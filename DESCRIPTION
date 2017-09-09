@@ -1,0 +1,28 @@
+Package: modelr
+Title: Functions used to environmental niche modeling
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Andrea", "Tapia", email = "katori@gmail.com", role = c("aut")),
+    person("Felipe", "Barros", email = "felipe.b4rros@gmail.com", role = c("aut")),
+    person("Guilherme", "Gall", email = "gmgall@gmail.com", role = c("aut", "cre"))
+    )
+Description: This package implements functions used to perform environmental
+    niche modeling (ENM) with the following algorithms: Bioclim, Domain, GLM,
+    Mahalanobis, Maxent, Random Forest, SVM and SVM2. A function to join
+    partitions is provided in finalModel(). ensemble() averages models from
+    distinct algorithms.
+Depends: R (>= 3.4.0)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: raster,
+    dismo,
+    e1071,
+    kernlab,
+    randomForest,
+    sp,
+    rgeos,
+    data.table,
+    rJava
+BugReports: https://github.com/Model-R/Back-end/issues
+RoxygenNote: 6.0.1
