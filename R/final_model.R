@@ -1,5 +1,14 @@
-######### Final modeling: one model per algorithm ----
-
+#' Gera um modelo final por algortimo
+#'
+#' @param sp Um nome de espécie
+#' @param select.partitions TRUE ou FALSE
+#' @param algortimos Algortimos selecionados. Maxent, RF e SVM por padrão
+#' @param threshold "spec_sens" por padrão
+#' @param TSS.value 0.7 por padrão
+#' @param models.dir Path do diretório onde estão os modelos
+#' @param final.dir Em que subdiretório escrever os modelos finais
+#' @return Uma string com a data e hora do término da execução
+#' @export
 finalModel <- function(sp, select.partitions = T, algoritmos = c("maxent", "rf", 
   "svm"), threshold = c("spec_sens"), TSS.value = 0.7, models.dir = "./models", 
   final.dir = "presfinal") {
