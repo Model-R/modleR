@@ -1,6 +1,15 @@
-## onde estao os modelos em geral ('models') onde estao os modelos finais
-## ('presfinal') cuanto de los modelos sea retenido: 0.5majority
-
+#' Gera um modelo só por espécie
+#'
+#' @param sp Um nome de espécie
+#' @param models.dir Path do diretório onde estão os modelos
+#' @param final.dir Path para subdiretório escrito com finalModel()
+#' @param ensemble.dir Path para os arquivos de saída
+#' @param occs Pontos de ocorrência da espécie
+#' @param which.models ???
+#' @param consensus ???
+#' @param consensus.level Quanto dos modelos será retido (0,5 = maioria)
+#' @return NULL
+#' @export
 ensemble <- function(sp, models.dir = "./models", final.dir = "presfinal", ensemble.dir = "ensemble", 
   occs = spp.filt, which.models = c("Final.bin.mean3", "Final.mean.bin7"), consensus = F, 
   consensus.level = 0.5) {
