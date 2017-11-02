@@ -7,6 +7,8 @@ createBuffer <- function(coord, sp, occs, seed, n.back,
     dist.buf <- mean(sp::spDists(x = coord, longlat = FALSE, segments = TRUE))
   if (buffer.type == "max") 
     dist.buf <- max(sp::spDists(x = coord, longlat = FALSE, segments = TRUE))
+  if (buffer.type == "median")
+    dist.buf <- median(sp::spDists(x = coord, longlat = FALSE, segments = TRUE))
   
   buffer <- raster::buffer(coord, width = dist.buf, dissolve = TRUE)
   

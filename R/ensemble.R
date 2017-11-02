@@ -19,9 +19,9 @@ ensemble <- function(sp, models.dir = "./models", final.dir = "presfinal", ensem
     {
       dir.create(paste0(models.dir, "/", sp, "/", ensemble.dir, "/"))
     }  #
-  #library(raster)
-  #library(scales)
-  #library(maps)
+  library(raster)
+  library(scales)
+  library(maps)
   
   ## para cada tipo de modelo
   for (whi in which.models) {
@@ -46,14 +46,13 @@ ensemble <- function(sp, models.dir = "./models", final.dir = "presfinal", ensem
       }
       coord <- occs[occs$sp == sp, c("lon", "lat")]
       
-#      png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/", sp, 
-#        "_", whi, "_ensemble.png"), res = 300, width = 410 * 300/72, height = 480 * 
-#        300/72)
-#      par(mfrow = c(1, 1), mar = c(3, 4, 4, 0))
-#      plot(ensemble.m, main = paste(sp, whi), legend = F, cex.main = 1, font.main = 3)
-#      maps::map("world", c("", "South America"), add = T, col = "grey")
-#      points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
-#      dev.off()
+      png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/", sp, "_", whi, "_ensemble.png"), 
+	  res = 300, width = 410 * 300/72, height =480*300/72)
+      par(mfrow = c(1, 1), mar = c(3, 4, 4, 0))
+      plot(ensemble.m, main = paste(sp, whi), legend = F, cex.main = 1, font.main = 3)
+      maps::map("world", c("", "South America"), add = T, col = "grey")
+      points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
+      dev.off()
       
       # o ensemble cru
       raster::writeRaster(ensemble.m, filename = paste0(models.dir, "/", sp, "/", ensemble.dir, 
@@ -67,15 +66,15 @@ ensemble <- function(sp, models.dir = "./models", final.dir = "presfinal", ensem
           100, ".tif"), overwrite = T)
         
         
-#        png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/", 
-#          sp, "_", whi, "_ensemble", consensus.level * 100, ".png"), res = 300, 
-#          width = 410 * 300/72, height = 480 * 300/72)
-#        par(mfrow = c(1, 1), mar = c(3, 4, 4, 0))
-#        plot(ensemble.consensus, main = paste(whi, consensus.level * 100), 
-#          legend = F, cex.main = 1, font.main = 3)
-#        maps::map("world", c("", "South America"), add = T, col = "grey")
-#        points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
-#        dev.off()
+         png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/", 
+          sp, "_", whi, "_ensemble", consensus.level * 100, ".png"), res = 300, 
+          width = 410 * 300/72, height = 480 * 300/72)
+         par(mfrow = c(1, 1), mar = c(3, 4, 4, 0))
+         plot(ensemble.consensus, main = paste(whi, consensus.level * 100), 
+          legend = F, cex.main = 1, font.main = 3)
+         maps::map("world", c("", "South America"), add = T, col = "grey")
+         points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
+         dev.off()
       }
     }
   }
