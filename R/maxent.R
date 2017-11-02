@@ -32,10 +32,13 @@ do_maxent <- function(sp,
   
   if (buffer %in% c("mean", "max")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
