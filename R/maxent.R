@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Maxent
+#' Faz modelagem de distribuição de espécies com algoritmo Maxent
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -29,7 +29,7 @@ do_maxent <- function(sp,
 
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
-  
+
   if (buffer %in% c("mean", "max")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
                            sp = sp, seed = seed, predictors = predictors)
@@ -42,20 +42,20 @@ do_maxent <- function(sp,
   }
 
   colnames(backgr) <- c("lon", "lat")
-  
+
   # Extraindo dados ambientais dos bckgr
   backvals <- raster::extract(predictors, backgr)
   pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
-  
+
   # Data partition
-  if (nrow(coordinates) < 11) 
+  if (nrow(coordinates) < 11)
     partitions <- nrow(coordinates)
   set.seed(seed)  #reproducibility
   group <- dismo::kfold(coordinates, partitions)
   set.seed(seed + 1)
   bg.grp <- dismo::kfold(backgr, partitions)
   group.all <- c(group, bg.grp)
-  
+
   pres <- cbind(coordinates, presvals)
   back <- cbind(backgr, backvals)
   rbind_1 <- rbind(pres, back)
@@ -76,7 +76,7 @@ do_maxent <- function(sp,
   for (i in unique(group)) {
     cat(paste(sp, "partition number", i, "\n"))
     pres_train <- coordinates[group != i, ]
-    if (nrow(coordinates) == 1) 
+    if (nrow(coordinates) == 1)
       pres_train <- coordinates[group == i, ]
     pres_test <- coordinates[group == i, ]
     
@@ -110,7 +110,7 @@ do_maxent <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = mx_cut, filename = paste0(models.dir, "/", sp, "/maxent_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
-    
+  
   
     if (project.model == T) {
       for (proj in projections) {

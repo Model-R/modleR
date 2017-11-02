@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Domain
+#' Faz modelagem de distribuição de espécies com algoritmo Domain
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -32,10 +32,13 @@ do_domain <- function(sp,
   
   if (buffer %in% c("mean", "max")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -107,7 +110,7 @@ do_domain <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = do_cut, filename = paste0(models.dir, "/", sp, "/Domain_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
-    
+  
   
     if (project.model == T) {
       for (proj in projections) {

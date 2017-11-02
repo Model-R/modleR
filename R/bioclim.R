@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Bioclim
+#' Faz modelagem de distribuição de espécies com algoritmo Bioclim
 #'
 #' @param sp Um nome de espécie
 #' @param coordinates Uma tabela com pontos de ocorrência
@@ -36,30 +36,33 @@ do_bioclim <- function(sp,
 
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
-  
+
   if (buffer %in% c("mean", "max")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer, 
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
-  
+
   # Extraindo dados ambientais dos bckgr
   backvals <- raster::extract(predictors, backgr)
   pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
-  
+
   # Data partition
-  if (nrow(coordinates) < 11) 
+  if (nrow(coordinates) < 11)
     partitions <- nrow(coordinates)
   set.seed(seed)  #reproducibility
   group <- dismo::kfold(coordinates, partitions)
   set.seed(seed + 1)
   bg.grp <- dismo::kfold(backgr, partitions)
   group.all <- c(group, bg.grp)
-  
+
   pres <- cbind(coordinates, presvals)
   back <- cbind(backgr, backvals)
   rbind_1 <- rbind(pres, back)
@@ -80,7 +83,7 @@ do_bioclim <- function(sp,
   for (i in unique(group)) {
     cat(paste(sp, "partition number", i, "\n"))
     pres_train <- coordinates[group != i, ]
-    if (nrow(coordinates) == 1) 
+    if (nrow(coordinates) == 1)
       pres_train <- coordinates[group == i, ]
     pres_test <- coordinates[group == i, ]
     
@@ -104,7 +107,6 @@ do_bioclim <- function(sp,
       sp, "_", i, "_bioclim.txt"))
     
     if (class(mask) == "SpatialPolygonsDataFrame") {
-    #source("../../fct/cropModel.R")
     bc_cont <- cropModel(bc_cont, mask)
     bc_bin <- cropModel(bc_bin, mask)
     bc_cut <- cropModel(bc_cut, mask)
@@ -132,11 +134,11 @@ do_bioclim <- function(sp,
           bc_proj_cut <- cropModel(bc_proj_cut, mask)
         }
         writeRaster(x = bc_proj, filename = paste0(models.dir, "/", sp, "/", 
-          proj, "/Domain_cont_", sp, "_", i, ".tif"), overwrite = T)
+          proj, "/BioClim_cont_", sp, "_", i, ".tif"), overwrite = T)
         writeRaster(x = bc_proj_bin, filename = paste0(models.dir, "/", sp, "/", 
-          proj, "/Domain_bin_", sp, "_", i, ".tif"), overwrite = T)
+          proj, "/BioClim_bin_", sp, "_", i, ".tif"), overwrite = T)
         writeRaster(x = bc_proj_cut, filename = paste0(models.dir, "/", sp, "/", 
-          proj, "/Domain_cut_", sp, "_", i, ".tif"), overwrite = T)
+          proj, "/BioClim_cut_", sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

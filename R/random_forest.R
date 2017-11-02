@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Random Forest
+#' Faz modelagem de distribuição de espécies com algoritmo Random Forest
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -32,10 +32,13 @@ do_randomForest <- function(sp,
 
   if (buffer %in% c("mean", "max")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -84,17 +87,6 @@ do_randomForest <- function(sp,
       -pa))  #new
     envtest_back <- subset(sdmdata_test, pa == 0, select = c(-group, -lon, -lat,
       -pa))  #new
-
-
-
-
-
-
-
-
-
-
-
 
     # rf1 <- tuneRF(x=envtrain,y=sdmdata_train$pa,stepFactor = 0.5)
     rf <- randomForest::randomForest(sdmdata_train$pa ~ ., data = envtrain)

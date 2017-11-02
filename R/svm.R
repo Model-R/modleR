@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo SVM
+#' Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -31,11 +31,14 @@ do_SVM <- function(sp,
   presvals <- raster::extract(predictors, coordinates)
 
   if (buffer %in% c("mean", "max")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer, 
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -119,8 +122,8 @@ do_SVM <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = svm_cut, filename = paste0(models.dir, "/", sp, "/svm_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
-    
-    
+  
+  
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)

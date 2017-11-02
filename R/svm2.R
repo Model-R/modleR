@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo SVM2
+#' Faz modelagem de distribuição de espécies com algoritmo SVM2 - (e1071)
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -31,11 +31,14 @@ do_SVM2 <- function(sp,
   presvals <- raster::extract(predictors, coordinates)
 
   if (buffer %in% c("mean", "max")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer, 
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
