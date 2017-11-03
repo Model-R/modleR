@@ -12,7 +12,8 @@
 #' @export
 finalModel <- function(sp, select.partitions = T, algoritmos = c("maxent", "rf", 
   "svm"), threshold = c("spec_sens"), TSS.value = 0.7, models.dir = "./models", 
-  final.dir = "presfinal") {
+  final.dir = "presfinal")
+{
   if (file.exists(paste0(models.dir, "/", sp, "/", final.dir)) == FALSE) 
     dir.create(paste0(models.dir, "/", sp, "/", final.dir), recursive = TRUE)
   print(date())

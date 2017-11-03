@@ -30,7 +30,7 @@ do_SVM2 <- function(sp,
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
-  if (buffer %in% c("mean", "max")) {
+  if (buffer %in% c("mean", "max", "median")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer, 
       occs = coordinates, sp = sp, seed = seed, predictors = predictors)
   } else {
