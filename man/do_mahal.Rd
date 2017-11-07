@@ -2,7 +2,7 @@
 % Please edit documentation in R/mahal.R
 \name{do_mahal}
 \alias{do_mahal}
-\title{Faz modelagem de distribuição de espécies com algotimo Mahalanobis}
+\title{Faz modelagem de distribuição de espécies com distância de Mahalanobis}
 \usage{
 do_mahal(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_mahal(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo Mahalanobis
+Faz modelagem de distribuição de espécies com distância de Mahalanobis
 }

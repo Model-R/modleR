@@ -2,7 +2,7 @@
 % Please edit documentation in R/glm.R
 \name{do_GLM}
 \alias{do_GLM}
-\title{Faz modelagem de distribuição de espécies com algotimo GLM}
+\title{Faz modelagem de distribuição de espécies com algoritmo GLM}
 \usage{
 do_GLM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
   models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_GLM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo GLM
+Faz modelagem de distribuição de espécies com algoritmo GLM
 }

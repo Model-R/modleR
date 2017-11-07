@@ -2,7 +2,7 @@
 % Please edit documentation in R/bioclim.R
 \name{do_bioclim}
 \alias{do_bioclim}
-\title{Faz modelagem de distribuição de espécies com algotimo Bioclim}
+\title{Faz modelagem de distribuição de espécies com algoritmo Bioclim}
 \usage{
 do_bioclim(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_bioclim(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo Bioclim
+Faz modelagem de distribuição de espécies com algoritmo Bioclim
 }

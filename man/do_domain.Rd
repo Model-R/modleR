@@ -2,7 +2,7 @@
 % Please edit documentation in R/domain.R
 \name{do_domain}
 \alias{do_domain}
-\title{Faz modelagem de distribuição de espécies com algotimo Domain}
+\title{Faz modelagem de distribuição de espécies com algoritmo Domain}
 \usage{
 do_domain(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_domain(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo Domain
+Faz modelagem de distribuição de espécies com algoritmo Domain
 }

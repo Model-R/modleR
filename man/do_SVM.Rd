@@ -2,7 +2,7 @@
 % Please edit documentation in R/svm.R
 \name{do_SVM}
 \alias{do_SVM}
-\title{Faz modelagem de distribuição de espécies com algotimo SVM}
+\title{Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)}
 \usage{
 do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
   models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo SVM
+Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)
 }

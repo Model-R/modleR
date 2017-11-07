@@ -2,7 +2,7 @@
 % Please edit documentation in R/random_forest.R
 \name{do_randomForest}
 \alias{do_randomForest}
-\title{Faz modelagem de distribuição de espécies com algotimo Random Forest}
+\title{Faz modelagem de distribuição de espécies com algoritmo Random Forest}
 \usage{
 do_randomForest(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_randomForest(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo Random Forest
+Faz modelagem de distribuição de espécies com algoritmo Random Forest
 }

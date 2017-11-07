@@ -2,7 +2,7 @@
 % Please edit documentation in R/maxent.R
 \name{do_maxent}
 \alias{do_maxent}
-\title{Faz modelagem de distribuição de espécies com algotimo Maxent}
+\title{Faz modelagem de distribuição de espécies com algoritmo Maxent}
 \usage{
 do_maxent(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir, project.model, projections, mask, n.back = 500)
@@ -28,5 +28,5 @@ do_maxent(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo Maxent
+Faz modelagem de distribuição de espécies com algoritmo Maxent
 }
