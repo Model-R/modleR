@@ -30,7 +30,7 @@ do_randomForest <- function(sp,
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
-  if (buffer %in% c("mean", "max")) {
+  if (buffer %in% c("mean", "max", "median")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
                            sp = sp, seed = seed, predictors = predictors)
   } else {
