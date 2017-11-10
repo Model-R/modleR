@@ -13,6 +13,7 @@ do_randomForest <- function(sp,
                             project.model,
                             projections,
                             mask,
+                            write_png = F,
                             n.back = 500) {
   cat(paste("Random Forests", "\n"))
 
@@ -124,8 +125,15 @@ do_randomForest <- function(sp,
       "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = rf_cut, filename = paste0(models.dir, "/", sp, "/rf_cut_", sp, 
       "_", i, ".tif"), overwrite = T)
-    
-    
+
+   if (write_png == T) {
+       png(filename = paste0(models.dir, "/", sp,"/rf",sp,"_",i,"%03d.png"))
+       plot(rf_cont,main = paste("RF raw","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       plot(rf_bin,main = paste("RF P/A","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       plot(rf_cut,main = paste("RF cut","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       dev.off()
+       }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)

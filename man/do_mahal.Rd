@@ -5,7 +5,8 @@
 \title{Faz modelagem de distribuição de espécies com distância de Mahalanobis}
 \usage{
 do_mahal(sp, coordinates, partitions, buffer = FALSE, seed = 512,
-  predictors, models.dir, project.model, projections, mask, n.back = 500)
+  predictors, models.dir, project.model, projections, mask, write_png = F,
+  n.back = 500)
 }
 \arguments{
 \item{sp}{Um nome de espécie}
@@ -21,6 +22,8 @@ do_mahal(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 \item{models.dir}{Path do diretório onde serão escritos os arquivos de saída}
 
 \item{mask}{Objeto do tipo SpatialPolygonsDataFrame com máscara}
+
+\item{write_png}{Se o png vai ser criado - defaults to F}
 
 \item{n.back}{Número de pontos de background}
 }

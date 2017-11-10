@@ -13,6 +13,7 @@ do_mahal <- function(sp,
 		     project.model,
 		     projections,
 		     mask,
+		     write_png = F,
 		     n.back = 500) {
   cat(paste("Mahalanobis distance", "\n"))
 
@@ -123,8 +124,15 @@ do_mahal <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = ma_cut, filename = paste0(models.dir, "/", sp, "/Mahal_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
-  
-  
+
+       if (write_png == T) {
+           png(filename = paste0(models.dir, "/", sp,"/Mahal",sp,"_",i,"%03d.png"))
+           plot(ma_cont, main = paste("Mahal raw","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           plot(ma_bin, main = paste("Mahal P/A","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           plot(ma_cut, main = paste("Mahal cut","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           dev.off()
+           }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)

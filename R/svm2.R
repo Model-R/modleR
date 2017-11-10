@@ -13,6 +13,7 @@ do_SVM2 <- function(sp,
                     project.model,
                     projections,
                     mask,
+                    write_png = F,
                     n.back = 500) {
   cat(paste("SVM2", "\n"))
 
@@ -123,6 +124,16 @@ do_SVM2 <- function(sp,
     raster::writeRaster(x = svm2_cut, filename = paste0(models.dir, "/", sp, "/svm2_cut_", sp,
       "_", i, ".tif"), overwrite = T)
 
+        if (write_png == T) {
+            png(filename = paste0(models.dir, "/", sp, "/svm2",sp,"_",i,"%03d.png"))
+            plot(svm2_cont,main = paste("SVM2 raw","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
+                                        round(svm2_TSS,2)))
+            plot(svm2_bin,main = paste("SVM2 P/A","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
+                                       round(svm2_TSS,2)))
+            plot(svm2_cut,main = paste("SVM2 cut","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
+                                       round(svm2_TSS,2)))
+            dev.off()
+            }
 
     if (project.model == T) {
       for (proj in projections) {

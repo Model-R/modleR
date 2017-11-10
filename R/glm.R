@@ -13,6 +13,7 @@ do_GLM <- function(sp,
                    project.model,
                    projections,
                    mask,
+    		       write_png = F,
                    n.back = 500) {
   cat(paste("GLM", "\n"))
 
@@ -121,6 +122,14 @@ do_GLM <- function(sp,
       "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = glm_cut, filename = paste0(models.dir, "/", sp, "/glm_cut_", sp,
       "_", i, ".tif"), overwrite = T)
+
+    if (write_png == T) {
+        png(filename = paste0(models.dir, "/", sp, "/glm", sp, "_", i, "%03d.png"))
+        plot(glm_cont,main = paste("GLM raw","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
+        plot(glm_bin,main = paste("GLM P/A","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
+        plot(glm_cut,main = paste("GLM cut","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
+        dev.off()
+        }
 
     if (project.model == T) {
       for (proj in projections) {

@@ -13,6 +13,7 @@ do_maxent <- function(sp,
 		      project.model,
 		      projections,
 		      mask,
+		      write_png = F,
 		      n.back = 500) {
   cat(paste("Maxent", "\n"))
 
@@ -110,6 +111,13 @@ do_maxent <- function(sp,
     raster::writeRaster(x = mx_cut, filename = paste0(models.dir, "/", sp, "/maxent_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
+  if (write_png == T) {
+      png(filename = paste0(models.dir, "/", sp,"/maxent",sp,"_",i,"%03d.png"))
+      plot(mx_cont,main = paste("Maxent raw","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      plot(mx_bin,main = paste("Maxent P/A","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      plot(mx_cut,main = paste("Maxent cut","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      dev.off()
+      }
 
     if (project.model == T) {
       for (proj in projections) {

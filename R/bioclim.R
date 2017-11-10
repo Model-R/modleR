@@ -7,6 +7,7 @@
 #' @param predictors Objeto do tipo RasterStack com variáveis preditoras
 #' @param models.dir Path do diretório onde serão escritos os arquivos de saída
 #' @param mask Objeto do tipo SpatialPolygonsDataFrame com máscara
+#' @param write_png Se o png vai ser criado - defaults to F
 #' @param n.back Número de pontos de background
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 #' @export
@@ -20,6 +21,7 @@ do_bioclim <- function(sp,
 		       project.model,
 		       projections,
 		       mask,
+		       write_png = F,
 		       n.back = 500) {
   cat(paste("Bioclim", "\n"))
 
@@ -119,6 +121,13 @@ do_bioclim <- function(sp,
     raster::writeRaster(x = bc_cut, filename = paste0(models.dir, "/", sp, "/BioClim_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
+  if (write_png == T) {
+      png(filename = paste0(models.dir, "/", sp,"/Bioclim",sp,"_",i,"%03d.png"))
+      raster::plot(bc_cont,main = paste("Bioclim raw","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
+      raster::plot(bc_bin,main = paste("Bioclim P/A","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
+      raster::plot(bc_cut,main = paste("Bioclim cut","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
+      dev.off()
+      }
 
     if (project.model == T) {
       for (proj in projections) {
