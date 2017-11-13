@@ -49,10 +49,17 @@ ensemble <- function(sp,
             png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
                                    sp, "_", whi, "_ensemble.png"),
                  res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
-            par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
-            raster::plot(ensemble.m, legend = F, axes = FALSE,box = F)
+            raster::plot(ensemble.m)
             maps::map("world", c("", "South America"), add = T, col = "grey")
-            points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
+            #points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
+            dev.off()
+            
+            png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
+                                  sp, "_", whi, "_ensemble_without_margins.png"),
+                res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
+            par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
+            raster::image(ensemble.m, legend = F, axes = FALSE,box = F, col=rev(terrain.colors(25)))
+            #points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
             dev.off()
 
             # o ensemble cru
