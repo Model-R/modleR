@@ -55,7 +55,7 @@ ensemble <- function(sp,
             dev.off()
             
             png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
-                                  sp, "_", whi, "_ensemble_without_margins.png"),
+                                  sp, "_", whi, "_ensemble_without_margins.png", bg = "transparent"),
                 res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
             par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
             raster::image(ensemble.m, legend = F, axes = FALSE,box = F, col=rev(terrain.colors(25)))
@@ -90,7 +90,7 @@ ensemble <- function(sp,
 
                 png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
                                        sp, "_", whi, "_ensemble",
-                                       consensus.level * 100, "without_margins", ".png"), res = 300,
+                                       consensus.level * 100, "without_margins", ".png", bg = "transparent"), res = 300,
                      width = 410 * 300/72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
                 raster::image(ensemble.consensus, legend = F, axes = FALSE, box = F, col=rev(terrain.colors(25)))
