@@ -69,16 +69,26 @@ ensemble <- function(sp,
                                                       ensemble.dir, "/", sp, "_", whi,
                                                       "_ensemble", consensus.level * 100,
                                                       ".tif"), overwrite = T)
+                
+                png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
+                                      sp, "_", whi, "_ensemble",
+                                      consensus.level * 100, ".png"), res = 300,
+                    width = 410 * 300/72, height = 480 * 300 / 72)
+                par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
+                raster::plot(ensemble.consensus)
+                maps::map("world", c("", "South America"), add = T, col = "grey")
+                #points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
+                dev.off()
 
 
                 png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
                                        sp, "_", whi, "_ensemble",
-                                       consensus.level * 100, ".png"), res = 300,
+                                       consensus.level * 100, "without_margins", ".png"), res = 300,
                      width = 410 * 300/72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
+                raster::image(ensemble.consensus, legend = F, axes = FALSE, box = F, col=rev(terrain.colors(25)))
                 raster::plot(ensemble.consensus, legend = F, axes = FALSE, box = F)
-                maps::map("world", c("", "South America"), add = T, col = "grey")
-                points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
+                #points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
                 dev.off()
             }
         }
