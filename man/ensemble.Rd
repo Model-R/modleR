@@ -7,7 +7,7 @@
 ensemble(sp, models.dir = "./models", final.dir = "presfinal",
   ensemble.dir = "ensemble", occs = spp.filt,
   which.models = c("Final.bin.mean3", "Final.mean.bin7"), consensus = F,
-  consensus.level = 0.5)
+  consensus.level = 0.5, write_png = T)
 }
 \arguments{
 \item{sp}{Um nome de espécie}
@@ -25,6 +25,8 @@ ensemble(sp, models.dir = "./models", final.dir = "presfinal",
 \item{consensus}{Se será usada uma regra de consenso para cortar o ensemble}
 
 \item{consensus.level}{Quanto dos modelos será retido (0,5 = maioria)}
+
+\item{write_png}{Write png? Defaults to TRUE}
 }
 \description{
 Gera um modelo só por espécie
