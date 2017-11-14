@@ -8,6 +8,7 @@
 #' @param which.models Qual tipo de modelo final será juntado (ex. bin.mean3)
 #' @param consensus Se será usada uma regra de consenso para cortar o ensemble
 #' @param consensus.level Quanto dos modelos será retido (0,5 = maioria)
+#' @param write_png Write png? Defaults to TRUE
 #' @return NULL
 #' @import raster
 #' @export
@@ -18,7 +19,8 @@ ensemble <- function(sp,
                      occs = spp.filt,
                      which.models = c("Final.bin.mean3", "Final.mean.bin7"),
                      consensus = F,
-                     consensus.level = 0.5) {
+                     consensus.level = 0.5,
+                     write_png = T) {
 
     ## pasta de output
     if (file.exists(paste0(models.dir, "/", sp, "/", ensemble.dir, "/")) == FALSE) {
@@ -46,20 +48,22 @@ ensemble <- function(sp,
             }
             coord <- occs[occs$sp == sp, c("lon", "lat")]
 
+            if (write_png) {
             png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
                                    sp, "_", whi, "_ensemble.png"),
                  res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
+            par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
             raster::plot(ensemble.m)
             maps::map("world", c("", "South America"), add = T, col = "grey")
             #points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
             dev.off()
-            
+            }
+
             png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
-                                  sp, "_", whi, "_ensemble_without_margins.png", bg = "transparent"),
+                                  sp, "_", whi, "_ensemble_without_margins.png"), bg = "transparent",
                 res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
             par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
-            raster::image(ensemble.m, legend = F, axes = FALSE,box = F, col=rev(terrain.colors(25)))
-            #points(coord, pch = 21, cex = 0.6, bg = scales::alpha("cyan", 0.6))
+            raster::image(ensemble.m, col = rev(terrain.colors(25)), axes = F, asp = 1)
             dev.off()
 
             # o ensemble cru
@@ -76,26 +80,25 @@ ensemble <- function(sp,
                                                       ensemble.dir, "/", sp, "_", whi,
                                                       "_ensemble", consensus.level * 100,
                                                       ".tif"), overwrite = T)
-                
+
+                if (write_png) {
                 png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
                                       sp, "_", whi, "_ensemble",
                                       consensus.level * 100, ".png"), res = 300,
                     width = 410 * 300/72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
+                par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
                 raster::plot(ensemble.consensus)
                 maps::map("world", c("", "South America"), add = T, col = "grey")
                 #points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
                 dev.off()
-
+                }
 
                 png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
                                        sp, "_", whi, "_ensemble",
-                                       consensus.level * 100, "without_margins", ".png", bg = "transparent"), res = 300,
-                     width = 410 * 300/72, height = 480 * 300 / 72)
+                                       consensus.level * 100, "without_margins.png"), bg = "transparent",
+                    res = 300, width = 410 * 300/72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
-                raster::image(ensemble.consensus, legend = F, axes = FALSE, box = F, col=rev(terrain.colors(25)))
-                raster::plot(ensemble.consensus, legend = F, axes = FALSE, box = F)
-                #points(coord, pch = 19, cex = 0.3, col = scales::alpha("cyan", 0.6))
+                raster::image(ensemble.consensus, col = rev(terrain.colors(25)), axes = F, asp = 1)
                 dev.off()
             }
         }
