@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Mahalanobis
+#' Faz modelagem de distribuição de espécies com distância de Mahalanobis
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -13,6 +13,7 @@ do_mahal <- function(sp,
 		     project.model,
 		     projections,
 		     mask,
+		     write_png = F,
 		     n.back = 500) {
   cat(paste("Mahalanobis distance", "\n"))
 
@@ -28,16 +29,18 @@ do_mahal <- function(sp,
     }
   }
 
-
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
-  if (buffer %in% c("mean", "max")) {
+  if (buffer %in% c("mean", "max", "median")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -121,7 +124,15 @@ do_mahal <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = ma_cut, filename = paste0(models.dir, "/", sp, "/Mahal_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
-    
+
+       if (write_png == T) {
+           png(filename = paste0(models.dir, "/", sp,"/Mahal",sp,"_",i,"%03d.png"))
+           plot(ma_cont, main = paste("Mahal raw","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           plot(ma_bin, main = paste("Mahal P/A","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           plot(ma_cut, main = paste("Mahal cut","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           dev.off()
+           }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)
@@ -129,8 +140,8 @@ do_mahal <- function(sp,
         ma_proj <- predict(data2, ma, progress = "text")
         ma_proj_bin <- ma_proj > thresholdma
         ma_proj_cut <- ma_proj_bin * ma_proj
-        # Normaliza o modelo cut ma_proj_cut <- ma_proj_cut/maxValue(ma_proj_cut)
-        
+        # Normaliza o modelo cut 
+        ma_proj_cut <- ma_proj_cut/maxValue(ma_proj_cut)        
         if (class(mask) == "SpatialPolygonsDataFrame") {
           source("./fct/cropModel.R")
           ma_proj <- cropModel(ma_proj, mask)

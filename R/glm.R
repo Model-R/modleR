@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo GLM
+#' Faz modelagem de distribuição de espécies com algoritmo GLM
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -13,16 +13,17 @@ do_GLM <- function(sp,
                    project.model,
                    projections,
                    mask,
+    		       write_png = F,
                    n.back = 500) {
   cat(paste("GLM", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
     dir.create(paste0(models.dir))
-  if (file.exists(paste0(models.dir, "/", sp)) == FALSE) 
+  if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
     dir.create(paste0(models.dir, "/", sp))
   if (project.model == T) {
     for (proj in projections) {
-      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE) 
+      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE)
         dir.create(paste0(models.dir, "/", sp, "/", proj))
     }
   }
@@ -30,12 +31,15 @@ do_GLM <- function(sp,
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
-  if (buffer %in% c("mean", "max")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer, 
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+  if (buffer %in% c("mean", "max", "median")) {
+    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -87,7 +91,7 @@ do_GLM <- function(sp,
 
     null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain, family = "binomial")
     full.model <- glm(sdmdata_train$pa ~ ., data = envtrain, family = "binomial")
-    glm <- step(object = null.model, scope = formula(full.model), direction = "both", 
+    glm <- step(object = null.model, scope = formula(full.model), direction = "both",
       trace = F)
     eglm <- dismo::evaluate(envtest_pre, envtest_back, model = glm, type = "response")  #####
     # eglm <- evaluate(pres_test,backg_test,glm,predictors,type='response')
@@ -99,12 +103,12 @@ do_GLM <- function(sp,
     thglm$algoritmo <- "glm"
     thglm$partition <- i
     row.names(thglm) <- paste(sp, i, "glm")
-    
+
     glm_cont <- dismo::predict(predictors, glm, progress = "text", type = "response")
     glm_bin <- glm_cont > thresholdglm
     glm_cut <- glm_bin * glm_cont
 
-    write.table(thglm, file = paste0(models.dir, "/", sp, "/evaluate", 
+    write.table(thglm, file = paste0(models.dir, "/", sp, "/evaluate",
       sp, "_", i, "_glm.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -112,13 +116,21 @@ do_GLM <- function(sp,
       glm_bin <- cropModel(glm_bin, mask)
       glm_cut <- cropModel(glm_cut, mask)
     }
-    raster::writeRaster(x = glm_cont, filename = paste0(models.dir, "/", sp, "/glm_cont_", 
+    raster::writeRaster(x = glm_cont, filename = paste0(models.dir, "/", sp, "/glm_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = glm_bin, filename = paste0(models.dir, "/", sp, "/glm_bin_", sp, 
+    raster::writeRaster(x = glm_bin, filename = paste0(models.dir, "/", sp, "/glm_bin_", sp,
       "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = glm_cut, filename = paste0(models.dir, "/", sp, "/glm_cut_", sp, 
+    raster::writeRaster(x = glm_cut, filename = paste0(models.dir, "/", sp, "/glm_cut_", sp,
       "_", i, ".tif"), overwrite = T)
-    
+
+    if (write_png == T) {
+        png(filename = paste0(models.dir, "/", sp, "/glm", sp, "_", i, "%03d.png"))
+        plot(glm_cont,main = paste("GLM raw","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
+        plot(glm_bin,main = paste("GLM P/A","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
+        plot(glm_cut,main = paste("GLM cut","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
+        dev.off()
+        }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)
@@ -133,11 +145,11 @@ do_GLM <- function(sp,
           glm_proj_bin <- cropModel(glm_proj_bin, mask)
           glm_proj_cut <- cropModel(glm_proj_cut, mask)
         }
-        writeRaster(x = glm_proj, filename = paste0(models.dir, "/", sp, "/", 
+        writeRaster(x = glm_proj, filename = paste0(models.dir, "/", sp, "/",
           proj, "/glm_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = glm_proj_bin, filename = paste0(models.dir, "/", sp, "/", 
+        writeRaster(x = glm_proj_bin, filename = paste0(models.dir, "/", sp, "/",
           proj, "/glm_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = glm_proj_cut, filename = paste0(models.dir, "/", sp, "/", 
+        writeRaster(x = glm_proj_cut, filename = paste0(models.dir, "/", sp, "/",
           proj, "/glm_cut_", sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }

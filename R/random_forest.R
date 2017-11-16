@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Random Forest
+#' Faz modelagem de distribuição de espécies com algoritmo Random Forest
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -13,6 +13,7 @@ do_randomForest <- function(sp,
                             project.model,
                             projections,
                             mask,
+                            write_png = F,
                             n.back = 500) {
   cat(paste("Random Forests", "\n"))
 
@@ -30,12 +31,15 @@ do_randomForest <- function(sp,
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
-  if (buffer %in% c("mean", "max")) {
+  if (buffer %in% c("mean", "max", "median")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -85,17 +89,6 @@ do_randomForest <- function(sp,
     envtest_back <- subset(sdmdata_test, pa == 0, select = c(-group, -lon, -lat,
       -pa))  #new
 
-
-
-
-
-
-
-
-
-
-
-
     # rf1 <- tuneRF(x=envtrain,y=sdmdata_train$pa,stepFactor = 0.5)
     rf <- randomForest::randomForest(sdmdata_train$pa ~ ., data = envtrain)
     # rf <- randomForest (x =envtrain ,y=factor(sdmdata_train$pa),xtest=envtest,ytest
@@ -132,8 +125,15 @@ do_randomForest <- function(sp,
       "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = rf_cut, filename = paste0(models.dir, "/", sp, "/rf_cut_", sp, 
       "_", i, ".tif"), overwrite = T)
-    
-    
+
+   if (write_png == T) {
+       png(filename = paste0(models.dir, "/", sp,"/rf",sp,"_",i,"%03d.png"))
+       plot(rf_cont,main = paste("RF raw","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       plot(rf_bin,main = paste("RF P/A","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       plot(rf_cut,main = paste("RF cut","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       dev.off()
+       }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)

@@ -2,10 +2,10 @@
 % Please edit documentation in R/svm.R
 \name{do_SVM}
 \alias{do_SVM}
-\title{Faz modelagem de distribuição de espécies com algotimo SVM}
+\title{Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)}
 \usage{
 do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
-  models.dir, project.model, projections, mask, n.back = 500)
+  models.dir, project.model, projections, mask, write_png = F, n.back = 500)
 }
 \arguments{
 \item{sp}{Um nome de espécie}
@@ -22,11 +22,13 @@ do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 
 \item{mask}{Objeto do tipo SpatialPolygonsDataFrame com máscara}
 
+\item{write_png}{Se o png vai ser criado - defaults to F}
+
 \item{n.back}{Número de pontos de background}
 }
 \value{
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo SVM
+Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)
 }

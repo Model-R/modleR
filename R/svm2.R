@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo SVM2
+#' Faz modelagem de distribuição de espécies com algoritmo SVM2 - (e1071)
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -13,16 +13,17 @@ do_SVM2 <- function(sp,
                     project.model,
                     projections,
                     mask,
+                    write_png = F,
                     n.back = 500) {
   cat(paste("SVM2", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
     dir.create(paste0(models.dir))
-  if (file.exists(paste0(models.dir, "/", sp)) == FALSE) 
+  if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
     dir.create(paste0(models.dir, "/", sp))
   if (project.model == T) {
     for (proj in projections) {
-      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE) 
+      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE)
         dir.create(paste0(models.dir, "/", sp, "/", proj))
     }
   }
@@ -30,12 +31,15 @@ do_SVM2 <- function(sp,
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
-  if (buffer %in% c("mean", "max")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer, 
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
-  } else {
+  if (buffer %in% c("mean", "max", "median")) {
+    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
+                           sp = sp, seed = seed, predictors = predictors)
+    } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -100,12 +104,12 @@ do_SVM2 <- function(sp,
     svm2_cont <- dismo::predict(predictors, svm2, progress = "text")
     svm2_bin <- svm2_cont > thresholdsvm2
     svm2_cut <- svm2_bin * svm2_cont
-    
+
     # TRANSFORMA 0 A 1
     svm2_cont <- svm2_cont/raster::maxValue(svm2_cont)
     svm2_cut <- svm2_cut/raster::maxValue(svm2_cut)
 
-    write.table(thsvm2, file = paste0(models.dir, "/", sp, "/evaluate", 
+    write.table(thsvm2, file = paste0(models.dir, "/", sp, "/evaluate",
       sp, "_", i, "_svm2.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -113,14 +117,24 @@ do_SVM2 <- function(sp,
       svm2_bin <- cropModel(svm2_bin, mask)
       svm2_cut <- cropModel(svm2_cut, mask)
     }
-    raster::writeRaster(x = svm2_cont, filename = paste0(models.dir, "/", sp, "/svm2_cont_", 
+    raster::writeRaster(x = svm2_cont, filename = paste0(models.dir, "/", sp, "/svm2_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = svm2_bin, filename = paste0(models.dir, "/", sp, "/svm2_bin_", sp, 
+    raster::writeRaster(x = svm2_bin, filename = paste0(models.dir, "/", sp, "/svm2_bin_", sp,
       "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = svm2_cut, filename = paste0(models.dir, "/", sp, "/svm2_cut_", sp, 
+    raster::writeRaster(x = svm2_cut, filename = paste0(models.dir, "/", sp, "/svm2_cut_", sp,
       "_", i, ".tif"), overwrite = T)
-    
-    
+
+        if (write_png == T) {
+            png(filename = paste0(models.dir, "/", sp, "/svm2",sp,"_",i,"%03d.png"))
+            plot(svm2_cont,main = paste("SVM2 raw","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
+                                        round(svm2_TSS,2)))
+            plot(svm2_bin,main = paste("SVM2 P/A","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
+                                       round(svm2_TSS,2)))
+            plot(svm2_cut,main = paste("SVM2 cut","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
+                                       round(svm2_TSS,2)))
+            dev.off()
+            }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)
@@ -135,11 +149,11 @@ do_SVM2 <- function(sp,
           svm2_proj_bin <- cropModel(svm2_proj_bin, mask)
           svm2_proj_cut <- cropModel(svm2_proj_cut, mask)
         }
-        writeRaster(x = svm2_proj, filename = paste0(models.dir, "/", sp, "/", 
+        writeRaster(x = svm2_proj, filename = paste0(models.dir, "/", sp, "/",
           proj, "/svm2_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = svm2_proj_bin, filename = paste0(models.dir, "/", sp, "/", 
+        writeRaster(x = svm2_proj_bin, filename = paste0(models.dir, "/", sp, "/",
           proj, "/svm2_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = svm2_proj_cut, filename = paste0(models.dir, "/", sp, "/", 
+        writeRaster(x = svm2_proj_cut, filename = paste0(models.dir, "/", sp, "/",
           proj, "/svm2_cut_", sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }

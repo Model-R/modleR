@@ -1,4 +1,4 @@
-#' Faz modelagem de distribuição de espécies com algotimo Domain
+#' Faz modelagem de distribuição de espécies com algoritmo Domain
 #'
 #' @inheritParams do_bioclim
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
@@ -13,6 +13,7 @@ do_domain <- function(sp,
 		      project.model,
 		      projections,
 		      mask,
+		      write_png = F,
 		      n.back = 500) {
   cat(paste("Domain", "\n"))
 
@@ -30,12 +31,15 @@ do_domain <- function(sp,
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
   
-  if (buffer %in% c("mean", "max")) {
+  if (buffer %in% c("mean", "max", "median")) {
     backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-      occs = coordinates, sp = sp, seed = seed, predictors = predictors)
+                           sp = sp, seed = seed, predictors = predictors)
   } else {
     set.seed(seed + 2)
-    backgr <- dismo::randomPoints(predictors, n.back)
+    backgr <- dismo::randomPoints(mask = predictors,
+                                  n = n.back,
+                                  p = coordinates,
+                                  excludep = T)
   }
 
   colnames(backgr) <- c("lon", "lat")
@@ -107,8 +111,15 @@ do_domain <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = do_cut, filename = paste0(models.dir, "/", sp, "/Domain_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
-    
-  
+
+    if (write_png == T) {
+        png(filename = paste0(models.dir, "/", sp, "/Domain", sp, "_", i, "%03d.png"))
+        plot(do_cont,main = paste("Domain raw","\n","AUC =", round(edo@auc,2),'-',"TSS =",round(do_TSS,2)))
+        plot(do_bin,main = paste("Domain P/A","\n","AUC =", round(edo@auc,2),'-',"TSS =",round(do_TSS,2)))
+        plot(do_cut,main = paste("Domain cut","\n","AUC =", round(edo@auc,2),'-',"TSS =",round(do_TSS,2)))
+        dev.off()
+        }
+
     if (project.model == T) {
       for (proj in projections) {
         data <- list.files(paste0("./env/", proj), pattern = proj)

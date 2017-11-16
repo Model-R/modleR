@@ -2,10 +2,11 @@
 % Please edit documentation in R/domain.R
 \name{do_domain}
 \alias{do_domain}
-\title{Faz modelagem de distribuição de espécies com algotimo Domain}
+\title{Faz modelagem de distribuição de espécies com algoritmo Domain}
 \usage{
 do_domain(sp, coordinates, partitions, buffer = FALSE, seed = 512,
-  predictors, models.dir, project.model, projections, mask, n.back = 500)
+  predictors, models.dir, project.model, projections, mask, write_png = F,
+  n.back = 500)
 }
 \arguments{
 \item{sp}{Um nome de espécie}
@@ -22,11 +23,13 @@ do_domain(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 
 \item{mask}{Objeto do tipo SpatialPolygonsDataFrame com máscara}
 
+\item{write_png}{Se o png vai ser criado - defaults to F}
+
 \item{n.back}{Número de pontos de background}
 }
 \value{
 Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 }
 \description{
-Faz modelagem de distribuição de espécies com algotimo Domain
+Faz modelagem de distribuição de espécies com algoritmo Domain
 }
