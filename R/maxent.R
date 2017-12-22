@@ -18,16 +18,13 @@ do_maxent <- function(sp,
   cat(paste("Maxent", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
-    dir.create(paste0(models.dir))
-  if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
-    dir.create(paste0(models.dir, "/", sp))
-  if (project.model == T) {
-    for (proj in projections) {
-      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE)
-        dir.create(paste0(models.dir, "/", sp, "/", proj))
-    }
-  }
-
+       dir.create(paste0(models.dir))
+    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
+     dir.create(paste0(models.dir, "/", sp))
+    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    if (file.exists(partition.folder) == FALSE)
+        dir.create(partition.folder,recursive = T)
+    
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
   if (buffer %in% c("mean", "max", "median")) {
@@ -64,7 +61,7 @@ do_maxent <- function(sp,
   rm(pres)
   rm(back)
   gc()
-  write.table(sdmdata, file = paste0(models.dir, "/", sp, "/sdmdata.txt"))
+  write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 
 #  if (! file.exists(file = paste0(models.dir, "/", sp, "/evaluate", sp, "_", i, ".txt"))) {
 #    write.table(data.frame(kappa = numeric(), spec_sens = numeric(), no_omission = numeric(), prevalence = numeric(),
@@ -96,7 +93,7 @@ do_maxent <- function(sp,
     thmx$partition <- i
     row.names(thmx) <- paste(sp, i, "maxent")
 
-    write.table(thmx, file = paste0(models.dir, "/", sp, "/evaluate",
+    write.table(thmx, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_maxent.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -104,23 +101,27 @@ do_maxent <- function(sp,
       mx_bin <- cropModel(mx_bin, mask)
       mx_cut <- cropModel(mx_cut, mask)
     }
-    raster::writeRaster(x = mx_cont, filename = paste0(models.dir, "/", sp, "/maxent_cont_",
+    raster::writeRaster(x = mx_cont, filename = paste0(partition.folder, "/maxent_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = mx_bin, filename = paste0(models.dir, "/", sp, "/maxent_bin_",
+    raster::writeRaster(x = mx_bin, filename = paste0(partition.folder, "/maxent_bin_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = mx_cut, filename = paste0(models.dir, "/", sp, "/maxent_cut_",
+    raster::writeRaster(x = mx_cut, filename = paste0(partition.folder, "/maxent_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(filename = paste0(models.dir, "/", sp,"/maxent",sp,"_",i,"%03d.png"))
-      plot(mx_cont,main = paste("Maxent raw","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
-      plot(mx_bin,main = paste("Maxent P/A","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
-      plot(mx_cut,main = paste("Maxent cut","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      png(filename = paste0(partition.folder,"/maxent",sp,"_",i,"%03d.png"))
+      raster::plot(mx_cont,main = paste("Maxent raw","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      raster::plot(mx_bin,main = paste("Maxent P/A","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      raster::plot(mx_cut,main = paste("Maxent cut","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
       dev.off()
       }
 
     if (project.model == T) {
       for (proj in projections) {
+      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+            if (file.exists(projection.folder) == FALSE)
+                dir.create(paste0(projection.folder), recursive = T)
+
         data <- list.files(paste0("./env/", proj), pattern = proj)
         data2 <- stack(data)
         mx_proj <- predict(data2, mx, progress = "text")
@@ -128,17 +129,14 @@ do_maxent <- function(sp,
         mx_proj_cut <- mx_proj_bin * mx_proj
         # Normaliza o modelo cut do_proj_cut <- do_proj_cut/maxValue(do_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
-          source("../../fct/cropModel.R")
+          source("./fct/cropModel.R")
           mx_proj <- cropModel(mx_proj, mask)
           mx_proj_bin <- cropModel(mx_proj_bin, mask)
           mx_proj_cut <- cropModel(mx_proj_cut, mask)
         }
-        writeRaster(x = mx_proj, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/maxent_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = mx_proj_bin, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/maxent_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = mx_proj_cut, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/maxent_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = mx_proj, filename = paste0(projection.folder, "/maxent_cont_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = mx_proj_bin, filename = paste0(projection.folder, "/maxent_bin_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = mx_proj_cut, filename = paste0(projection.folder, "/maxent_cut_", sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

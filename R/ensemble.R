@@ -14,7 +14,7 @@
 #' @export
 ensemble <- function(sp,
                      models.dir = "./models",
-                     final.dir = "presfinal",
+                     final.dir = "final_models",
                      ensemble.dir = "ensemble",
                      occs = spp.filt,
                      which.models = c("Final.bin.mean3", "Final.mean.bin7"),
@@ -23,14 +23,14 @@ ensemble <- function(sp,
                      write_png = T) {
 
     ## pasta de output
-    if (file.exists(paste0(models.dir, "/", sp, "/", ensemble.dir, "/")) == FALSE) {
-        dir.create(paste0(models.dir, "/", sp, "/", ensemble.dir, "/"))
+    if (file.exists(paste0(models.dir, "/", sp, "/present/", ensemble.dir, "/")) == FALSE) {
+        dir.create(paste0(models.dir, "/", sp, "/present/", ensemble.dir, "/"))
     }
 
     ## para cada tipo de modelo
     for (whi in which.models) {
         cat(paste(whi, "-", sp, "\n"))  #lê os arquivos
-        tif.files <- list.files(paste0(models.dir, "/", sp, "/", final.dir),
+        tif.files <- list.files(paste0(models.dir, "/", sp, "/present/", final.dir),
                                 full.names = T, pattern = paste0(whi, ".*tif$"))
 
         if (length(tif.files) == 0) {
@@ -49,8 +49,9 @@ ensemble <- function(sp,
             coord <- occs[occs$sp == sp, c("lon", "lat")]
 
             if (write_png) {
-            png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
-                                   sp, "_", whi, "_ensemble.png"),
+            png(filename = paste0(models.dir, "/", sp, "/present/",
+                                  ensemble.dir, "/",
+                                  sp, "_", whi, "_ensemble.png"),
                  res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
             par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
             raster::plot(ensemble.m)
@@ -59,7 +60,8 @@ ensemble <- function(sp,
             dev.off()
             }
 
-            png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
+            png(filename = paste0(models.dir, "/", sp, "/present/",
+                                  ensemble.dir, "/",
                                   sp, "_", whi, "_ensemble_without_margins.png"), bg = "transparent",
                 res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
             par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
@@ -68,21 +70,28 @@ ensemble <- function(sp,
 
             # o ensemble cru
             raster::writeRaster(ensemble.m,
-                                filename = paste0(models.dir, "/", sp, "/",
-                                                  ensemble.dir, "/", sp, "_", whi,
-                                                  "_ensemble.tif"), overwrite = T)
+                                filename = paste0(models.dir, "/", sp,
+                                                  "/present/",
+                                                  ensemble.dir, "/", sp, "_",
+                                                  whi,
+                                                  "_ensemble.tif"),
+                                overwrite = T)
 
             #### Consensus models
             if (consensus == TRUE) {
                 ensemble.consensus <- ensemble.m >= consensus.level
                 raster::writeRaster(ensemble.consensus,
-                                    filename = paste0(models.dir, "/", sp, "/",
-                                                      ensemble.dir, "/", sp, "_", whi,
-                                                      "_ensemble", consensus.level * 100,
+                                    filename = paste0(models.dir, "/", sp,
+                                                      "/present/",
+                                                      ensemble.dir, "/", sp,
+                                                      "_", whi,
+                                                      "_ensemble",
+                                                      consensus.level * 100,
                                                       ".tif"), overwrite = T)
 
                 if (write_png) {
-                png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
+                png(filename = paste0(models.dir, "/", sp, "/present/",
+                                      ensemble.dir, "/",
                                       sp, "_", whi, "_ensemble",
                                       consensus.level * 100, ".png"), res = 300,
                     width = 410 * 300/72, height = 480 * 300 / 72)
@@ -93,7 +102,7 @@ ensemble <- function(sp,
                 dev.off()
                 }
 
-                png(filename = paste0(models.dir, "/", sp, "/", ensemble.dir, "/",
+                png(filename = paste0(models.dir, "/", sp, "/present/", ensemble.dir, "/",
                                        sp, "_", whi, "_ensemble",
                                        consensus.level * 100, "without_margins.png"), bg = "transparent",
                     res = 300, width = 410 * 300/72, height = 480 * 300 / 72)

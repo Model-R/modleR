@@ -26,16 +26,13 @@ do_bioclim <- function(sp,
   cat(paste("Bioclim", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
-    dir.create(paste0(models.dir))
-  if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
-    dir.create(paste0(models.dir, "/", sp))
-  if (project.model == T) {
-    for (proj in projections) {
-      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE)
-        dir.create(paste0(models.dir, "/", sp, "/", proj))
-    }
-  }
-
+       dir.create(paste0(models.dir))
+    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
+     dir.create(paste0(models.dir, "/", sp))
+    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    if (file.exists(partition.folder) == FALSE)
+        dir.create(partition.folder,recursive = T)
+    
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
@@ -74,13 +71,8 @@ do_bioclim <- function(sp,
   rm(pres)
   rm(back)
   gc()
-  write.table(sdmdata, file = paste0(models.dir, "/", sp, "/sdmdata.txt"))
+  write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 
-#  if (! file.exists(file = paste0(models.dir, "/", sp, "/evaluate", sp, "_", i, ".txt"))) {
-#    write.table(data.frame(kappa = numeric(), spec_sens = numeric(), no_omission = numeric(), prevalence = numeric(),
-#			         equal_sens_spec = numeric(), sensitivity = numeric(), AUC = numeric(), TSS = numeric(), algoritmo = character(),
-#				 partition = numeric()), file = paste0(models.dir, "/", sp, "/evaluate", sp, "_", i, ".txt"))
-#  }
 
   ##### Hace los modelos
   for (i in unique(group)) {
@@ -106,7 +98,7 @@ do_bioclim <- function(sp,
     thbc$partition <- i
     row.names(thbc) <- paste(sp, i, "BioClim")
 
-    write.table(thbc, file = paste0(models.dir, "/", sp, "/evaluate",
+    write.table(thbc, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_bioclim.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -114,15 +106,15 @@ do_bioclim <- function(sp,
     bc_bin <- cropModel(bc_bin, mask)
     bc_cut <- cropModel(bc_cut, mask)
     }
-    raster::writeRaster(x = bc_cont, filename = paste0(models.dir, "/", sp, "/BioClim_cont_",
+    raster::writeRaster(x = bc_cont, filename = paste0(partition.folder, "/BioClim_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = bc_bin, filename = paste0(models.dir, "/", sp, "/BioClim_bin_",
+    raster::writeRaster(x = bc_bin, filename = paste0(partition.folder, "/BioClim_bin_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = bc_cut, filename = paste0(models.dir, "/", sp, "/BioClim_cut_",
+    raster::writeRaster(x = bc_cut, filename = paste0(partition.folder, "/BioClim_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(filename = paste0(models.dir, "/", sp,"/Bioclim",sp,"_",i,"%03d.png"))
+                  png(filename = paste0(partition.folder,"/Bioclim",sp,"_",i,"%03d.png"))
       raster::plot(bc_cont,main = paste("Bioclim raw","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
       raster::plot(bc_bin,main = paste("Bioclim P/A","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
       raster::plot(bc_cut,main = paste("Bioclim cut","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
@@ -131,24 +123,26 @@ do_bioclim <- function(sp,
 
     if (project.model == T) {
       for (proj in projections) {
+      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+            if (file.exists(projection.folder) == FALSE)
+                dir.create(paste0(projection.folder), recursive = T)
+
         data <- list.files(paste0("./env/", proj), pattern = proj)
         data2 <- stack(data)
         bc_proj <- predict(data2, do, progress = "text")
         bc_proj_bin <- bc_proj > thresholdbc
         bc_proj_cut <- bc_proj_bin * bc_proj
-        # Normaliza o modelo cut do_proj_cut <- do_proj_cut/maxValue(do_proj_cut)
+        # Normaliza o modelo cut
+         bc_proj_cut <- bc_proj_cut/maxValue(bc_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
           source("./fct/cropModel.R")
           bc_proj <- cropModel(bc_proj, mask)
           bc_proj_bin <- cropModel(bc_proj_bin, mask)
           bc_proj_cut <- cropModel(bc_proj_cut, mask)
         }
-        writeRaster(x = bc_proj, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/BioClim_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = bc_proj_bin, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/BioClim_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = bc_proj_cut, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/BioClim_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = bc_proj, filename = paste0(projection.folder, "/BioClim_cont_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = bc_proj_bin, filename = paste0(projection.folder, "/BioClim_bin_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = bc_proj_cut, filename = paste0(projection.folder, "/BioClim_cut_", sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

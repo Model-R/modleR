@@ -19,16 +19,13 @@ do_mahal <- function(sp,
 
 
   if (file.exists(paste0(models.dir)) == FALSE)
-    dir.create(paste0(models.dir))
-  if (file.exists(paste0(models.dir, "/", sp)) == FALSE) 
-    dir.create(paste0(models.dir, "/", sp))
-  if (project.model == T) {
-    for (proj in projections) {
-      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE) 
-        dir.create(paste0(models.dir, "/", sp, "/", proj))
-    }
-  }
-
+       dir.create(paste0(models.dir))
+    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
+     dir.create(paste0(models.dir, "/", sp))
+    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    if (file.exists(partition.folder) == FALSE)
+        dir.create(partition.folder,recursive = T)
+    
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
@@ -66,7 +63,8 @@ do_mahal <- function(sp,
   rm(pres)
   rm(back)
   gc()
-  write.table(sdmdata, file = paste0(models.dir, "/", sp, "/sdmdata.txt"))
+  write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
+
 
   ##### Hace los modelos
   for (i in unique(group)) {
@@ -110,7 +108,7 @@ do_mahal <- function(sp,
     thma$partition <- i
     row.names(thma) <- paste(sp, i, "Mahal")
     
-    write.table(thma, file = paste0(models.dir, "/", sp, "/evaluate", 
+    write.table(thma, file = paste0(partition.folder, "/evaluate", 
       sp, "_", i, "_mahal.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -118,15 +116,15 @@ do_mahal <- function(sp,
       ma_bin <- cropModel(ma_bin, mask)
       ma_cut <- cropModel(ma_cut, mask)
     }
-    raster::writeRaster(x = ma_cont, filename = paste0(models.dir, "/", sp, "/Mahal_cont_", 
+    raster::writeRaster(x = ma_cont, filename = paste0(partition.folder, "/Mahal_cont_", 
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = ma_bin, filename = paste0(models.dir, "/", sp, "/Mahal_bin_", 
+    raster::writeRaster(x = ma_bin, filename = paste0(partition.folder, "/Mahal_bin_", 
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = ma_cut, filename = paste0(models.dir, "/", sp, "/Mahal_cut_", 
+    raster::writeRaster(x = ma_cut, filename = paste0(partition.folder, "/Mahal_cut_", 
       sp, "_", i, ".tif"), overwrite = T)
 
        if (write_png == T) {
-           png(filename = paste0(models.dir, "/", sp,"/Mahal",sp,"_",i,"%03d.png"))
+           png(filename = paste0(partition.folder,"/Mahal",sp,"_",i,"%03d.png"))
            plot(ma_cont, main = paste("Mahal raw","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
            plot(ma_bin, main = paste("Mahal P/A","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
            plot(ma_cut, main = paste("Mahal cut","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
@@ -135,6 +133,10 @@ do_mahal <- function(sp,
 
     if (project.model == T) {
       for (proj in projections) {
+      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+            if (file.exists(projection.folder) == FALSE)
+                dir.create(paste0(projection.folder), recursive = T)
+
         data <- list.files(paste0("./env/", proj), pattern = proj)
         data2 <- stack(data)
         ma_proj <- predict(data2, ma, progress = "text")
@@ -148,12 +150,10 @@ do_mahal <- function(sp,
           ma_proj_bin <- cropModel(ma_proj_bin, mask)
           ma_proj_cut <- cropModel(ma_proj_cut, mask)
         }
-          writeRaster(x = ma_proj, filename = paste0(models.dir, "/", sp, "/", 
-            proj, "/mahal_cont_", sp, "_", i, ".tif"), overwrite = T)
-          writeRaster(x = ma_proj_bin, filename = paste0(models.dir, "/", sp, 
-            "/", proj, "/mahal_bin_", sp, "_", i, ".tif"), overwrite = T)
-          writeRaster(x = ma_proj_cut, filename = paste0(models.dir, "/", sp, 
-            "/", proj, "/mahal_cut_", sp, "_", i, ".tif"), overwrite = T)
+          writeRaster(x = ma_proj, filename = paste0(projection.folder, "/mahal_cont_", sp, "_", i, ".tif"), overwrite = T)
+          writeRaster(x = ma_proj_bin, filename = paste0(projection.folder, 
+            "/mahal_bin_", sp, "_", i, ".tif"), overwrite = T)
+          writeRaster(x = ma_proj_cut, filename = paste0(projection.folder, "/mahal_cut_", sp, "_", i, ".tif"), overwrite = T)
           rm(data2)
         }
       }
