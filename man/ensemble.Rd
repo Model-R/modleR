@@ -4,7 +4,7 @@
 \alias{ensemble}
 \title{Gera um modelo só por espécie}
 \usage{
-ensemble(sp, models.dir = "./models", final.dir = "presfinal",
+ensemble(sp, models.dir = "./models", final.dir = "final_models",
   ensemble.dir = "ensemble", occs = spp.filt,
   which.models = c("Final.bin.mean3", "Final.mean.bin7"), consensus = F,
   consensus.level = 0.5, write_png = T)
