@@ -18,16 +18,13 @@ do_GLM <- function(sp,
   cat(paste("GLM", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
-    dir.create(paste0(models.dir))
-  if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
-    dir.create(paste0(models.dir, "/", sp))
-  if (project.model == T) {
-    for (proj in projections) {
-      if (file.exists(paste0(models.dir, "/", sp, "/", proj)) == FALSE)
-        dir.create(paste0(models.dir, "/", sp, "/", proj))
-    }
-  }
-
+       dir.create(paste0(models.dir))
+    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
+     dir.create(paste0(models.dir, "/", sp))
+    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    if (file.exists(partition.folder) == FALSE)
+        dir.create(partition.folder,recursive = T)
+    
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
@@ -65,7 +62,7 @@ do_GLM <- function(sp,
   rm(pres)
   rm(back)
   gc()
-  write.table(sdmdata, file = paste0(models.dir, "/", sp, "/sdmdata.txt"))
+  write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 
 
   ##### Hace los modelos
@@ -108,7 +105,7 @@ do_GLM <- function(sp,
     glm_bin <- glm_cont > thresholdglm
     glm_cut <- glm_bin * glm_cont
 
-    write.table(thglm, file = paste0(models.dir, "/", sp, "/evaluate",
+    write.table(thglm, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_glm.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -116,15 +113,15 @@ do_GLM <- function(sp,
       glm_bin <- cropModel(glm_bin, mask)
       glm_cut <- cropModel(glm_cut, mask)
     }
-    raster::writeRaster(x = glm_cont, filename = paste0(models.dir, "/", sp, "/glm_cont_",
+    raster::writeRaster(x = glm_cont, filename = paste0(partition.folder, "/glm_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = glm_bin, filename = paste0(models.dir, "/", sp, "/glm_bin_", sp,
+    raster::writeRaster(x = glm_bin, filename = paste0(partition.folder, "/glm_bin_", sp,
       "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = glm_cut, filename = paste0(models.dir, "/", sp, "/glm_cut_", sp,
+    raster::writeRaster(x = glm_cut, filename = paste0(partition.folder, "/glm_cut_", sp,
       "_", i, ".tif"), overwrite = T)
 
     if (write_png == T) {
-        png(filename = paste0(models.dir, "/", sp, "/glm", sp, "_", i, "%03d.png"))
+        png(filename = paste0(partition.folder, "/glm", sp, "_", i, "%03d.png"))
         plot(glm_cont,main = paste("GLM raw","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
         plot(glm_bin,main = paste("GLM P/A","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
         plot(glm_cut,main = paste("GLM cut","\n","AUC =", round(eglm@auc,2),'-',"TSS =",round(glm_TSS,2)))
@@ -133,6 +130,10 @@ do_GLM <- function(sp,
 
     if (project.model == T) {
       for (proj in projections) {
+      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+            if (file.exists(projection.folder) == FALSE)
+                dir.create(paste0(projection.folder), recursive = T)
+
         data <- list.files(paste0("./env/", proj), pattern = proj)
         data2 <- stack(data)
         glm_proj <- predict(data2, glm, progress = "text")
@@ -145,12 +146,9 @@ do_GLM <- function(sp,
           glm_proj_bin <- cropModel(glm_proj_bin, mask)
           glm_proj_cut <- cropModel(glm_proj_cut, mask)
         }
-        writeRaster(x = glm_proj, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/glm_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = glm_proj_bin, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/glm_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = glm_proj_cut, filename = paste0(models.dir, "/", sp, "/",
-          proj, "/glm_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = glm_proj, filename = paste0(projection.folder, "/glm_cont_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = glm_proj_bin, filename = paste0(projection.folder, "/glm_bin_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = glm_proj_cut, filename = paste0(projection.folder, "/glm_cut_", sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

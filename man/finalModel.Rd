@@ -6,7 +6,7 @@
 \usage{
 finalModel(sp, select.partitions = T, algoritmos = c("maxent", "rf", "svm"),
   threshold = c("spec_sens"), TSS.value = 0.7, models.dir = "./models",
-  final.dir = "presfinal")
+  final.dir = "final_models")
 }
 \arguments{
 \item{sp}{Um nome de espécie}
