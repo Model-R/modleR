@@ -2,30 +2,30 @@
 % Please edit documentation in R/final_model.R
 \name{finalModel}
 \alias{finalModel}
-\title{Gera um modelo final por algortimo}
+\title{Joins ENM from several partitions, creating a model per algorithm.}
 \usage{
 finalModel(sp, select.partitions = T, algoritmos = c("maxent", "rf", "svm"),
   threshold = c("spec_sens"), TSS.value = 0.7, models.dir = "./models",
   final.dir = "final_models")
 }
 \arguments{
-\item{sp}{Um nome de espécie}
+\item{sp}{A character string with the species name}
 
 \item{select.partitions}{TRUE ou FALSE}
 
-\item{threshold}{"spec_sens" por padrão}
+\item{algoritmos}{Which algorithms will be processed. Defaults to c("maxent", "rf", "svm")}
 
-\item{TSS.value}{0.7 por padrão}
+\item{threshold}{Which cutting threshold will be used, defaults to "spec_sens"}
 
-\item{models.dir}{Path do diretório onde estão os modelos}
+\item{TSS.value}{Threshold to select models from TSS values (between -1 and 1)}
 
-\item{final.dir}{Em que subdiretório escrever os modelos finais}
+\item{models.dir}{Character string. Folder path where the input files are located}
 
-\item{algortimos}{Algortimos selecionados. Maxent, RF e SVM por padrão}
+\item{final.dir}{Character string. Name of the folder to save the output files. A subfolder will be created.}
 }
 \value{
-Uma string com a data e hora do término da execução
+A character string with the initial and final execution times.
 }
 \description{
-Gera um modelo final por algortimo
+Joins ENM from several partitions, creating a model per algorithm.
 }

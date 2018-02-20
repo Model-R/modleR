@@ -2,7 +2,7 @@
 % Please edit documentation in R/ensemble.R
 \name{ensemble}
 \alias{ensemble}
-\title{Gera um modelo só por espécie}
+\title{Joins ENM from several algorithms, creating a model per species.}
 \usage{
 ensemble(sp, models.dir = "./models", final.dir = "final_models",
   ensemble.dir = "ensemble", occs = spp.filt,
@@ -10,24 +10,24 @@ ensemble(sp, models.dir = "./models", final.dir = "final_models",
   consensus.level = 0.5, write_png = T)
 }
 \arguments{
-\item{sp}{Um nome de espécie}
+\item{sp}{A character string with the species name}
 
-\item{models.dir}{Path do diretório onde estão os modelos}
+\item{models.dir}{Character string. Folder path where the input files are located}
 
-\item{final.dir}{Path para subdiretório escrito com finalModel()}
+\item{final.dir}{Character string, name of the subfolder where the files for the final models are located}
 
-\item{ensemble.dir}{Path para os arquivos de saída}
+\item{ensemble.dir}{Character string, name of the folder to save the output files. A subfolder will be created.}
 
-\item{occs}{Pontos de ocorrência da espécie}
+\item{occs}{A two-column data frame with the occurrence points}
 
-\item{which.models}{Qual tipo de modelo final será juntado (ex. bin.mean3)}
+\item{which.models}{How will the ensemble be built? Currently "Final.bin.mean3" and/or "Final.mean.bin7"}
 
-\item{consensus}{Se será usada uma regra de consenso para cortar o ensemble}
+\item{consensus}{Logical. Will a consensus rule be applied?}
 
-\item{consensus.level}{Quanto dos modelos será retido (0,5 = maioria)}
+\item{consensus.level}{Threshold for the consensus rule, betwen 0 and 1 (0.5 means a majority rule).}
 
 \item{write_png}{Write png? Defaults to TRUE}
 }
 \description{
-Gera um modelo só por espécie
+Joins ENM from several algorithms, creating a model per species.
 }
