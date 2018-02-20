@@ -24,13 +24,16 @@ do_randomForest <- function(sp,
     partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
     if (file.exists(partition.folder) == FALSE)
         dir.create(partition.folder,recursive = T)
-    
+
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-                           sp = sp, seed = seed, predictors = predictors)
+    backgr <- createBuffer(coord = coordinates,
+                           n.back = n.back,
+                           buffer.type = buffer,
+                           seed = seed,
+                           predictors = predictors)
   } else {
     set.seed(seed + 2)
     backgr <- dismo::randomPoints(mask = predictors,
