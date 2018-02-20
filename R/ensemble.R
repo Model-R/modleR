@@ -1,15 +1,14 @@
-#' Gera um modelo só por espécie
+#' Joins ENM from several algorithms, creating a model per species.
 #'
-#' @param sp Um nome de espécie
-#' @param models.dir Path do diretório onde estão os modelos
-#' @param final.dir Path para subdiretório escrito com finalModel()
-#' @param ensemble.dir Path para os arquivos de saída
-#' @param occs Pontos de ocorrência da espécie
-#' @param which.models Qual tipo de modelo final será juntado (ex. bin.mean3)
-#' @param consensus Se será usada uma regra de consenso para cortar o ensemble
-#' @param consensus.level Quanto dos modelos será retido (0,5 = maioria)
+#' @param sp A character string with the species name
+#' @param models.dir Character string. Folder path where the input files are located
+#' @param final.dir Character string, name of the subfolder where the files for the final models are located
+#' @param ensemble.dir Character string, name of the folder to save the output files. A subfolder will be created.
+#' @param occs A two-column data frame with the occurrence points
+#' @param which.models How will the ensemble be built? Currently "Final.bin.mean3" and/or "Final.mean.bin7"
+#' @param consensus Logical. Will a consensus rule be applied?
+#' @param consensus.level Threshold for the consensus rule, betwen 0 and 1 (0.5 means a majority rule).
 #' @param write_png Write png? Defaults to TRUE
-#' @return NULL
 #' @import raster
 #' @export
 ensemble <- function(sp,
@@ -113,4 +112,5 @@ ensemble <- function(sp,
         }
     }
     #return(ensemble.m)
+    print(date())
 }
