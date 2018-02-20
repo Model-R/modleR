@@ -1,20 +1,20 @@
-#' Faz modelagem de distribuição de espécies com algoritmo Random Forest
+#' Fits ecological niche models using Random Forest
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_randomForest <- function(sp,
                             coordinates,
                             partitions,
-                            buffer = FALSE,
-                            seed = 512,
+                            buffer,
+                            seed,
                             predictors,
                             models.dir,
                             project.model,
                             projections,
                             mask,
-                            write_png = F,
-                            n.back = 500) {
+                            write_png,
+                            n.back) {
   cat(paste("Random Forests", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
@@ -94,10 +94,10 @@ do_randomForest <- function(sp,
     # rf <- randomForest (x =envtrain ,y=factor(sdmdata_train$pa),xtest=envtest,ytest
     # = factor(sdmdata_teste$pa))#fazendo teste interno a funcao evaluate nao serve
     # :(
-    
+
     erf <- dismo::evaluate(envtest_pre, envtest_back, rf)
     rf_TSS <- max(erf@TPR + erf@TNR) - 1
-    
+
     thresholdrf <- erf@t[which.max(erf@TPR + erf@TNR)]
     thrf <- dismo::threshold(erf)
     thrf$AUC <- erf@auc
@@ -105,13 +105,13 @@ do_randomForest <- function(sp,
     thrf$algoritmo <- "rf"
     thrf$partition <- i
     row.names(thrf) <- paste(sp, i, "rf")
-    
+
     rf_cont <- dismo::predict(predictors, rf, progress = "text", type = "response")
     rf_bin <- rf_cont > thresholdrf
     rf_cut <- rf_bin * rf_cont
     # rf1_cut <- rf1_cut/maxValue(rf1_cut)
 
-    write.table(thrf, file = paste0(partition.folder, "/evaluate", 
+    write.table(thrf, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_randomforest.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -119,11 +119,11 @@ do_randomForest <- function(sp,
       rf_bin <- cropModel(rf_bin, mask)
       rf_cut <- cropModel(rf_cut, mask)
     }
-    raster::writeRaster(x = rf_cont, filename = paste0(partition.folder, "/rf_cont_", 
+    raster::writeRaster(x = rf_cont, filename = paste0(partition.folder, "/rf_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = rf_bin, filename = paste0(partition.folder, "/rf_bin_", sp, 
+    raster::writeRaster(x = rf_bin, filename = paste0(partition.folder, "/rf_bin_", sp,
       "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = rf_cut, filename = paste0(partition.folder, "/rf_cut_", sp, 
+    raster::writeRaster(x = rf_cut, filename = paste0(partition.folder, "/rf_cut_", sp,
       "_", i, ".tif"), overwrite = T)
 
    if (write_png == T) {

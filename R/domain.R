@@ -1,20 +1,20 @@
-#' Faz modelagem de distribuição de espécies com algoritmo Domain
+#' Fits ecological niche models using Domain
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_domain <- function(sp,
 		      coordinates,
 		      partitions,
-		      buffer = FALSE,
-		      seed = 512,
+		      buffer,
+		      seed,
 		      predictors,
 		      models.dir,
 		      project.model,
 		      projections,
 		      mask,
-		      write_png = F,
-		      n.back = 500) {
+		      write_png,
+		      n.back) {
   cat(paste("Domain", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
@@ -78,7 +78,7 @@ do_domain <- function(sp,
     pres_test <- coordinates[group == i, ]
 
     backg_test <- backgr[bg.grp == i, ]  #new
-    
+
     do <- dismo::domain(predictors, pres_train)
     edo <- dismo::evaluate(pres_test, backg_test, do, predictors)
     thresholddo <- edo@t[which.max(edo@TPR + edo@TNR)]
@@ -93,19 +93,19 @@ do_domain <- function(sp,
     thdo$partition <- i
     row.names(thdo) <- paste(sp, i, "Domain")
 
-    write.table(thdo, file = paste0(partition.folder, "/evaluate", 
+    write.table(thdo, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_domain.txt"))
-    
+
     if (class(mask) == "SpatialPolygonsDataFrame") {
       do_cont <- cropModel(do_cont, mask)
       do_bin <- cropModel(do_bin, mask)
       do_cut <- cropModel(do_cut, mask)
     }
-    raster::writeRaster(x = do_cont, filename = paste0(partition.folder, "/Domain_cont_", 
+    raster::writeRaster(x = do_cont, filename = paste0(partition.folder, "/Domain_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = do_bin, filename = paste0(partition.folder, "/Domain_bin_", 
+    raster::writeRaster(x = do_bin, filename = paste0(partition.folder, "/Domain_bin_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = do_cut, filename = paste0(partition.folder, "/Domain_cut_", 
+    raster::writeRaster(x = do_cut, filename = paste0(partition.folder, "/Domain_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
     if (write_png == T) {

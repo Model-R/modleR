@@ -1,20 +1,20 @@
-#' Faz modelagem de distribuição de espécies com algoritmo GLM
+#' Fits ecological niche models using GLM
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_GLM <- function(sp,
                    coordinates,
                    partitions,
-                   buffer = FALSE,
-                   seed = 512,
+                   buffer,
+                   seed,
                    predictors,
                    models.dir,
                    project.model,
                    projections,
                    mask,
-    		       write_png = F,
-                   n.back = 500) {
+    		       write_png,
+                   n.back) {
   cat(paste("GLM", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)

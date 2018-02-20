@@ -1,20 +1,20 @@
-#' Faz modelagem de distribuição de espécies com algoritmo SVM2 - (e1071)
+#' Fits ecological niche models using SVM from package e1071
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_SVM2 <- function(sp,
                     coordinates,
                     partitions,
-                    buffer = FALSE,
-                    seed = 512,
+                    buffer,
+                    seed,
                     predictors,
                     models.dir,
                     project.model,
                     projections,
                     mask,
-                    write_png = F,
-                    n.back = 500) {
+                    write_png,
+                    n.back) {
   cat(paste("SVM2", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
@@ -117,7 +117,7 @@ do_SVM2 <- function(sp,
       svm2_bin <- cropModel(svm2_bin, mask)
       svm2_cut <- cropModel(svm2_cut, mask)
     }
-    
+
     raster::writeRaster(x = svm2_cont, filename = paste0(partition.folder, "/svm2_cont_",
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = svm2_bin, filename = paste0(partition.folder, "/svm2_bin_", sp,

@@ -1,28 +1,28 @@
-#' Faz modelagem de distribuição de espécies com algoritmo Bioclim
+#' Fits ecological niche models using Bioclim
 #'
-#' @param sp Um nome de espécie
-#' @param coordinates Uma tabela com pontos de ocorrência
-#' @param buffer Define se será usado buffer e de que tipo ("mean" ou "max")
-#' @param seed Para reprodutibilidade
-#' @param predictors Objeto do tipo RasterStack com variáveis preditoras
-#' @param models.dir Path do diretório onde serão escritos os arquivos de saída
-#' @param mask Objeto do tipo SpatialPolygonsDataFrame com máscara
-#' @param write_png Se o png vai ser criado - defaults to F
-#' @param n.back Número de pontos de background
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @param sp A character string with the species name
+#' @param coordinates A two-column data frame with the occurrence points
+#' @param buffer Defines if a buffer will be used to sample pseudo-absences (F, "mean", "median", "max")
+#' @param seed For reproducibility purposes
+#' @param predictors A RasterStack of predictor variables
+#' @param models.dir Folder path to save the output files
+#' @param mask A SpatialPolygonsDataFrame to be used as a mask to cut the final models
+#' @param write_png Logical, whether png files will be written
+#' @param n.back Number of pseudoabsence points
+#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_bioclim <- function(sp,
 		       coordinates,
 		       partitions,
-		       buffer = FALSE,
-		       seed = 512,
+		       buffer,
+		       seed,
 		       predictors,
 		       models.dir,
 		       project.model,
 		       projections,
 		       mask,
-		       write_png = F,
-		       n.back = 500) {
+		       write_png,
+		       n.back) {
   cat(paste("Bioclim", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)

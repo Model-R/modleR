@@ -1,20 +1,20 @@
-#' Faz modelagem de distribuição de espécies com distância de Mahalanobis
+#' Fits ecological niche models using Mahalanobis distance
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_mahal <- function(sp,
 		     coordinates,
 		     partitions,
-		     buffer = FALSE,
-		     seed = 512,
+		     buffer,
+		     seed,
 		     predictors,
 		     models.dir,
 		     project.model,
 		     projections,
 		     mask,
-		     write_png = F,
-		     n.back = 500) {
+		     write_png,
+		     n.back) {
   cat(paste("Mahalanobis distance", "\n"))
 
 
@@ -104,14 +104,14 @@ do_mahal <- function(sp,
     if (raster::minValue(ma_cut) < 0) {
       ma_cut <- (ma_cut - raster::minValue(ma_cut))/raster::maxValue(ma_cut - raster::minValue(ma_cut))
     }
-    
+
     thma$AUC <- ema@auc
     thma$TSS <- ma_TSS
     thma$algoritmo <- "Mahal"
     thma$partition <- i
     row.names(thma) <- paste(sp, i, "Mahal")
-    
-    write.table(thma, file = paste0(partition.folder, "/evaluate", 
+
+    write.table(thma, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_mahal.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -119,11 +119,11 @@ do_mahal <- function(sp,
       ma_bin <- cropModel(ma_bin, mask)
       ma_cut <- cropModel(ma_cut, mask)
     }
-    raster::writeRaster(x = ma_cont, filename = paste0(partition.folder, "/Mahal_cont_", 
+    raster::writeRaster(x = ma_cont, filename = paste0(partition.folder, "/Mahal_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = ma_bin, filename = paste0(partition.folder, "/Mahal_bin_", 
+    raster::writeRaster(x = ma_bin, filename = paste0(partition.folder, "/Mahal_bin_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = ma_cut, filename = paste0(partition.folder, "/Mahal_cut_", 
+    raster::writeRaster(x = ma_cut, filename = paste0(partition.folder, "/Mahal_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
        if (write_png == T) {
@@ -145,8 +145,8 @@ do_mahal <- function(sp,
         ma_proj <- predict(data2, ma, progress = "text")
         ma_proj_bin <- ma_proj > thresholdma
         ma_proj_cut <- ma_proj_bin * ma_proj
-        # Normaliza o modelo cut 
-        ma_proj_cut <- ma_proj_cut/maxValue(ma_proj_cut)        
+        # Normaliza o modelo cut
+        ma_proj_cut <- ma_proj_cut/maxValue(ma_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
           source("./fct/cropModel.R")
           ma_proj <- cropModel(ma_proj, mask)
@@ -154,7 +154,7 @@ do_mahal <- function(sp,
           ma_proj_cut <- cropModel(ma_proj_cut, mask)
         }
           writeRaster(x = ma_proj, filename = paste0(projection.folder, "/mahal_cont_", sp, "_", i, ".tif"), overwrite = T)
-          writeRaster(x = ma_proj_bin, filename = paste0(projection.folder, 
+          writeRaster(x = ma_proj_bin, filename = paste0(projection.folder,
             "/mahal_bin_", sp, "_", i, ".tif"), overwrite = T)
           writeRaster(x = ma_proj_cut, filename = paste0(projection.folder, "/mahal_cut_", sp, "_", i, ".tif"), overwrite = T)
           rm(data2)
