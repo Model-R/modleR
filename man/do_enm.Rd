@@ -4,15 +4,21 @@
 \alias{do_enm}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_enm(especie, coordinates, partitions, buffer, seed, predictors, models.dir,
-  project.model, projections, mask, n.back, write_png, maxent = T,
-  domain = T, bioclim = T, rf = T, glm = T, svm = T, svm2 = T,
-  mahal = T)
+do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
+  models.dir = "./models", project.model = FALSE, projections = NULL,
+  mask, write_png = FALSE, n.back, bioclim = TRUE, domain = TRUE,
+  glm = TRUE, mahal = TRUE, maxent = TRUE, rf = TRUE, svm = TRUE,
+  svm2 = TRUE)
 }
 \arguments{
-\item{coordinates}{A three-column data frame with the occurrence points of all species (sp, lat, lon)}
+\item{sp}{A character string with the species name}
 
-\item{buffer}{Defines if a buffer will be used to sample pseudo-absences (F, "mean", "median", "max")}
+\item{coordinates}{A two-column data frame with the occurrence points}
+
+\item{partitions}{The number of partitions for a cross validation}
+
+\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
+(F, "mean", "median", "max")}
 
 \item{seed}{For reproducibility purposes}
 
@@ -20,16 +26,35 @@ do_enm(especie, coordinates, partitions, buffer, seed, predictors, models.dir,
 
 \item{models.dir}{Folder path to save the output files}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used as a mask to cut the final models}
+\item{project.model}{Logical, whether to perform a projection}
+
+\item{projections}{The RasterStack of projeciton variables}
+
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
+
+\item{write_png}{Logical, whether png files will be written}
 
 \item{n.back}{Number of pseudoabsence points}
 
-\item{write_png}{Logical, whether png files will be written, defaults to F}
+\item{bioclim}{Execute bioclim from its dismo implementation}
 
-\item{sp}{A character string with the species name}
+\item{domain}{Execute domain from its dismo implementation}
+
+\item{glm}{Execute glm from the dismo implementation}
+
+\item{mahal}{Execute mahalanobis distance from its dismo implementation}
+
+\item{maxent}{Execute maxent from its dismo implementation}
+
+\item{rf}{Execute random forests from its dismo implementation}
+
+\item{svm}{Execute svm from kernlab package}
+
+\item{svm2}{Execute svm from e1071 package}
 }
 \value{
-A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+A set of ecological niche models for each partiion and algorithm,
+        written in the \code{models.dir} subfolder
 }
 \description{
 Fits ecological niche models for various algorithms.

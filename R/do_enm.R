@@ -1,73 +1,42 @@
 #' Fits ecological niche models for various algorithms.
 #'
-#' @param sp A character string with the species name
-#' @param coordinates A three-column data frame with the occurrence points of all species (sp, lat, lon)
-#' @param buffer Defines if a buffer will be used to sample pseudo-absences (F, "mean", "median", "max")
-#' @param seed For reproducibility purposes
-#' @param predictors A RasterStack of predictor variables
-#' @param models.dir Folder path to save the output files
-#' @param mask A SpatialPolygonsDataFrame to be used as a mask to cut the final models
-#' @param write_png Logical, whether png files will be written, defaults to F
-#' @param n.back Number of pseudoabsence points
-#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+#' @inheritParams do_bioclim
+#' @param bioclim Execute bioclim from its dismo implementation
+#' @param domain Execute domain from its dismo implementation
+#' @param mahal Execute mahalanobis distance from its dismo implementation
+#' @param maxent Execute maxent from its dismo implementation
+#' @param glm Execute glm from the dismo implementation
+#' @param rf Execute random forests from its dismo implementation
+#' @param svm Execute svm from kernlab package
+#' @param svm2 Execute svm from e1071 package
+#' @return A set of ecological niche models for each partiion and algorithm,
+#'         written in the \code{models.dir} subfolder
 #' @export
 #'
-do_enm <- function(especie,
-                      coordinates,
-                      partitions,
-                      buffer,
-                      seed,
-                      predictors,
-                      models.dir,
-                      project.model,
-                      projections,
-                      mask,
-                      n.back,
-                      write_png,
-                      maxent = T,
-                      domain = T,
-                      bioclim = T,
-                      rf = T,
-                      glm = T,
-                      svm = T,
-                      svm2 = T,
-                      mahal = T
-                      ) {
-    ocorrencias <-
-        coordinates[coordinates$sp == especie, c("lon", "lat")]
-    if (maxent == T) {
-        do_maxent(
-            especie,
-            coordinates = ocorrencias,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
-            predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
-}
-    if (domain == T) {
-        do_domain(
-            especie,
-            coordinates = ocorrencias,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
-            predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
-    }
+do_enm <- function(sp,
+                   coordinates,
+                   partitions,
+                   buffer = FALSE,
+                   seed = 512,
+                   predictors,
+                   models.dir = "./models",
+                   project.model = FALSE,
+                   projections = NULL,
+                   mask,
+                   write_png = FALSE,
+                   n.back,
+                   bioclim = TRUE,
+                   domain = TRUE,
+                   glm = TRUE,
+                   mahal = TRUE,
+                   maxent = TRUE,
+                   rf = TRUE,
+                   svm = TRUE,
+                   svm2 = TRUE) {
+    ocorrencias <- coordinates[coordinates$sp == sp, c("lon", "lat")]
     if (bioclim == T) {
         do_bioclim(
-            especie,
+            sp,
             coordinates = ocorrencias,
             partitions = partitions,
             buffer = buffer,
@@ -80,9 +49,9 @@ do_enm <- function(especie,
             n.back = n.back,
             write_png = write_png)
     }
-    if (rf == T) {
-        do_randomForest(
-            especie,
+    if (domain == T) {
+        do_domain(
+            sp,
             coordinates = ocorrencias,
             partitions = partitions,
             buffer = buffer,
@@ -97,37 +66,7 @@ do_enm <- function(especie,
     }
     if (glm == T) {
         do_GLM(
-            especie,
-            coordinates = ocorrencias,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
-            predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
-    }
-    if (svm == T) {
-        do_SVM(
-            especie,
-            coordinates = ocorrencias,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
-            predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
-    }
-    if (svm2 == T) {
-        do_SVM2(
-            especie,
+            sp,
             coordinates = ocorrencias,
             partitions = partitions,
             buffer = buffer,
@@ -142,7 +81,67 @@ do_enm <- function(especie,
     }
     if (mahal == T) {
         do_mahal(
-            especie,
+            sp,
+            coordinates = ocorrencias,
+            partitions = partitions,
+            buffer = buffer,
+            seed = seed,
+            predictors = predictors,
+            models.dir = models.dir,
+            project.model = project.model,
+            projections = projections,
+            mask = mask,
+            n.back = n.back,
+            write_png = write_png)
+    }
+    if (maxent == T) {
+        do_maxent(
+            sp,
+            coordinates = ocorrencias,
+            partitions = partitions,
+            buffer = buffer,
+            seed = seed,
+            predictors = predictors,
+            models.dir = models.dir,
+            project.model = project.model,
+            projections = projections,
+            mask = mask,
+            n.back = n.back,
+            write_png = write_png)
+    }
+    if (rf == T) {
+        do_randomForest(
+            sp,
+            coordinates = ocorrencias,
+            partitions = partitions,
+            buffer = buffer,
+            seed = seed,
+            predictors = predictors,
+            models.dir = models.dir,
+            project.model = project.model,
+            projections = projections,
+            mask = mask,
+            n.back = n.back,
+            write_png = write_png)
+    }
+    if (svm == T) {
+        do_SVM(
+            sp,
+            coordinates = ocorrencias,
+            partitions = partitions,
+            buffer = buffer,
+            seed = seed,
+            predictors = predictors,
+            models.dir = models.dir,
+            project.model = project.model,
+            projections = projections,
+            mask = mask,
+            n.back = n.back,
+            write_png = write_png)
+    }
+    if (svm2 == T) {
+        do_SVM2(
+            sp,
             coordinates = ocorrencias,
             partitions = partitions,
             buffer = buffer,
