@@ -19,6 +19,7 @@ Imports:
     data.table,
     dismo,
     e1071,
+    graphics,
     kernlab,
     maps,
     randomForest,
