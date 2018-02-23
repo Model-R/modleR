@@ -4,8 +4,9 @@
 \alias{do_maxent}
 \title{Fits ecological niche models using Maxent.}
 \usage{
-do_maxent(sp, coordinates, partitions, buffer, seed, predictors, models.dir,
-  project.model, projections, mask, write_png, n.back)
+do_maxent(sp, coordinates, partitions, buffer = FALSE, seed = 512,
+  predictors, models.dir = "./models", project.model = FALSE,
+  projections = NULL, mask, write_png = FALSE, n.back)
 }
 \arguments{
 \item{sp}{A character string with the species name}
@@ -34,7 +35,7 @@ do_maxent(sp, coordinates, partitions, buffer, seed, predictors, models.dir,
 \item{n.back}{Number of pseudoabsence points}
 }
 \value{
-A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+A data frame with the evaluation statistics (TSS, AUC, etc.)
 }
 \description{
 Fits ecological niche models using Maxent.

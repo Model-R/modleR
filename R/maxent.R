@@ -1,19 +1,19 @@
 #' Fits ecological niche models using Maxent.
 #'
 #' @inheritParams do_bioclim
-#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @export
 do_maxent <- function(sp,
                       coordinates,
                       partitions,
-                      buffer,
-                      seed,
+                      buffer = FALSE,
+                      seed = 512,
                       predictors,
-                      models.dir,
-                      project.model,
-                      projections,
+                      models.dir = "./models",
+                      project.model = FALSE,
+                      projections = NULL,
                       mask,
-                      write_png,
+                      write_png = FALSE,
                       n.back) {
 
   cat(paste("Maxent", "\n"))

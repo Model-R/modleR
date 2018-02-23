@@ -4,7 +4,7 @@
 #' @param coordinates A two-column data frame with the occurrence points
 #' @param partitions The number of partitions for a cross validation
 #' @param buffer Defines if a buffer will be used to sample pseudo-absences
-#' (F, "mean", "median", "max")
+#'        (F, "mean", "median", "max")
 #' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
 #' @param models.dir Folder path to save the output files
@@ -20,14 +20,14 @@
 do_bioclim <- function(sp,
                        coordinates,
                        partitions,
-                       buffer,
-                       seed,
+                       buffer = FALSE,
+                       seed = 512,
                        predictors,
-                       models.dir,
-                       project.model,
-                       projections,
+                       models.dir = "./models",
+                       project.model = FALSE,
+                       projections = NULL,
                        mask,
-                       write_png,
+                       write_png = FALSE,
                        n.back) {
   cat(paste("Bioclim", "\n"))
 
