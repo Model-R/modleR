@@ -4,21 +4,20 @@
 \alias{ensemble}
 \title{Create ensemble models from several algorithms.}
 \usage{
-ensemble(sp, models.dir = "./models", final.dir = "final_models",
-  ensemble.dir = "ensemble", occs = spp.filt,
-  which.models = c("Final.bin.mean3", "Final.mean.bin7"), consensus = F,
-  consensus.level = 0.5, write_png = T)
+ensemble(sp, occs, models.dir = "./models", final.dir = "final_models",
+  ensemble.dir = "ensemble", which.models = c("Final.bin.mean3",
+  "Final.mean.bin7"), consensus = F, consensus.level = 0.5, write_png = T)
 }
 \arguments{
 \item{sp}{A character string with the species name}
+
+\item{occs}{A two-column data frame with the occurrence points}
 
 \item{models.dir}{Character string. Folder path where the input files are located}
 
 \item{final.dir}{Character string, name of the subfolder where the files for the final models are located}
 
 \item{ensemble.dir}{Character string, name of the folder to save the output files. A subfolder will be created.}
-
-\item{occs}{A two-column data frame with the occurrence points}
 
 \item{which.models}{How will the ensemble be built? Currently \code{Final.bin.mean3} and/or \code{Final.mean.bin7}}
 
@@ -29,7 +28,8 @@ ensemble(sp, models.dir = "./models", final.dir = "final_models",
 \item{write_png}{Write png? Defaults to TRUE}
 }
 \value{
-A set of ensemble models and figures (optional) written in the
+A rasterStack with the mean and standard deviation of the assembled
+        models. A set of ensemble models and figures (optional) written in the
          \code{ensemble.dir} subfolder
 }
 \description{

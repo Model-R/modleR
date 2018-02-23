@@ -4,25 +4,26 @@
 #'  model by calculating the mean of each final model per algorithm.
 #'
 #' @param sp A character string with the species name
+#' @param occs A two-column data frame with the occurrence points
 #' @param models.dir Character string. Folder path where the input files are located
 #' @param final.dir Character string, name of the subfolder where the files for the final models are located
 #' @param ensemble.dir Character string, name of the folder to save the output files. A subfolder will be created.
-#' @param occs A two-column data frame with the occurrence points
 #' @param which.models How will the ensemble be built? Currently \code{Final.bin.mean3} and/or \code{Final.mean.bin7}
 #' @param consensus Logical. Will a consensus rule be applied?
 #' @param consensus.level Threshold for the consensus rule, betwen 0 and 1 (0.5 means a majority rule).
 #' @param write_png Write png? Defaults to TRUE
 #' @import raster
-#' @importFrom graphics par
+#' @import graphics
 #' @importFrom stats sd
 #' @export
-#' @return A set of ensemble models and figures (optional) written in the
+#' @return A rasterStack with the mean and standard deviation of the assembled
+#'         models. A set of ensemble models and figures (optional) written in the
 #'          \code{ensemble.dir} subfolder
 ensemble <- function(sp,
+                     occs,
                      models.dir = "./models",
                      final.dir = "final_models",
                      ensemble.dir = "ensemble",
-                     occs = spp.filt,
                      which.models = c("Final.bin.mean3", "Final.mean.bin7"),
                      consensus = F,
                      consensus.level = 0.5,
@@ -137,6 +138,6 @@ ensemble <- function(sp,
             }
         }
     }
-    #return(ensemble.m)
+    return(raster::stack(ensemble.m, ensemble.sd))
     print(date())
 }
