@@ -8,13 +8,15 @@
 #' @param models.dir Character. Folder path where the input files are located
 #' @param final.dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
-#' @return A character string with the initial and final execution times.
+#' @return A set of ecological niche models and figures (optional) written in the
+#'          \code{final.dir} subfolder
 #' @import raster
 #' @importFrom utils read.table
 #' @export
 final_model <- function(sp,
                         select.partitions = TRUE,
-                        algoritmos = c("maxent", "rf", "svm"),
+                        algoritmos = c("bioclim","domain","glm","mahal",
+                                       "maxent", "rf", "svm"),
                         threshold = c("spec_sens"),
                         TSS.value = 0.7,
                         models.dir = "./models",

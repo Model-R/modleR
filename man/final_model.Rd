@@ -4,9 +4,10 @@
 \alias{final_model}
 \title{Joins ENM from several partitions, creating a model per algorithm.}
 \usage{
-final_model(sp, select.partitions = TRUE, algoritmos = c("maxent", "rf",
-  "svm"), threshold = c("spec_sens"), TSS.value = 0.7,
-  models.dir = "./models", final.dir = "final_models")
+final_model(sp, select.partitions = TRUE, algoritmos = c("bioclim",
+  "domain", "glm", "mahal", "maxent", "rf", "svm"),
+  threshold = c("spec_sens"), TSS.value = 0.7, models.dir = "./models",
+  final.dir = "final_models")
 }
 \arguments{
 \item{sp}{A character string with the species name}
@@ -25,7 +26,8 @@ final_model(sp, select.partitions = TRUE, algoritmos = c("maxent", "rf",
 A subfolder will be created.}
 }
 \value{
-A character string with the initial and final execution times.
+A set of ecological niche models and figures (optional) written in the
+         \code{final.dir} subfolder
 }
 \description{
 Joins ENM from several partitions, creating a model per algorithm.
