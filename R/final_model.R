@@ -2,29 +2,35 @@
 #'
 #' @param sp A character string with the species name
 #' @param select.partitions TRUE ou FALSE
-#' @param algoritmos Which algorithms will be processed. Defaults to c("maxent", "rf", "svm")
+#' @param algoritmos Which algorithms will be processed.
 #' @param threshold Which cutting threshold will be used, defaults to "spec_sens"
-#' @param TSS.value Threshold to select models from TSS values (between -1 and 1)
-#' @param models.dir Character string. Folder path where the input files are located
-#' @param final.dir Character string. Name of the folder to save the output files. A subfolder will be created.
+#' @param TSS.value Threshold to select models from TSS values
+#' @param models.dir Character. Folder path where the input files are located
+#' @param final.dir Character. Name of the folder to save the output files.
+#'                  A subfolder will be created.
 #' @return A character string with the initial and final execution times.
 #' @import raster
+#' @importFrom utils read.table
 #' @export
-finalModel <- function(sp,
-                       select.partitions = T,
-                       algoritmos = c("maxent", "rf", "svm"),
-                       threshold = c("spec_sens"),
-                       TSS.value = 0.7,
-                       models.dir = "./models",
-                       final.dir = "final_models") {
-    if (file.exists(paste0(models.dir, "/", sp, "/present/", final.dir)) == FALSE)
-        dir.create(paste0(models.dir, "/", sp, "/present/", final.dir), recursive = TRUE)
+final_model <- function(sp,
+                        select.partitions = TRUE,
+                        algoritmos = c("maxent", "rf", "svm"),
+                        threshold = c("spec_sens"),
+                        TSS.value = 0.7,
+                        models.dir = "./models",
+                        final.dir = "final_models") {
+
+    if (file.exists(paste0(models.dir, "/", sp, "/present/",
+                           final.dir)) == FALSE)
+        dir.create(paste0(models.dir, "/", sp, "/present/", final.dir),
+                   recursive = TRUE)
     print(date())
 
     cat(paste(sp, "\n"))
     cat(paste("Reading the evaluation files", "\n"))
-    evall <- list.files(path = paste0(models.dir, "/", sp, "/present/partitions"),
-                        pattern = "evaluate", full.names = T)
+    evall <- list.files(
+        path = paste0(models.dir, "/", sp, "/present/partitions"),
+        pattern = "evaluate", full.names = T)
     lista <- list()
     for (i in 1:length(evall)) {
         lista[[i]] <- read.table(file = evall[i],
@@ -38,14 +44,11 @@ finalModel <- function(sp,
     if (exists("algoritmos") == F)
         algoritmos <- unique(stats$algoritmo)
     algoritmos <- as.factor(algoritmos)
-    # algo <- algoritmos[1]
     todo <- raster::stack()
     for (algo in algoritmos) {
         cat(paste("Extracting data for", algo, "\n"))
-        stats2 <- stats[stats$algoritmo == algo,]
-
+        stats2 <- stats[stats$algoritmo == algo, ]
         part <- nrow(stats2)  #How many partitions were there
-
         cat(paste("Reading models from .tif files", "\n"))
         modelos.cont <-
             list.files(
@@ -71,12 +74,11 @@ finalModel <- function(sp,
         if (select.partitions == T) {
             cat("selecting partitions for", sp, algo, "\n")
             sel.index <- which(stats2[, "TSS"] >= TSS.value)
-            cont.sel <- mod.cont[[sel.index]]  #(1)
-            bin.sel <- mod.bin[[sel.index]]  #(5)
+            cont.sel  <- mod.cont[[sel.index]]  #(1)
+            bin.sel   <- mod.bin[[sel.index]]  #(5)
 
 
-            th.mean <-
-                mean(stats2[, names(stats2) == threshold][sel.index])
+            th.mean <- mean(stats2[, names(stats2) == threshold][sel.index])
 
             if (length(sel.index) == 0)
                 cat(paste("No partition was selected for", sp, algo, "\n"))
@@ -121,7 +123,9 @@ finalModel <- function(sp,
                 raster::rasterOptions(setfileext = F)
                 raster::writeRaster(
                     x = final,
-                    filename = paste0(models.dir, "/", sp, "/present/", final.dir, "/", names(final), sp, algo, ".tif"),
+                    filename = paste0(models.dir, "/", sp, "/present/",
+                                      final.dir, "/", names(final), sp,
+                                      algo, ".tif"),
                     bylayer = T,
                     overwrite = T,
                     format = "GTiff"

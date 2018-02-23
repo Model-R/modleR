@@ -2,7 +2,7 @@
 % Please edit documentation in R/ensemble.R
 \name{ensemble}
 \alias{ensemble}
-\title{Joins ENM from several algorithms, creating a model per species.}
+\title{Create ensemble models from several algorithms.}
 \usage{
 ensemble(sp, models.dir = "./models", final.dir = "final_models",
   ensemble.dir = "ensemble", occs = spp.filt,
@@ -20,7 +20,7 @@ ensemble(sp, models.dir = "./models", final.dir = "final_models",
 
 \item{occs}{A two-column data frame with the occurrence points}
 
-\item{which.models}{How will the ensemble be built? Currently "Final.bin.mean3" and/or "Final.mean.bin7"}
+\item{which.models}{How will the ensemble be built? Currently \code{Final.bin.mean3} and/or \code{Final.mean.bin7}}
 
 \item{consensus}{Logical. Will a consensus rule be applied?}
 
@@ -28,6 +28,11 @@ ensemble(sp, models.dir = "./models", final.dir = "final_models",
 
 \item{write_png}{Write png? Defaults to TRUE}
 }
+\value{
+A set of ensemble models and figures (optional) written in the
+         \code{ensemble.dir} subfolder
+}
 \description{
-Joins ENM from several algorithms, creating a model per species.
+\code{ensemble} takes the input of \code{final_model} and builds an ensemble
+ model by calculating the mean of each final model per algorithm.
 }

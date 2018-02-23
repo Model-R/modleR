@@ -2,7 +2,7 @@
 % Please edit documentation in R/random_forest.R
 \name{do_randomForest}
 \alias{do_randomForest}
-\title{Fits ecological niche models using Random Forest}
+\title{Fits ecological niche models using Random Forests.}
 \usage{
 do_randomForest(sp, coordinates, partitions, buffer, seed, predictors,
   models.dir, project.model, projections, mask, write_png, n.back)
@@ -12,7 +12,10 @@ do_randomForest(sp, coordinates, partitions, buffer, seed, predictors,
 
 \item{coordinates}{A two-column data frame with the occurrence points}
 
-\item{buffer}{Defines if a buffer will be used to sample pseudo-absences (F, "mean", "median", "max")}
+\item{partitions}{The number of partitions for a cross validation}
+
+\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
+(F, "mean", "median", "max")}
 
 \item{seed}{For reproducibility purposes}
 
@@ -20,7 +23,11 @@ do_randomForest(sp, coordinates, partitions, buffer, seed, predictors,
 
 \item{models.dir}{Folder path to save the output files}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used as a mask to cut the final models}
+\item{project.model}{Logical, whether to perform a projection}
+
+\item{projections}{The RasterStack of projeciton variables}
+
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
 \item{write_png}{Logical, whether png files will be written}
 
@@ -30,5 +37,5 @@ do_randomForest(sp, coordinates, partitions, buffer, seed, predictors,
 A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 }
 \description{
-Fits ecological niche models using Random Forest
+Fits ecological niche models using Random Forests.
 }

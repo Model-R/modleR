@@ -1,36 +1,36 @@
-#' Fits ecological niche models using Domain
+#' Fits ecological niche models using Domain.
 #'
 #' @inheritParams do_bioclim
-#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @export
 do_domain <- function(sp,
-		      coordinates,
-		      partitions,
-		      buffer,
-		      seed,
-		      predictors,
-		      models.dir,
-		      project.model,
-		      projections,
-		      mask,
-		      write_png,
-		      n.back) {
+                      coordinates,
+                      partitions,
+                      buffer,
+                      seed,
+                      predictors,
+                      models.dir,
+                      project.model,
+                      projections,
+                      mask,
+                      write_png,
+                      n.back) {
   cat(paste("Domain", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
        dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
      dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder,recursive = T)
+        dir.create(partition.folder, recursive = T)
 
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
 
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates,
+    backgr <- create_buffer(coord = coordinates,
                            n.back = n.back,
                            buffer.type = buffer,
                            seed = seed,
@@ -97,28 +97,38 @@ do_domain <- function(sp,
       sp, "_", i, "_domain.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
-      do_cont <- cropModel(do_cont, mask)
-      do_bin <- cropModel(do_bin, mask)
-      do_cut <- cropModel(do_cut, mask)
+      do_cont <- crop_model(do_cont, mask)
+      do_bin  <- crop_model(do_bin, mask)
+      do_cut  <- crop_model(do_cut, mask)
     }
-    raster::writeRaster(x = do_cont, filename = paste0(partition.folder, "/Domain_cont_",
+    raster::writeRaster(x = do_cont,
+                        filename = paste0(partition.folder, "/Domain_cont_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = do_bin, filename = paste0(partition.folder, "/Domain_bin_",
+    raster::writeRaster(x = do_bin,
+                        filename = paste0(partition.folder, "/Domain_bin_",
       sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = do_cut, filename = paste0(partition.folder, "/Domain_cut_",
+    raster::writeRaster(x = do_cut,
+                        filename = paste0(partition.folder, "/Domain_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
     if (write_png == T) {
-        png(filename = paste0(partition.folder, "/Domain", sp, "_", i, "%03d.png"))
-        plot(do_cont,main = paste("Domain raw","\n","AUC =", round(edo@auc,2),'-',"TSS =",round(do_TSS,2)))
-        plot(do_bin,main = paste("Domain P/A","\n","AUC =", round(edo@auc,2),'-',"TSS =",round(do_TSS,2)))
-        plot(do_cut,main = paste("Domain cut","\n","AUC =", round(edo@auc,2),'-',"TSS =",round(do_TSS,2)))
+        png(filename = paste0(partition.folder,
+                              "/Domain", sp, "_", i, "%03d.png"))
+        plot(do_cont,
+             main = paste("Domain raw", "\n", "AUC =", round(edo@auc, 2), "-",
+                          "TSS =", round(do_TSS, 2)))
+        plot(do_bin,
+             main = paste("Domain P/A", "\n", "AUC =", round(edo@auc, 2), "-",
+                          "TSS =", round(do_TSS, 2)))
+        plot(do_cut,
+             main = paste("Domain cut", "\n", "AUC =", round(edo@auc, 2), "-",
+                          "TSS =", round(do_TSS, 2)))
         dev.off()
         }
 
     if (project.model == T) {
       for (proj in projections) {
-      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+      projection.folder <- paste0(models.dir, "/", sp, "/", proj)
             if (file.exists(projection.folder) == FALSE)
                 dir.create(paste0(projection.folder), recursive = T)
 
@@ -127,16 +137,23 @@ do_domain <- function(sp,
         do_proj <- predict(data2, do, progress = "text")
         do_proj_bin <- do_proj > thresholddo
         do_proj_cut <- do_proj_bin * do_proj
-        # Normaliza o modelo cut do_proj_cut <- do_proj_cut/maxValue(do_proj_cut)
+        # Normaliza o modelo cut
+        do_proj_cut <- do_proj_cut / maxValue(do_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
           source("./fct/cropModel.R")
-          do_proj <- cropModel(do_proj, mask)
-          do_proj_bin <- cropModel(do_proj_bin, mask)
-          do_proj_cut <- cropModel(do_proj_cut, mask)
+          do_proj     <- crop_model(do_proj, mask)
+          do_proj_bin <- crop_model(do_proj_bin, mask)
+          do_proj_cut <- crop_model(do_proj_cut, mask)
         }
-        writeRaster(x = do_proj, filename = paste0(projection.folder, "/Domain_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = do_proj_bin, filename = paste0(projection.folder, "/Domain_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = do_proj_cut, filename = paste0(projection.folder, "/Domain_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = do_proj,
+                    filename = paste0(projection.folder, "/Domain_cont_", sp,
+                                      "_", i, ".tif"), overwrite = T)
+        writeRaster(x = do_proj_bin,
+                    filename = paste0(projection.folder, "/Domain_bin_", sp,
+                                      "_", i, ".tif"), overwrite = T)
+        writeRaster(x = do_proj_cut,
+                    filename = paste0(projection.folder, "/Domain_cut_", sp,
+                                      "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

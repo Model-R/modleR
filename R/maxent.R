@@ -1,34 +1,35 @@
-#' Fits ecological niche models using Maxent
+#' Fits ecological niche models using Maxent.
 #'
 #' @inheritParams do_bioclim
 #' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 #' @export
 do_maxent <- function(sp,
-		      coordinates,
-		      partitions,
-		      buffer,
-		      seed,
-		      predictors,
-		      models.dir,
-		      project.model,
-		      projections,
-		      mask,
-		      write_png,
-		      n.back) {
+                      coordinates,
+                      partitions,
+                      buffer,
+                      seed,
+                      predictors,
+                      models.dir,
+                      project.model,
+                      projections,
+                      mask,
+                      write_png,
+                      n.back) {
+
   cat(paste("Maxent", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
        dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
      dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder,recursive = T)
+        dir.create(partition.folder, recursive = T)
 
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates,
+    backgr <- create_buffer(coord = coordinates,
                            n.back = n.back,
                            buffer.type = buffer,
                            seed = seed,
@@ -100,9 +101,9 @@ do_maxent <- function(sp,
       sp, "_", i, "_maxent.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
-      mx_cont <- cropModel(mx_cont, mask)
-      mx_bin <- cropModel(mx_bin, mask)
-      mx_cut <- cropModel(mx_cut, mask)
+      mx_cont <- crop_model(mx_cont, mask)
+      mx_bin <- crop_model(mx_bin, mask)
+      mx_cut <- crop_model(mx_cut, mask)
     }
     raster::writeRaster(x = mx_cont, filename = paste0(partition.folder, "/maxent_cont_",
       sp, "_", i, ".tif"), overwrite = T)
@@ -112,16 +113,16 @@ do_maxent <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(filename = paste0(partition.folder,"/maxent",sp,"_",i,"%03d.png"))
-      raster::plot(mx_cont,main = paste("Maxent raw","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
-      raster::plot(mx_bin,main = paste("Maxent P/A","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
-      raster::plot(mx_cut,main = paste("Maxent cut","\n","AUC =", round(emx@auc,2),'-',"TSS =",round(mx_TSS,2)))
+      png(filename = paste0(partition.folder, "/maxent", sp, "_", i, "%03d.png"))
+      raster::plot(mx_cont, main = paste("Maxent raw", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      raster::plot(mx_bin, main = paste("Maxent P/A", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      raster::plot(mx_cut, main = paste("Maxent cut", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
       dev.off()
       }
 
     if (project.model == T) {
       for (proj in projections) {
-      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+      projection.folder <- paste0(models.dir, "/", sp, "/", proj)
             if (file.exists(projection.folder) == FALSE)
                 dir.create(paste0(projection.folder), recursive = T)
 
@@ -133,9 +134,9 @@ do_maxent <- function(sp,
         # Normaliza o modelo cut do_proj_cut <- do_proj_cut/maxValue(do_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
           source("./fct/cropModel.R")
-          mx_proj <- cropModel(mx_proj, mask)
-          mx_proj_bin <- cropModel(mx_proj_bin, mask)
-          mx_proj_cut <- cropModel(mx_proj_cut, mask)
+          mx_proj <- crop_model(mx_proj, mask)
+          mx_proj_bin <- crop_model(mx_proj_bin, mask)
+          mx_proj_cut <- crop_model(mx_proj_cut, mask)
         }
         writeRaster(x = mx_proj, filename = paste0(projection.folder, "/maxent_cont_", sp, "_", i, ".tif"), overwrite = T)
         writeRaster(x = mx_proj_bin, filename = paste0(projection.folder, "/maxent_bin_", sp, "_", i, ".tif"), overwrite = T)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/domain.R
 \name{do_domain}
 \alias{do_domain}
-\title{Fits ecological niche models using Domain}
+\title{Fits ecological niche models using Domain.}
 \usage{
 do_domain(sp, coordinates, partitions, buffer, seed, predictors, models.dir,
   project.model, projections, mask, write_png, n.back)
@@ -12,7 +12,10 @@ do_domain(sp, coordinates, partitions, buffer, seed, predictors, models.dir,
 
 \item{coordinates}{A two-column data frame with the occurrence points}
 
-\item{buffer}{Defines if a buffer will be used to sample pseudo-absences (F, "mean", "median", "max")}
+\item{partitions}{The number of partitions for a cross validation}
+
+\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
+(F, "mean", "median", "max")}
 
 \item{seed}{For reproducibility purposes}
 
@@ -20,15 +23,19 @@ do_domain(sp, coordinates, partitions, buffer, seed, predictors, models.dir,
 
 \item{models.dir}{Folder path to save the output files}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used as a mask to cut the final models}
+\item{project.model}{Logical, whether to perform a projection}
+
+\item{projections}{The RasterStack of projeciton variables}
+
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
 \item{write_png}{Logical, whether png files will be written}
 
 \item{n.back}{Number of pseudoabsence points}
 }
 \value{
-A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+A data frame with the evaluation statistics (TSS, AUC, etc.)
 }
 \description{
-Fits ecological niche models using Domain
+Fits ecological niche models using Domain.
 }

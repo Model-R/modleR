@@ -1,7 +1,7 @@
-#' Fits ecological niche models using SVM from package e1071
+#' Fits ecological niche models using SVM from package e1071.
 #'
 #' @inheritParams do_bioclim
-#' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @export
 do_SVM2 <- function(sp,
                     coordinates,
@@ -21,15 +21,15 @@ do_SVM2 <- function(sp,
        dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
      dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder,recursive = T)
+        dir.create(partition.folder, recursive = T)
 
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates,
+    backgr <- create_buffer(coord = coordinates,
                            n.back = n.back,
                            buffer.type = buffer,
                            seed = seed,
@@ -92,7 +92,7 @@ do_SVM2 <- function(sp,
 
     svm2 <- e1071::best.tune("svm", envtrain, sdmdata_train$pa, data = envtrain)  ##svm deve ser com a variável resposta binária ou contínua, eu acho que binária
     esvm2 <- dismo::evaluate(envtest_pre, envtest_back, svm2)
-    # esvm <- evaluate(pres_test,backg_test,model = svm,x = predictors)
+    # esvm <- evaluate(pres_test, backg_test, model = svm, x = predictors)
     svm2_TSS <- max(esvm2@TPR + esvm2@TNR) - 1
     thresholdsvm2 <- esvm2@t[which.max(esvm2@TPR + esvm2@TNR)]
     thsvm2 <- dismo::threshold(esvm2)
@@ -106,39 +106,49 @@ do_SVM2 <- function(sp,
     svm2_cut <- svm2_bin * svm2_cont
 
     # TRANSFORMA 0 A 1
-    svm2_cont <- svm2_cont/raster::maxValue(svm2_cont)
-    svm2_cut <- svm2_cut/raster::maxValue(svm2_cut)
+    svm2_cont <- svm2_cont / raster::maxValue(svm2_cont)
+    svm2_cut <- svm2_cut / raster::maxValue(svm2_cut)
 
     write.table(thsvm2, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_svm2.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
-      svm2_cont <- cropModel(svm2_cont, mask)
-      svm2_bin <- cropModel(svm2_bin, mask)
-      svm2_cut <- cropModel(svm2_cut, mask)
+      svm2_cont <- crop_model(svm2_cont, mask)
+      svm2_bin <- crop_model(svm2_bin, mask)
+      svm2_cut <- crop_model(svm2_cut, mask)
     }
 
-    raster::writeRaster(x = svm2_cont, filename = paste0(partition.folder, "/svm2_cont_",
-      sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = svm2_bin, filename = paste0(partition.folder, "/svm2_bin_", sp,
-      "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = svm2_cut, filename = paste0(partition.folder, "/svm2_cut_", sp,
-      "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = svm2_cont,
+                        filename = paste0(partition.folder, "/svm2_cont_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = svm2_bin,
+                        filename = paste0(partition.folder, "/svm2_bin_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = svm2_cut,
+                        filename = paste0(partition.folder, "/svm2_cut_",
+                                          sp, "_", i, ".tif"), overwrite = T)
 
         if (write_png == T) {
-            png(filename = paste0(partition.folder,"/svm2",sp,"_",i,"%03d.png"))
-            raster::plot(svm2_cont,main = paste("SVM2 raw","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
-                                        round(svm2_TSS,2)))
-            raster::plot(svm2_bin,main = paste("SVM2 P/A","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
-                                       round(svm2_TSS,2)))
-            raster::plot(svm2_cut,main = paste("SVM2 cut","\n","AUC =", round(esvm2@auc,2),'-',"TSS =",
-                                       round(svm2_TSS,2)))
+            png(filename = paste0(partition.folder,
+                                  "/svm2", sp, "_", i, "%03d.png"))
+            raster::plot(svm2_cont,
+                         main = paste("SVM2 raw", "\n",
+                                      "AUC =", round(esvm2@auc, 2), "-",
+                                      "TSS =", round(svm2_TSS, 2)))
+            raster::plot(svm2_bin,
+                         main = paste("SVM2 P/A", "\n",
+                                      "AUC =", round(esvm2@auc, 2), "-",
+                                      "TSS =", round(svm2_TSS, 2)))
+            raster::plot(svm2_cut,
+                         main = paste("SVM2 cut", "\n",
+                                      "AUC =", round(esvm2@auc, 2), "-",
+                                      "TSS =", round(svm2_TSS, 2)))
             dev.off()
             }
 
     if (project.model == T) {
       for (proj in projections) {
-      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+      projection.folder <- paste0(models.dir, "/", sp, "/", proj)
             if (file.exists(projection.folder) == FALSE)
                 dir.create(paste0(projection.folder), recursive = T)
 
@@ -148,16 +158,21 @@ do_SVM2 <- function(sp,
         svm2_proj_bin <- svm2_proj > thresholdsvm2
         svm2_proj_cut <- svm2_proj_bin * svm2_proj
         # Normaliza o modelo cut
-         svm2_proj_cut <- svm2_proj_cut/maxValue(svm2_proj_cut)
+        svm2_proj_cut <- svm2_proj_cut / maxValue(svm2_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
-          source("./fct/cropModel.R")
-          svm2_proj <- cropModel(svm2_proj, mask)
-          svm2_proj_bin <- cropModel(svm2_proj_bin, mask)
-          svm2_proj_cut <- cropModel(svm2_proj_cut, mask)
+          svm2_proj <- crop_model(svm2_proj, mask)
+          svm2_proj_bin <- crop_model(svm2_proj_bin, mask)
+          svm2_proj_cut <- crop_model(svm2_proj_cut, mask)
         }
-        writeRaster(x = svm2_proj, filename = paste0(projection.folder, "/svm2_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = svm2_proj_bin, filename = paste0(projection.folder, "/svm2_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = svm2_proj_cut, filename = paste0(projection.folder, "/svm2_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = svm2_proj,
+                    filename = paste0(projection.folder, "/svm2_cont_", sp,
+                                      "_", i, ".tif"), overwrite = T)
+        writeRaster(x = svm2_proj_bin,
+                    filename = paste0(projection.folder, "/svm2_bin_", sp,
+                                      "_", i, ".tif"), overwrite = T)
+        writeRaster(x = svm2_proj_cut,
+                    filename = paste0(projection.folder, "/svm2_cut_", sp,
+                                      "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

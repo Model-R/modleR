@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_enm.R
 \name{do_enm}
 \alias{do_enm}
-\title{Fits ecological niche models for various algorithms}
+\title{Fits ecological niche models for various algorithms.}
 \usage{
 do_enm(especie, coordinates, partitions, buffer, seed, predictors, models.dir,
   project.model, projections, mask, n.back, write_png, maxent = T,
@@ -32,5 +32,5 @@ do_enm(especie, coordinates, partitions, buffer, seed, predictors, models.dir,
 A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 }
 \description{
-Fits ecological niche models for various algorithms
+Fits ecological niche models for various algorithms.
 }

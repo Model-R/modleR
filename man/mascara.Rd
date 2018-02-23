@@ -3,12 +3,12 @@
 \docType{data}
 \name{mascara}
 \alias{mascara}
-\title{Máscara para a Mata Atlântica}
-\format{Um SpatialPolygonsDataFrame da Mata Atlântica}
+\title{Mask of the Brazilian Atlantic Forest, based on IBGE}
+\format{A SpatialPolygonsDataFrame of the Brazilian Atlantic Forest}
 \usage{
 mascara
 }
 \description{
-Máscara para a Mata Atlântica
+Mask of the Brazilian Atlantic Forest, based on IBGE
 }
 \keyword{datasets}

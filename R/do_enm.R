@@ -1,4 +1,4 @@
-#' Fits ecological niche models for various algorithms
+#' Fits ecological niche models for various algorithms.
 #'
 #' @param sp A character string with the species name
 #' @param coordinates A three-column data frame with the occurrence points of all species (sp, lat, lon)
