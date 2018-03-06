@@ -1,21 +1,21 @@
-#' Pontos de ocorrência de 4 espécies
+#' Ocurrence points for four species in the Brazilian Atlantic Forest.
 #'
-#' Uma tabela que contém 618 pontos de ocorrência de 4 espécies
+#' A dataframe with 618 occurrence points from four species
 #'
-#' @format Um data frame contendo 618 linhas e 3 colunas:
+#' @format A dataframe with 618 rows and 3 columns:
 #' \describe{
-#'   \item{sp}{Nome da espécie}
+#'   \item{sp}{Species name}
 #'   \item{lat}{Latitude}
 #'   \item{lon}{Longitude}
 #' }
 "coordenadas"
 
-#' Máscara para a Mata Atlântica
+#' Mask of the Brazilian Atlantic Forest, based on IBGE
 #'
-#' @format Um SpatialPolygonsDataFrame da Mata Atlântica
+#' @format A SpatialPolygonsDataFrame of the Brazilian Atlantic Forest
 "mascara"
 
-#' Variáveis preditoras
+#' Predictor variables
 #'
-#' @format Um RasterStack com variáveis preditoras de exemplo
+#' @format A RasterStack with 6 predictor variables issued from a PCA
 "variaveis_preditoras"

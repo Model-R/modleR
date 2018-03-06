@@ -3,10 +3,10 @@
 \docType{data}
 \name{coordenadas}
 \alias{coordenadas}
-\title{Pontos de ocorrência de 4 espécies}
-\format{Um data frame contendo 618 linhas e 3 colunas:
+\title{Ocurrence points for four species in the Brazilian Atlantic Forest.}
+\format{A dataframe with 618 rows and 3 columns:
 \describe{
-  \item{sp}{Nome da espécie}
+  \item{sp}{Species name}
   \item{lat}{Latitude}
   \item{lon}{Longitude}
 }}
@@ -14,6 +14,6 @@
 coordenadas
 }
 \description{
-Uma tabela que contém 618 pontos de ocorrência de 4 espécies
+A dataframe with 618 occurrence points from four species
 }
 \keyword{datasets}

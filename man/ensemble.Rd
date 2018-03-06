@@ -2,32 +2,37 @@
 % Please edit documentation in R/ensemble.R
 \name{ensemble}
 \alias{ensemble}
-\title{Gera um modelo só por espécie}
+\title{Create ensemble models from several algorithms.}
 \usage{
-ensemble(sp, models.dir = "./models", final.dir = "final_models",
-  ensemble.dir = "ensemble", occs = spp.filt,
-  which.models = c("Final.bin.mean3", "Final.mean.bin7"), consensus = F,
-  consensus.level = 0.5, write_png = T)
+ensemble(sp, occs, models.dir = "./models", final.dir = "final_models",
+  ensemble.dir = "ensemble", which.models = c("Final.bin.mean3",
+  "Final.mean.bin7"), consensus = F, consensus.level = 0.5, write_png = T)
 }
 \arguments{
-\item{sp}{Um nome de espécie}
+\item{sp}{A character string with the species name}
 
-\item{models.dir}{Path do diretório onde estão os modelos}
+\item{occs}{A two-column data frame with the occurrence points}
 
-\item{final.dir}{Path para subdiretório escrito com finalModel()}
+\item{models.dir}{Character string. Folder path where the input files are located}
 
-\item{ensemble.dir}{Path para os arquivos de saída}
+\item{final.dir}{Character string, name of the subfolder where the files for the final models are located}
 
-\item{occs}{Pontos de ocorrência da espécie}
+\item{ensemble.dir}{Character string, name of the folder to save the output files. A subfolder will be created.}
 
-\item{which.models}{Qual tipo de modelo final será juntado (ex. bin.mean3)}
+\item{which.models}{How will the ensemble be built? Currently \code{Final.bin.mean3} and/or \code{Final.mean.bin7}}
 
-\item{consensus}{Se será usada uma regra de consenso para cortar o ensemble}
+\item{consensus}{Logical. Will a consensus rule be applied?}
 
-\item{consensus.level}{Quanto dos modelos será retido (0,5 = maioria)}
+\item{consensus.level}{Threshold for the consensus rule, betwen 0 and 1 (0.5 means a majority rule).}
 
 \item{write_png}{Write png? Defaults to TRUE}
 }
+\value{
+A rasterStack with the mean and standard deviation of the assembled
+        models. A set of ensemble models and figures (optional) written in the
+         \code{ensemble.dir} subfolder
+}
 \description{
-Gera um modelo só por espécie
+\code{ensemble} takes the input of \code{final_model} and builds an ensemble
+ model by calculating the mean of each final model per algorithm.
 }

@@ -1,45 +1,54 @@
-#' Faz modelagem de distribuição de espécies com algoritmo Bioclim
+#' Fits ecological niche models using Bioclim.
 #'
-#' @param sp Um nome de espécie
-#' @param coordinates Uma tabela com pontos de ocorrência
-#' @param buffer Define se será usado buffer e de que tipo ("mean" ou "max")
-#' @param seed Para reprodutibilidade
-#' @param predictors Objeto do tipo RasterStack com variáveis preditoras
-#' @param models.dir Path do diretório onde serão escritos os arquivos de saída
-#' @param mask Objeto do tipo SpatialPolygonsDataFrame com máscara
-#' @param write_png Se o png vai ser criado - defaults to F
-#' @param n.back Número de pontos de background
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @param sp A character string with the species name
+#' @param coordinates A two-column data frame with the occurrence points
+#' @param partitions The number of partitions for a cross validation
+#' @param buffer Defines if a buffer will be used to sample pseudo-absences
+#'        (F, "mean", "median", "max")
+#' @param seed For reproducibility purposes
+#' @param predictors A RasterStack of predictor variables
+#' @param models.dir Folder path to save the output files
+#' @param project.model Logical, whether to perform a projection
+#' @param projections The RasterStack of projeciton variables
+#' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
+#' @param write_png Logical, whether png files will be written
+#' @param n.back Number of pseudoabsence points
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
+#' @import grDevices
+#' @importFrom utils write.table
 #' @export
 do_bioclim <- function(sp,
-		       coordinates,
-		       partitions,
-		       buffer = FALSE,
-		       seed = 512,
-		       predictors,
-		       models.dir,
-		       project.model,
-		       projections,
-		       mask,
-		       write_png = F,
-		       n.back = 500) {
+                       coordinates,
+                       partitions,
+                       buffer = FALSE,
+                       seed = 512,
+                       predictors,
+                       models.dir = "./models",
+                       project.model = FALSE,
+                       projections = NULL,
+                       mask,
+                       write_png = FALSE,
+                       n.back) {
   cat(paste("Bioclim", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
        dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
      dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder,recursive = T)
-    
+        dir.create(partition.folder, recursive = T)
+
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
 
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-                           sp = sp, seed = seed, predictors = predictors)
+    backgr <- create_buffer(coord = coordinates,
+                            n.back = n.back,
+                            buffer.type = buffer,
+                            seed = seed,
+                            predictors = predictors)
   } else {
     set.seed(seed + 2)
     backgr <- dismo::randomPoints(mask = predictors,
@@ -102,47 +111,61 @@ do_bioclim <- function(sp,
       sp, "_", i, "_bioclim.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
-    bc_cont <- cropModel(bc_cont, mask)
-    bc_bin <- cropModel(bc_bin, mask)
-    bc_cut <- cropModel(bc_cut, mask)
+    bc_cont <- crop_model(bc_cont, mask)
+    bc_bin <- crop_model(bc_bin, mask)
+    bc_cut <- crop_model(bc_cut, mask)
     }
-    raster::writeRaster(x = bc_cont, filename = paste0(partition.folder, "/BioClim_cont_",
-      sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = bc_bin, filename = paste0(partition.folder, "/BioClim_bin_",
-      sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = bc_cut, filename = paste0(partition.folder, "/BioClim_cut_",
-      sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = bc_cont,
+                        filename = paste0(partition.folder, "/BioClim_cont_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = bc_bin,
+                        filename = paste0(partition.folder, "/BioClim_bin_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = bc_cut,
+                        filename = paste0(partition.folder, "/BioClim_cut_",
+                                          sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-                  png(filename = paste0(partition.folder,"/Bioclim",sp,"_",i,"%03d.png"))
-      raster::plot(bc_cont,main = paste("Bioclim raw","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
-      raster::plot(bc_bin,main = paste("Bioclim P/A","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
-      raster::plot(bc_cut,main = paste("Bioclim cut","\n","AUC =", round(ebc@auc,2),'-',"TSS =",round(bc_TSS,2)))
+      png(paste0(partition.folder, "/Bioclim", sp, "_", i, "%03d.png"))
+      raster::plot(bc_cont,
+                   main = paste("Bioclim raw", "\n",
+                                "AUC =", round(ebc@auc, 2), "-",
+                                "TSS =", round(bc_TSS, 2)))
+      raster::plot(bc_bin, main = paste("Bioclim P/A", "\n",
+                                        "AUC =", round(ebc@auc, 2), "-",
+                                        "TSS =", round(bc_TSS, 2)))
+      raster::plot(bc_cut, main = paste("Bioclim cut", "\n",
+                                        "AUC =", round(ebc@auc, 2), "-",
+                                        "TSS =", round(bc_TSS, 2)))
       dev.off()
       }
 
     if (project.model == T) {
       for (proj in projections) {
-      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
-            if (file.exists(projection.folder) == FALSE)
-                dir.create(paste0(projection.folder), recursive = T)
-
-        data <- list.files(paste0("./env/", proj), pattern = proj)
-        data2 <- stack(data)
-        bc_proj <- predict(data2, do, progress = "text")
-        bc_proj_bin <- bc_proj > thresholdbc
-        bc_proj_cut <- bc_proj_bin * bc_proj
+          projection.folder <- paste0(models.dir, "/", sp, "/", proj)
+          if (file.exists(projection.folder) == FALSE)
+              dir.create(paste0(projection.folder), recursive = T)
+          data <- list.files(paste0("./env/", proj), pattern = proj)
+          data2 <- stack(data)
+          bc_proj <- predict(data2, bc, progress = "text")
+          bc_proj_bin <- bc_proj > thresholdbc
+          bc_proj_cut <- bc_proj_bin * bc_proj
         # Normaliza o modelo cut
-         bc_proj_cut <- bc_proj_cut/maxValue(bc_proj_cut)
+         bc_proj_cut <- bc_proj_cut / maxValue(bc_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
-          source("./fct/cropModel.R")
-          bc_proj <- cropModel(bc_proj, mask)
-          bc_proj_bin <- cropModel(bc_proj_bin, mask)
-          bc_proj_cut <- cropModel(bc_proj_cut, mask)
+          bc_proj     <- crop_model(bc_proj, mask)
+          bc_proj_bin <- crop_model(bc_proj_bin, mask)
+          bc_proj_cut <- crop_model(bc_proj_cut, mask)
         }
-        writeRaster(x = bc_proj, filename = paste0(projection.folder, "/BioClim_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = bc_proj_bin, filename = paste0(projection.folder, "/BioClim_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = bc_proj_cut, filename = paste0(projection.folder, "/BioClim_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = bc_proj,
+                    filename = paste0(projection.folder, "/BioClim_cont_",
+                                      sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = bc_proj_bin,
+                    filename = paste0(projection.folder, "/BioClim_bin_",
+                                      sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = bc_proj_cut,
+                    filename = paste0(projection.folder, "/BioClim_cut_",
+                                      sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

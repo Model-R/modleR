@@ -1,20 +1,21 @@
-#' Faz modelagem de distribuição de espécies com distância de Mahalanobis
+#' Fits ecological niche models using Mahalanobis distance.
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @export
 do_mahal <- function(sp,
-		     coordinates,
-		     partitions,
-		     buffer = FALSE,
-		     seed = 512,
-		     predictors,
-		     models.dir,
-		     project.model,
-		     projections,
-		     mask,
-		     write_png = F,
-		     n.back = 500) {
+                     coordinates,
+                     partitions,
+                     buffer = FALSE,
+                     seed = 512,
+                     predictors,
+                     models.dir = "./models",
+                     project.model = FALSE,
+                     projections = NULL,
+                     mask,
+                     write_png = FALSE,
+                     n.back) {
+
   cat(paste("Mahalanobis distance", "\n"))
 
 
@@ -22,16 +23,19 @@ do_mahal <- function(sp,
        dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
      dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder,recursive = T)
-    
+        dir.create(partition.folder, recursive = T)
+
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-                           sp = sp, seed = seed, predictors = predictors)
+      backgr <- create_buffer(coord = coordinates,
+                              n.back = n.back,
+                              buffer.type = buffer,
+                              seed = seed,
+                              predictors = predictors)
   } else {
     set.seed(seed + 2)
     backgr <- dismo::randomPoints(mask = predictors,
@@ -89,51 +93,65 @@ do_mahal <- function(sp,
 
     ma <- dismo::mahal(predictors, pres_train)
     if (exists("ma")) {
-    ema <- dismo::evaluate(pres_test, backg_test, ma, predictors)
-    thresholdma <- ema@t[which.max(ema@TPR + ema@TNR)]
-    thma <- dismo::threshold(ema)
-    ma_TSS <- max(ema@TPR + ema@TNR) - 1
-    ma_cont <- dismo::predict(ma, predictors, progress = "text")
-    ma_cont[ma_cont < dismo::threshold(ema, "no_omission")] <- dismo::threshold(ema, "no_omission")
-    ma_bin <- ma_cont > thresholdma
-    ma_cut <- ma_cont
-    ma_cut[ma_cut < thresholdma] <- thresholdma
-    if (raster::minValue(ma_cut) < 0) {
-      ma_cut <- (ma_cut - raster::minValue(ma_cut))/raster::maxValue(ma_cut - raster::minValue(ma_cut))
-    }
-    
+        ema <- dismo::evaluate(pres_test, backg_test, ma, predictors)
+        thresholdma <- ema@t[which.max(ema@TPR + ema@TNR)]
+        thma <- dismo::threshold(ema)
+        ma_TSS <- max(ema@TPR + ema@TNR) - 1
+        ma_cont <- dismo::predict(ma, predictors, progress = "text")
+        ma_cont[ma_cont < dismo::threshold(ema, "no_omission")] <-
+            dismo::threshold(ema, "no_omission")
+        ma_bin <- ma_cont > thresholdma
+        ma_cut <- ma_cont
+        ma_cut[ma_cut < thresholdma] <- thresholdma
+        if (raster::minValue(ma_cut) < 0) {
+            ma_cut <-
+                (ma_cut - raster::minValue(ma_cut)) /
+                raster::maxValue(ma_cut - raster::minValue(ma_cut))
+        }
+
     thma$AUC <- ema@auc
     thma$TSS <- ma_TSS
     thma$algoritmo <- "Mahal"
     thma$partition <- i
     row.names(thma) <- paste(sp, i, "Mahal")
-    
-    write.table(thma, file = paste0(partition.folder, "/evaluate", 
+
+    write.table(thma, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_mahal.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
-      ma_cont <- cropModel(ma_cont, mask)
-      ma_bin <- cropModel(ma_bin, mask)
-      ma_cut <- cropModel(ma_cut, mask)
+      ma_cont <- crop_model(ma_cont, mask)
+      ma_bin <- crop_model(ma_bin, mask)
+      ma_cut <- crop_model(ma_cut, mask)
     }
-    raster::writeRaster(x = ma_cont, filename = paste0(partition.folder, "/Mahal_cont_", 
-      sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = ma_bin, filename = paste0(partition.folder, "/Mahal_bin_", 
-      sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = ma_cut, filename = paste0(partition.folder, "/Mahal_cut_", 
-      sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = ma_cont,
+                        filename = paste0(partition.folder, "/Mahal_cont_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = ma_bin,
+                        filename = paste0(partition.folder, "/Mahal_bin_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = ma_cut,
+                        filename = paste0(partition.folder, "/Mahal_cut_",
+                                          sp, "_", i, ".tif"), overwrite = T)
 
        if (write_png == T) {
-           png(filename = paste0(partition.folder,"/Mahal",sp,"_",i,"%03d.png"))
-           plot(ma_cont, main = paste("Mahal raw","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
-           plot(ma_bin, main = paste("Mahal P/A","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
-           plot(ma_cut, main = paste("Mahal cut","\n","AUC =", round(ema@auc,2),'-',"TSS =",round(ma_TSS,2)))
+           png(filename = paste0(partition.folder,
+                                 "/Mahal", sp, "_", i, "%03d.png"))
+           plot(ma_cont,
+                main = paste("Mahal raw", "\n",
+                             "AUC =", round(ema@auc, 2), "-",
+                             "TSS =", round(ma_TSS, 2)))
+           plot(ma_bin, main = paste("Mahal P/A", "\n",
+                                     "AUC =", round(ema@auc, 2), "-",
+                                     "TSS =", round(ma_TSS, 2)))
+           plot(ma_cut, main = paste("Mahal cut", "\n",
+                                     "AUC =", round(ema@auc, 2), "-",
+                                     "TSS =", round(ma_TSS, 2)))
            dev.off()
            }
 
     if (project.model == T) {
       for (proj in projections) {
-      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+      projection.folder <- paste0(models.dir, "/", sp, "/", proj)
             if (file.exists(projection.folder) == FALSE)
                 dir.create(paste0(projection.folder), recursive = T)
 
@@ -142,18 +160,22 @@ do_mahal <- function(sp,
         ma_proj <- predict(data2, ma, progress = "text")
         ma_proj_bin <- ma_proj > thresholdma
         ma_proj_cut <- ma_proj_bin * ma_proj
-        # Normaliza o modelo cut 
-        ma_proj_cut <- ma_proj_cut/maxValue(ma_proj_cut)        
+        # Normaliza o modelo cut
+        ma_proj_cut <- ma_proj_cut / maxValue(ma_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
-          source("./fct/cropModel.R")
-          ma_proj <- cropModel(ma_proj, mask)
-          ma_proj_bin <- cropModel(ma_proj_bin, mask)
-          ma_proj_cut <- cropModel(ma_proj_cut, mask)
+          ma_proj <- crop_model(ma_proj, mask)
+          ma_proj_bin <- crop_model(ma_proj_bin, mask)
+          ma_proj_cut <- crop_model(ma_proj_cut, mask)
         }
-          writeRaster(x = ma_proj, filename = paste0(projection.folder, "/mahal_cont_", sp, "_", i, ".tif"), overwrite = T)
-          writeRaster(x = ma_proj_bin, filename = paste0(projection.folder, 
-            "/mahal_bin_", sp, "_", i, ".tif"), overwrite = T)
-          writeRaster(x = ma_proj_cut, filename = paste0(projection.folder, "/mahal_cut_", sp, "_", i, ".tif"), overwrite = T)
+          writeRaster(x = ma_proj,
+                      filename = paste0(projection.folder, "/mahal_cont_", sp,
+                                        "_", i, ".tif"), overwrite = T)
+          writeRaster(x = ma_proj_bin,
+                      filename = paste0(projection.folder, "/mahal_bin_", sp,
+                                        "_", i, ".tif"), overwrite = T)
+          writeRaster(x = ma_proj_cut,
+                      filename = paste0(projection.folder, "/mahal_cut_", sp,
+                                        "_", i, ".tif"), overwrite = T)
           rm(data2)
         }
       }

@@ -3,12 +3,12 @@
 \docType{data}
 \name{variaveis_preditoras}
 \alias{variaveis_preditoras}
-\title{Variáveis preditoras}
-\format{Um RasterStack com variáveis preditoras de exemplo}
+\title{Predictor variables}
+\format{A RasterStack with 6 predictor variables issued from a PCA}
 \usage{
 variaveis_preditoras
 }
 \description{
-Variáveis preditoras
+Predictor variables
 }
 \keyword{datasets}

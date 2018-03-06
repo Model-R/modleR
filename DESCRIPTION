@@ -1,8 +1,8 @@
 Package: modelr
-Title: Functions used to environmental niche modeling
+Title: Environmental Niche Modeling Workflow Based on dismo
 Version: 0.0.0.9000
 Authors@R: c(
-    person("Andrea", "Tapia", email = "katori@gmail.com", role = c("aut")),
+    person("Andrea", "Sánchez-Tapia", email = "andreasancheztapia@gmail.com", role = c("aut")),
     person("Felipe", "Barros", email = "felipe.b4rros@gmail.com", role = c("aut")),
     person("Guilherme", "Gall", email = "gmgall@gmail.com", role = c("aut", "cre"))
     )
@@ -15,14 +15,17 @@ Depends: R (>= 3.0.0)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: raster,
+Imports:
+    data.table,
     dismo,
     e1071,
+    graphics,
     kernlab,
+    maps,
     randomForest,
-    sp,
+    raster,
     rgeos,
-    data.table,
-    rJava
+    rJava,
+    sp
 BugReports: https://github.com/Model-R/Back-end/issues
 RoxygenNote: 6.0.1

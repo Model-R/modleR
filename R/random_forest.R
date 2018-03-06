@@ -1,7 +1,7 @@
-#' Faz modelagem de distribuição de espécies com algoritmo Random Forest
+#' Fits ecological niche models using Random Forests.
 #'
 #' @inheritParams do_bioclim
-#' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @export
 do_randomForest <- function(sp,
                             coordinates,
@@ -9,28 +9,32 @@ do_randomForest <- function(sp,
                             buffer = FALSE,
                             seed = 512,
                             predictors,
-                            models.dir,
-                            project.model,
-                            projections,
+                            models.dir = "./models",
+                            project.model = FALSE,
+                            projections = NULL,
                             mask,
-                            write_png = F,
-                            n.back = 500) {
+                            write_png = FALSE,
+                            n.back) {
   cat(paste("Random Forests", "\n"))
 
-  if (file.exists(paste0(models.dir)) == FALSE)
-       dir.create(paste0(models.dir))
+    if (file.exists(paste0(models.dir)) == FALSE)
+        dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
-     dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir,"/",sp,"/present","/partitions")
+        dir.create(paste0(models.dir, "/", sp))
+    partition.folder <-
+        paste0(models.dir, "/", sp, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder,recursive = T)
-    
+        dir.create(partition.folder, recursive = T)
+
   # tabela de valores
   presvals <- raster::extract(predictors, coordinates)
 
   if (buffer %in% c("mean", "max", "median")) {
-    backgr <- createBuffer(coord = coordinates, n.back = n.back, buffer.type = buffer,
-                           sp = sp, seed = seed, predictors = predictors)
+    backgr <- create_buffer(coord = coordinates,
+                           n.back = n.back,
+                           buffer.type = buffer,
+                           seed = seed,
+                           predictors = predictors)
   } else {
     set.seed(seed + 2)
     backgr <- dismo::randomPoints(mask = predictors,
@@ -86,15 +90,15 @@ do_randomForest <- function(sp,
     envtest_back <- subset(sdmdata_test, pa == 0, select = c(-group, -lon, -lat,
       -pa))  #new
 
-    # rf1 <- tuneRF(x=envtrain,y=sdmdata_train$pa,stepFactor = 0.5)
+    # rf1 <- tuneRF(x=envtrain, y=sdmdata_train$pa, stepFactor = 0.5)
     rf <- randomForest::randomForest(sdmdata_train$pa ~ ., data = envtrain)
-    # rf <- randomForest (x =envtrain ,y=factor(sdmdata_train$pa),xtest=envtest,ytest
+    # rf <- randomForest (x =envtrain , y=factor(sdmdata_train$pa), xtest=envtest, ytest
     # = factor(sdmdata_teste$pa))#fazendo teste interno a funcao evaluate nao serve
     # :(
-    
+
     erf <- dismo::evaluate(envtest_pre, envtest_back, rf)
     rf_TSS <- max(erf@TPR + erf@TNR) - 1
-    
+
     thresholdrf <- erf@t[which.max(erf@TPR + erf@TNR)]
     thrf <- dismo::threshold(erf)
     thrf$AUC <- erf@auc
@@ -102,38 +106,47 @@ do_randomForest <- function(sp,
     thrf$algoritmo <- "rf"
     thrf$partition <- i
     row.names(thrf) <- paste(sp, i, "rf")
-    
+
     rf_cont <- dismo::predict(predictors, rf, progress = "text", type = "response")
     rf_bin <- rf_cont > thresholdrf
     rf_cut <- rf_bin * rf_cont
     # rf1_cut <- rf1_cut/maxValue(rf1_cut)
 
-    write.table(thrf, file = paste0(partition.folder, "/evaluate", 
+    write.table(thrf, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_randomforest.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
-      rf_cont <- cropModel(rf_cont, mask)
-      rf_bin <- cropModel(rf_bin, mask)
-      rf_cut <- cropModel(rf_cut, mask)
+      rf_cont <- crop_model(rf_cont, mask)
+      rf_bin <- crop_model(rf_bin, mask)
+      rf_cut <- crop_model(rf_cut, mask)
     }
-    raster::writeRaster(x = rf_cont, filename = paste0(partition.folder, "/rf_cont_", 
-      sp, "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = rf_bin, filename = paste0(partition.folder, "/rf_bin_", sp, 
-      "_", i, ".tif"), overwrite = T)
-    raster::writeRaster(x = rf_cut, filename = paste0(partition.folder, "/rf_cut_", sp, 
-      "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = rf_cont,
+                        filename = paste0(partition.folder, "/rf_cont_",
+                                           sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = rf_bin,
+                        filename = paste0(partition.folder, "/rf_bin_",
+                                          sp, "_", i, ".tif"), overwrite = T)
+    raster::writeRaster(x = rf_cut,
+                        filename = paste0(partition.folder, "/rf_cut_",
+                                          sp, "_", i, ".tif"), overwrite = T)
 
    if (write_png == T) {
-       png(filename = paste0(partition.folder,"/rf",sp,"_",i,"%03d.png"))
-       raster::plot(rf_cont,main = paste("RF raw","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
-      raster::plot(rf_bin,main = paste("RF P/A","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
-      raster::plot(rf_cut,main = paste("RF cut","\n","AUC =", round(erf@auc,2),'-',"TSS =",round(rf_TSS,2)))
+       png(filename = paste0(partition.folder, "/rf", sp, "_", i, "%03d.png"))
+       raster::plot(rf_cont, main = paste("RF raw", "\n",
+                                          "AUC =", round(erf@auc, 2), "-",
+                                          "TSS =", round(rf_TSS, 2)))
+      raster::plot(rf_bin, main = paste("RF P/A", "\n",
+                                        "AUC =", round(erf@auc, 2), "-",
+                                        "TSS =", round(rf_TSS, 2)))
+      raster::plot(rf_cut, main = paste("RF cut", "\n",
+                                        "AUC =", round(erf@auc, 2), "-",
+                                        "TSS =", round(rf_TSS, 2)))
        dev.off()
        }
 
     if (project.model == T) {
       for (proj in projections) {
-      projection.folder <- paste0(models.dir,"/",sp,"/",proj)
+      projection.folder <- paste0(models.dir, "/", sp, "/", proj)
             if (file.exists(projection.folder) == FALSE)
                 dir.create(paste0(projection.folder), recursive = T)
 
@@ -142,18 +155,22 @@ do_randomForest <- function(sp,
         rf_proj <- predict(data2, rf, progress = "text")
         rf_proj_bin <- rf_proj > thresholdrf
         rf_proj_cut <- rf_proj_bin * rf_proj
-        # Normaliza o modelo cut rf_proj_cut <- rf_proj_cut/maxValue(rf_proj_cut)
+        # Normaliza o modelo cut
+        rf_proj_cut <- rf_proj_cut / maxValue(rf_proj_cut)
         if (class(mask) == "SpatialPolygonsDataFrame") {
-          source("./fct/cropModel.R")
-          rf_proj <- cropModel(rf_proj, mask)
-          rf_proj_bin <- cropModel(rf_proj_bin, mask)
-          rf_proj_cut <- cropModel(rf_proj_cut, mask)
+          rf_proj <- crop_model(rf_proj, mask)
+          rf_proj_bin <- crop_model(rf_proj_bin, mask)
+          rf_proj_cut <- crop_model(rf_proj_cut, mask)
         }
-        writeRaster(x = rf_proj, filename = paste0(projection.folder, "/rf_cont_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = rf_proj_bin, filename = paste0(projection.folder,
-         "/rf_bin_", sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = rf_proj_cut, filename = paste0(projection.folder,
-        "/rf_cut_", sp, "_", i, ".tif"), overwrite = T)
+        writeRaster(x = rf_proj,
+                    filename = paste0(projection.folder, "/rf_cont_", sp, "_",
+                                      i, ".tif"), overwrite = T)
+        writeRaster(x = rf_proj_bin,
+                    filename = paste0(projection.folder, "/rf_bin_", sp, "_",
+                                      i, ".tif"), overwrite = T)
+        writeRaster(x = rf_proj_cut,
+                    filename = paste0(projection.folder, "/rf_cut_", sp, "_",
+                                      i, ".tif"), overwrite = T)
         rm(data2)
       }
     }

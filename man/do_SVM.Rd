@@ -2,33 +2,41 @@
 % Please edit documentation in R/svm.R
 \name{do_SVM}
 \alias{do_SVM}
-\title{Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)}
+\title{Fits ecological niche models using SVM from package kernlab.}
 \usage{
 do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
-  models.dir, project.model, projections, mask, write_png = F, n.back = 500)
+  models.dir = "./models", project.model = FALSE, projections = NULL,
+  mask, write_png = FALSE, n.back)
 }
 \arguments{
-\item{sp}{Um nome de espécie}
+\item{sp}{A character string with the species name}
 
-\item{coordinates}{Uma tabela com pontos de ocorrência}
+\item{coordinates}{A two-column data frame with the occurrence points}
 
-\item{buffer}{Define se será usado buffer e de que tipo ("mean" ou "max")}
+\item{partitions}{The number of partitions for a cross validation}
 
-\item{seed}{Para reprodutibilidade}
+\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
+(F, "mean", "median", "max")}
 
-\item{predictors}{Objeto do tipo RasterStack com variáveis preditoras}
+\item{seed}{For reproducibility purposes}
 
-\item{models.dir}{Path do diretório onde serão escritos os arquivos de saída}
+\item{predictors}{A RasterStack of predictor variables}
 
-\item{mask}{Objeto do tipo SpatialPolygonsDataFrame com máscara}
+\item{models.dir}{Folder path to save the output files}
 
-\item{write_png}{Se o png vai ser criado - defaults to F}
+\item{project.model}{Logical, whether to perform a projection}
 
-\item{n.back}{Número de pontos de background}
+\item{projections}{The RasterStack of projeciton variables}
+
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
+
+\item{write_png}{Logical, whether png files will be written}
+
+\item{n.back}{Number of pseudoabsence points}
 }
 \value{
-Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 }
 \description{
-Faz modelagem de distribuição de espécies com algoritmo SVM (kernlab)
+Fits ecological niche models using SVM from package kernlab.
 }
