@@ -138,6 +138,6 @@ ensemble <- function(sp,
             }
         }
     }
-    return(raster::stack(ensemble.m, ensemble.sd))
+
     print(date())
 }
