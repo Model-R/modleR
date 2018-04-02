@@ -29,3 +29,6 @@ Imports:
     sp
 BugReports: https://github.com/Model-R/Back-end/issues
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

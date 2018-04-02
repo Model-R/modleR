@@ -4,3 +4,7 @@
 .Rapp.history
 script.R
 modelr.Rproj
+inst/doc
+*.html
+*.pdf
+vignettes/modelR_cache

@@ -33,11 +33,12 @@ do_enm <- function(sp,
                    rf = TRUE,
                    svm = TRUE,
                    svm2 = TRUE) {
-    ocorrencias <- coordinates[coordinates$sp == sp, c("lon", "lat")]
+    #ocorrencias <- coordinates[coordinates$sp == sp, c("lon", "lat")]
+
     if (bioclim == T) {
         do_bioclim(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -52,7 +53,7 @@ do_enm <- function(sp,
     if (domain == T) {
         do_domain(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -67,7 +68,7 @@ do_enm <- function(sp,
     if (glm == T) {
         do_GLM(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -82,7 +83,7 @@ do_enm <- function(sp,
     if (mahal == T) {
         do_mahal(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -97,7 +98,7 @@ do_enm <- function(sp,
     if (maxent == T) {
         do_maxent(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -112,7 +113,7 @@ do_enm <- function(sp,
     if (rf == T) {
         do_randomForest(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -127,7 +128,7 @@ do_enm <- function(sp,
     if (svm == T) {
         do_SVM(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,
@@ -142,7 +143,7 @@ do_enm <- function(sp,
     if (svm2 == T) {
         do_SVM2(
             sp,
-            coordinates = ocorrencias,
+            coordinates = coordinates,
             partitions = partitions,
             buffer = buffer,
             seed = seed,

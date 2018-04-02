@@ -1,0 +1,202 @@
+---
+title: "ModelR: a workflow for ecological niche models based on dismo"
+author: "Andrea Sánchez-Tapia"
+date: "`r Sys.Date()`"
+output: 
+    rmarkdown::html_vignette:
+        toc: true
+vignette: >
+  %\VignetteIndexEntry{ModelR: a workflow for ecological niche models based on dismo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+ModelR is a workflow based on dismo designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data to crossvalidation or jacknife procedures depending on the number of occurrence points<!-- precisamos implementar bootstrap-->, then it performs ecological niche models using the several algorithms implemented in the `dismo` package.
+
+The workflow consists of mainly three functions that should be used sequentially.
+
+1. `do_enm()` and each independent `do_[algorithm]` function make the ENM for each partition of the crossvalidation
+2. `final_model()` selects and joins the partition models into a final model per species per algorithm, 
+3. `ensemble_model()` joins the final models per algorithm into an ensemble model.
+
+## Folder structure
+
+`modelr` writes the outputs in the hard disk, according to the following folder structure:   
+
+    `models.dir/projection/partitions`  
+    `models.dir/projection/final_models`  
+    `models.dir/projection/ensemble_models`  
+
++ When projecting models into the present, the projection folder is called `present`.
++ You can set `models.dir` wherever you want in the hard disk, but if you do not modify the default value, it will create the output under the working directory (its default value is `./models.dir`, the period points to the working directory)
++ The nested subfolder structure will remain the same. If you change `final_models` default value ("final_model") you will need to include the new value when calling ensemble() (`final_dir = "[new name]"`), to indicate the function where to look for models.
+
+
+# Fitting a model per partition
+
+All `do_[algorithm]` functions and `do_enm()` create a *model per partition, per algorithm*. The available algorithms are bioclim, domain, maxent, mahalanobis distances, as implemented in `dismo`, and support vector machines (SVM), as implemented by packages `kernlab` and `e1071`. GLM and Random Forest (from package `randomForest`) are also implemented.
+
+```{r load}
+devtools::load_all()
+```
+
+Other options in do_enm and individual algorithm functions are: 
+
++ `partitions`: It implements a k-fold cross-validation (argument `part`, defaults to 3) but overwrites part when n < 10, setting part to the number of occurrence records (a jacknife partition).  
++ `buffer`
++ seed 
++ mask
+
+
+
+
+
+
+
+
+```{r load_java, echo = FALSE}
+dyn.load(
+    '/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/server/libjvm.dylib')
+```
+
+```{r especies}
+library(rJava) 
+library(raster)
+especies <- unique(coordenadas$sp)
+especies
+```
+
+## Fitting one algorithm: `do_bioclim`
+
+### Setting up the data
+
+`modelr` comes with example data, a data frame called coordenadas, with occurrence data for four species, and predictor variables called `variaveis_preditoras`
+
+```{r dataset, fig.width= 5, fig.height=5, fig.cap= "The example dataset: predictor variables and occurrence for four species "}
+head(coordenadas)
+raster::plot(variaveis_preditoras[[1]])
+points(sp::SpatialPoints(coordenadas[,c(2,3)]), 
+       bg = as.numeric(unclass(coordenadas$sp)), pch = 21)
+```
+
+
+We'll filter the coordenadas file to select only the data for the first species: 
+
+```{r occs}
+library(dplyr)
+especies[1]
+occs <- filter(coordenadas, sp == especies[1]) %>% select(lon, lat)
+head(occs)
+```
+
+```{r do_bioclim, cache = T}
+args(do_bioclim)
+do_bioclim(sp = especies[1],
+           coordinates = occs,
+           partitions = 3,
+           buffer = "mean",
+           predictors = variaveis_preditoras,
+           mask = NULL,
+           models.dir = "~/temp",
+           write_png = T,
+           n.back = 500)
+```
+
+
+```{r files}
+list.files("~/temp", recursive = T)
+```
+ 
+At the end of a model round, the partition folder containts: 
+
++ A file called `sdmdata.txt` with the data used for each partition. 
++ Figures in png to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these .png can be controlled with the `write_png` parameter. 
++ A tif file for each partition
++ A .txt table with the evaluation data for each partition: `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These files will be read by the `final_model()` function, to generate the final model per species.
+
+
+### Fitting several algorithms per species: do_enm()
+
+The same modeling procedure can be performed by using do_enm(), that recevives the same parameters as do_bioclim() but allows the user to call the algorithms using TRUE or FALSE statements (just as BIOMOD2 functions do). 
+
+```{r, eval = F}
+args(do_enm)
+do_enm(sp = especies[1],
+       coordinates = coordenadas,
+       partitions = 3,
+       buffer = "mean",
+       predictors = variaveis_preditoras,
+       mask = NULL,
+       models.dir = "~/temp",
+       write_png = T,
+       n.back = 500,
+       bioclim = T)
+```
+
+`do_enm()` calls several independent functions for each algorithm, called `do_[algorithm]`. This allows to parallelize by species and/or species algorithms in multi-cluster environments. The following lines call for bioclim, GLM, maxent, random forests and smv.
+
+```{r, eval = T}
+args(do_enm)
+do_enm(sp = especies[1],
+       coordinates = occs,
+       partitions = 3,
+       buffer = "mean",
+       predictors = variaveis_preditoras,
+       mask = NULL,
+       models.dir = "~/temp",
+       write_png = T,
+       n.back = 500,
+       bioclim = T, 
+       glm = T,
+       maxent = T,
+       rf = T,
+       svm = T)
+```
+
+
+## Joining partitions: `final_model()`
+
+`final_model()` has two main ways to create a final model per algorithm per species.
+
++ It can select the best partitions, with the parameter `select.partitions = T`, and select only those who obtained a TSS value above `TSS.value`. If select.partitions is set to FALSE, it will create the final model using all partitions. 
++ It can also weigh the partitions by a performance metric, giving larger weights to better partitions.
++ The final models can be done using a subset of the algorithms avaliable on the kard disk, using the parameter `algorithms`. If left unspecified, all algorithms will be used.
++ 
+
+
+
+```{r final_model}
+args(final_model)
+final_model(sp = especies[1],
+            select.partitions = F,
+            TSS.value = 0.5,
+            algoritmos = c("BioClim", "glm", "maxent"),
+            models.dir = "~/temp")
+```
+
+`final_model()` creates a .tif fil for each final.model
+ 
+ ```{r}
+final.folder <- list.files("~/temp", recursive = T, pattern = "final_models", include.dirs = T, full.names = T)
+list.files(final.folder)
+```
+
+## ensemble()
+
+```{r}
+ensemble(especies[1],
+         occs = occs,
+         models.dir = "~/temp",
+         consensus = T,
+         consensus.level = 0.5)
+```
+
+
