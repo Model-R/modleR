@@ -125,9 +125,9 @@ At the end of a model round, the partition folder containts:
 
 ### Fitting several algorithms per species: do_enm()
 
-The same modeling procedure can be performed by using do_enm(), that recevives the same parameters as do_bioclim() but allows the user to call the algorithms using TRUE or FALSE statements (just as BIOMOD2 functions do). 
+The same modeling procedure can be performed by using do_enm(), that receives the same parameters as do_bioclim() but allows the user to call the algorithms using TRUE or FALSE statements (just as BIOMOD2 functions do). 
 
-```{r, eval = F}
+```{r do_enm1, eval = F}
 args(do_enm)
 do_enm(sp = especies[1],
        coordinates = coordenadas,
@@ -143,7 +143,7 @@ do_enm(sp = especies[1],
 
 `do_enm()` calls several independent functions for each algorithm, called `do_[algorithm]`. This allows to parallelize by species and/or species algorithms in multi-cluster environments. The following lines call for bioclim, GLM, maxent, random forests and smv.
 
-```{r, eval = T}
+```{r do_enm2, eval = F, cache = T}
 args(do_enm)
 do_enm(sp = especies[1],
        coordinates = occs,
@@ -164,34 +164,43 @@ do_enm(sp = especies[1],
 
 ## Joining partitions: `final_model()`
 
-`final_model()` has two main ways to create a final model per algorithm per species.
+There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-+ It can select the best partitions, with the parameter `select.partitions = T`, and select only those who obtained a TSS value above `TSS.value`. If select.partitions is set to FALSE, it will create the final model using all partitions. 
-+ It can also weigh the partitions by a performance metric, giving larger weights to better partitions.
-+ The final models can be done using a subset of the algorithms avaliable on the kard disk, using the parameter `algorithms`. If left unspecified, all algorithms will be used.
-+ 
+![](final_model_english.png)
 
 
++ It can weigh the partitions by a performance metric `weigh.partitions = TRUE` and `weight.par = "spec_sens"`, and give larger weights to partitions with better performance. This results in a continuous, uncut surface. 
++ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, it will create the final model using all partitions. 
++ The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
++ The selected models/algorithms form a `raster::rasterStack()` object. Their mean can be calculated (step 2) and the binary model can be obtained by cutting by the mean threshold (meanTSSth) that maximizes the individual partition's TSS (step 3)
++ The selected binary models (step 5) can also be joined by a mean (step 7) and a binary (step 8) or cut (step 9) model can be obtained through levels of consensus (defaults to 0.5: majority consensus approach).
 
-```{r final_model}
+```{r final_model, cache = T}
 args(final_model)
 final_model(sp = especies[1],
             select.partitions = F,
             TSS.value = 0.5,
-            algoritmos = c("BioClim", "glm", "maxent"),
+            algoritmos = c("bioclim", "glm", "maxent"),
             models.dir = "~/temp")
 ```
 
-`final_model()` creates a .tif fil for each final.model
+`final_model()` creates a .tif file for each final.model
  
- ```{r}
+```{r final_folder}
 final.folder <- list.files("~/temp", recursive = T, pattern = "final_models", include.dirs = T, full.names = T)
 list.files(final.folder)
 ```
 
+```{r}
+final_models <- raster::stack(final.folder)
+plot(final_models[])
+```
+
 ## ensemble()
 
-```{r}
+Ensemble() joins the final models into a mean
+
+```{r ensemble, cache = T}
 ensemble(especies[1],
          occs = occs,
          models.dir = "~/temp",
