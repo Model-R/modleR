@@ -1,4 +1,4 @@
-#' Fits ecological niche models using SVM from package kernlab.
+#' Fits ecological niche models using SVM from package kernlab (function ksvm()).
 #'
 #' @inheritParams do_bioclim
 #' @return A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)

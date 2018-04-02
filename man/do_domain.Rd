@@ -2,7 +2,7 @@
 % Please edit documentation in R/domain.R
 \name{do_domain}
 \alias{do_domain}
-\title{Fits ecological niche models using Domain.}
+\title{Fits ecological niche models using domain.}
 \usage{
 do_domain(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir = "./models", project.model = FALSE,
@@ -38,5 +38,5 @@ do_domain(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 A data frame with the evaluation statistics (TSS, AUC, etc.)
 }
 \description{
-Fits ecological niche models using Domain.
+Fits ecological niche models using domain.
 }

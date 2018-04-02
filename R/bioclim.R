@@ -1,4 +1,4 @@
-#' Fits ecological niche models using Bioclim.
+#' Fits ecological niche models using bioclim.
 #'
 #' @param sp A character string with the species name
 #' @param coordinates A two-column data frame with the occurrence points
@@ -29,7 +29,7 @@ do_bioclim <- function(sp,
                        mask,
                        write_png = FALSE,
                        n.back) {
-  cat(paste("Bioclim", "\n"))
+  cat(paste("bioclim", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
        dir.create(paste0(models.dir))
@@ -103,9 +103,9 @@ do_bioclim <- function(sp,
     bc_cut <- bc_cont * bc_bin
     thbc$AUC <- ebc@auc
     thbc$TSS <- bc_TSS
-    thbc$algoritmo <- "BioClim"
+    thbc$algoritmo <- "bioclim"
     thbc$partition <- i
-    row.names(thbc) <- paste(sp, i, "BioClim")
+    row.names(thbc) <- paste(sp, i, "bioclim")
 
     write.table(thbc, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_bioclim.txt"))
@@ -116,25 +116,25 @@ do_bioclim <- function(sp,
     bc_cut <- crop_model(bc_cut, mask)
     }
     raster::writeRaster(x = bc_cont,
-                        filename = paste0(partition.folder, "/BioClim_cont_",
+                        filename = paste0(partition.folder, "/bioclim_cont_",
                                           sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = bc_bin,
-                        filename = paste0(partition.folder, "/BioClim_bin_",
+                        filename = paste0(partition.folder, "/bioclim_bin_",
                                           sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = bc_cut,
-                        filename = paste0(partition.folder, "/BioClim_cut_",
+                        filename = paste0(partition.folder, "/bioclim_cut_",
                                           sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(paste0(partition.folder, "/Bioclim", sp, "_", i, "%03d.png"))
+      png(paste0(partition.folder, "/bioclim", sp, "_", i, "%03d.png"))
       raster::plot(bc_cont,
-                   main = paste("Bioclim raw", "\n",
+                   main = paste("bioclim raw", "\n",
                                 "AUC =", round(ebc@auc, 2), "-",
                                 "TSS =", round(bc_TSS, 2)))
-      raster::plot(bc_bin, main = paste("Bioclim P/A", "\n",
+      raster::plot(bc_bin, main = paste("bioclim P/A", "\n",
                                         "AUC =", round(ebc@auc, 2), "-",
                                         "TSS =", round(bc_TSS, 2)))
-      raster::plot(bc_cut, main = paste("Bioclim cut", "\n",
+      raster::plot(bc_cut, main = paste("bioclim cut", "\n",
                                         "AUC =", round(ebc@auc, 2), "-",
                                         "TSS =", round(bc_TSS, 2)))
       dev.off()
@@ -158,13 +158,13 @@ do_bioclim <- function(sp,
           bc_proj_cut <- crop_model(bc_proj_cut, mask)
         }
         writeRaster(x = bc_proj,
-                    filename = paste0(projection.folder, "/BioClim_cont_",
+                    filename = paste0(projection.folder, "/bioclim_cont_",
                                       sp, "_", i, ".tif"), overwrite = T)
         writeRaster(x = bc_proj_bin,
-                    filename = paste0(projection.folder, "/BioClim_bin_",
+                    filename = paste0(projection.folder, "/bioclim_bin_",
                                       sp, "_", i, ".tif"), overwrite = T)
         writeRaster(x = bc_proj_cut,
-                    filename = paste0(projection.folder, "/BioClim_cut_",
+                    filename = paste0(projection.folder, "/bioclim_cut_",
                                       sp, "_", i, ".tif"), overwrite = T)
         rm(data2)
       }

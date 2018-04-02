@@ -1,4 +1,4 @@
-#' Fits ecological niche models using Domain.
+#' Fits ecological niche models using domain.
 #'
 #' @inheritParams do_bioclim
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
@@ -15,7 +15,7 @@ do_domain <- function(sp,
                       mask,
                       write_png = FALSE,
                       n.back) {
-  cat(paste("Domain", "\n"))
+  cat(paste("domain", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
        dir.create(paste0(models.dir))
@@ -89,9 +89,9 @@ do_domain <- function(sp,
     do_cut <- do_cont * do_bin
     thdo$AUC <- edo@auc
     thdo$TSS <- do_TSS
-    thdo$algoritmo <- "Domain"
+    thdo$algoritmo <- "domain"
     thdo$partition <- i
-    row.names(thdo) <- paste(sp, i, "Domain")
+    row.names(thdo) <- paste(sp, i, "domain")
 
     write.table(thdo, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_domain.txt"))
@@ -102,26 +102,26 @@ do_domain <- function(sp,
       do_cut  <- crop_model(do_cut, mask)
     }
     raster::writeRaster(x = do_cont,
-                        filename = paste0(partition.folder, "/Domain_cont_",
+                        filename = paste0(partition.folder, "/domain_cont_",
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = do_bin,
-                        filename = paste0(partition.folder, "/Domain_bin_",
+                        filename = paste0(partition.folder, "/domain_bin_",
       sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = do_cut,
-                        filename = paste0(partition.folder, "/Domain_cut_",
+                        filename = paste0(partition.folder, "/domain_cut_",
       sp, "_", i, ".tif"), overwrite = T)
 
     if (write_png == T) {
         png(filename = paste0(partition.folder,
-                              "/Domain", sp, "_", i, "%03d.png"))
+                              "/domain", sp, "_", i, "%03d.png"))
         plot(do_cont,
-             main = paste("Domain raw", "\n", "AUC =", round(edo@auc, 2), "-",
+             main = paste("domain raw", "\n", "AUC =", round(edo@auc, 2), "-",
                           "TSS =", round(do_TSS, 2)))
         plot(do_bin,
-             main = paste("Domain P/A", "\n", "AUC =", round(edo@auc, 2), "-",
+             main = paste("domain P/A", "\n", "AUC =", round(edo@auc, 2), "-",
                           "TSS =", round(do_TSS, 2)))
         plot(do_cut,
-             main = paste("Domain cut", "\n", "AUC =", round(edo@auc, 2), "-",
+             main = paste("domain cut", "\n", "AUC =", round(edo@auc, 2), "-",
                           "TSS =", round(do_TSS, 2)))
         dev.off()
         }
@@ -146,13 +146,13 @@ do_domain <- function(sp,
           do_proj_cut <- crop_model(do_proj_cut, mask)
         }
         writeRaster(x = do_proj,
-                    filename = paste0(projection.folder, "/Domain_cont_", sp,
+                    filename = paste0(projection.folder, "/domain_cont_", sp,
                                       "_", i, ".tif"), overwrite = T)
         writeRaster(x = do_proj_bin,
-                    filename = paste0(projection.folder, "/Domain_bin_", sp,
+                    filename = paste0(projection.folder, "/domain_bin_", sp,
                                       "_", i, ".tif"), overwrite = T)
         writeRaster(x = do_proj_cut,
-                    filename = paste0(projection.folder, "/Domain_cut_", sp,
+                    filename = paste0(projection.folder, "/domain_cut_", sp,
                                       "_", i, ".tif"), overwrite = T)
         rm(data2)
       }

@@ -111,9 +111,9 @@ do_mahal <- function(sp,
 
     thma$AUC <- ema@auc
     thma$TSS <- ma_TSS
-    thma$algoritmo <- "Mahal"
+    thma$algoritmo <- "mahal"
     thma$partition <- i
-    row.names(thma) <- paste(sp, i, "Mahal")
+    row.names(thma) <- paste(sp, i, "mahal")
 
     write.table(thma, file = paste0(partition.folder, "/evaluate",
       sp, "_", i, "_mahal.txt"))
@@ -135,15 +135,15 @@ do_mahal <- function(sp,
 
        if (write_png == T) {
            png(filename = paste0(partition.folder,
-                                 "/Mahal", sp, "_", i, "%03d.png"))
+                                 "/mahal", sp, "_", i, "%03d.png"))
            plot(ma_cont,
-                main = paste("Mahal raw", "\n",
+                main = paste("mahal raw", "\n",
                              "AUC =", round(ema@auc, 2), "-",
                              "TSS =", round(ma_TSS, 2)))
-           plot(ma_bin, main = paste("Mahal P/A", "\n",
+           plot(ma_bin, main = paste("mahal P/A", "\n",
                                      "AUC =", round(ema@auc, 2), "-",
                                      "TSS =", round(ma_TSS, 2)))
-           plot(ma_cut, main = paste("Mahal cut", "\n",
+           plot(ma_cut, main = paste("mahal cut", "\n",
                                      "AUC =", round(ema@auc, 2), "-",
                                      "TSS =", round(ma_TSS, 2)))
            dev.off()

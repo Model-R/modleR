@@ -2,7 +2,7 @@
 % Please edit documentation in R/svm.R
 \name{do_SVM}
 \alias{do_SVM}
-\title{Fits ecological niche models using SVM from package kernlab.}
+\title{Fits ecological niche models using SVM from package kernlab (function ksvm()).}
 \usage{
 do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
   models.dir = "./models", project.model = FALSE, projections = NULL,
@@ -38,5 +38,5 @@ do_SVM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 A data frame with the evaluation statistics (TSS, AUC, and their respective thresholds)
 }
 \description{
-Fits ecological niche models using SVM from package kernlab.
+Fits ecological niche models using SVM from package kernlab (function ksvm()).
 }

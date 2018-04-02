@@ -2,7 +2,7 @@
 % Please edit documentation in R/bioclim.R
 \name{do_bioclim}
 \alias{do_bioclim}
-\title{Fits ecological niche models using Bioclim.}
+\title{Fits ecological niche models using bioclim.}
 \usage{
 do_bioclim(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir = "./models", project.model = FALSE,
@@ -38,5 +38,5 @@ do_bioclim(sp, coordinates, partitions, buffer = FALSE, seed = 512,
 A data frame with the evaluation statistics (TSS, AUC, etc.)
 }
 \description{
-Fits ecological niche models using Bioclim.
+Fits ecological niche models using bioclim.
 }

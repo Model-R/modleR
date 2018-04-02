@@ -16,7 +16,7 @@ do_maxent <- function(sp,
                       write_png = FALSE,
                       n.back) {
 
-  cat(paste("Maxent", "\n"))
+  cat(paste("maxent", "\n"))
 
   if (file.exists(paste0(models.dir)) == FALSE)
        dir.create(paste0(models.dir))
@@ -114,9 +114,9 @@ do_maxent <- function(sp,
 
   if (write_png == T) {
       png(filename = paste0(partition.folder, "/maxent", sp, "_", i, "%03d.png"))
-      raster::plot(mx_cont, main = paste("Maxent raw", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
-      raster::plot(mx_bin, main = paste("Maxent P/A", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
-      raster::plot(mx_cut, main = paste("Maxent cut", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      raster::plot(mx_cont, main = paste("maxent raw", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      raster::plot(mx_bin, main = paste("maxent P/A", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      raster::plot(mx_cut, main = paste("maxent cut", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
       dev.off()
       }
 

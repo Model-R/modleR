@@ -1,8 +1,9 @@
 #' Joins ENM from several partitions, creating a model per algorithm.
 #'
+#' This function reads the output from dismo.mod and creates a model per species
 #' @param sp A character string with the species name
 #' @param select.partitions TRUE ou FALSE
-#' @param algoritmos Which algorithms will be processed.
+#' @param algorithms Which algorithms will be processed.
 #' @param threshold Which cutting threshold will be used, defaults to "spec_sens"
 #' @param TSS.value Threshold to select models from TSS values
 #' @param models.dir Character. Folder path where the input files are located
@@ -15,7 +16,7 @@
 #' @export
 final_model <- function(sp,
                         select.partitions = TRUE,
-                        algoritmos = c("bioclim","domain","glm","mahal",
+                        algorithms = c("bioclim", "domain", "glm", "mahal",
                                        "maxent", "rf", "svm"),
                         threshold = c("spec_sens"),
                         TSS.value = 0.7,
@@ -44,10 +45,10 @@ final_model <- function(sp,
 
     # Extracts only for the selected algorithm
     if (exists("algoritmos") == F)
-        algoritmos <- unique(stats$algoritmo)
-    algoritmos <- as.factor(algoritmos)
+        algorithms <- unique(stats$algoritmo)
+    algoritmos <- as.factor(algorithms)
     todo <- raster::stack()
-    for (algo in algoritmos) {
+    for (algo in algorithms) {
         cat(paste("Extracting data for", algo, "\n"))
         stats2 <- stats[stats$algoritmo == algo, ]
         part <- nrow(stats2)  #How many partitions were there
@@ -76,6 +77,9 @@ final_model <- function(sp,
         if (select.partitions == T) {
             cat("selecting partitions for", sp, algo, "\n")
             sel.index <- which(stats2[, "TSS"] >= TSS.value)
+        } else {
+            sel.index <- 1:nrow(stats2)
+            }
             cont.sel  <- mod.cont[[sel.index]]  #(1)
             bin.sel   <- mod.bin[[sel.index]]  #(5)
 
@@ -87,13 +91,8 @@ final_model <- function(sp,
 
             # en caso de que sea solo uno varios modelos son el mismo
             if (length(sel.index) == 1) {
-                cat(paste(
-                    length(sel.index),
-                    "partition was selected for",
-                    sp,
-                    algo,
-                    "\n"
-                ))
+                cat(paste(length(sel.index), "partition was selected for",
+                    sp, algo, "\n"))
 
                 # bin.sel #[3] bin.sel #[7]
                 final <- raster::stack(bin.sel, bin.sel)
@@ -103,12 +102,8 @@ final_model <- function(sp,
             # en caso de que sean más aplica el mapa
 
             if (length(sel.index) > 1) {
-                cat(paste(
-                    length(sel.index),
-                    "partitions were selected for",
-                    sp,
-                    "\n"
-                ))
+                cat(paste(length(sel.index), "partitions were selected for", sp,
+                    "\n"))
 
                 final.cont.mean <- mean(cont.sel)  #(2)
                 final.bin.mean <- (final.cont.mean > th.mean)  #(3)
@@ -144,7 +139,7 @@ final_model <- function(sp,
             cat("select", sp, algo, "DONE", "\n")
 
         }
-    }
+
 
     print(paste("DONE", algo, "\n"))
     print(date())

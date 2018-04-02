@@ -90,9 +90,9 @@ do_SVM2 <- function(sp,
       -pa))  #new
 
 
-    svm2 <- e1071::best.tune("svm", envtrain, sdmdata_train$pa, data = envtrain)  ##svm deve ser com a variável resposta binária ou contínua, eu acho que binária
+    svm2 <- e1071::best.tune("svm", envtrain, sdmdata_train$pa, data = envtrain)
     esvm2 <- dismo::evaluate(envtest_pre, envtest_back, svm2)
-    # esvm <- evaluate(pres_test, backg_test, model = svm, x = predictors)
+    # esvm <- evaluate(pres_test, backg_test, model = svm2, x = predictors)
     svm2_TSS <- max(esvm2@TPR + esvm2@TNR) - 1
     thresholdsvm2 <- esvm2@t[which.max(esvm2@TPR + esvm2@TNR)]
     thsvm2 <- dismo::threshold(esvm2)
