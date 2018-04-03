@@ -124,13 +124,13 @@ do_mahal <- function(sp,
       ma_cut <- crop_model(ma_cut, mask)
     }
     raster::writeRaster(x = ma_cont,
-                        filename = paste0(partition.folder, "/Mahal_cont_",
+                        filename = paste0(partition.folder, "/mahal_cont_",
                                           sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = ma_bin,
-                        filename = paste0(partition.folder, "/Mahal_bin_",
+                        filename = paste0(partition.folder, "/mahal_bin_",
                                           sp, "_", i, ".tif"), overwrite = T)
     raster::writeRaster(x = ma_cut,
-                        filename = paste0(partition.folder, "/Mahal_cut_",
+                        filename = paste0(partition.folder, "/mahal_cut_",
                                           sp, "_", i, ".tif"), overwrite = T)
 
        if (write_png == T) {
@@ -179,7 +179,7 @@ do_mahal <- function(sp,
           rm(data2)
         }
       }
-    } else cat("Mahalanobis distance did not run")
+    } else cat("mahalanobis distance did not run")
   }
   return(thma)
 }

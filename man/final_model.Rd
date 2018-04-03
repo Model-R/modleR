@@ -4,19 +4,24 @@
 \alias{final_model}
 \title{Joins ENM from several partitions, creating a model per algorithm.}
 \usage{
-final_model(sp, select.partitions = TRUE, algoritmos = c("bioclim",
-  "domain", "glm", "mahal", "maxent", "rf", "svm"),
-  threshold = c("spec_sens"), TSS.value = 0.7, models.dir = "./models",
+final_model(species.name, select.partitions = TRUE,
+  weight.partitions = FALSE, algorithms = NULL,
+  threshold = c("spec_sens"), weight.par = c("TSS", "AUC"),
+  TSS.value = 0.7, consensus.level = 0.5, models.dir = "./models",
   final.dir = "final_models")
 }
 \arguments{
-\item{sp}{A character string with the species name}
+\item{species.name}{A character string with the species name}
 
 \item{select.partitions}{TRUE ou FALSE}
 
-\item{algoritmos}{Which algorithms will be processed.}
+\item{algorithms}{Which algorithms will be processed.}
 
-\item{threshold}{Which cutting threshold will be used, defaults to "spec_sens"}
+\item{threshold}{Which selecting threshold will be used to cut the mean
+models in final_model_3 approach (see vignettes), it
+defaults to "spec_sens" but any dismo threshold
+can be used: "kappa", "no_omission", "prevalence",
+"equal_sens_spec", "sensitivity".}
 
 \item{TSS.value}{Threshold to select models from TSS values}
 
@@ -30,5 +35,5 @@ A set of ecological niche models and figures (optional) written in the
          \code{final.dir} subfolder
 }
 \description{
-Joins ENM from several partitions, creating a model per algorithm.
+This function reads the output from dismo.mod and creates a model per species
 }
