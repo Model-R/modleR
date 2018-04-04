@@ -26,7 +26,7 @@ do_bioclim <- function(sp,
                        models.dir = "./models",
                        project.model = FALSE,
                        projections = NULL,
-                       mask,
+                       mask = NULL,
                        write_png = FALSE,
                        n.back) {
   cat(paste("bioclim", "\n"))

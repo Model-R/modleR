@@ -12,7 +12,7 @@ do_SVM <- function(sp,
                    models.dir = "./models",
                    project.model = FALSE,
                    projections = NULL,
-                   mask,
+                   mask = NULL,
                    write_png = FALSE,
                    n.back) {
 

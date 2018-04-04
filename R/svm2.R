@@ -12,7 +12,7 @@ do_SVM2 <- function(sp,
                     models.dir = "./models",
                     project.model = FALSE,
                     projections = NULL,
-                    mask,
+                    mask = NULL,
                     write_png = FALSE,
                     n.back) {
   cat(paste("SVM2", "\n"))

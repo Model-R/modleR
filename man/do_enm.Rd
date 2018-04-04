@@ -6,9 +6,9 @@
 \usage{
 do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
   models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask, write_png = FALSE, n.back, bioclim = TRUE, domain = TRUE,
-  glm = TRUE, mahal = TRUE, maxent = TRUE, rf = TRUE, svm = TRUE,
-  svm2 = TRUE)
+  mask = NULL, write_png = FALSE, n.back, bioclim = FALSE,
+  domain = FALSE, glm = FALSE, mahal = FALSE, maxent = FALSE,
+  rf = FALSE, svm = FALSE, svm2 = FALSE)
 }
 \arguments{
 \item{sp}{A character string with the species name}
@@ -36,24 +36,24 @@ do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 
 \item{n.back}{Number of pseudoabsence points}
 
-\item{bioclim}{Execute bioclim from its dismo implementation}
+\item{bioclim}{Execute bioclim from the dismo implementation}
 
-\item{domain}{Execute domain from its dismo implementation}
+\item{domain}{Execute domain from the dismo implementation}
 
-\item{glm}{Execute glm from the dismo implementation}
+\item{glm}{Execute GLM as suggested by the dismo documentation}
 
-\item{mahal}{Execute mahalanobis distance from its dismo implementation}
+\item{mahal}{Execute mahalanobis distance from the dismo implementation}
 
-\item{maxent}{Execute maxent from its dismo implementation}
+\item{maxent}{Execute maxent from the dismo implementation}
 
-\item{rf}{Execute random forests from its dismo implementation}
+\item{rf}{Execute random forests from randomForest() as suggested by the dismo documentation}
 
 \item{svm}{Execute svm from kernlab package}
 
 \item{svm2}{Execute svm from e1071 package}
 }
 \value{
-A set of ecological niche models for each partiion and algorithm,
+A set of ecological niche models for each partition and algorithm,
         written in the \code{models.dir} subfolder
 }
 \description{

@@ -6,7 +6,7 @@
 \usage{
 do_GLM(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
   models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask, write_png = FALSE, n.back)
+  mask = NULL, write_png = FALSE, n.back)
 }
 \arguments{
 \item{sp}{A character string with the species name}

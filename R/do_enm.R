@@ -1,15 +1,15 @@
 #' Fits ecological niche models for various algorithms.
 #'
 #' @inheritParams do_bioclim
-#' @param bioclim Execute bioclim from its dismo implementation
-#' @param domain Execute domain from its dismo implementation
-#' @param mahal Execute mahalanobis distance from its dismo implementation
-#' @param maxent Execute maxent from its dismo implementation
-#' @param glm Execute glm from the dismo implementation
-#' @param rf Execute random forests from its dismo implementation
+#' @param bioclim Execute bioclim from the dismo implementation
+#' @param domain Execute domain from the dismo implementation
+#' @param mahal Execute mahalanobis distance from the dismo implementation
+#' @param maxent Execute maxent from the dismo implementation
+#' @param glm Execute GLM as suggested by the dismo documentation
+#' @param rf Execute random forests from randomForest() as suggested by the dismo documentation
 #' @param svm Execute svm from kernlab package
 #' @param svm2 Execute svm from e1071 package
-#' @return A set of ecological niche models for each partiion and algorithm,
+#' @return A set of ecological niche models for each partition and algorithm,
 #'         written in the \code{models.dir} subfolder
 #' @export
 #'
@@ -22,17 +22,17 @@ do_enm <- function(sp,
                    models.dir = "./models",
                    project.model = FALSE,
                    projections = NULL,
-                   mask,
+                   mask = NULL,
                    write_png = FALSE,
                    n.back,
-                   bioclim = TRUE,
-                   domain = TRUE,
-                   glm = TRUE,
-                   mahal = TRUE,
-                   maxent = TRUE,
-                   rf = TRUE,
-                   svm = TRUE,
-                   svm2 = TRUE) {
+                   bioclim = FALSE,
+                   domain = FALSE,
+                   glm = FALSE,
+                   mahal = FALSE,
+                   maxent = FALSE,
+                   rf = FALSE,
+                   svm = FALSE,
+                   svm2 = FALSE) {
     #ocorrencias <- coordinates[coordinates$sp == sp, c("lon", "lat")]
 
     if (bioclim == T) {
@@ -111,7 +111,7 @@ do_enm <- function(sp,
             write_png = write_png)
     }
     if (rf == T) {
-        do_randomForest(
+        do_rf(
             sp,
             coordinates = coordinates,
             partitions = partitions,

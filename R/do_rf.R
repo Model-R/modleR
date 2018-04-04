@@ -3,19 +3,20 @@
 #' @inheritParams do_bioclim
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @export
-do_randomForest <- function(sp,
-                            coordinates,
-                            partitions,
-                            buffer = FALSE,
-                            seed = 512,
-                            predictors,
-                            models.dir = "./models",
-                            project.model = FALSE,
-                            projections = NULL,
-                            mask,
-                            write_png = FALSE,
-                            n.back) {
-  cat(paste("Random Forests", "\n"))
+do_rf <- function(sp,
+                  coordinates,
+                  partitions,
+                  buffer = FALSE,
+                  seed = 512,
+                  predictors,
+                  models.dir = "./models",
+                  project.model = FALSE,
+                  projections = NULL,
+                  mask = NULL,
+                  write_png = FALSE,
+                  n.back) {
+
+  cat(paste("randomForests", "\n"))
 
     if (file.exists(paste0(models.dir)) == FALSE)
         dir.create(paste0(models.dir))
@@ -113,7 +114,7 @@ do_randomForest <- function(sp,
     # rf1_cut <- rf1_cut/maxValue(rf1_cut)
 
     write.table(thrf, file = paste0(partition.folder, "/evaluate",
-      sp, "_", i, "_randomforest.txt"))
+      sp, "_", i, "_rf.txt"))
 
     if (class(mask) == "SpatialPolygonsDataFrame") {
       rf_cont <- crop_model(rf_cont, mask)
