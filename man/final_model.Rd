@@ -4,18 +4,23 @@
 \alias{final_model}
 \title{Joins ENM from several partitions, creating a model per algorithm.}
 \usage{
-final_model(species.name, select.partitions = TRUE,
-  weight.partitions = FALSE, algorithms = NULL,
-  threshold = c("spec_sens"), weight.par = c("TSS", "AUC"),
-  TSS.value = 0.7, consensus.level = 0.5, models.dir = "./models",
+final_model(species.name, algorithms = NULL, weight.par = NULL,
+  select.partitions = TRUE, TSS.value = 0.7, threshold = c("spec_sens"),
+  consensus.level = 0.5, models.dir = "./models",
   final.dir = "final_models")
 }
 \arguments{
 \item{species.name}{A character string with the species name}
 
+\item{algorithms}{Which algorithms will be processed. If no name is given it
+will process all algorithms present in the evaluation files}
+
+\item{weight.par}{Which performance statistic should be used to weight the
+partitions defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
+
 \item{select.partitions}{TRUE ou FALSE}
 
-\item{algorithms}{Which algorithms will be processed.}
+\item{TSS.value}{Threshold to select models from TSS values}
 
 \item{threshold}{Which selecting threshold will be used to cut the mean
 models in final_model_3 approach (see vignettes), it
@@ -23,7 +28,8 @@ defaults to "spec_sens" but any dismo threshold
 can be used: "kappa", "no_omission", "prevalence",
 "equal_sens_spec", "sensitivity".}
 
-\item{TSS.value}{Threshold to select models from TSS values}
+\item{consensus.level}{Which proportion of models will be kept when creating
+\code{final_model_8} (binary)}
 
 \item{models.dir}{Character. Folder path where the input files are located}
 

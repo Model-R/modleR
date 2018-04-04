@@ -6,8 +6,8 @@
 \usage{
 ensemble(species.name, occs, models.dir = "./models",
   final.dir = "final_models", ensemble.dir = "ensemble",
-  which.models = c("final_model_3", "final_model_7"), consensus = F,
-  consensus.level = 0.5, write_png = T, write_reflora_map = F)
+  which.models = c("final_model_3", "final_model_7"), consensus = FALSE,
+  consensus.level = 0.5, write_png = T, write_raw_map = F)
 }
 \arguments{
 \item{species.name}{A character string with the species name}
@@ -41,12 +41,12 @@ files. A subfolder will be created.}
 
 \item{write_png}{Write png? Defaults to TRUE}
 
-\item{write_reflora_map}{Create a raw map without margins}
+\item{write_raw_map}{Create a mean raw map without margins}
 }
 \value{
-A rasterStack with the mean and standard deviation of the assembled
-        models. A set of ensemble models and figures (optional) written in
-        the \code{ensemble.dir} subfolder
+A rasterStack with the minimun, maximum, median, mean and standard
+deviation of the assembled models. A set of ensemble models and figures
+(optional) written in the \code{ensemble.dir} subfolder
 }
 \description{
 \code{ensemble} takes the input of \code{final_model} and builds an ensemble

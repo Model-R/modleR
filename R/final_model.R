@@ -2,14 +2,19 @@
 #'
 #' This function reads the output from dismo.mod and creates a model per species
 #' @param species.name A character string with the species name
+#' @param algorithms Which algorithms will be processed. If no name is given it
+#' will process all algorithms present in the evaluation files
+#' @param weight.par Which performance statistic should be used to weight the
+#'  partitions defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select.partitions TRUE ou FALSE
-#' @param algorithms Which algorithms will be processed.
 #' @param TSS.value Threshold to select models from TSS values
 #' @param threshold Which selecting threshold will be used to cut the mean
 #'                  models in final_model_3 approach (see vignettes), it
 #'                  defaults to "spec_sens" but any dismo threshold
 #'                  can be used: "kappa", "no_omission", "prevalence",
 #'                  "equal_sens_spec", "sensitivity".
+#' @param consensus.level Which proportion of models will be kept when creating
+#'                   \code{final_model_8} (binary)
 #' @param models.dir Character. Folder path where the input files are located
 #' @param final.dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
@@ -19,12 +24,11 @@
 #' @importFrom utils read.table
 #' @export
 final_model <- function(species.name,
-                        select.partitions = TRUE,
-                        weight.partitions = FALSE,
                         algorithms = NULL,
-                        threshold = c("spec_sens"),
-                        weight.par = c("TSS", "AUC"),
+                        weight.par = NULL,
+                        select.partitions = TRUE,
                         TSS.value = 0.7,
+                        threshold = c("spec_sens"),
                         consensus.level = 0.5,
                         models.dir = "./models",
                         final.dir = "final_models") {
@@ -122,7 +126,7 @@ final_model <- function(species.name,
                 cat("selected final models for", species.name, algo, "DONE", "\n")
             }
 
-            if (weight.partitions == TRUE) {
+            if (!is.null(weight.par)) {
                 final.w <- stack()
                 for (wpar in unique(weight.par)) {
                     pond.stats <- stats2[, wpar]

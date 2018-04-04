@@ -25,16 +25,17 @@
 #' @param consensus.level Threshold for the consensus rule, betwen 0 and 1
 #'                        (0.5 means a majority rule).
 #' @param write_png Write png? Defaults to TRUE
-#' @param write_reflora_map Create a raw map without margins
+#' @param write_raw_map Create a mean raw map without margins
 #'
 #' @import raster
+#' @importFrom scales alpha
 #' @import graphics
 #' @importFrom stats sd
 #' @export
 #' @seealso \link{final_model}
-#' @return A rasterStack with the mean and standard deviation of the assembled
-#'         models. A set of ensemble models and figures (optional) written in
-#'         the \code{ensemble.dir} subfolder
+#' @return A rasterStack with the minimun, maximum, median, mean and standard
+#' deviation of the assembled models. A set of ensemble models and figures
+#' (optional) written in the \code{ensemble.dir} subfolder
 ensemble <- function(species.name,
                      occs,
                      models.dir = "./models",
@@ -44,7 +45,7 @@ ensemble <- function(species.name,
                      consensus = FALSE,
                      consensus.level = 0.5,
                      write_png = T,
-                     write_reflora_map = F) {
+                     write_raw_map = F) {
 
     ## output folder
     if (file.exists(
@@ -65,10 +66,10 @@ ensemble <- function(species.name,
             cat(paste(length(tif.files),
                       "models to ensemble from for", species.name, "\n"))
             mod2 <- raster::stack(tif.files)
-            if (length(tif.files) == 1) {
-                ensemble.m <- mod2
-            } else {
-                ensemble.m <- raster::overlay(mod2, fun = function(x) {
+            #if (length(tif.files) == 1) {
+             #   ensemble.mean <- mod2
+            #} else {
+                ensemble.mean <- raster::overlay(mod2, fun = function(x) {
                     return(mean(x, na.rm = T))
                     }
                     )
@@ -76,16 +77,31 @@ ensemble <- function(species.name,
                     return(sd(x, na.rm = T))
                     }
                     )
-            }
+                ensemble.min <- raster::overlay(mod2, fun = function(x) {
+                    return(min(x, na.rm = T))
+                    }
+                    )
+                ensemble.max <- raster::overlay(mod2, fun = function(x) {
+                    return(max(x, na.rm = T))
+                    }
+                    )
+                ensemble.median <- raster::overlay(mod2, fun = function(x) {
+                    return(stats::median(x, na.rm = T))
+                    }
+                    )
+            ensemble.mods <- raster::stack(ensemble.mean, ensemble.median, ensemble.sd,
+                                   ensemble.min, ensemble.max)
+            names(ensemble.mods) <- c("mean", "median", "sd", "min", "max")
+
             coord <- occs[occs$sp == species.name, c("lon", "lat")]
 
             if (write_png) {
                 png(filename = paste0(models.dir, "/", species.name, "/present/",
                                       ensemble.dir, "/", species.name, "_", whi,
-                                      "_ensemble.png"),
+                                      "_ensemble_mean.png"),
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
-                raster::plot(ensemble.m)
+                raster::plot(ensemble.mean)
                 maps::map("world",
                           c("", "South America"),
                           add = T,
@@ -94,35 +110,37 @@ ensemble <- function(species.name,
                        bg = scales::alpha("cyan", 0.6))
                 dev.off()
             }
-            if (write_reflora_map) {
+            if (write_raw_map) {
                 png(filename = paste0(models.dir, "/", species.name, "/present/",
                                   ensemble.dir, "/", species.name, "_", whi,
                                   "_ensemble_without_margins.png"),
                     bg = "transparent",
                 res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
-                raster::image(ensemble.m, col = rev(terrain.colors(25)),
+                raster::image(ensemble.mean, col = rev(terrain.colors(25)),
                           axes = F, asp = 1)
                 dev.off()
                 }
 
-            raster::writeRaster(ensemble.m,
+            raster::writeRaster(ensemble.mods,
                                 filename = paste0(models.dir, "/", species.name,
                                                   "/present/",
                                                   ensemble.dir, "/", species.name, "_",
                                                   whi,
                                                   "_ensemble.tif"),
+                                bylayer = T,
+                                suffix = "names",
                                 overwrite = T)
 
             #### Consensus models
             if (consensus == TRUE) {
-                ensemble.consensus <- ensemble.m >= consensus.level
+                ensemble.consensus <- ensemble.mean >= consensus.level
                 raster::writeRaster(ensemble.consensus,
                                     filename = paste0(models.dir, "/", species.name,
                                                       "/present/",
                                                       ensemble.dir, "/", species.name,
                                                       "_", whi,
-                                                      "_ensemble",
+                                                      "_ensemble", "_meanconsensus",
                                                       consensus.level * 100,
                                                       ".tif"), overwrite = T)
 
@@ -130,7 +148,8 @@ ensemble <- function(species.name,
                 if (write_png) {
                 png(filename = paste0(models.dir, "/", species.name, "/present/",
                                       ensemble.dir, "/",
-                                      species.name, "_", whi, "_ensemble",
+                                      species.name, "_", whi,
+                                      "_ensemble", "_meanconsensus",
                                       consensus.level * 100, ".png"), res = 300,
                     width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
@@ -141,7 +160,7 @@ ensemble <- function(species.name,
                        col = scales::alpha("cyan", 0.6))
                 dev.off()
                 }
-                if (write_reflora_map) {
+                if (write_raw_map) {
                 png(filename = paste0(models.dir, "/", species.name, "/present/",
                                       ensemble.dir, "/",
                                        species.name, "_", whi, "_ensemble",
@@ -157,6 +176,7 @@ ensemble <- function(species.name,
             }
         }
     }
-
     print(date())
 }
+
+
