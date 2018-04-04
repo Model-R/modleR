@@ -52,12 +52,12 @@ All `do_[algorithm]` functions and `do_enm()` create a *model per partition, per
 
 `modelr` comes with example data, a data frame called `coordenadas`, with occurrence data for four species, and predictor variables called `variaveis_preditoras`
 
-```{r load, echo = F, message=FALSE}
+```{r load, echo = F, message=FALSE, eval =FALSE}
 devtools::load_all()
 ```
 
-```{r lib, echo = T, eval = F}
-library(modelr) 
+```{r lib, echo = T, eval = T}
+library(modelr)
 ```
 
 
@@ -97,7 +97,7 @@ head(occs)
 ## Fitting one algorithm: `do_[algorithm]`
 
 
-```{r do_bioclim, cache = T}
+```{r do_bioclim}
 args(do_bioclim)
 ```
 The arguments in each individual `do_[algorithm]` are:
@@ -108,7 +108,7 @@ The arguments in each individual `do_[algorithm]` are:
 + `mask`: will crop and mask the partition models into a ShapeFile
 
 
-```{r}
+```{r, eval = F}
 do_bioclim(sp = species[1],
            coordinates = occs,
            partitions = 3,
@@ -122,8 +122,9 @@ do_bioclim(sp = species[1],
 
 
 
+You can explore the list of files created at this phase, for example:
+
 ```{r partfiles, echo=FALSE, eval=FALSE}
-# The list of files created at this phase looks like this: 
 partitions.folder <- 
     list.files("~/temp", recursive = T, pattern = "partitions", include.dirs = T, full.names = T)
 head(list.files(partitions.folder, recursive = T))
@@ -144,7 +145,7 @@ The same modeling procedure can be performed by using `do_enm()`, that receives 
 ```{r do_enm1, eval = F}
 args(do_enm)
 do_enm(sp = species[1],
-       coordinates = coordenadas,
+       coordinates = occs,
        partitions = 3,
        buffer = "mean",
        predictors = variaveis_preditoras,
@@ -157,7 +158,7 @@ do_enm(sp = species[1],
 
 `do_enm()` calls several independent functions for each algorithm, called `do_[algorithm]`. This allows to parallelize by species and/or species algorithms in multi-cluster environments. The following lines call for bioclim, GLM, maxent, random forests and smv.
 
-```{r do_enm2, eval = F, cache = T}
+```{r do_enm2, eval = F, cache = F}
 args(do_enm)
 do_enm(sp = species[1],
        coordinates = occs,
@@ -195,27 +196,29 @@ args(final_model)
 ```
 
 
-
-```{r, cache = T}
+```{r, cache = T, eval = F}
 final_model(species.name = species[1],
             select.partitions = T,
-            weight.partitions = F,
-            algorithms = c("bioclim", "glm", "maxent", "rf"),
+            algorithms = c("bioclim", "maxent"),
             TSS.value = 0.5,
             models.dir = "~/temp")
 ```
 
 `final_model()` creates a .tif file for each final.model (one per algorithm) under the specified folder (default: `final_models`)
  
-```{r final_folder}
-final.folder <- list.files("~/temp", recursive = T, pattern = "final_models", include.dirs = T, full.names = T)
+We can explore these models from the files:
+
+```{r final_folder, eval = F}
+final.folder <- list.files("~/temp", 
+                           recursive = T,
+                           pattern = "final_models",
+                           include.dirs = T,
+                           full.names = T)
 final_mods <- list.files(final.folder, full.names = T)
 head(final_mods)
 ```
 
-We can explore these models from the files
-
-```{r plot_final, fig.width = 7, fig.height = 6}
+```{r plot_final, fig.width = 7, fig.height = 6, eval = F}
 library(raster)
 final_models <- stack(final_mods)
 plot(final_models)
@@ -228,7 +231,7 @@ The third step of the workflow is joining the models for each algorithm into a f
 `ensemble()` uses a `which.model` parameter to specify which final model (in fig. 2) should be assembled together (the default is
 `which.models = c("final_model_3", "final_model_7", "final_model_8")`) referring to step 3, 7 and 8 of the `final_model()` approach.
 
-```{r ensemble, cache = T}
+```{r ensemble, cache = T, eval = F}
 ensemble(species[1],
          occs = occs,
          which.models = "final_model_7",
@@ -237,13 +240,15 @@ ensemble(species[1],
 
 At any point we can explore the outputs in the folders: 
 
-```{r check_ensemble, fig.width = 5, fig.height = 5}
-ensemble_files <-  list.files("~/temp", recursive = T,
-                              pattern = "final_model_7_ensemble.tif",
-                              include.dirs = T, full.names = T)
+```{r check_ensemble, fig.width = 5, fig.height = 5,eval = F}
+ensemble_files <-  list.files("~/temp/", recursive = T,
+                              pattern = "final_model_7_ensemble.+tif",
+                               full.names = T, )
 
-ens.mod <- raster(ensemble_files)
+ensemble_files
+ens.mod <- stack(ensemble_files)
 plot(ens.mod)
+plot(ens.mod[[2]])
 maps::map(,,add = T)
 ```
 
@@ -266,14 +271,9 @@ for (especie in especies) {
            n.back = 500,
            write_png = T,
            bioclim = T,
-           domain = F,
-           glm = F,
            maxent = T,
-           mahal = F,
            rf = T,
-           svm = T,
-           svm2 = T,
-           mask = NULL)
+           svm = T)
 }
 
 ```
@@ -292,51 +292,19 @@ coordenadas %>% split(.$sp) %>%
                         n.back = 500,
                         write_png = T,
                         bioclim = T,
-                        domain = F,
-                        glm = F,
                         maxent = T,
-                        mahal = F,
                         rf = T,
-                        svm = T,
-                        svm2 = T,
-                        mask = NULL,
-                        ))
+                        svm = T))
 ```
 
-<!--These workflows do not allow the user to set up personalized parameters
-
-```{r purrr_example, eval = FALSE}
-library(purrr)
-coordenadas %>% split(.$sp) %>%
-    purrr::map(~ do_enm(sp = unique(.$sp), 
-                        coordinates = .[, c("lon", "lat")],
-                        partitions = 3,
-                        buffer = "mean",
-                        predictors = variaveis_preditoras,
-                        models.dir = "~/temp_purrr",
-                        n.back = 500,
-                        write_png = T,
-                        bioclim = T,
-                        domain = F,
-                        glm = F,
-                        maxent = T,
-                        mahal = F,
-                        rf = T,
-                        svm = T,
-                        svm2 = T,
-                        mask = NULL,
-                        ))
-```
--->
 ```{r purrr_final, eval = F}
 coordenadas %>% 
     split(.$sp) %>%
     purrr::map(~ final_model(species.name = unique(.$sp),
                              select.partitions = TRUE,
-                             weight.partitions = F,
-                             TSS.value = 0.7,
+                             TSS.value = 0.5,
                              consensus.level = 0.5,
-                             models.dir = "./temp_purrr"))
+                             models.dir = "~/temp_purrr"))
 ```
 
 ```{r purrr_ensemble, eval = F}
@@ -346,7 +314,7 @@ coordenadas %>%
                           occs = .[, c("lon", "lat")],
                           which.models = "final_model_7",
                           write_png = T,
-                          models.dir = "./temp_purrr"))
+                          models.dir = "~/temp_purrr"))
 
 ```
 

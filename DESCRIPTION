@@ -26,9 +26,11 @@ Imports:
     raster,
     rgeos,
     rJava,
+    scales,
     sp
 BugReports: https://github.com/Model-R/Back-end/issues
 RoxygenNote: 6.0.1
-Suggests: knitr,
+Suggests: dplyr,
+    knitr,
     rmarkdown
 VignetteBuilder: knitr
