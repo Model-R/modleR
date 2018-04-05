@@ -52,23 +52,9 @@ All `do_[algorithm]` functions and `do_enm()` create a *model per partition, per
 
 `modelr` comes with example data, a data frame called `coordenadas`, with occurrence data for four species, and predictor variables called `variaveis_preditoras`
 
-```{r load, echo = F, message=FALSE, eval =FALSE}
-devtools::load_all()
-```
 
 ```{r lib, echo = T, eval = T}
 library(modelr)
-```
-
-
-```{r load_java, echo = FALSE}
-#this vignette was built in a bad-tempered mac, sorry for this:
-dyn.load(
-    '/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/jre/lib/server/libjvm.dylib')
-
-```
-
-```{r species}
 library(rJava) 
 library(raster)
 head(coordenadas)
