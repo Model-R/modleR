@@ -167,7 +167,7 @@ do_enm(sp = species[1],
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![](final_model_english.png)
+<!--![](final_model_english.png)-->
 
 
 + It can weigh the partitions by a performance metric `weigh.partitions = TRUE` and `weight.par = "spec_sens"`, and give larger weights to partitions with better performance. This results in a continuous, uncut surface. 
