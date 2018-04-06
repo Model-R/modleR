@@ -6,7 +6,7 @@
 #' @param seed Para reprodutibilidade
 #' @param predictors Objeto do tipo RasterStack com variáveis preditoras
 #' @param models.dir Path do diretório onde serão escritos os arquivos de saída
-#' @param write_png Se o png vai ser criado - defaults to F
+#' @param plot_sdmdata Se o png vai ser criado - defaults to F
 #' @param n.back Número de pontos de background
 #' @return Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
 #' @export
@@ -15,38 +15,53 @@
 # tabela de valores
 setup_sdmdata <- function(sp = sp,
                           coordinates = coordinates,
-                          partitions = partitions,
                           buffer = FALSE,
                           seed = 512,
                           predictors = predictors,
                           models.dir = models.dir,
                           plot_sdmdata = T,
-                          n.back = 500) {
+                          n.back = 500,
+                          bootstrap = T
+                          boot_proportion = 0.8,
+                          crossvalidation = T,
+                          partitions = partitions,
+                          times = 10) {
+    if (file.exists(paste0(models.dir)) == FALSE)
+        dir.create(paste0(models.dir))
+    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
+        dir.create(paste0(models.dir, "/", sp))
+    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
+    if (file.exists(partition.folder) == FALSE)
+        dir.create(partition.folder, recursive = T)
+
+    # tabela de valores
+    presvals <- raster::extract(predictors, coordinates)
+
+
     if (buffer %in% c("mean", "max", "median")) {
         backgr <- create_buffer(coord = coordinates,
-         n.back = n.back,
-                               buffer.type = buffer, seed = seed,
-                               predictors = predictors)
-        } else {
-            set.seed(seed + 2)
-            backgr <- dismo::randomPoints(mask = predictors,
-                                          n = n.back,
-                                          p = coordinates,
-                                          excludep = T)
-        }
+                                n.back = n.back,
+                                buffer.type = buffer,
+                                seed = seed,
+                                predictors = predictors)
+    } else {
+        set.seed(seed + 2)
+        backgr <- dismo::randomPoints(mask = predictors,
+                                      n = n.back,
+                                      p = coordinates,
+                                      excludep = T)
+    }
 
     colnames(backgr) <- c("lon", "lat")
 
-    # Extraindo dados ambientais
-    presvals <- raster::extract(predictors, coordinates)
+    # Extraindo dados ambientais dos bckgr
     backvals <- raster::extract(predictors, backgr)
-
     pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
 
-    # Data partition
+    # Data partition-----
 #Jacknife
 if (crossvalidation == TRUE) {
-    if (nrow(coordinates) < 11)
+    if (nrow(coordinates) < 11) #forces jacknife
         partitions <- nrow(coordinates)
     #Crossvalidation
     set.seed(seed)  #reproducibility
