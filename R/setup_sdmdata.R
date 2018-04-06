@@ -20,12 +20,13 @@ setup_sdmdata <- function(sp = sp,
                           predictors = predictors,
                           models.dir = models.dir,
                           plot_sdmdata = T,
-                          n.back = 500,
-                          bootstrap = T
+                          n.back = 1000,
+                          bootstrap = T,
                           boot_proportion = 0.8,
+                          n_boot = 10,
                           crossvalidation = T,
                           partitions = partitions,
-                          times = 10) {
+                          n_cv = 10) {
     if (file.exists(paste0(models.dir)) == FALSE)
         dir.create(paste0(models.dir))
     if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
@@ -58,9 +59,13 @@ setup_sdmdata <- function(sp = sp,
     backvals <- raster::extract(predictors, backgr)
     pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
 
+    pres <- cbind(coordinates, presvals)
+    back <- cbind(backgr, backvals)
+    rbind_1 <- rbind(pres, back)
+
     # Data partition-----
 #Jacknife
-if (crossvalidation == TRUE) {
+    if (crossvalidation == TRUE & (is.null(n_cv) | n_cv %in% 1)) {
     if (nrow(coordinates) < 11) #forces jacknife
         partitions <- nrow(coordinates)
     #Crossvalidation
@@ -69,15 +74,72 @@ if (crossvalidation == TRUE) {
     set.seed(seed + 1)
     bg.grp <- dismo::kfold(backgr, partitions)
     group.all <- c(group, bg.grp)
-
-    pres <- cbind(coordinates, presvals)
-    back <- cbind(backgr, backvals)
-    rbind_1 <- rbind(pres, back)
     sdmdata <- data.frame(cbind(group.all, pa, rbind_1))
+    write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
+}
+    # Repeated CV
+    if (crossvalidation == TRUE & n_cv > 1) {
+        cv.pres <- replicate(n = n_cv,
+                  dismo::kfold(coordinates, partitions))
+        dimnames(cv.pres) <- list(NULL,paste0("cv",1:n_cv))
+        cv.back <- replicate(n = n_cv,
+                  dismo::kfold(backgr, partitions))
+        dimnames(cv.back) <- list(NULL,paste0("cv",1:n_cv))
+        cv.matrix <- rbind(cv.pres, cv.back)
+        sdmdata <- data.frame(cv.matrix, pa, rbind_1)
+        write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
+
+        }
+    # Bootstrap
+    if (bootstrap == TRUE) {
+    boot.pres <- replicate(n = n_boot,
+                           sample(
+                               x = seq_along(1:nrow(coordinates)),
+                               size = nrow(coordinates) * boot_proportion,
+                               replace = FALSE
+                           ))
+    boot.back <- replicate(n = n_boot,
+                           sample(
+                               x = seq_along(1:nrow(backgr)),
+                               size = nrow(backgr) * boot_proportion,
+                               replace = FALSE
+                           ))
+    boot_p <- matrix(data = "test",
+                     nrow = nrow(coordinates),
+                     ncol = n_boot,
+                     dimnames = list(NULL,paste0("boot",1:n_boot)))
+    boot_a <- matrix(data = "test",
+                     nrow = nrow(backgr),
+                     ncol = n_boot,
+                     dimnames = list(NULL,paste0("boot",1:n_boot)))
+    for (i in seq_along(1:n_boot)) {
+        boot_p[, i][boot.pres[, i]] <- "train"
+        }
+    for (i in seq_along(1:n_boot)) {
+        boot_a[, i][boot.back[, i]] <- "train"
+    }
+    boot.matrix <- rbind(boot_p, boot_a)
+    sdmdata <- data.frame(boot.matrix, pa, rbind_1)
+    write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
+}
+
+
+
+    if (plot_sdmdata) {
+        #Creates a .png plot of the initial dataset
+        cat(paste("Plotting the dataset...",'\n'))
+        png(filename = paste0(partition.folder, "/sdmdata_", sp,".png"))
+        par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
+        raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
+        points(back, pch = ".", col = "black")
+        points(pres, pch = 3, col = "grey50")
+        legend("topleft", pch = c("+","."),
+               col = c("grey50", "black"), legend = c("Occs","Back"))
+        dev.off()
+    }
     rm(rbind_1)
     rm(pres)
     rm(back)
     gc()
-    write.table(sdmdata, file = paste0(models.dir, "/", sp, "/sdmdata.txt"))
     return(sdmdata)
 }
