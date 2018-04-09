@@ -1,6 +1,6 @@
 #' Prepara os dados para modelagem
 #'
-#' @param sp Um nome de espécie
+#' @param species.name Um nome de espécie
 #' @param coordinates Uma tabela com pontos de ocorrência
 #' @param buffer Define se será usado buffer e de que tipo ("mean" ou "max")
 #' @param seed Para reprodutibilidade
@@ -13,7 +13,7 @@
 #'
 #'
 # tabela de valores
-setup_sdmdata <- function(sp = sp,
+setup_sdmdata <- function(species.name = species.name,
                           coordinates = coordinates,
                           buffer = FALSE,
                           seed = 512,
@@ -21,17 +21,17 @@ setup_sdmdata <- function(sp = sp,
                           models.dir = models.dir,
                           plot_sdmdata = T,
                           n.back = 1000,
-                          bootstrap = T,
+                          bootstrap = F,
                           boot_proportion = 0.8,
                           n_boot = 10,
-                          crossvalidation = T,
+                          crossvalidation = F,
                           partitions = partitions,
                           n_cv = 10) {
     if (file.exists(paste0(models.dir)) == FALSE)
         dir.create(paste0(models.dir))
-    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
-        dir.create(paste0(models.dir, "/", sp))
-    partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
+    if (file.exists(paste0(models.dir, "/", species.name)) == FALSE)
+        dir.create(paste0(models.dir, "/", species.name))
+    partition.folder <- paste0(models.dir, "/", species.name, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
         dir.create(partition.folder, recursive = T)
 
@@ -61,35 +61,35 @@ setup_sdmdata <- function(sp = sp,
 
     pres <- cbind(coordinates, presvals)
     back <- cbind(backgr, backvals)
-    rbind_1 <- rbind(pres, back)
-
+    coord_env_all <- rbind(pres, back)
+    sdmdata <- cbind(pa,coord_env_all)
     # Data partition-----
-#Jacknife
-    if (crossvalidation == TRUE & (is.null(n_cv) | n_cv %in% 1)) {
-    if (nrow(coordinates) < 11) #forces jacknife
-        partitions <- nrow(coordinates)
-    #Crossvalidation
-    set.seed(seed)  #reproducibility
-    group <- dismo::kfold(coordinates, partitions)
-    set.seed(seed + 1)
-    bg.grp <- dismo::kfold(backgr, partitions)
-    group.all <- c(group, bg.grp)
-    sdmdata <- data.frame(cbind(group.all, pa, rbind_1))
-    write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
-}
-    # Repeated CV
-    if (crossvalidation == TRUE & n_cv > 1) {
-        cv.pres <- replicate(n = n_cv,
-                  dismo::kfold(coordinates, partitions))
-        dimnames(cv.pres) <- list(NULL,paste0("cv",1:n_cv))
-        cv.back <- replicate(n = n_cv,
-                  dismo::kfold(backgr, partitions))
-        dimnames(cv.back) <- list(NULL,paste0("cv",1:n_cv))
-        cv.matrix <- rbind(cv.pres, cv.back)
-        sdmdata <- data.frame(cv.matrix, pa, rbind_1)
-        write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
-
+    #Crossvalidation, repetated crossvalidation and jacknife
+    if (crossvalidation == TRUE) {
+        if (nrow(coordinates) < 11) {
+            #forces jacknife
+            partitions <- nrow(coordinates)
+            n_cv <- 1
         }
+        if (n_cv == 1) {
+            #Crossvalidation
+            set.seed(seed)  #reproducibility
+            group <- dismo::kfold(coordinates, partitions)
+            set.seed(seed + 1)
+            bg.grp <- dismo::kfold(backgr, partitions)
+            group.all <- c(group, bg.grp)
+        }
+        if (n_cv > 1) {
+            # Repeated CV
+            cv.pres <- replicate(n = n_cv,
+                                 dismo::kfold(coordinates, partitions))
+            dimnames(cv.pres) <- list(NULL, paste0("cv", 1:n_cv))
+            cv.back <- replicate(n = n_cv,
+                                 dismo::kfold(backgr, partitions))
+            dimnames(cv.back) <- list(NULL, paste0("cv", 1:n_cv))
+            cv.matrix <- rbind(cv.pres, cv.back)
+        }
+    }
     # Bootstrap
     if (bootstrap == TRUE) {
     boot.pres <- replicate(n = n_boot,
@@ -119,16 +119,19 @@ setup_sdmdata <- function(sp = sp,
         boot_a[, i][boot.back[, i]] <- "train"
     }
     boot.matrix <- rbind(boot_p, boot_a)
-    sdmdata <- data.frame(boot.matrix, pa, rbind_1)
-    write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 }
+
+    if (exists("group.all"))   sdmdata <- data.frame(group.all, sdmdata)
+    if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
+    if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
+    write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 
 
 
     if (plot_sdmdata) {
         #Creates a .png plot of the initial dataset
         cat(paste("Plotting the dataset...",'\n'))
-        png(filename = paste0(partition.folder, "/sdmdata_", sp,".png"))
+        png(filename = paste0(partition.folder, "/sdmdata_", species.name,".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
         points(back, pch = ".", col = "black")
@@ -137,7 +140,7 @@ setup_sdmdata <- function(sp = sp,
                col = c("grey50", "black"), legend = c("Occs","Back"))
         dev.off()
     }
-    rm(rbind_1)
+    rm(coord_env_all)
     rm(pres)
     rm(back)
     gc()

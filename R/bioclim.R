@@ -28,112 +28,100 @@ do_bioclim <- function(sp,
                        projections = NULL,
                        mask = NULL,
                        write_png = FALSE,
-                       n.back) {
+                       n.back,
+                       bootstrap = T,
+                       boot_proportion = 0.8,
+                       n_boot = 10,
+                       crossvalidation = F,
+                       n_cv = 10) {
   cat(paste("bioclim", "\n"))
 
-  if (file.exists(paste0(models.dir)) == FALSE)
-       dir.create(paste0(models.dir))
-    if (file.exists(paste0(models.dir, "/", sp)) == FALSE)
-     dir.create(paste0(models.dir, "/", sp))
+  #sdmdatasetup
     partition.folder <- paste0(models.dir, "/", sp, "/present", "/partitions")
-    if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder, recursive = T)
-
-  # tabela de valores
-  presvals <- raster::extract(predictors, coordinates)
-
-
-  if (buffer %in% c("mean", "max", "median")) {
-    backgr <- create_buffer(coord = coordinates,
-                            n.back = n.back,
-                            buffer.type = buffer,
-                            seed = seed,
-                            predictors = predictors)
-  } else {
-    set.seed(seed + 2)
-    backgr <- dismo::randomPoints(mask = predictors,
-                                  n = n.back,
-                                  p = coordinates,
-                                  excludep = T)
-  }
-
-  colnames(backgr) <- c("lon", "lat")
-
-  # Extraindo dados ambientais dos bckgr
-  backvals <- raster::extract(predictors, backgr)
-  pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
-
-  # Data partition
-  if (nrow(coordinates) < 11)
-    partitions <- nrow(coordinates)
-  set.seed(seed)  #reproducibility
-  group <- dismo::kfold(coordinates, partitions)
-  set.seed(seed + 1)
-  bg.grp <- dismo::kfold(backgr, partitions)
-  group.all <- c(group, bg.grp)
-
-  pres <- cbind(coordinates, presvals)
-  back <- cbind(backgr, backvals)
-  rbind_1 <- rbind(pres, back)
-  sdmdata <- data.frame(cbind(group.all, pa, rbind_1))
-  rm(rbind_1)
-  rm(pres)
-  rm(back)
-  gc()
-  write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
-
+    if (file.exists(paste0(partition.folder, "/sdmdata.txt"))) {
+        sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
+        } else {
+            sdmdata <- setup_sdmdata(
+                sp = sp,
+                coordinates = coordinates,
+                partitions = partitions,
+                buffer = buffer,
+                seed = seed,
+                predictors = predictors,
+                models.dir = models.dir,
+                plot_sdmdata = plot_sdmdata,
+                n.back = n.back,
+                bootstrap = bootstrap,
+                boot_proportion = boot_proportion,
+                n_boot = n_boot,
+                crossvalidation = crossvalidation,
+                n_cv = n_cv
+            )
+        }
 
   ##### Hace los modelos
-  for (i in unique(group)) {
-    cat(paste(sp, "partition number", i, "\n"))
-    pres_train <- coordinates[group != i, ]
-    if (nrow(coordinates) == 1)
-      pres_train <- coordinates[group == i, ]
-    pres_test <- coordinates[group == i, ]
-
-    backg_test <- backgr[bg.grp == i, ]  #new
-
-    bc <- dismo::bioclim(predictors, pres_train)
-    ebc <- dismo::evaluate(pres_test, backg_test, bc, predictors)
-    thresholdbc <- ebc@t[which.max(ebc@TPR + ebc@TNR)]
-    thbc <- dismo::threshold(ebc)
-    bc_TSS <- max(ebc@TPR + ebc@TNR) - 1
-    bc_cont <- dismo::predict(predictors, bc, progress = "text")
-    bc_bin <- bc_cont > thresholdbc
-    bc_cut <- bc_cont * bc_bin
-    thbc$AUC <- ebc@auc
-    thbc$TSS <- bc_TSS
-    thbc$algoritmo <- "bioclim"
-    thbc$partition <- i
-    row.names(thbc) <- paste(sp, i, "bioclim")
-
-    write.table(thbc, file = paste0(partition.folder, "/evaluate",
-      sp, "_", i, "_bioclim.txt"))
-
-    if (class(mask) == "SpatialPolygonsDataFrame") {
-    bc_cont <- crop_model(bc_cont, mask)
-    bc_bin <- crop_model(bc_bin, mask)
-    bc_cut <- crop_model(bc_cut, mask)
-    }
+    runs <- which(names(sdmdata) == "pa") - 1
+      #para cada columna de la matriz de diseño
+  for (i in seq_along(1:runs)) {
+      group.all <- sdmdata[,i]
+      group <- group.all[sdmdata$pa == 1]
+      bg.grp <- group.all[sdmdata$pa == 0]
+      backgr <- sdmdata[sdmdata$pa == 0, c("lon", "lat")]
+      #para cada grupo
+      for (g in unique(group)) {
+          cat(paste(sp,"run number", i, "partition number", g, "\n"))
+          pres_train <- coordinates[group != g, ]
+          if (nrow(coordinates) == 1)
+              pres_train <- coordinates[group == g, ]
+          pres_test <- coordinates[group == g, ]
+          backg_test <- backgr[bg.grp == g, ]
+          
+          bc <- dismo::bioclim(predictors, pres_train)
+          ebc <- dismo::evaluate(pres_test, backg_test, bc, predictors)
+          thresholdbc <- ebc@t[which.max(ebc@TPR + ebc@TNR)]
+          thbc <- dismo::threshold(ebc)
+          bc_TSS <- max(ebc@TPR + ebc@TNR) - 1
+          bc_cont <- dismo::predict(predictors, bc, progress = "text")
+          bc_bin <- bc_cont > thresholdbc
+          bc_cut <- bc_cont * bc_bin
+          thbc$AUC <- ebc@auc
+          thbc$TSS <- bc_TSS
+          thbc$algoritmo <- "bioclim"
+          thbc$run <- i
+          thbc$partition <- g
+          row.names(thbc) <- paste(sp, i, g, "bioclim")
+          
+          write.table(thbc, file = paste0(partition.folder, "/evaluate",
+      sp, "_", i, "_", g, "_bioclim.txt"))
+      
+          if (class(mask) == "SpatialPolygonsDataFrame") {
+              bc_cont <- crop_model(bc_cont, mask)
+              bc_bin <- crop_model(bc_bin, mask)
+              bc_cut <- crop_model(bc_cut, mask)
+              }
     raster::writeRaster(x = bc_cont,
                         filename = paste0(partition.folder, "/bioclim_cont_",
-                                          sp, "_", i, ".tif"), overwrite = T)
+                                          sp, "_", i,"_", g, ".tif"), overwrite = T)
     raster::writeRaster(x = bc_bin,
                         filename = paste0(partition.folder, "/bioclim_bin_",
-                                          sp, "_", i, ".tif"), overwrite = T)
+                                          sp, "_", i, "_", g, ".tif"), overwrite = T)
     raster::writeRaster(x = bc_cut,
                         filename = paste0(partition.folder, "/bioclim_cut_",
-                                          sp, "_", i, ".tif"), overwrite = T)
+                                          sp, "_", i, "_", g, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(paste0(partition.folder, "/bioclim", sp, "_", i, "%03d.png"))
+      png(paste0(partition.folder, "/bioclim_cont", sp, "_", i, "_", g, ".png"))
       raster::plot(bc_cont,
                    main = paste("bioclim raw", "\n",
                                 "AUC =", round(ebc@auc, 2), "-",
                                 "TSS =", round(bc_TSS, 2)))
+      dev.off()
+      png(paste0(partition.folder, "/bioclim_bin", sp, "_", i, "_", g, ".png"))
       raster::plot(bc_bin, main = paste("bioclim P/A", "\n",
                                         "AUC =", round(ebc@auc, 2), "-",
                                         "TSS =", round(bc_TSS, 2)))
+      dev.off()
+      png(paste0(partition.folder, "/bioclim_cut", sp, "_", i, "_", g, ".png"))
       raster::plot(bc_cut, main = paste("bioclim cut", "\n",
                                         "AUC =", round(ebc@auc, 2), "-",
                                         "TSS =", round(bc_TSS, 2)))
@@ -156,19 +144,21 @@ do_bioclim <- function(sp,
           bc_proj     <- crop_model(bc_proj, mask)
           bc_proj_bin <- crop_model(bc_proj_bin, mask)
           bc_proj_cut <- crop_model(bc_proj_cut, mask)
+          }
+         writeRaster(x = bc_proj,
+                     filename = paste0(projection.folder, "/bioclim_cont_", sp,
+                                       "_", i, "_", g, ".tif"), overwrite = T)
+         writeRaster(x = bc_proj_bin,
+                     filename = paste0(projection.folder, "/bioclim_bin_", sp,
+                                       "_", i, "_", g,".tif"), overwrite = T)
+         writeRaster(x = bc_proj_cut,
+                     filename = paste0(projection.folder, "/bioclim_cut_", sp,
+                                       "_", i, "_", g, ".tif"), overwrite = T)
+         rm(data2)
+         }
         }
-        writeRaster(x = bc_proj,
-                    filename = paste0(projection.folder, "/bioclim_cont_",
-                                      sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = bc_proj_bin,
-                    filename = paste0(projection.folder, "/bioclim_bin_",
-                                      sp, "_", i, ".tif"), overwrite = T)
-        writeRaster(x = bc_proj_cut,
-                    filename = paste0(projection.folder, "/bioclim_cut_",
-                                      sp, "_", i, ".tif"), overwrite = T)
-        rm(data2)
       }
     }
-  }
+
   return(thbc)
 }
