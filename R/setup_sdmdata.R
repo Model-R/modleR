@@ -1,6 +1,6 @@
-#' Prepara os dados para modelagem
+#' Prepares the dataset to perform ENM
 #'
-#' @param species.name Um nome de espécie
+#' @param species.name A species name
 #' @param coordinates Uma tabela com pontos de ocorrência
 #' @param buffer Define se será usado buffer e de que tipo ("mean" ou "max")
 #' @param seed Para reprodutibilidade

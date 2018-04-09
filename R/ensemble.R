@@ -36,7 +36,7 @@
 #' @return A rasterStack with the minimun, maximum, median, mean and standard
 #' deviation of the assembled models. A set of ensemble models and figures
 #' (optional) written in the \code{ensemble.dir} subfolder
-ensemble <- function(species.name,
+ensemble_model <- function(species.name,
                      occs,
                      models.dir = "./models",
                      final.dir = "final_models",

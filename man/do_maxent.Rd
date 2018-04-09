@@ -6,7 +6,9 @@
 \usage{
 do_maxent(sp, coordinates, partitions, buffer = FALSE, seed = 512,
   predictors, models.dir = "./models", project.model = FALSE,
-  projections = NULL, mask = NULL, write_png = FALSE, n.back)
+  projections = NULL, mask = NULL, write_png = FALSE, n.back,
+  bootstrap = T, boot_proportion = 0.8, n_boot = 10,
+  crossvalidation = F, n_cv = 10)
 }
 \arguments{
 \item{sp}{A character string with the species name}
