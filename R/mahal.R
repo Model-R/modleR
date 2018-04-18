@@ -135,14 +135,20 @@ do_mahal <- function(sp,
 
        if (write_png == T) {
            png(filename = paste0(partition.folder,
-                                 "/mahal", sp, "_", i, "%03d.png"))
+                                 "/mahal_cont_", sp, "_", i, ".png"))
            plot(ma_cont,
                 main = paste("mahal raw", "\n",
                              "AUC =", round(ema@auc, 2), "-",
                              "TSS =", round(ma_TSS, 2)))
+         dev.off()
+         png(filename = paste0(partition.folder,
+                                 "/mahal_bin_", sp, "_", i, ".png"))
            plot(ma_bin, main = paste("mahal P/A", "\n",
                                      "AUC =", round(ema@auc, 2), "-",
                                      "TSS =", round(ma_TSS, 2)))
+         dev.off()
+         png(filename = paste0(partition.folder,
+                                 "/mahal_cut_", sp, "_", i, ".png"))
            plot(ma_cut, main = paste("mahal cut", "\n",
                                      "AUC =", round(ema@auc, 2), "-",
                                      "TSS =", round(ma_TSS, 2)))
