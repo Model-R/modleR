@@ -133,13 +133,17 @@ do_GLM <- function(sp,
       "_", i, ".tif"), overwrite = T)
 
     if (write_png == T) {
-        png(filename = paste0(partition.folder, "/glm", sp, "_", i, "%03d.png"))
+        png(filename = paste0(partition.folder, "/glm_cont_", sp, "_", i, ".png"))
         plot(glm_cont, main = paste("GLM raw", "\n",
                                     "AUC =", round(eglm@auc, 2), "-",
                                     "TSS =", round(glm_TSS, 2)))
+        dev.off()
+        png(filename = paste0(partition.folder, "/glm_bin_", sp, "_", i, ".png"))
         plot(glm_bin, main = paste("GLM P/A", "\n",
                                    "AUC =", round(eglm@auc, 2), "-",
                                    "TSS =", round(glm_TSS, 2)))
+        dev.off()
+        png(filename = paste0(partition.folder, "/glm_cut_", sp, "_", i, ".png"))
         plot(glm_cut, main = paste("GLM cut", "\n",
                                    "AUC =", round(eglm@auc, 2), "-",
                                    "TSS =", round(glm_TSS, 2)))
