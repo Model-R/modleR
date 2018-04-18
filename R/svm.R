@@ -130,15 +130,19 @@ do_SVM <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
 
     if (write_png == T) {
-        png(filename = paste0(partition.folder, "/svm", sp, "_", i, "%03d.png"))
+        png(filename = paste0(partition.folder, "/svm_cont_", sp, "_", i, ".png"))
         raster::plot(svm_cont,
                      main = paste("SVM raw", "\n",
                                   "AUC =", round(esvm@auc, 2), "-",
                                   "TSS =", round(svm_TSS, 2)))
+        dev.off()
+        png(filename = paste0(partition.folder, "/svm_bin_", sp, "_", i, ".png"))
         raster::plot(svm_bin,
                      main = paste("SVM P/A", "\n",
                                   "AUC =", round(esvm@auc, 2), "-",
                                   "TSS =", round(svm_TSS, 2)))
+        dev.off()
+        png(filename = paste0(partition.folder, "/svm_cut_", sp, "_", i, ".png"))
         raster::plot(svm_cut,
                      main = paste("SVM cut", "\n",
                                   "AUC =", round(esvm@auc, 2), "-",
