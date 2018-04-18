@@ -113,9 +113,13 @@ do_maxent <- function(sp,
       sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(filename = paste0(partition.folder, "/maxent", sp, "_", i, "%03d.png"))
+      png(filename = paste0(partition.folder, "/maxent_cont_", sp, "_", i, ".png"))
       raster::plot(mx_cont, main = paste("maxent raw", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      dev.off()
+      png(filename = paste0(partition.folder, "/maxent_bin_", sp, "_", i, ".png"))
       raster::plot(mx_bin, main = paste("maxent P/A", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
+      dev.off()
+      png(filename = paste0(partition.folder, "/maxent_cut_", sp, "_", i, ".png"))
       raster::plot(mx_cut, main = paste("maxent cut", "\n", "AUC =", round(emx@auc, 2), "-", "TSS =", round(mx_TSS, 2)))
       dev.off()
       }
