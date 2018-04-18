@@ -130,15 +130,21 @@ do_SVM2 <- function(sp,
 
         if (write_png == T) {
             png(filename = paste0(partition.folder,
-                                  "/svm2", sp, "_", i, "%03d.png"))
+                                  "/svm2_cont_", sp, "_", i, ".png"))
             raster::plot(svm2_cont,
                          main = paste("SVM2 raw", "\n",
                                       "AUC =", round(esvm2@auc, 2), "-",
                                       "TSS =", round(svm2_TSS, 2)))
+            dev.off()
+            png(filename = paste0(partition.folder,
+                                  "/svm2_bin_", sp, "_", i, ".png"))
             raster::plot(svm2_bin,
                          main = paste("SVM2 P/A", "\n",
                                       "AUC =", round(esvm2@auc, 2), "-",
                                       "TSS =", round(svm2_TSS, 2)))
+            dev.off()
+            png(filename = paste0(partition.folder,
+                                  "/svm2_cut_", sp, "_", i, ".png"))
             raster::plot(svm2_cut,
                          main = paste("SVM2 cut", "\n",
                                       "AUC =", round(esvm2@auc, 2), "-",
