@@ -1,42 +1,41 @@
 #' Fits ecological niche models using any dismo algorithm.
 #'
-#' @param species_name A character string with the species name
+#' @inheritParams setup_sdmdata
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent","domain",
 #'                                        "mahal", "glm", "svm.k","svm.e","rf")}
-#' @param coordinates A two-column data frame with the occurrence points
-#' @param partitions The number of partitions for a cross validation
-#' @param buffer Defines if a buffer will be used to sample pseudo-absences
-#'        (F, "mean", "median", "max")
-#' @param seed For reproducibility purposes
-#' @param predictors A RasterStack of predictor variables
-#' @param models.dir Folder path to save the output files
 #' @param project.model Logical, whether to perform a projection
 #' @param projections The RasterStack of projeciton variables
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
 #' @param write_png Logical, whether png files will be written
-#' @param n.back Number of pseudoabsence points
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
+#' @author Andrea Sánchez-Tapia
 #' @import grDevices
 #' @importFrom utils write.table
 #' @export
 do_any <- function(species_name,
-                   algo = c("bioclim", "maxent", "mahal", "domain"),
+                   algo = c("bioclim"), #um só
                    coordinates,
-                   partitions,
+                   lon,
+                   lat,
+                   real_absences,
                    buffer = FALSE,
                    seed = 512,
                    predictors,
+                   clean_nas,
                    models.dir = "./models",
                    project.model = FALSE,
                    projections = NULL,
                    mask = NULL,
                    write_png = FALSE,
                    n.back,
-                   bootstrap = T,
+                   bootstrap = F,
                    boot_proportion = 0.8,
-                   n_boot = 10,
+                   boot_n = 10,
                    crossvalidation = F,
-                   n_cv = 10) {
+                   cv_partitions,
+                   cv_n = 1,
+                   plot_sdmdata = TRUE
+                   ) {
 
     cat(paste(algo, "\n"))
 
@@ -48,21 +47,24 @@ do_any <- function(species_name,
         sdmdata <- setup_sdmdata(
             species_name = species_name,
             coordinates = coordinates,
-            partitions = partitions,
+            lon = lon,
+            lat = lat,
+            real_absences = real_absences,
             buffer = buffer,
             seed = seed,
             predictors = predictors,
+            clean_nas = clean_nas,
             models.dir = models.dir,
             plot_sdmdata = plot_sdmdata,
             n.back = n.back,
             bootstrap = bootstrap,
             boot_proportion = boot_proportion,
-            n_boot = n_boot,
+            boot_n = boot_n,
             crossvalidation = crossvalidation,
+            cv_partitions = cv_partitions,
             n_cv = n_cv
         )
     }
-
     ##### Hace los modelos
     runs <- which(names(sdmdata) == "pa") - 1
 

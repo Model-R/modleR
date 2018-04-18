@@ -4,11 +4,12 @@
 \alias{do_any}
 \title{Fits ecological niche models using any dismo algorithm.}
 \usage{
-do_any(species_name, algo = c("bioclim", "maxent", "mahal", "domain"),
-  coordinates, partitions, buffer = FALSE, seed = 512, predictors,
+do_any(species_name, algo = c("bioclim"), coordinates, lon, lat,
+  real_absences, buffer = FALSE, seed = 512, predictors, clean_nas,
   models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask = NULL, write_png = FALSE, n.back, bootstrap = T,
-  boot_proportion = 0.8, n_boot = 10, crossvalidation = F, n_cv = 10)
+  mask = NULL, write_png = FALSE, n.back, bootstrap = F,
+  boot_proportion = 0.8, boot_n = 10, crossvalidation = F, cv_partitions,
+  cv_n = 1, plot_sdmdata = TRUE)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -16,9 +17,13 @@ do_any(species_name, algo = c("bioclim", "maxent", "mahal", "domain"),
 \item{algo}{The algorithm to be fitted \code{c("bioclim", "maxent","domain",
 "mahal", "glm", "svm.k","svm.e","rf")}}
 
-\item{coordinates}{A two-column data frame with the occurrence points}
+\item{coordinates}{A data frame with occurrence data}
 
-\item{partitions}{The number of partitions for a cross validation}
+\item{lon}{the name of the longitude column. defaults to "lon"}
+
+\item{lat}{the name of the latitude column. defaults to "lat"}
+
+\item{real_absences}{User defined absence points}
 
 \item{buffer}{Defines if a buffer will be used to sample pseudo-absences
 (F, "mean", "median", "max")}
@@ -26,6 +31,9 @@ do_any(species_name, algo = c("bioclim", "maxent", "mahal", "domain"),
 \item{seed}{For reproducibility purposes}
 
 \item{predictors}{A RasterStack of predictor variables}
+
+\item{clean_nas}{Logical, delete occurrence points with no environmental information?
+Defaults to FALSE and can take a while for large datasets}
 
 \item{models.dir}{Folder path to save the output files}
 
@@ -38,10 +46,27 @@ do_any(species_name, algo = c("bioclim", "maxent", "mahal", "domain"),
 \item{write_png}{Logical, whether png files will be written}
 
 \item{n.back}{Number of pseudoabsence points}
+
+\item{bootstrap}{Logical, perform bootstrap}
+
+\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled for bootstrap}
+
+\item{boot_n}{How many bootstrap runs}
+
+\item{crossvalidation}{Logical, perform k-fold crossvalidation}
+
+\item{cv_partitions}{Number of partitions in the crossvalidation}
+
+\item{cv_n}{How many crossvalidation runs}
+
+\item{plot_sdmdata}{Logical, whether png files will be written}
 }
 \value{
 A data frame with the evaluation statistics (TSS, AUC, etc.)
 }
 \description{
 Fits ecological niche models using any dismo algorithm.
+}
+\author{
+Andrea Sánchez-Tapia
 }

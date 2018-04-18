@@ -4,18 +4,16 @@
 \alias{do_enm}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
-  models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask = NULL, write_png = FALSE, n.back, bioclim = FALSE,
-  domain = FALSE, glm = FALSE, mahal = FALSE, maxent = FALSE,
-  rf = FALSE, svm = FALSE, svm2 = FALSE)
+do_enm(species_name, coordinates, partitions, buffer = FALSE, seed = 512,
+  predictors, models.dir = "./models", project.model = FALSE,
+  projections = NULL, mask = NULL, write_png = FALSE, n.back,
+  bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
+  maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE)
 }
 \arguments{
-\item{sp}{A character string with the species name}
+\item{species_name}{A character string with the species name}
 
-\item{coordinates}{A two-column data frame with the occurrence points}
-
-\item{partitions}{The number of partitions for a cross validation}
+\item{coordinates}{A data frame with occurrence data}
 
 \item{buffer}{Defines if a buffer will be used to sample pseudo-absences
 (F, "mean", "median", "max")}
@@ -46,11 +44,12 @@ do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 
 \item{maxent}{Execute maxent from the dismo implementation}
 
-\item{rf}{Execute random forests from randomForest() as suggested by the dismo documentation}
+\item{rf}{Execute random forests from randomForest() as suggested
+by the dismo documentation}
 
-\item{svm}{Execute svm from kernlab package}
+\item{svm.k}{Execute svm from kernlab package}
 
-\item{svm2}{Execute svm from e1071 package}
+\item{svm.e}{Execute svm from e1071 package}
 }
 \value{
 A set of ecological niche models for each partition and algorithm,
@@ -58,4 +57,7 @@ A set of ecological niche models for each partition and algorithm,
 }
 \description{
 Fits ecological niche models for various algorithms.
+}
+\author{
+Andrea Sánchez-Tapia
 }
