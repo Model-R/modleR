@@ -113,13 +113,19 @@ do_domain <- function(sp,
 
     if (write_png == T) {
         png(filename = paste0(partition.folder,
-                              "/domain", sp, "_", i, "%03d.png"))
+                              "/domain_cont_", sp, "_", i, ".png"))
         plot(do_cont,
              main = paste("domain raw", "\n", "AUC =", round(edo@auc, 2), "-",
                           "TSS =", round(do_TSS, 2)))
+        dev.off()
+        png(filename = paste0(partition.folder,
+                              "/domain_bin_", sp, "_", i, ".png"))
         plot(do_bin,
              main = paste("domain P/A", "\n", "AUC =", round(edo@auc, 2), "-",
                           "TSS =", round(do_TSS, 2)))
+       dev.off()
+       png(filename = paste0(partition.folder,
+                              "/domain_cut_", sp, "_", i, ".png"))
         plot(do_cut,
              main = paste("domain cut", "\n", "AUC =", round(edo@auc, 2), "-",
                           "TSS =", round(do_TSS, 2)))
