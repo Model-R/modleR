@@ -126,18 +126,18 @@ do_bioclim <- function(sp,
                                           sp, "_", i, ".tif"), overwrite = T)
 
   if (write_png == T) {
-      png(paste0(partition.folder, "/bioclim_cont", sp, "_", i, ".png"))
+      png(paste0(partition.folder, "/bioclim_cont_", sp, "_", i, ".png"))
       raster::plot(bc_cont,
                    main = paste("bioclim raw", "\n",
                                 "AUC =", round(ebc@auc, 2), "-",
                                 "TSS =", round(bc_TSS, 2)))
       dev.off()
-      png(paste0(partition.folder, "/bioclim_bin", sp, "_", i, ".png"))
+      png(paste0(partition.folder, "/bioclim_bin_", sp, "_", i, ".png"))
       raster::plot(bc_bin, main = paste("bioclim P/A", "\n",
                                         "AUC =", round(ebc@auc, 2), "-",
                                         "TSS =", round(bc_TSS, 2)))
       dev.off()
-      png(paste0(partition.folder, "/bioclim_cut", sp, "_", i, ".png"))
+      png(paste0(partition.folder, "/bioclim_cut_", sp, "_", i, ".png"))
     raster::plot(bc_cut, main = paste("bioclim cut", "\n",
                                         "AUC =", round(ebc@auc, 2), "-",
                                         "TSS =", round(bc_TSS, 2)))
