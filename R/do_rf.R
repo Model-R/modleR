@@ -132,13 +132,17 @@ do_rf <- function(sp,
                                           sp, "_", i, ".tif"), overwrite = T)
 
    if (write_png == T) {
-       png(filename = paste0(partition.folder, "/rf", sp, "_", i, "%03d.png"))
+       png(filename = paste0(partition.folder, "/rf_cont_", sp, "_", i, ".png"))
        raster::plot(rf_cont, main = paste("RF raw", "\n",
                                           "AUC =", round(erf@auc, 2), "-",
                                           "TSS =", round(rf_TSS, 2)))
+      dev.off()
+      png(filename = paste0(partition.folder, "/rf_bin_", sp, "_", i, ".png")) 
       raster::plot(rf_bin, main = paste("RF P/A", "\n",
                                         "AUC =", round(erf@auc, 2), "-",
                                         "TSS =", round(rf_TSS, 2)))
+      dev.off()
+      png(filename = paste0(partition.folder, "/rf_cut_", sp, "_", i, ".png")) 
       raster::plot(rf_cut, main = paste("RF cut", "\n",
                                         "AUC =", round(erf@auc, 2), "-",
                                         "TSS =", round(rf_TSS, 2)))
