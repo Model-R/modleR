@@ -4,32 +4,63 @@
 \alias{setup_sdmdata}
 \title{Prepares the dataset to perform ENM}
 \usage{
-setup_sdmdata(species.name = species.name, coordinates = coordinates,
-  buffer = FALSE, seed = 512, predictors = predictors,
+setup_sdmdata(species_name = species_name, coordinates = coordinates,
+  real_absences = NULL, lon = "lon", lat = "lat", buffer = FALSE,
+  seed = 512, predictors = predictors, clean_nas = F,
   models.dir = models.dir, plot_sdmdata = T, n.back = 1000,
-  bootstrap = F, boot_proportion = 0.8, n_boot = 10,
-  crossvalidation = F, partitions = partitions, n_cv = 10)
+  bootstrap = F, boot_proportion = 0.8, boot_n = 10,
+  crossvalidation = F, cv_partitions = cv_partitions, cv_n = 10)
 }
 \arguments{
-\item{species.name}{A species name}
+\item{species_name}{A character string with the species name}
 
-\item{coordinates}{Uma tabela com pontos de ocorrência}
+\item{coordinates}{A data frame with occurrence data}
 
-\item{buffer}{Define se será usado buffer e de que tipo ("mean" ou "max")}
+\item{real_absences}{User defined absence points}
 
-\item{seed}{Para reprodutibilidade}
+\item{lon}{the name of the longitude column. defaults to "lon"}
 
-\item{predictors}{Objeto do tipo RasterStack com variáveis preditoras}
+\item{lat}{the name of the latitude column. defaults to "lat"}
 
-\item{models.dir}{Path do diretório onde serão escritos os arquivos de saída}
+\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
+(F, "mean", "median", "max")}
 
-\item{plot_sdmdata}{Se o png vai ser criado - defaults to F}
+\item{seed}{For reproducibility purposes}
 
-\item{n.back}{Número de pontos de background}
+\item{predictors}{A RasterStack of predictor variables}
+
+\item{clean_nas}{Logical, delete occurrence points with no environmental information?
+Defaults to FALSE and can take a while for large datasets}
+
+\item{models.dir}{Folder path to save the output files}
+
+\item{plot_sdmdata}{Logical, whether png files will be written}
+
+\item{n.back}{Number of pseudoabsence points}
+
+\item{bootstrap}{Logical, perform bootstrap}
+
+\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled for bootstrap}
+
+\item{boot_n}{How many bootstrap runs}
+
+\item{crossvalidation}{Logical, perform k-fold crossvalidation}
+
+\item{cv_partitions}{Number of partitions in the crossvalidation}
+
+\item{cv_n}{How many crossvalidation runs}
+
+\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled for bootstrap}
 }
 \value{
-Um data.frame com metadados da modelagem (TSS, AUC, algoritmo etc.)
+A dataframe called sdmdata with the groups for each run
+(in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
+the geographical coordinates, of the occurrence and pseudoabsence points, and
+the associated environmental variables.
 }
 \description{
 Prepares the dataset to perform ENM
+}
+\author{
+Andrea Sánchez-Tapia
 }
