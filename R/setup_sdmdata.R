@@ -40,7 +40,10 @@ setup_sdmdata <- function(species_name = species_name,
                           buffer = FALSE,
                           seed = 512,
                           predictors = predictors,
+                          clean_dupl = T,
                           clean_nas = F,
+                          geo_filt = F,
+                          geo_filt_dist,
                           models.dir = models.dir,
                           plot_sdmdata = T,
                           n.back = 1000,
@@ -62,11 +65,18 @@ setup_sdmdata <- function(species_name = species_name,
     names(coordinates) <- c("lon", "lat")
     # tabela de valores
     presvals <- raster::extract(predictors, coordinates)
+    if (clean_dupl == TRUE) {
+        coordinates <- coordinates[!base::duplicated(coordinates),]
+        presvals <- presvals[!base::duplicated(coordinates),]
+    }
     if (clean_nas == TRUE) {
         coordinates <- coordinates[complete.cases(presvals),]
         presvals <- presvals[complete.cases(presvals),]
     }
-
+    if (geo_filt == TRUE) {
+        coordinates <- geo_filt(coordinates = coordinates, min.distance = geo_filt_dist)
+        presvals <- raster::extract(predictors, coordinates)
+    }
     if (!is.null(real_absences)) {
         backgr <- real_absences[,c(lon, lat)]
     } else {
