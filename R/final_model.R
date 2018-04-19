@@ -1,7 +1,7 @@
 #' Joins ENM from several partitions, creating a model per algorithm.
 #'
 #' This function reads the output from dismo.mod and creates a model per species
-#' @param species.name A character string with the species name
+#' @param species_name A character string with the species name
 #' @param algorithms Which algorithms will be processed. If no name is given it
 #' will process all algorithms present in the evaluation files
 #' @param weight.par Which performance statistic should be used to weight the
@@ -18,12 +18,13 @@
 #' @param models.dir Character. Folder path where the input files are located
 #' @param final.dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
+#' @param write_png Writes png files of the final models
 #' @return A set of ecological niche models and figures (optional) written in the
 #'          \code{final.dir} subfolder
 #' @import raster
 #' @importFrom utils read.table
 #' @export
-final_model <- function(species.name,
+final_model <- function(species_name,
                         algorithms = NULL,
                         weight.par = NULL,
                         select.partitions = TRUE,
@@ -31,18 +32,22 @@ final_model <- function(species.name,
                         threshold = c("spec_sens"),
                         consensus.level = 0.5,
                         models.dir = "./models",
-                        final.dir = "final_models") {
+                        final.dir = "final_models",
+                        write_png = T #checar que 3 seja binario e 7 seja smeicontinuo
+                        #implementar o 4
+                        #which.models = final_model_5
+                        ) {
 
-    if (file.exists(paste0(models.dir, "/", species.name, "/present/",
+    if (file.exists(paste0(models.dir, "/", species_name, "/present/",
                            final.dir)) == FALSE)
-        dir.create(paste0(models.dir, "/", species.name, "/present/", final.dir),
+        dir.create(paste0(models.dir, "/", species_name, "/present/", final.dir),
                    recursive = TRUE)
     print(date())
 
-    cat(paste(species.name, "\n"))
+    cat(paste(species_name, "\n"))
     cat(paste("Reading the evaluation files", "\n"))
     evall <- list.files(
-        path = paste0(models.dir, "/", species.name, "/present/partitions"),
+        path = paste0(models.dir, "/", species_name, "/present/partitions"),
         pattern = "evaluate", full.names = T)
     lista <- list()
     for (i in 1:length(evall)) {
@@ -52,7 +57,7 @@ final_model <- function(species.name,
     }
     stats <- data.table::rbindlist(lista)
     stats <- as.data.frame(stats)
-# ö escribir los evaluate de todos?
+# ö escribir los evaluate de todos? si
     # Extracts only for the selected algorithm
     if (is.null(algorithms)) {
         algorithms <- unique(stats$algoritmo)
@@ -70,25 +75,25 @@ final_model <- function(species.name,
         cat(paste("Reading models from .tif files", "\n"))
         modelos.cont <-
             list.files(
-                path = paste0(models.dir, "/", species.name, "/present/partitions"),
+                path = paste0(models.dir, "/", species_name, "/present/partitions"),
                 full.names = T,
                 pattern = paste0(algo, "_cont_",sp,"_",run,"_")
             )
 
         modelos.bin <-
             list.files(
-                path = paste0(models.dir, "/", species.name, "/present/partitions"),
+                path = paste0(models.dir, "/", species_name, "/present/partitions"),
                 full.names = T,
                 pattern = paste0(algo, "_bin_",sp,"_",run,"_")
             )
 
         mod.cont <- raster::stack(modelos.cont)  #(0)
         mod.bin <- raster::stack(modelos.bin)  #(0)
-        #names(mod.cont) <- paste0(algo, "_cont_", species.name, "_Run_", run, "_Partition_", 1:n.part)
+        #names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
         #names(mod.bin) <- names(mod.cont)
 
         if (select.partitions == T) {
-            cat(paste("selecting partitions for", species.name, algo, "run",run, "\n"))
+            cat(paste("selecting partitions for", species_name, algo, "run",run, "\n"))
             sel.index <- which(stats.algo[, "TSS"] >= TSS.value)
         } else {
             #it will use everything
@@ -99,7 +104,7 @@ final_model <- function(species.name,
             th.mean <- mean(stats.algo[, names(stats.algo) == threshold][sel.index])
 
             if (length(sel.index) == 0) {
-                cat(paste("No partition was selected for", species.name, algo,"run",run, "\n"))
+                cat(paste("No partition was selected for", species_name, algo,"run",run, "\n"))
                 }
             # if length(sel.index) == 1 many of the final models are the same
             # 1 and 2 = continuous
@@ -108,7 +113,7 @@ final_model <- function(species.name,
             #I build the stack by repeating those, for homogeneity
             if (length(sel.index) == 1) {
                 cat(paste(length(sel.index), "partition was selected for",
-                    species.name, algo, "run",run,"\n"))
+                    species_name, algo, "run",run,"\n"))
 
                 # bin.sel #[3] bin.sel #[7]
                 final <- raster::stack(bin.sel.5, bin.sel.5, bin.sel.5)
@@ -118,7 +123,7 @@ final_model <- function(species.name,
             # When the selected models are more than one, refer to the map in the vignette
             if (length(sel.index) > 1) {
                 cat(paste(length(sel.index), "partitions were selected for",
-                          species.name, algo,"run",run, "\n"))
+                          species_name, algo,"run",run, "\n"))
 
                 final.cont.mean.2 <- raster::mean(cont.sel.1)  #(2)
                 final.bin.mean.3 <- (final.cont.mean.2 > th.mean)  #(3)
@@ -127,7 +132,7 @@ final_model <- function(species.name,
 
                 final <- raster::stack(final.bin.mean.3, final.sel.bin.7, final.sel.bin.8)
                 names(final) <- c("final_model_3", "final_model_7", "final_model_8")
-                cat(paste("selected final models for", species.name, algo, "run", run, "DONE", "\n"))
+                cat(paste("selected final models for", species_name, algo, "run", run, "DONE", "\n"))
             }
 
             if (!is.null(weight.par)) {
@@ -137,23 +142,16 @@ final_model <- function(species.name,
                     if (wpar == "TSS")
                         pond.stats <- (pond.stats + 1) / 2
                     #pond <- mod[[1:part]] * pond.stats
-                    cat(paste("Calculating the weighted mean for", species.name, wpar, algo, "run", run))
+                    cat(paste("Calculating the weighted mean for", species_name, wpar, algo, "run", run))
                     final.w.cont <- raster::weighted.mean(mod.cont, w = pond.stats)
                     names(final.w.cont) <- paste0("final_model_weighted_",wpar)
                     final.w <- addLayer(final.w, final.w.cont)
-                    # png(filename = paste0(models.dir, "/", species.name, "/present/",
-            #                       final.dir, "/final_", par, "_Wmean_",
-            #                       species.name,"_", algo, ".png"))
-            # par(mar = c(4, 4, 3, 3), mfrow = c(1, 1))
-            # plot(final.w, main = paste(par, "Wmean", species.name, algo))
-            # dev.off()
-            # ##
 
             #names(final.w)[length(names(final))] <- paste("Weighted",par)
-                    cat("weighted final models for", species.name, algo,"run" ,run,"DONE", "\n")
+                    cat("weighted final models for", species_name, algo,"run" ,run,"DONE", "\n")
 
                     }
-    }
+            }
 
             if (exists("final")) {
                 if (exists("final.w")) {
@@ -163,26 +161,27 @@ final_model <- function(species.name,
                 raster::rasterOptions(setfileext = F)
                 raster::writeRaster(
                     x = final,
-                    filename = paste0(models.dir, "/", species.name, "/present/",
-                                      final.dir, "/", names(final), species.name,
-                                      algo, "_run",run, ".tif"),
+                    filename = paste0(models.dir, "/", species_name, "/present/",
+                                      final.dir, "/", names(final),"_", species_name,
+                                      "_", algo, "_run",run, ".tif"),
                     bylayer = T,
                     overwrite = T,
                     format = "GTiff"
                 )
-
-                #        for (i in 1:dim(final)[[3]]) {
-                #          png(filename = paste0(models.dir, "/", species.name, "/", final.dir, "/",
-                #          names(final)[i], species.name, algo, ".png"))
-                #          plot(final[[i]], main = names(final)[i])
-                #          dev.off()
-                #        }
+                if (write_png == T) {
+                    for (i in 1:dim(final)[[3]]) {
+                        png(filename = paste0(models.dir, "/", species_name,
+                                              "/present/", final.dir, "/",
+                                              names(final)[i],"_",
+                                              species_name,"_", algo, ".png"))
+                        plot(final[[i]], main = names(final)[i])
+                        dev.off()
+                        }
+                }
             }
-
-
-        }
 
     }
     print(paste("DONE", algo, "\n"))
     print(date())
+    }
 }

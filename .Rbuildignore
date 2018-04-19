@@ -3,3 +3,6 @@
 ^README.*$
 ./docs
 ./R/euclidean.R
+./1sdmtest_cv
+./1sdmtest_cvrep
+./man/do_centroid.Rd

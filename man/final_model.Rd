@@ -4,13 +4,13 @@
 \alias{final_model}
 \title{Joins ENM from several partitions, creating a model per algorithm.}
 \usage{
-final_model(species.name, algorithms = NULL, weight.par = NULL,
+final_model(species_name, algorithms = NULL, weight.par = NULL,
   select.partitions = TRUE, TSS.value = 0.7, threshold = c("spec_sens"),
   consensus.level = 0.5, models.dir = "./models",
-  final.dir = "final_models")
+  final.dir = "final_models", write_png = T)
 }
 \arguments{
-\item{species.name}{A character string with the species name}
+\item{species_name}{A character string with the species name}
 
 \item{algorithms}{Which algorithms will be processed. If no name is given it
 will process all algorithms present in the evaluation files}
@@ -35,6 +35,8 @@ can be used: "kappa", "no_omission", "prevalence",
 
 \item{final.dir}{Character. Name of the folder to save the output files.
 A subfolder will be created.}
+
+\item{write_png}{Writes png files of the final models}
 }
 \value{
 A set of ecological niche models and figures (optional) written in the
