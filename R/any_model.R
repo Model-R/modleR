@@ -15,13 +15,13 @@
 do_any <- function(species_name,
                    algo = c("bioclim"), #um só
                    coordinates,
-                   lon,
-                   lat,
-                   real_absences,
+                   lon = "lon",
+                   lat = "lat",
+                   real_absences = NULL,
                    buffer = FALSE,
                    seed = 512,
                    predictors,
-                   clean_nas,
+                   clean_nas = F,
                    models.dir = "./models",
                    project.model = FALSE,
                    projections = NULL,
@@ -62,7 +62,7 @@ do_any <- function(species_name,
             boot_n = boot_n,
             crossvalidation = crossvalidation,
             cv_partitions = cv_partitions,
-            n_cv = n_cv
+            cv_n = cv_n
         )
     }
     ##### Hace los modelos
@@ -75,7 +75,8 @@ do_any <- function(species_name,
         bg.grp <- group.all[sdmdata$pa == 0]
         backgr <- sdmdata[sdmdata$pa == 0, c("lon", "lat")]
         #para cada grupo
-        for (g in unique(group)) {
+        for (g in setdiff(unique(group), 0)) {
+            #excluding the zero allows for bootstrap. only 1 partition will run
             cat(paste(species_name,"run number", i, "partition number", g, "\n"))
             pres_train <- coordinates[group != g, ]
             if (nrow(coordinates) == 1)
@@ -89,6 +90,8 @@ do_any <- function(species_name,
                                           grep("layer", names(sdmdata_test))]
             env_backg_test <- sdmdata_test[sdmdata_test$pa == 0,
                                            grep("layer", names(sdmdata_test))]
+
+
 
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "maxent")  mod <- dismo::maxent(predictors, pres_train)

@@ -138,19 +138,19 @@ setup_sdmdata <- function(species_name = species_name,
                                size = nrow(backgr) * boot_proportion,
                                replace = FALSE
                            ))
-    boot_p <- matrix(data = "test",
+    boot_p <- matrix(data = 1,
                      nrow = nrow(coordinates),
                      ncol = boot_n,
                      dimnames = list(NULL,paste0("boot",1:boot_n)))
-    boot_a <- matrix(data = "test",
+    boot_a <- matrix(data = 1,
                      nrow = nrow(backgr),
                      ncol = boot_n,
                      dimnames = list(NULL,paste0("boot",1:boot_n)))
     for (i in seq_along(1:boot_n)) {
-        boot_p[, i][boot.pres[, i]] <- "train"
+        boot_p[, i][boot.pres[, i]] <- 0
         }
     for (i in seq_along(1:boot_n)) {
-        boot_a[, i][boot.back[, i]] <- "train"
+        boot_a[, i][boot.back[, i]] <- 0
     }
     boot.matrix <- rbind(boot_p, boot_a)
 }
