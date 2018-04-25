@@ -4,9 +4,12 @@
 \alias{do_enm}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_enm(species_name, coordinates, partitions, buffer = FALSE, seed = 512,
-  predictors, models.dir = "./models", project.model = FALSE,
+do_enm(species_name, coordinates, lon = "lon", lat = "lat",
+  real_absences = NULL, buffer = FALSE, seed = 512, predictors,
+  clean_nas = F, models.dir = "./models", project.model = FALSE,
   projections = NULL, mask = NULL, write_png = FALSE, n.back,
+  bootstrap = F, boot_proportion = 0.8, boot_n = 10,
+  crossvalidation = F, cv_partitions, cv_n = 1, plot_sdmdata = TRUE,
   bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
   maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE)
 }
@@ -15,12 +18,21 @@ do_enm(species_name, coordinates, partitions, buffer = FALSE, seed = 512,
 
 \item{coordinates}{A data frame with occurrence data}
 
+\item{lon}{the name of the longitude column. defaults to "lon"}
+
+\item{lat}{the name of the latitude column. defaults to "lat"}
+
+\item{real_absences}{User defined absence points}
+
 \item{buffer}{Defines if a buffer will be used to sample pseudo-absences
 (F, "mean", "median", "max")}
 
 \item{seed}{For reproducibility purposes}
 
 \item{predictors}{A RasterStack of predictor variables}
+
+\item{clean_nas}{Logical, delete occurrence points with no environmental
+information? Defaults to FALSE and can take a while for large datasets}
 
 \item{models.dir}{Folder path to save the output files}
 
@@ -33,6 +45,21 @@ do_enm(species_name, coordinates, partitions, buffer = FALSE, seed = 512,
 \item{write_png}{Logical, whether png files will be written}
 
 \item{n.back}{Number of pseudoabsence points}
+
+\item{bootstrap}{Logical, perform bootstrap}
+
+\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled
+for bootstrap}
+
+\item{boot_n}{How many bootstrap runs}
+
+\item{crossvalidation}{Logical, perform k-fold crossvalidation}
+
+\item{cv_partitions}{Number of partitions in the crossvalidation}
+
+\item{cv_n}{How many crossvalidation runs}
+
+\item{plot_sdmdata}{Logical, whether png files will be written}
 
 \item{bioclim}{Execute bioclim from the dismo implementation}
 

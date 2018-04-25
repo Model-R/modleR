@@ -138,7 +138,7 @@ do_any <- function(species_name,
             write.table(
                 th_table,
                 file = paste0(partition.folder,
-                              "/evaluate",
+                              "/evaluate_",
                               species_name,
                               "_",
                               i,
@@ -204,35 +204,20 @@ do_any <- function(species_name,
             )
 
             if (write_png == T) {
-                png(paste0(
-                    partition.folder,
-                    "/",
-                    algo,
-                    "_cont",
-                    species_name,
-                    "_",
-                    i,
-                    "_",
-                    g,
-                    ".png"
-                ))
+                png(paste0(partition.folder, "/", algo, "_cont_", species_name,
+                    "_", i, "_", g, ".png"))
                 raster::plot(mod_cont,
-                             main = paste(
-                                 algo,
-                                 "raw",
-                                 "\n",
-                                 "AUC =",
+                             main = paste(algo, "raw", "\n", "AUC =",
                                  round(eval_mod@auc, 2),
                                  "-",
                                  "TSS =",
-                                 round(mod_TSS, 2)
-                             ))
+                                 round(mod_TSS, 2)))
                 dev.off()
                 png(paste0(
                     partition.folder,
                     "/",
                     algo,
-                    "_bin",
+                    "_bin_",
                     species_name,
                     "_",
                     i,
@@ -256,7 +241,7 @@ do_any <- function(species_name,
                     partition.folder,
                     "/",
                     algo,
-                    "cut",
+                    "_cut_",
                     species_name,
                     "_",
                     i,

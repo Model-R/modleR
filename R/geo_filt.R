@@ -9,14 +9,13 @@
 #' sampling bias and improve predictions of ecological niche models.
 #' Ecography, 37(11), 1084-1091. doi:10.1111/j.1600-0587.2013.00441.x
 #' @seealso \code{\link[dismo]{gridSample}}
-#' @examples
-#' geo.filt(coordinates = manimax, min.distance = 20)
 #'
 #' @importFrom dismo gridSample
 #' @export
 geo_filt <- function(coordinates, min.distance = 10) {
     res  <-  min.distance / 111 #why 111
-    r <- raster::raster(extent(range(coordinates[,1]), range(coordinates[,2])) + res)
+    r <- raster::raster(extent(range(coordinates[,1]),
+                               range(coordinates[,2])) + res)
     res(r) <- res
     pts <- dismo::gridSample(coordinates, r, n = 1)
     cat(paste0(dim(pts)[1],

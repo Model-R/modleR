@@ -4,12 +4,13 @@
 \alias{do_any}
 \title{Fits ecological niche models using any dismo algorithm.}
 \usage{
-do_any(species_name, algo = c("bioclim"), coordinates, lon, lat,
-  real_absences, buffer = FALSE, seed = 512, predictors, clean_nas,
-  models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask = NULL, write_png = FALSE, n.back, bootstrap = F,
-  boot_proportion = 0.8, boot_n = 10, crossvalidation = F, cv_partitions,
-  cv_n = 1, plot_sdmdata = TRUE)
+do_any(species_name, algo = c("bioclim"), coordinates, lon = "lon",
+  lat = "lat", real_absences = NULL, buffer = FALSE, seed = 512,
+  predictors, clean_nas = F, models.dir = "./models",
+  project.model = FALSE, projections = NULL, mask = NULL,
+  write_png = FALSE, n.back, bootstrap = F, boot_proportion = 0.8,
+  boot_n = 10, crossvalidation = F, cv_partitions, cv_n = 1,
+  plot_sdmdata = TRUE)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -32,8 +33,8 @@ do_any(species_name, algo = c("bioclim"), coordinates, lon, lat,
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{clean_nas}{Logical, delete occurrence points with no environmental information?
-Defaults to FALSE and can take a while for large datasets}
+\item{clean_nas}{Logical, delete occurrence points with no environmental
+information? Defaults to FALSE and can take a while for large datasets}
 
 \item{models.dir}{Folder path to save the output files}
 
@@ -49,7 +50,8 @@ Defaults to FALSE and can take a while for large datasets}
 
 \item{bootstrap}{Logical, perform bootstrap}
 
-\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled for bootstrap}
+\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled
+for bootstrap}
 
 \item{boot_n}{How many bootstrap runs}
 
