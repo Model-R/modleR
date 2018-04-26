@@ -16,12 +16,11 @@
 #' @seealso \code{\link[raster]{buffer}}
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
-#' create_buffer(coordinates = coordenadas, n.back = 500, buffer.type = "mean",
-#'  predictors = variaveis_preditoras)
+#' create_buffer(coordenadas, 500, "mean", predictors = variaveis_preditoras)
 #'
 #' @import raster
 #' @importFrom dismo randomPoints
-#'
+#' @export
 create_buffer <- function(coord,
                           n.back,
                           buffer.type,
