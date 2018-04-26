@@ -95,7 +95,7 @@ final_model <- function(species_name,
                 path = paste0(models.dir, "/", species_name, "/present/partitions"),
                 full.names = T,
                 #pattern = paste0(algo, "_cont_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_cont_",species_name,"+tif")
+                pattern = paste0(algo, "_cont_",".*tif$")
             )
 
         modelos.bin <-
@@ -103,7 +103,7 @@ final_model <- function(species_name,
                 path = paste0(models.dir, "/", species_name, "/present/partitions"),
                 full.names = T,
                 #pattern = paste0(algo, "_bin_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_bin_",species_name,"+tif")
+                pattern = paste0(algo, "_bin_",".*tif$")
             )
 
         mod.cont <- raster::stack(modelos.cont)  #(0)
