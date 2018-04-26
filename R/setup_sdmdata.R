@@ -9,8 +9,12 @@
 #'        (F, "mean", "median", "max")
 #' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
+#' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
+#'  TRUE
 #' @param clean_nas Logical, delete occurrence points with no environmental
 #' information? Defaults to FALSE and can take a while for large datasets
+#' @param geo_filt Logical, delete occurrence that are too close?
+#' @param geo_filt_dist The distance of the geographic filter (in kilometers)
 #' @param models.dir Folder path to save the output files
 #' @param plot_sdmdata Logical, whether png files will be written
 #' @param n.back Number of pseudoabsence points

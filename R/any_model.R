@@ -11,6 +11,7 @@
 #' @author Andrea Sánchez-Tapia
 #' @import grDevices
 #' @importFrom utils write.table
+#' @importFrom stats complete.cases formula glm step
 #' @export
 do_any <- function(species_name,
                    algo = c("bioclim"), #um só
@@ -77,7 +78,7 @@ do_any <- function(species_name,
         #para cada grupo
         for (g in setdiff(unique(group), 0)) {
             #excluding the zero allows for bootstrap. only 1 partition will run
-            cat(paste(species_name,"run number", i, "partition number", g, "\n"))
+            cat(paste(species_name, algo, "run number", i, "partition number", g, "\n"))
             pres_train <- coordinates[group != g, ]
             if (nrow(coordinates) == 1)
                 pres_train <- coordinates[group == g, ]

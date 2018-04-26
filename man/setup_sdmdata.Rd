@@ -6,9 +6,9 @@
 \usage{
 setup_sdmdata(species_name = species_name, coordinates = coordinates,
   real_absences = NULL, lon = "lon", lat = "lat", buffer = FALSE,
-  seed = 512, predictors = predictors, clean_nas = F,
-  models.dir = models.dir, plot_sdmdata = T, n.back = 1000,
-  bootstrap = F, boot_proportion = 0.8, boot_n = 10,
+  seed = 512, predictors = predictors, clean_dupl = T, clean_nas = F,
+  geo_filt = F, geo_filt_dist, models.dir = models.dir, plot_sdmdata = T,
+  n.back = 1000, bootstrap = F, boot_proportion = 0.8, boot_n = 10,
   crossvalidation = F, cv_partitions = cv_partitions, cv_n = 10)
 }
 \arguments{
@@ -29,8 +29,15 @@ setup_sdmdata(species_name = species_name, coordinates = coordinates,
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{clean_nas}{Logical, delete occurrence points with no environmental information?
-Defaults to FALSE and can take a while for large datasets}
+\item{clean_dupl}{Logical, delete duplicate occurrence points? defaults to
+TRUE}
+
+\item{clean_nas}{Logical, delete occurrence points with no environmental
+information? Defaults to FALSE and can take a while for large datasets}
+
+\item{geo_filt}{Logical, delete occurrence that are too close?}
+
+\item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
 
 \item{models.dir}{Folder path to save the output files}
 
@@ -40,7 +47,8 @@ Defaults to FALSE and can take a while for large datasets}
 
 \item{bootstrap}{Logical, perform bootstrap}
 
-\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled for bootstrap}
+\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled
+for bootstrap}
 
 \item{boot_n}{How many bootstrap runs}
 
@@ -49,8 +57,6 @@ Defaults to FALSE and can take a while for large datasets}
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
 \item{cv_n}{How many crossvalidation runs}
-
-\item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled for bootstrap}
 }
 \value{
 A dataframe called sdmdata with the groups for each run
@@ -60,6 +66,9 @@ the associated environmental variables.
 }
 \description{
 Prepares the dataset to perform ENM
+}
+\seealso{
+\code{\link[dismo]{gridSample}}
 }
 \author{
 Andrea Sánchez-Tapia
