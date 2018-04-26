@@ -180,15 +180,17 @@ final_model <- function(species_name,
                     }
             }
 
-            if (exists("final")) {
-                if (exists("final.w")) {
-            final <- addLayer(final, final.w)
-            }
+            if (!exists("final")) {
+                final <- stack()
+                } else {
+                    if (exists("final.w")) {
+                        final <- addLayer(final, final.w)
+                    }
                 # plot(final) Escribe final
                 raster::writeRaster(
                     x = final,
                     filename = paste0(models.dir, "/", species_name, "/present/",
-                                      final.dir, "/", names(final),"_", species_name,
+                                      final.dir, "/", species_name,
                                       "_", algo, ".tif"),
                     bylayer = T,
                     overwrite = T,
@@ -199,8 +201,8 @@ final_model <- function(species_name,
                     for (i in 1:dim(final)[[3]]) {
                         png(filename = paste0(models.dir, "/", species_name,
                                               "/present/", final.dir, "/",
-                                              names(final)[i],"_",
-                                              species_name,"_", algo, ".png"))
+                                              species_name,"_", algo, "_",
+                                              names(final)[i], ".png"))
                         plot(final[[i]], main = names(final)[i])
                         dev.off()
                         }
