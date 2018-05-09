@@ -3,15 +3,15 @@
 #' \code{ensemble} takes the input of \code{final_model} and builds an ensemble
 #'  model by calculating the mean of each final model per algorithm.
 #'
-#' @param species.name A character string with the species name
+#' @param species_name A character string with the species name
 #' @param occs A two-column data frame with the occurrence points
-#' @param models.dir Character string. Folder path where the input files
+#' @param models_dir Character string. Folder path where the input files
 #'                   are located
-#' @param final.dir Character string, name of the subfolder where the files
+#' @param final_dir Character string, name of the subfolder where the files
 #'                  for the final models are located
-#' @param ensemble.dir Character string, name of the folder to save the output
+#' @param ensemble_dir Character string, name of the folder to save the output
 #'                     files. A subfolder will be created.
-#' @param which.models Which final_model() will be used? Currently it can be:
+#' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
 #'   by TSS or AUC}
@@ -22,7 +22,7 @@
 #'   \item{\code{final_model_8}}{the binary consensus from \code{final_model_7}}
 #' }
 #' @param consensus Logical. Will a consensus rule be applied?
-#' @param consensus.level Threshold for the consensus rule, betwen 0 and 1
+#' @param consensus_level Threshold for the consensus rule, betwen 0 and 1
 #'                        (0.5 means a majority rule).
 #' @param write_png Write png? Defaults to TRUE
 #' @param write_raw_map Create a mean raw map without margins
@@ -35,36 +35,38 @@
 #' @seealso \link{final_model}
 #' @return A rasterStack with the minimun, maximum, median, mean and standard
 #' deviation of the assembled models. A set of ensemble models and figures
-#' (optional) written in the \code{ensemble.dir} subfolder
-ensemble_model <- function(species.name,
-                     occs,
-                     models.dir = "./models",
-                     final.dir = "final_models",
-                     ensemble.dir = "ensemble",
-                     which.models = c("final_model_3", "final_model_7"),
-                     consensus = FALSE,
-                     consensus.level = 0.5,
-                     write_png = T,
-                     write_raw_map = F) {
+#' (optional) written in the \code{ensemble_dir} subfolder
+ensemble_model <- function(species_name,
+                           occs,
+                           models_dir = "./models",
+                           final_dir = "final_models",
+                           ensemble_dir = "ensemble",
+                           which_models = c("final_model_3"),
+                           consensus = FALSE,
+                           consensus_level = 0.5,
+                           write_png = T,
+                           write_raw_map = F,
+                           ...) {
+
 
     ## output folder
     if (file.exists(
-        paste0(models.dir, "/", species.name, "/present/", ensemble.dir, "/")) == FALSE) {
-        dir.create(paste0(models.dir, "/", species.name, "/present/", ensemble.dir, "/"))
+        paste0(models_dir, "/", species_name, "/present/", ensemble_dir, "/")) == FALSE) {
+        dir.create(paste0(models_dir, "/", species_name, "/present/", ensemble_dir, "/"))
     }
 
     ## for each model specified in final_models
-    for (whi in which.models) {
-        cat(paste(whi, "-", species.name, "\n"))  #lê os arquivos
-        tif.files <- list.files(paste0(models.dir, "/", species.name, "/present/",
-                                       final.dir),
+    for (whi in which_models) {
+        cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
+        tif.files <- list.files(paste0(models_dir, "/", species_name, "/present/",
+                                       final_dir),
                                 full.names = T, pattern = paste0(whi, ".*tif$"))
 
         if (length(tif.files) == 0) {
-            cat(paste("No models to ensemble from for", species.name, "\n"))
+            cat(paste("No", whi, "models to ensemble from for", species_name, "\n"))
         } else {
-            cat(paste(length(tif.files),
-                      "models to ensemble from for", species.name, "\n"))
+            cat(paste(length(tif.files), whi,
+                      "models to ensemble from for", species_name, "\n"))
             mod2 <- raster::stack(tif.files)
             #if (length(tif.files) == 1) {
              #   ensemble.mean <- mod2
@@ -93,11 +95,11 @@ ensemble_model <- function(species.name,
                                    ensemble.min, ensemble.max)
             names(ensemble.mods) <- c("mean", "median", "sd", "min", "max")
 
-            coord <- occs[occs$sp == species.name, c("lon", "lat")]
+            coord <- occs[occs$sp == species_name, c("lon", "lat")]
 
             if (write_png) {
-                png(filename = paste0(models.dir, "/", species.name, "/present/",
-                                      ensemble.dir, "/", species.name, "_", whi,
+                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                                      ensemble_dir, "/", species_name, "_", whi,
                                       "_ensemble_mean.png"),
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
@@ -111,8 +113,8 @@ ensemble_model <- function(species.name,
                 dev.off()
             }
             if (write_raw_map) {
-                png(filename = paste0(models.dir, "/", species.name, "/present/",
-                                  ensemble.dir, "/", species.name, "_", whi,
+                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                                  ensemble_dir, "/", species_name, "_", whi,
                                   "_ensemble_without_margins.png"),
                     bg = "transparent",
                 res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
@@ -123,9 +125,9 @@ ensemble_model <- function(species.name,
                 }
 
             raster::writeRaster(ensemble.mods,
-                                filename = paste0(models.dir, "/", species.name,
+                                filename = paste0(models_dir, "/", species_name,
                                                   "/present/",
-                                                  ensemble.dir, "/", species.name, "_",
+                                                  ensemble_dir, "/", species_name, "_",
                                                   whi,
                                                   "_ensemble.tif"),
                                 bylayer = T,
@@ -134,23 +136,23 @@ ensemble_model <- function(species.name,
 
             #### Consensus models
             if (consensus == TRUE) {
-                ensemble.consensus <- ensemble.mean >= consensus.level
+                ensemble.consensus <- ensemble.mean >= consensus_level
                 raster::writeRaster(ensemble.consensus,
-                                    filename = paste0(models.dir, "/", species.name,
+                                    filename = paste0(models_dir, "/", species_name,
                                                       "/present/",
-                                                      ensemble.dir, "/", species.name,
+                                                      ensemble_dir, "/", species_name,
                                                       "_", whi,
                                                       "_ensemble", "_meanconsensus",
-                                                      consensus.level * 100,
+                                                      consensus_level * 100,
                                                       ".tif"), overwrite = T)
 
 
                 if (write_png) {
-                png(filename = paste0(models.dir, "/", species.name, "/present/",
-                                      ensemble.dir, "/",
-                                      species.name, "_", whi,
+                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                                      ensemble_dir, "/",
+                                      species_name, "_", whi,
                                       "_ensemble", "_meanconsensus",
-                                      consensus.level * 100, ".png"), res = 300,
+                                      consensus_level * 100, ".png"), res = 300,
                     width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
                 raster::plot(ensemble.consensus)
@@ -161,10 +163,10 @@ ensemble_model <- function(species.name,
                 dev.off()
                 }
                 if (write_raw_map) {
-                png(filename = paste0(models.dir, "/", species.name, "/present/",
-                                      ensemble.dir, "/",
-                                       species.name, "_", whi, "_ensemble",
-                                       consensus.level * 100,
+                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                                      ensemble_dir, "/",
+                                       species_name, "_", whi, "_ensemble",
+                                       consensus_level * 100,
                                       "without_margins.png"),
                     bg = "transparent",
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)

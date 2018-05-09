@@ -15,9 +15,9 @@
 #' information? Defaults to FALSE and can take a while for large datasets
 #' @param geo_filt Logical, delete occurrence that are too close?
 #' @param geo_filt_dist The distance of the geographic filter (in kilometers)
-#' @param models.dir Folder path to save the output files
+#' @param models_dir Folder path to save the output files
 #' @param plot_sdmdata Logical, whether png files will be written
-#' @param n.back Number of pseudoabsence points
+#' @param n_back Number of pseudoabsence points
 #' @param bootstrap Logical, perform bootstrap
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
@@ -47,21 +47,21 @@ setup_sdmdata <- function(species_name = species_name,
                           clean_dupl = T,
                           clean_nas = F,
                           geo_filt = F,
-                          geo_filt_dist,
-                          models.dir = models.dir,
+                          geo_filt_dist = NULL,
+                          models_dir = models_dir,
                           plot_sdmdata = T,
-                          n.back = 1000,
+                          n_back = 1000,
                           bootstrap = F,
                           boot_proportion = 0.8,
                           boot_n = 10,
                           crossvalidation = F,
                           cv_partitions = cv_partitions,
                           cv_n = 10) {
-    if (file.exists(paste0(models.dir)) == FALSE)
-        dir.create(paste0(models.dir))
-    if (file.exists(paste0(models.dir, "/", species_name)) == FALSE)
-        dir.create(paste0(models.dir, "/", species_name))
-    partition.folder <- paste0(models.dir, "/", species_name, "/present", "/partitions")
+    if (file.exists(paste0(models_dir)) == FALSE)
+        dir.create(paste0(models_dir))
+    if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
+        dir.create(paste0(models_dir, "/", species_name))
+    partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
         dir.create(partition.folder, recursive = T)
 
@@ -86,15 +86,15 @@ setup_sdmdata <- function(species_name = species_name,
     } else {
     if (buffer %in% c("mean", "max", "median")) {
         backgr <- create_buffer(coord = coordinates,
-                                n.back = n.back,
-                                buffer.type = buffer,
+                                n_back = n_back,
+                                buffer_type = buffer,
                                 seed = seed,
                                 predictors = predictors)
 
     } else {
         set.seed(seed + 2)
         backgr <- dismo::randomPoints(mask = predictors,
-                                      n = n.back,
+                                      n = n_back,
                                       p = coordinates,
                                       excludep = T)
     }

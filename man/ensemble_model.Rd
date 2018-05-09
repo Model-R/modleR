@@ -4,26 +4,26 @@
 \alias{ensemble_model}
 \title{Create ensemble models from several algorithms.}
 \usage{
-ensemble_model(species.name, occs, models.dir = "./models",
-  final.dir = "final_models", ensemble.dir = "ensemble",
-  which.models = c("final_model_3", "final_model_7"), consensus = FALSE,
-  consensus.level = 0.5, write_png = T, write_raw_map = F)
+ensemble_model(species_name, occs, models_dir = "./models",
+  final_dir = "final_models", ensemble_dir = "ensemble",
+  which_models = c("final_model_3"), consensus = FALSE,
+  consensus_level = 0.5, write_png = T, write_raw_map = F, ...)
 }
 \arguments{
-\item{species.name}{A character string with the species name}
+\item{species_name}{A character string with the species name}
 
 \item{occs}{A two-column data frame with the occurrence points}
 
-\item{models.dir}{Character string. Folder path where the input files
+\item{models_dir}{Character string. Folder path where the input files
 are located}
 
-\item{final.dir}{Character string, name of the subfolder where the files
+\item{final_dir}{Character string, name of the subfolder where the files
 for the final models are located}
 
-\item{ensemble.dir}{Character string, name of the folder to save the output
+\item{ensemble_dir}{Character string, name of the folder to save the output
 files. A subfolder will be created.}
 
-\item{which.models}{Which final_model() will be used? Currently it can be:
+\item{which_models}{Which final_model() will be used? Currently it can be:
 \describe{
   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
   by TSS or AUC}
@@ -36,7 +36,7 @@ files. A subfolder will be created.}
 
 \item{consensus}{Logical. Will a consensus rule be applied?}
 
-\item{consensus.level}{Threshold for the consensus rule, betwen 0 and 1
+\item{consensus_level}{Threshold for the consensus rule, betwen 0 and 1
 (0.5 means a majority rule).}
 
 \item{write_png}{Write png? Defaults to TRUE}
@@ -46,7 +46,7 @@ files. A subfolder will be created.}
 \value{
 A rasterStack with the minimun, maximum, median, mean and standard
 deviation of the assembled models. A set of ensemble models and figures
-(optional) written in the \code{ensemble.dir} subfolder
+(optional) written in the \code{ensemble_dir} subfolder
 }
 \description{
 \code{ensemble} takes the input of \code{final_model} and builds an ensemble

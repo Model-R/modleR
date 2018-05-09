@@ -7,9 +7,10 @@
 setup_sdmdata(species_name = species_name, coordinates = coordinates,
   real_absences = NULL, lon = "lon", lat = "lat", buffer = FALSE,
   seed = 512, predictors = predictors, clean_dupl = T, clean_nas = F,
-  geo_filt = F, geo_filt_dist, models.dir = models.dir, plot_sdmdata = T,
-  n.back = 1000, bootstrap = F, boot_proportion = 0.8, boot_n = 10,
-  crossvalidation = F, cv_partitions = cv_partitions, cv_n = 10)
+  geo_filt = F, geo_filt_dist = NULL, models_dir = models_dir,
+  plot_sdmdata = T, n_back = 1000, bootstrap = F, boot_proportion = 0.8,
+  boot_n = 10, crossvalidation = F, cv_partitions = cv_partitions,
+  cv_n = 10)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -39,11 +40,11 @@ information? Defaults to FALSE and can take a while for large datasets}
 
 \item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
 
-\item{models.dir}{Folder path to save the output files}
+\item{models_dir}{Folder path to save the output files}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
-\item{n.back}{Number of pseudoabsence points}
+\item{n_back}{Number of pseudoabsence points}
 
 \item{bootstrap}{Logical, perform bootstrap}
 

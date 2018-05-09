@@ -4,12 +4,12 @@
 \alias{geo_filt}
 \title{Excludes occurrence points within a geographic distance}
 \usage{
-geo_filt(coordinates, min.distance = 10)
+geo_filt(coordinates, min_distance = 10)
 }
 \arguments{
 \item{coordinates}{data.frame. Table with the species' data. It should contain only two columns: lon and lat, in that order.}
 
-\item{min.distance}{numeric. Minimum distance (in Km) between points.}
+\item{min_distance}{numeric. Minimum distance (in Km) between points.}
 }
 \value{
 Table of occurrence points with minimum distance indicated in min.distance

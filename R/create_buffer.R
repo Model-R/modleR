@@ -2,8 +2,8 @@
 #'
 #' @param coord  A data frame with occurrence data. It should contain only two columns:
 #' lon and lat, in that order.
-#' @param n.back Number of pseudoabsence points
-#' @param buffer.type Character string indicating whether the buffer should be
+#' @param n_back Number of pseudoabsence points
+#' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the mean, median or maximum distance between occurrence points
 #' @param seed for reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
@@ -22,22 +22,22 @@
 #' @importFrom dismo randomPoints
 #' @export
 create_buffer <- function(coord,
-                          n.back,
-                          buffer.type,
+                          n_back,
+                          buffer_type,
                           seed = 512,
                           predictors) {
 
     sp::coordinates(coord) <- ~lon + lat
     raster::crs(coord) <- raster::crs(predictors)
-    if (buffer.type == "mean")
+    if (buffer_type == "mean")
         dist.buf <- mean(sp::spDists(x = coord,
                                      longlat = TRUE,
                                      segments = FALSE))
-    if (buffer.type == "max")
+    if (buffer_type == "max")
         dist.buf <-  max(sp::spDists(x = coord,
                                     longlat = TRUE,
                                     segments = FALSE))
-    if (buffer.type == "median")
+    if (buffer_type == "median")
         dist.buf <- stats::median(sp::spDists(x = coord,
                                               longlat = TRUE,
                                               segments = FALSE))
@@ -58,7 +58,7 @@ create_buffer <- function(coord,
     # Samples random points
     set.seed(seed + 2)
     backgr <- dismo::randomPoints(mask = r_buffer,
-                                  n = n.back,
+                                  n = n_back,
                                   p = coord,
                                   excludep = T)
     rm(buffer.shape)
