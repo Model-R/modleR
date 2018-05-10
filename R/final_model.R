@@ -69,21 +69,18 @@ final_model <- function(species_name,
     }
     stats <- data.table::rbindlist(lista)
     stats <- as.data.frame(stats)
-    write.csv(stats, file = paste0(models_dir,"/", species_name, "/present/", final_dir,"/",species_name, "final_statistics.csv"))
+    write.csv(stats, file = paste0(models_dir,"/", species_name, "/present/",
+                                   final_dir,"/",species_name,
+                                   "final_statistics.csv"))
 
     # Extracts only for the selected algorithm
     if (is.null(algorithms)) {
         algorithms <- unique(stats$algoritmo)
     }
     algorithms <- as.factor(algorithms)
-    #n.models <- nrow(stats) #How many models were there
-
-    #n.runs <-  length(unique(stats$run)) #How many runs were there
-    #for (run in seq_along(1:n.runs)) {
-     #   stats.run <- stats[stats$run == run, ]
 
     for (algo in algorithms) {
-        cat(paste("Extracting data for", algo, "\n"))
+        cat(paste("Extracting data for", species_name, algo, "\n"))
         stats.algo <- stats[stats$algoritmo == algo, ]
         #stats.algo <- stats.run[stats.run$algoritmo == algo, ]
         n.part <- nrow(stats.algo)  #How many partitions were there
@@ -204,29 +201,33 @@ final_model <- function(species_name,
                         final <- addLayer(final, final.w)
                     }
                 # Escribe final
-                    #pero solo los que sean pedidos en which_model
-                    which_final <- final[which_models]
-                raster::writeRaster(x = which_final,
-                                    filename = paste0(models_dir, "/",
-                                                      species_name, "/present/",
-                                                      final_dir, "/",
-                                                      species_name, "_", algo,
-                                                      ".tif"),
-                    bylayer = T,
-                    overwrite = T,
-                    format = "GTiff",
-                    suffix = "names"
-                )
-                if (write_png == T) {
-                    for (i in 1:dim(which_final)[[3]]) {
-                        png(filename = paste0(models_dir, "/", species_name,
-                                              "/present/", final_dir, "/",
-                                              species_name,"_", algo, "_",
-                                              names(which_final)[i], ".png"))
-                        plot(which_final[[i]], main = names(which_final)[i])
-                        dev.off()
+                    if (length(final) != 0) {
+
+                        #pero solo los que sean pedidos en which_model
+                        which_final <- final[[which_models]]
+                        for (i in 1:dim(which_final)[[3]]) {
+                        raster::writeRaster(x = which_final[[i]],
+                                            filename = paste0(models_dir, "/",
+                                                species_name, "/present/",
+                                                final_dir, "/", species_name,
+                                                "_", algo, "_",
+                                                names(which_final)[i], ".tif"),
+                                            overwrite = T,
+                                            format = "GTiff")
                         }
-                }
+                        if (write_png == T) {
+                            for (i in 1:dim(which_final)[[3]]) {
+                                png(filename = paste0(models_dir, "/", species_name,
+                                                      "/present/", final_dir, "/",
+                                                      species_name,"_", algo, "_",
+                                                      names(which_final)[i], ".png"))
+                                plot(which_final[[i]], main = names(which_final)[i])
+                                dev.off()
+                            }
+                        }
+                    } else {
+                        warning(paste("no models were selected for", species_name, algo))
+                    }
             }
 
     }
