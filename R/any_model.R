@@ -137,8 +137,10 @@ do_any <- function(species_name,
                 if (!nrow(coordinates) %in% c(1, 2)) {
                     #sólo corta por LTP si hay más de dos puntos...
                     LPTec <- dismo::threshold(eec, 'no_omission')
-                    #ec_cont[ec_cont < LPTec] <- LPTec
-                    ec_cont[ec_cont < LPTec] <- 0 #éste debe ser el problema
+                    ec_cont[ec_cont < LPTec] <- LPTec
+                    ec_cont <- (ec_cont - raster::minValue(ec_cont)) /
+                        raster::maxValue(ec_cont - raster::minValue(ec_cont))
+                    #ec_cont[ec_cont < LPTec] <- 0 #éste debe ser el problema
                 }
                 #evaluates again because the values changed
                 p <- raster::extract(ec_cont, y = pres_test)
