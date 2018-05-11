@@ -13,7 +13,7 @@
 #' @seealso \code{\link[dismo]{maxent}}
 #' @seealso \code{\link[dismo]{domain}}
 #' @seealso \code{\link[dismo]{mahal}}
-
+#' @import raster
 #' @import grDevices
 #' @importFrom utils write.table
 #' @importFrom stats complete.cases formula glm step
@@ -88,17 +88,80 @@ do_any <- function(species_name,
             if (algo == "svm.e") {
                 mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
                                         data = envtrain)
-}
+                }
 
-            eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-           #if (algo %in% c("rf", "glm", "svm", "svm2")) {
+            ######euclidean here
+            if (algo %in% c("centroid", "mindist")) {
+                ec_cont <- predictors[[1]]
+                ec_cont[!is.na(ec_cont)] <- 1
+                predictors.st <- raster::scale(predictors)
+                pres.vals <- raster::extract(predictors.st, pres_train)#extrae valores
+                pred.vals <- raster::values(predictors.st)
+                dist.vals <- vector(length = nrow(pred.vals))
+
+                #esto es centroid
+                if (algo == "centroid") {
+                    cat(paste("Euclidean environmental distance to centroid",'\n'))
+                    #calcula la media ambiental de los puntos de train
+                    centroid.val <- apply(pres.vals, 2, mean, na.rm = TRUE)
+                    #calcula la distancia a ese centroide
+                    dist.vals <- apply(pred.vals, 1, FUN = function(x) {
+                        dist(rbind(centroid.val, x))
+                        }
+                        )
+                raster::values(ec_cont) <- -dist.vals
+                    }
+
+                #esto es mindist
+                #no está haciendo bien el cut
+                if (algo == "mindist") {
+                    pred.vals.cc <- pred.vals[complete.cases(pred.vals), ]
+                    min.vals <- vector(length = nrow(pred.vals.cc))
+                    for (m in 1:nrow(pred.vals.cc)) {
+                        mindata <- rbind(pred.vals.cc[m, ], pres.vals)
+                        min.vals[m] <- min(as.matrix(dist(mindata))[1,][-1], na.rm = T)
+                    }
+                ec_cont[complete.cases(pred.vals)] <- -min.vals
+
+                }
+                #rescales the output so the output is between
+                if (raster::minValue(ec_cont) < 0) {
+                    ec_cont <-
+                        (ec_cont - raster::minValue(ec_cont)) /
+                        raster::maxValue(ec_cont - raster::minValue(ec_cont))
+                }
+                # evaluates the model to extract LPT
+                p <- raster::extract(ec_cont, y = pres_test)
+                a <- raster::extract(ec_cont, y = backg_test)
+                eec <- dismo::evaluate(p = p, a = a)
+                if (!nrow(coordinates) %in% c(1, 2)) {
+                    #sólo corta por LTP si hay más de dos puntos...
+                    LPTec <- dismo::threshold(eec, 'no_omission')
+                    #ec_cont[ec_cont < LPTec] <- LPTec
+                    ec_cont[ec_cont < LPTec] <- 0 #éste debe ser el problema
+                }
+                #evaluates again because the values changed
+                p <- raster::extract(ec_cont, y = pres_test)
+                a <- raster::extract(ec_cont, y = backg_test)
+                eec <- dismo::evaluate(p = p, a = a)
+        }
+            ######euclidean jusqu'ici----
+
+            if (algo %in% c("mindist", "centroid")) {
+                eval_mod <- eec
+                mod_cont <- ec_cont
+            } else {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                mod_cont <- dismo::predict(predictors, mod, progress = "text")
+            }
+            #if (algo %in% c("rf", "glm", "svm", "svm2")) {
             #eval_mod2 <- dismo::evaluate(env_pres_test, env_backg_test, mod)
             #}
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
             th_table <- dismo::threshold(eval_mod)
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
-            mod_cont <- dismo::predict(predictors, mod, progress = "text")
+
             mod_bin  <- mod_cont > th_mod
             mod_cut  <- mod_cont * mod_bin
             th_table$AUC <- eval_mod@auc
