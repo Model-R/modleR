@@ -33,12 +33,12 @@ references:
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = T
+  eval = F
 )
 ```
 
 
-__modelr__ is a workflow based on package __dismo__, designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, lack of environmental information and geographic <!--and environmental--> filters, executes crossvalidation, bootstrap or jacknife procedures depending on the number of occurrence points, then it performs ecological niche models using the several algorithms implemented in the `dismo` package.
+__ModelR__ is a workflow based on package __dismo__, designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, lack of environmental information and geographic <!--and environmental--> filters, executes crossvalidation, bootstrap or jacknife procedures depending on the number of occurrence points, then it performs ecological niche models using the several algorithms implemented in the `dismo` package.
 
 ## Installing 
 
@@ -64,7 +64,7 @@ The workflow consists of mainly four functions that should be used sequentially.
 
 # Folder structure created by this package
 
-__modelr__ writes the outputs in the hard disk, according to the following folder structure:   
+__ModelR__ writes the outputs in the hard disk, according to the following folder structure:   
 
     `models_dir/projection1/partitions`  
     `models_dir/projection1/final_models`  
@@ -92,7 +92,7 @@ Functions `do_any` and `do_enm()` create a *model per partition, per algorithm*.
 
 ## Setting up the data: `setup_sdmdata()`
 
-__modelr__ comes with example data, a data frame called `coordenadas`, with 
+__ModelR__ comes with example data, a data frame called `coordenadas`, with 
 occurrence data for four species, and predictor variables called 
 `variaveis_preditoras`
 
@@ -100,7 +100,7 @@ occurrence data for four species, and predictor variables called
 ```{r lib, echo = T}
 library(devtools)
 load_all()
-#library(modelr)
+#library(ModelR)
 library(rJava) 
 library(raster)
 head(coordenadas)
@@ -256,8 +256,7 @@ do_enm(species_name = species[1],
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![](final_model_english.png)
-![](https://www.flickr.com/gp/ananke/78813X)
+
 
 + It can weigh the partitions by a performance metric `weigh.partitions = TRUE` and `weight.par = "spec_sens"`, and give larger weights to partitions with better performance. This results in a continuous, uncut surface. 
 + It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, it will use all the partitions. 

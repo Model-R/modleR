@@ -10,6 +10,8 @@
 #' by the dismo documentation
 #' @param svm.k Execute svm from kernlab package
 #' @param svm.e Execute svm from e1071 package
+#' @param mindist Execute minimum euclidean distance
+#' @param centroid Execute euclidean distance to the environmental centroid
 #' @return A set of ecological niche models for each partition and algorithm,
 #'         written in the \code{models_dir} subfolder
 #' @author Andrea Sánchez-Tapia

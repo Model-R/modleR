@@ -6,7 +6,8 @@
 \usage{
 do_enm(species_name, coordinates, predictors, models_dir = "./models",
   bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
-  maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE, ...)
+  maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE,
+  mindist = FALSE, centroid = FALSE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
