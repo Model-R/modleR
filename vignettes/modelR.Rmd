@@ -256,7 +256,7 @@ do_enm(species_name = species[1],
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-
+![__`final_model()` options__](final_model_english.png)
 
 + It can weigh the partitions by a performance metric `weigh.partitions = TRUE` and `weight.par = "spec_sens"`, and give larger weights to partitions with better performance. This results in a continuous, uncut surface. 
 + It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, it will use all the partitions. 

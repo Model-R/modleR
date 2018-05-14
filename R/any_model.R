@@ -16,7 +16,7 @@
 #' @import raster
 #' @import grDevices
 #' @importFrom utils write.table
-#' @importFrom stats complete.cases formula glm step
+#' @importFrom stats complete.cases formula glm step dist
 #' @export
 do_any <- function(species_name,
                    algo = c("bioclim"), #um só

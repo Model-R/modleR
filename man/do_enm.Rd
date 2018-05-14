@@ -34,6 +34,10 @@ by the dismo documentation}
 \item{svm.k}{Execute svm from kernlab package}
 
 \item{svm.e}{Execute svm from e1071 package}
+
+\item{mindist}{Execute minimum euclidean distance}
+
+\item{centroid}{Execute euclidean distance to the environmental centroid}
 }
 \value{
 A set of ecological niche models for each partition and algorithm,
