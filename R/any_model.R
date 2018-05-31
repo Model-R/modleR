@@ -32,17 +32,14 @@ do_any <- function(species_name,
 
     #sdmdatasetup
     partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
-    if (file.exists(paste0(partition.folder, "/sdmdata.txt"))) {
-        sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
-        message("sdmdata.txt file found, fitting the models from it")
-    } else {
+
         sdmdata <- setup_sdmdata(
             species_name = species_name,
             coordinates = coordinates,
             predictors = predictors,
             models_dir = models_dir,
             ...)
-    }
+
     ##### Hace los modelos
     runs <- which(names(sdmdata) == "pa") - 1
 
@@ -89,8 +86,6 @@ do_any <- function(species_name,
                 mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
                                         data = envtrain)
                 }
-
-            ######euclidean here
             if (algo %in% c("centroid", "mindist")) {
                 ec_cont <- predictors[[1]]
                 ec_cont[!is.na(ec_cont)] <- 1
@@ -147,7 +142,6 @@ do_any <- function(species_name,
                 a <- raster::extract(ec_cont, y = backg_test)
                 eec <- dismo::evaluate(p = p, a = a)
         }
-            ######euclidean jusqu'ici----
 
             if (algo %in% c("mindist", "centroid")) {
                 eval_mod <- eec
@@ -156,9 +150,6 @@ do_any <- function(species_name,
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 mod_cont <- dismo::predict(predictors, mod, progress = "text")
             }
-            #if (algo %in% c("rf", "glm", "svm", "svm2")) {
-            #eval_mod2 <- dismo::evaluate(env_pres_test, env_backg_test, mod)
-            #}
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
             th_table <- dismo::threshold(eval_mod)
