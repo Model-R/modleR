@@ -65,8 +65,41 @@ setup_sdmdata <- function(species_name = species_name,
     if (file.exists(partition.folder) == FALSE)
         dir.create(partition.folder, recursive = T)
 
-    coordinates <- coordinates[,c(lon,lat)]
+    coordinates <- coordinates[,c(lon, lat)]
     names(coordinates) <- c("lon", "lat")
+    original.n <- nrow(coordinates)
+        #checking metadata
+    if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
+        message("metadata file found, checking metadata \n")
+        metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F,row.names = 1)
+        metadata_old <- metadata_old[,-3]
+        metadata_new <- data.frame(
+            species_name = droplevels(species_name),
+            original.n = original.n,
+            buffer = buffer,
+            seed = ifelse(is.null(seed), NA, seed),
+            res.x = res(predictors)[1],
+            res.y = res(predictors)[2],
+            clean_dupl = clean_dupl,
+            clean_nas = clean_nas,
+            geo_filt = geo_filt,
+            geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
+            models_dir = models_dir,
+            n_back = n_back,
+            partition = partition_type,
+            boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
+            boot_n = ifelse(is.null(boot_n), NA, boot_n),
+            cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
+            cv_n = ifelse(is.null(cv_n), NA, cv_n), row.names = 1)
+
+            if (all(all.equal(metadata_old, metadata_new) == T)) {
+            message("same metadata, no need to run data partition")
+            sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
+            return(sdmdata)
+            }
+    }
+    message("performing data partition")
+
     # tabela de valores
     presvals <- raster::extract(predictors, coordinates)
     if (clean_dupl == TRUE) {
