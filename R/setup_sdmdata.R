@@ -65,8 +65,13 @@ setup_sdmdata <- function(species_name = species_name,
     if (file.exists(partition.folder) == FALSE)
         dir.create(partition.folder, recursive = T)
 
+    ## checking latitude and longitude columns
+    if (all(c(lon, lat) %in% names(coordinates))) {
     coordinates <- coordinates[,c(lon, lat)]
     names(coordinates) <- c("lon", "lat")
+    } else {
+        stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
+        }
     original.n <- nrow(coordinates)
         #checking metadata
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
