@@ -188,6 +188,31 @@ setup_sdmdata <- function(species_name = species_name,
                col = c("grey50", "black"), legend = c("Occs","Back"))
         dev.off()
     }
+
+    metadata <- data.frame(
+        species_name = species_name,
+        original.n = original.n,
+        final.n = final.n,
+        buffer = buffer,
+        seed = ifelse(is.null(seed), NA, seed),
+        res.x = res(predictors)[1],
+        res.y = res(predictors)[2],
+        clean_dupl = clean_dupl,
+        clean_nas = clean_nas,
+        geo_filt = geo_filt,
+        geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
+        models_dir = models_dir,
+        n_back = n_back,
+        partition = partition_type,
+        boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
+        boot_n = ifelse(is.null(boot_n),NA,boot_n),
+        cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
+        cv_n = ifelse(is.null(cv_n), NA, cv_n)
+    )
+    message("saving metadata")
+    write.table(metadata, file = paste0(partition.folder, "/metadata.txt"))
+
+
     rm(coord_env_all)
     rm(pres)
     rm(back)
