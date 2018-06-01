@@ -5,17 +5,20 @@
 \title{Prepares the dataset to perform ENM}
 \usage{
 setup_sdmdata(species_name = species_name, coordinates = coordinates,
-  real_absences = NULL, lon = "lon", lat = "lat", buffer = FALSE,
-  seed = 512, predictors = predictors, clean_dupl = T, clean_nas = F,
-  geo_filt = F, geo_filt_dist = NULL, models_dir = models_dir,
-  plot_sdmdata = T, n_back = 1000, bootstrap = F, boot_proportion = 0.8,
-  boot_n = 10, crossvalidation = F, cv_partitions = cv_partitions,
-  cv_n = 10)
+  predictors = predictors, real_absences = NULL, lon = "lon",
+  lat = "lat", buffer = FALSE, seed = 512, clean_dupl = T,
+  clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
+  models_dir = models_dir, plot_sdmdata = T, n_back = 1000,
+  partition_type = c("bootstrap", "crossvalidation"),
+  boot_proportion = NULL, boot_n = NULL, cv_partitions = NULL,
+  cv_n = NULL)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
 \item{coordinates}{A data frame with occurrence data}
+
+\item{predictors}{A RasterStack of predictor variables}
 
 \item{real_absences}{User defined absence points}
 
@@ -27,8 +30,6 @@ setup_sdmdata(species_name = species_name, coordinates = coordinates,
 (F, "mean", "median", "max")}
 
 \item{seed}{For reproducibility purposes}
-
-\item{predictors}{A RasterStack of predictor variables}
 
 \item{clean_dupl}{Logical, delete duplicate occurrence points? defaults to
 TRUE}
@@ -46,14 +47,12 @@ information? Defaults to FALSE and can take a while for large datasets}
 
 \item{n_back}{Number of pseudoabsence points}
 
-\item{bootstrap}{Logical, perform bootstrap}
+\item{partition_type}{Perform bootstrap or k-fold crossvalidation?}
 
 \item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled
 for bootstrap}
 
 \item{boot_n}{How many bootstrap runs}
-
-\item{crossvalidation}{Logical, perform k-fold crossvalidation}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 

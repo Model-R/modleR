@@ -18,11 +18,10 @@
 #' @param models_dir Folder path to save the output files
 #' @param plot_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points
-#' @param bootstrap Logical, perform bootstrap
+#' @param partition_type Perform bootstrap or k-fold crossvalidation?
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n How many bootstrap runs
-#' @param crossvalidation Logical, perform k-fold crossvalidation
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n How many crossvalidation runs
 #' @return A dataframe called sdmdata with the groups for each run
@@ -38,12 +37,12 @@
 # tabela de valores
 setup_sdmdata <- function(species_name = species_name,
                           coordinates = coordinates,
+                          predictors = predictors,
                           real_absences = NULL,
                           lon = "lon",
                           lat = "lat",
                           buffer = FALSE,
                           seed = 512,
-                          predictors = predictors,
                           clean_dupl = T,
                           clean_nas = F,
                           geo_filt = F,
@@ -51,12 +50,11 @@ setup_sdmdata <- function(species_name = species_name,
                           models_dir = models_dir,
                           plot_sdmdata = T,
                           n_back = 1000,
-                          bootstrap = F,
-                          boot_proportion = 0.8,
-                          boot_n = 10,
-                          crossvalidation = F,
-                          cv_partitions = cv_partitions,
-                          cv_n = 10) {
+                          partition_type = c("bootstrap", "crossvalidation"),
+                          boot_proportion = NULL,
+                          boot_n = NULL,
+                          cv_partitions = NULL,
+                          cv_n = NULL) {
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir))
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
@@ -79,7 +77,7 @@ setup_sdmdata <- function(species_name = species_name,
         metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F,row.names = 1)
         metadata_old <- metadata_old[,-3]
         metadata_new <- data.frame(
-            species_name = droplevels(species_name),
+            species_name = as.character(species_name),
             original.n = original.n,
             buffer = buffer,
             seed = ifelse(is.null(seed), NA, seed),
@@ -116,7 +114,7 @@ setup_sdmdata <- function(species_name = species_name,
         presvals <- presvals[complete.cases(presvals),]
     }
     if (geo_filt == TRUE) {
-        coordinates <- geo_filt(coordinates = coordinates, min.distance = geo_filt_dist)
+        coordinates <- geo_filt(coordinates = coordinates, min_distance = geo_filt_dist)
         presvals <- raster::extract(predictors, coordinates)
     }
     if (!is.null(real_absences)) {
@@ -128,9 +126,8 @@ setup_sdmdata <- function(species_name = species_name,
                                 buffer_type = buffer,
                                 seed = seed,
                                 predictors = predictors)
-
     } else {
-        set.seed(seed + 2)
+        set.seed(seed)
         backgr <- dismo::randomPoints(mask = predictors,
                                       n = n_back,
                                       p = coordinates,
@@ -140,6 +137,7 @@ setup_sdmdata <- function(species_name = species_name,
 
     colnames(backgr) <- c("lon", "lat")
 
+    final.n <- nrow(coordinates)
     # Extraindo dados ambientais dos bckgr
     backvals <- raster::extract(predictors, backgr)
 
@@ -151,17 +149,21 @@ setup_sdmdata <- function(species_name = species_name,
     sdmdata <- cbind(pa,coord_env_all)
     # Data partition-----
     #Crossvalidation, repetated crossvalidation and jacknife
-    if (crossvalidation == TRUE) {
+    #if (crossvalidation == TRUE) {
+    if (partition_type == "crossvalidation") {
         if (nrow(coordinates) < 11) {
+            message("less than 11 occurrences, forcing jacknife")
             #forces jacknife
             cv_partitions <- nrow(coordinates)
             cv_n <- 1
         }
+        if (is.null(cv_n)) stop("cv_n must be specified in crossvalidation")
+        if (is.null(cv_partitions)) stop("cv_partitions must be specified in crossvalidation")
         if (cv_n == 1) {
             #Crossvalidation
             set.seed(seed)  #reproducibility
             group <- dismo::kfold(coordinates, cv_partitions)
-            set.seed(seed + 1)
+            set.seed(seed)
             bg.grp <- dismo::kfold(backgr, cv_partitions)
             group.all <- c(group, bg.grp)
         }
@@ -177,7 +179,12 @@ setup_sdmdata <- function(species_name = species_name,
         }
     }
     # Bootstrap
-    if (bootstrap == TRUE) {
+    #if (bootstrap == TRUE) {
+    if (partition_type == "bootstrap") {
+        if (boot_proportion > 1 | boot_proportion <= 0)
+            stop("bootstrap training set proportion must be between 0 and 1")
+        if (is.null(boot_n))
+            stop("boot_n must be specified")
     boot.pres <- replicate(n = boot_n,
                            sample(
                                x = seq_along(1:nrow(coordinates)),
@@ -210,13 +217,13 @@ setup_sdmdata <- function(species_name = species_name,
     if (exists("group.all"))   sdmdata <- data.frame(group.all, sdmdata)
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
+    message("saving sdmdata")
     write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 
 
 
     if (plot_sdmdata) {
-        #Creates a .png plot of the initial dataset
-        cat(paste("Plotting the dataset...",'\n'))
+        message("Plotting the dataset...",'\n')
         png(filename = paste0(partition.folder, "/sdmdata_", species_name,".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
@@ -227,8 +234,9 @@ setup_sdmdata <- function(species_name = species_name,
         dev.off()
     }
 
+    #metadata
     metadata <- data.frame(
-        species_name = species_name,
+        species_name = as.character(species_name),
         original.n = original.n,
         final.n = final.n,
         buffer = buffer,
