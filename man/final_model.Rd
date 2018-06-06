@@ -8,7 +8,7 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   select_partitions = TRUE, threshold = c("spec_sens"),
   select_par = "TSS", select_par_val = 0.7, consensus_level = 0.5,
   models_dir = "./models", final_dir = "final_models",
-  which_models = c("final_model_3"), write_png = T, ...)
+  which_models = c("raw_mean"), write_png = T, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -33,23 +33,27 @@ partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 \item{select_par_val}{Threshold to select models from TSS values}
 
 \item{consensus_level}{Which proportion of models will be kept when creating
-\code{final_model_8} (binary)}
+\code{bin_consensus} (binary)}
 
 \item{models_dir}{Character. Folder path where the input files are located}
 
 \item{final_dir}{Character. Name of the folder to save the output files.
-                 A subfolder will be created.
+A subfolder will be created.}
+
+\item{which_models}{Which final_model() will be used? Currently it can be:
 \describe{
   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
   by TSS or AUC}
-  \item{\code{final_model_3}}{the binary model created by selecting or not the
-   partitions, taking their mean and cutting by the mean threshold that
-   maximizes TSS (or other dismo thresholds)}
-  \item{\code{final_model_7}}{the mean of the selected binary models}
-  \item{\code{final_model_8}}{the binary consensus from \code{final_model_7}}
+  \item{\code{raw_mean}}{the mean of the selected raw models}
+  \item{\code{bin_mean_th}}{the binary model created by cutting \code{raw_mean} by the mean of the thresholds that
+   maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+   \item{\code{cut_mean_th}}{the cut model created by recovering \code{raw_mean} values above the mean threshold that
+   maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+  \item{\code{bin_mean}}{the mean of the selected binary models}
+  \item{\code{bin_consensus}}{the binary consensus from \code{bin_mean}.
+  \code{consensus_level} must be defined, 0.5 means a majority consensus}
+  \item{\code{cut_mean}}{the mean of the selected cut models}
 }}
-
-\item{which_models}{Which final_model() will be used? Currently it can be:}
 
 \item{write_png}{Writes png files of the final models}
 }

@@ -9,38 +9,23 @@ vignette: >
   %\VignetteIndexEntry{ModelR: a workflow for ecological niche models based on dismo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-references:
-- id: araujo_ensemble_2007
-  title: Ensemble forecasting of species distributions
-  author:
-  - family: Araújo
-    given: Miguel
-  - family: New
-    given: Mark
-  container-title: Trends in Ecology and Evolution
-  volume: 22
-  URL: 'http://dx.doi.org/10.1016/j.tree.2006.09.010'
-  DOI: 10.1016/j.tree.2006.09.010
-  issue: 1
-  publisher: 
-  page: 42-47
-  type: article-journal
-  issued:
-    year: 2007
+bibliography: ModelR.bib
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = F
+  eval = T
 )
 ```
 
 
-__ModelR__ is a workflow based on package __dismo__, designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, lack of environmental information and geographic <!--and environmental--> filters, executes crossvalidation, bootstrap or jacknife procedures depending on the number of occurrence points, then it performs ecological niche models using the several algorithms implemented in the `dismo` package.
+__ModelR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, lack of environmental information and geographic <!--and environmental--> filters, executes crossvalidation, bootstrap or jacknife procedures depending on the number of occurrence points, then it performs ecological niche models using several algorithms already implemented in the `dismo` package. It also performs glm, Support Vector Machines, Random Forests and environmental distances.
 
-## Installing 
+# Installing 
+
+Currently ModelR can be installed from github but we aim to submit to CRAN soon:
 
 ```
 library(devtools)
@@ -50,19 +35,19 @@ install_github("Model-R/modelr_pkg", build_vignettes = TRUE)
 
 (`build_vignettes` will include this vignette on the installation)
 
-## The workflow
+# The workflow
 
 The workflow consists of mainly four functions that should be used sequentially.
 
-0.^\*^ `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation);  
-1. `do_any()` makes the ENM for each partition and partition; optionally, 
+1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
+2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, 
 `do_enm()` calls `do_any()` to fit multiple algorithms.
-2. `final_model()` selects and joins the partition models into a final model per species per algorithm;  
-3. `ensemble_model()` joins the final models per algorithm into an ensemble model.  
+3. Partition joining: `final_model()` selects and joins the partition models into a model per species per algorithm;  
+4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model.  
 
-^\*^ `setup_sdmdata()` can be called apart or it will be called from within `do_any()` or `do_enm()`
+NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_any()` or `do_enm()`. Likewise, `do_enm()` is just a wrapper that will call several instances of `do_any()`.
 
-# Folder structure created by this package
+## Folder structure created by this package
 
 __ModelR__ writes the outputs in the hard disk, according to the following folder structure:   
 
@@ -81,23 +66,20 @@ __ModelR__ writes the outputs in the hard disk, according to the following folde
 + The _names_ of the `final` and `ensemble` folders can be modified, but __the nested subfolder structure will remain the same__. If you change `final_models` default value (`"final_model"`) you will need to include the new value when calling `ensemble_model()` (`final_dir = "[new name]"`), to indicate the function where to look for models. This partial flexibility allows for experimenting with final model and ensemble construction (by runnning final or ensemble twice in different output folders, for example). 
 
 
-# Fitting a model per partition
+##  Cleaning and setting up the data: `setup_sdmdata()`
 
-Functions `do_any` and `do_enm()` create a *model per partition, per algorithm*. The available algorithms are bioclim, domain, MaxEnt, mahalanobis distances, as implemented in __dismo__, and support vector machines (SVM), as implemented by packages __kernlab__ (`svm.k`) and __e1071__ (`svm.e`). GLM from base R and Random Forest (from package __randomForest__) are also implemented. Details for the implementation of each model can be accessed in the documentation of the function:
+The first step of the workflow is to setup the data, that is, to partition it 
+according to each project needs, to sample background pseudoabsences and to 
+apply some data cleaning procedures, as well as some filters. This is done by 
+function `setup_sdmdata()`
 
-```
-?modelr::do_any()
-```
-<!--escrever os detalhes das implementações --> 
-
-## Setting up the data: `setup_sdmdata()`
 
 __ModelR__ comes with example data, a data frame called `coordenadas`, with 
 occurrence data for four species, and predictor variables called 
 `variaveis_preditoras`
 
 
-```{r lib, echo = T}
+```{r lib, echo = T, eval = T}
 library(devtools)
 load_all()
 #library(ModelR)
@@ -118,124 +100,106 @@ points(sp::SpatialPoints(coordenadas[,c(2,3)]),
 
 We will filter the `coordenadas` file to select only the data for the first species: 
 
-```{r occs, message = F}
+```{r occs, message = F, eval = TRUE}
 library(dplyr)
 species[1]
 occs <- filter(coordenadas, sp == species[1]) %>% select(lon, lat)
 head(occs)
 ```
 
-__The first step of the workflow is to setup the data, that is, to partition it according to each project needs, to sample background pseudoabsences and to apply some data cleaning procedures, as well as some filters__
+
+
+`setupsdmdata()` has a large number of parameters: 
 
 ```{r args_setup_sdmdata}
 args(setup_sdmdata)
 ```
 
-xx <!-- Ö[describe] --> 
-`setupsdmdata()` has a large number of parameters: 
++ `species_name` is the name of the species to model
++ `coordinates` is the dataframe with coordinates, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
++ `predictors`: is the rasterStack of the environmental variables
 
-    + `partitions`: It implements a k-fold cross-validation (argument `part`, defaults to 3) but overwrites part when n < 10, setting part to the number of occurrence records (a jacknife partition).  
-    + `buffer`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) within this buffer.
-    + `seed`: for reproducilibity purposes 
+There are a couple options for data cleaning: 
+
++ `clean_dupl` will delete exact duplicates in the occurrence data
++ `clean_nas` will delete any occurrence with no environmental data in the predictor set.
 
 
-## Fitting one algorithm: `do_any()`
+The function also sets up different experimental designs:
+
++ `partition_type` can be either bootstrap or k-fold crossvalidation
++ `boot_n` and `cv_n` perform repeated bootstraps and repeated k-fold crossvalidation, respectively
++ `boot_proportion` sets the proportion of data to be sampled as training set (defaults to 0.8)
++ `cv_partitions` sets the number of partitions in the k-fold crossvalidations (defaults to 3)
++ but overwrites part when n < 10, setting part to the number of occurrence records (a jacknife partition).  
+
+Pseudoabsence sampling has also some options:
+
++ `real_absences` can be used to specify a set of user-defined absences, with species name, lat and lon columns.
++ `geo_filt` will eliminate records that are at less than `geo_filt_dist` between them, in order to control for spatial autocorrelation
++ `buffer`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) _within_ this buffer, in order to control for the area accessible to the species (M in the BAM diagram).
+
++ `seed`: for reproducilibity purposes 
 
 
-```{r args_do_any}
+
+```{r}
+sdmdata_1sp <- setup_sdmdata(species_name = species[1],
+                             coordinates = occs,
+                             predictors = variaveis_preditoras,
+                             clean_nas = T,
+                             models_dir = "~/modelR_test/1species",
+                             partition_type = "crossvalidation",
+                             cv_partitions = 5,
+                             cv_n = 1,
+                             seed = 512,
+                             buffer = "mean",
+                             plot_sdmdata = T,
+                             n_back = 500)
+```
+
++ The function will return a `sdmdata` data frame, with the groups for training and test in bootstrap or crossvalidation, a `pa` vector that marks presences and absences, and the environmental dataset. This same dataframe will be written in the hard disk, as `sdmdata.txt`
++ It will also write a `metadata.txt` with the parameters of the latest modeling round. If there has been a cleaning step, it will show different values in the "original.n" and "final.n" columns.
++ If a call to the function encounters previously written metadata, it will check if the current round has the same parameters and skip the data partitioning. If a previous metadata file is found but it has different metadata (i.e. the paramteres were modified), it will run the function.
+
+__NOTE:__ `setup_sdmdata` will check if there's a prior folder structure and sdmdata.txt and metadata.txt files, in order to avoid repeating the data partitioning. If there is an inconsistency between the existing metadata and the current parameters, it will run the function with the current parameters. 
+
+
+## Fitting a model per partition: `do_any()` and `do_enm()`
+
+Functions `do_any` and `do_enm()` create a *model per partition, per algorithm*.
+The difference between these functions that `do_any()` performs modeling for one
+individual algorithm at a time, that can be chosen by using parameter `algo`, 
+while `do_enm()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
+
+The available algorithms are:
+
++ "bioclim", "maxent", "mahal", "domain", as implemented in __dismo__ package [@hijmans_dismo_2017], 
++ Support Vector Machines (SVM), as implemented by packages __kernlab__ [`svm.k` @karatzoglou_kernlab_2004] and __e1071__ [`svm.e` @meyer_e1071_2017],
++ GLM from base R, here implemented with a stepwise selection approach
++ Random Forests (from package __randomForest__ @liaw_classification_2002) 
++ Two euclidean algorithms are also implemented, a minimum distance algorithm ("minimum"), and a distance to the environmental centroid ("centroid"). 
+
+Details for the implementation of each model can be accessed in the documentation of the function.
+<!--Ö escrever os detalhes das implementações --> 
+
+Here you can see the differences between the parameters of both functions. 
+Actually `do_enm()` calls several instances of `do_any()` In practice you may only want to call `do_enm()`
+but for parallelization by algorithm it may be better to call `do_any()` individually.
+
+```{r args_do_any_do_enm}
 args(do_any)
-```
-
-`do_any()` performs modeling for each individual algorithm, using parameter `algo`
-
-+ `mask`: will crop and mask the partition models into a ShapeFile
-
-
-```{r do_any}
-do_any(species_name = species[1],
-       algo = "bioclim",
-       coordinates = occs,
-       predictors = variaveis_preditoras,
-       models_dir = "~/modelR_test/1species",
-       write_png = T,
-       bootstrap = F,
-       crossvalidation = T,
-       cv_partitions = 5,
-       cv_n = 1,
-       buffer = "mean",
-       plot_sdmdata = T,
-       n_back = 500)
-```
-
-You can explore the list of files created at this phase, for example:
-
-```{r partfiles}
-partitions.folder <-
-     list.files("~/modelR_test", recursive = T, pattern = "partitions",
-                include.dirs = T, full.names = T)
-partitions.folder
-```
-
-A call to: 
-
-```
-list.files(partitions.folder, recursive = T)
-```
-
-Should return something like this
-
-```
-[1] "bioclim_bin_Eugenia florida DC._1_1.png"     
-[2] "bioclim_bin_Eugenia florida DC._1_1.tif"     
-[3] "bioclim_cont_Eugenia florida DC._1_1.png"    
-[4] "bioclim_cont_Eugenia florida DC._1_1.tif"    
-[5] "bioclim_cut_Eugenia florida DC._1_1.png"     
-[6] "bioclim_cut_Eugenia florida DC._1_1.tif"     
-[7] "evaluate_Eugenia florida DC._1_1_bioclim.txt"
-[8] "sdmdata_Eugenia florida DC..png"             
-[9] "sdmdata.txt"              
-```
-
-At the end of a modeling round, the partition folder containts: 
-
-+ A `.tif` file for each partition, continuous, binary and cut by the threshold that maximizes its TSS.
-+ Figures in `.png` to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these figures can be controlled with the `write_png` parameter. 
-+ A `.txt` table with the evaluation data for each partition: `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These files will be read by the `final_model()` function, to generate the final model per species.
-+ A file called `sdmdata.txt` with the data used for each partition
-+ An optional `.png` image of the data (controlled by parameter `plot_sdmdata = T`)
-
-
-### Fitting several algorithms per species: `do_enm()`
-
-The previous modeling procedure can be also performed by using `do_enm()`, that receives the same parameters as `do_any()` but allows the user to call __more than one algorithm__ using TRUE or FALSE statements (just as BIOMOD2 functions do). 
-
-`do_enm()` calls several instances of `do_any()`. The following code would perform only bioclim, it is equivalent to `do_any()` + `algo = "bioclim"`
-
-```{r do_enm1, eval = F}
 args(do_enm)
+```
+
+Calling `do_enm()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
+
+The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
+
+```{r do_enm2, echo = F}
 do_enm(species_name = species[1],
        coordinates = occs,
-       predictors = variaveis_preditoras,
-       models_dir = "~/modelR_test/1species",
-       bootstrap = F,
-       crossvalidation = T,
-       cv_partitions = 5,
-       cv_n = 1,
-       buffer = "mean",
-       plot_sdmdata = T,
-       write_png = T,
-       n_back = 500,
-       bioclim = T)
-```
-
-The following lines call for bioclim, GLM, maxent (as implemented by __dismo__), random forests (package __randomForest__) and smv.k (from package __kernlab__)
-
-```{r do_enm2}
-args(do_enm)
-do_enm(species_name = species[1],
-       coordinates = occs,
-       bootstrap = F,
-       crossvalidation = T,
+       partition_type = "crossvalidation",
        cv_partitions = 5,
        cv_n = 1,
        buffer = "mean",
@@ -251,18 +215,75 @@ do_enm(species_name = species[1],
        svm.k = T)
 ```
 
+Both functions admit the parameters from `setupsdmdata()` and run it  <!-- [Ö acá toca saber qué tan obligatorio es usar los parámetros y qué tanto va a darle tranquilo. Si es bligatorio deberíamosdejar de hablar de la primera función] --> . In addition: 
+
++ `mask`: will crop and mask the partition models into a ShapeFile
++ `write_png` will create a png file of the output 
+
+You can explore the list of files created at this phase, for example:
+
+```{r partfiles}
+partitions.folder <-
+     list.files("~/modelR_test/1species", recursive = T,
+                pattern = "partitions",
+                include.dirs = T, full.names = T)
+partitions.folder
+```
+
+A call to: 
+
+```
+list.files(partitions.folder, recursive = T)
+```
+
+should return something like this:
+
+```
+[1] "bioclim_bin_Eugenia florida DC._1_1.png"     
+[2] "bioclim_bin_Eugenia florida DC._1_1.tif"     
+[3] "bioclim_bin_Eugenia florida DC._1_2.png"     
+[4] "bioclim_bin_Eugenia florida DC._1_2.tif"     
+ ...
+[11] "bioclim_cont_Eugenia florida DC._1_1.png"    
+[12] "bioclim_cont_Eugenia florida DC._1_1.tif"    
+[13] "bioclim_cont_Eugenia florida DC._1_2.png"    
+[14] "bioclim_cont_Eugenia florida DC._1_2.tif"  
+... 
+[31] "evaluate_Eugenia florida DC._1_1_bioclim.txt"
+[32] "evaluate_Eugenia florida DC._1_1_glm.txt"    
+[33] "evaluate_Eugenia florida DC._1_1_maxent.txt" 
+...
+[116] "metadata.txt"     
+...
+[145] "rf_cut_Eugenia florida DC._1_5.png"          
+[146] "rf_cut_Eugenia florida DC._1_5.tif"          
+[147] "sdmdata_Eugenia florida DC..png"             
+[148] "sdmdata.txt"       
+```
+
+At the end of a modeling round, the partition folder containts: 
+
++ A `.tif` file for each partition, continuous, binary and cut by the threshold that maximizes its TSS. Its name will indicate the algorithm, the type of model (cont, bin or cut), the name of the species, the run and partition.
++ Figures in `.png` to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these figures can be controlled with the `write_png` parameter. 
++ A `.txt` table with the evaluation data for each partition: `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These files will be read by the `final_model()` function, to generate the final model per species.
++ A file called `sdmdata.txt` with the data used for each partition
++ A file called `metadata.txt` with the metadata of the current modeling round.
++ An optional `.png` image of the data (controlled by parameter `plot_sdmdata = T`)
+
 
 ## Joining partitions: `final_model()`
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![__`final_model()` options__](final_model_english.png)
+![__`final_model()` options__](final_model_english.png){ width=100% }
 
-+ It can weigh the partitions by a performance metric `weigh.partitions = TRUE` and `weight.par = "spec_sens"`, and give larger weights to partitions with better performance. This results in a continuous, uncut surface. 
-+ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, it will use all the partitions. 
-+ The selected partitions form a `raster::rasterStack()` object (step 1 in figure 2). Their mean can be calculated (step 2) and a binary model can be obtained by cutting it by the mean threshold (meanTSSth) that maximizes the individual partition's TSS (step 3: called `final_model_3`). From the means and the threshold, a "cut" model can also be obtained (`final_model_4`).
-+ The selected binary models (step 5) can also be joined by a mean (step 7, `final_model_7`) and a binary (step 8) or cut (step 9) model can be obtained through levels of consensus (defaults to 0.5: majority consensus approach).
-+ The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
++ It can weigh the partitions by setting `weigh.partitions = TRUE` and a performance metric, either TSS (`weight.par = "TSS"`) or AUC (`weight.par = "AUC"`), to give higher weights to partitions with better performance. This results in a continuous, uncut surface. 
++ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions. 
++ The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object. 
++ Their means can be calculated (`raw_mean`, `bin_mean` or `cut_mean`, second line in Figure 2)
++ From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_mean_th`). A "cut" model can also be obtained (`cut_mean_th`).
++ From `bin_mean`, a consensus model (i.e. how many of the retained models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
++ NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
 
 
 ```{r final_model}
@@ -270,13 +291,14 @@ args(final_model)
 ```
 
 
-```{r final}
+```{r final, echo = F}
 final_model(species_name = species[1],
-            select_partitions = F,
+            select_partitions = T,
             select_par_val = 0.5,
+            consensus_level = 0.5,
             weight_par = c("TSS"),
             models_dir = "~/modelR_test/1species",
-            which_models = c("final_model_7", "final_model_weighted_TSS"))
+            which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
 ```
 
 `final_model()` creates a .tif file for each final.model (one per algorithm) under the specified folder (default: `final_models`)
@@ -302,31 +324,32 @@ plot(final_models)
 
 ## ensemble_model()
 
-The third step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation,minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create cut these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
+The third step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
-`ensemble_model()` uses a `which.model` parameter to specify which final model (in fig. 2) should be assembled together (the default is
-`which.models = c("final_model_3", "final_model_7", "final_model_8")`) referring to step 3, 7 and 8 of the `final_model()` approach.
+`ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
-```{r ensemble_model}
+```{r ensemble_model, eval = F}
 ensemble_model(species[1],
                occs = occs,
-               which_models = "final_model_7",
+               which_models = "raw_mean",
                models_dir = "~/modelR_test/1species/")
 ```
 
 At any point we can explore the outputs in the folders: 
 
 ```{r check_ensemble, fig.width = 5, fig.height = 5}
-ensemble_files <-  list.files("~/modelR_test/1species/",
+ensemble_files <-  list.files("~/modelR_test/1species/Eugenia florida DC./present/ensemble/",
                               recursive = T,
-                              pattern = "final_model_7_ensemble.+tif",
+                              pattern = "raw_mean.+tif",
                               full.names = T)
 
 ensemble_files
 ens_mod <- stack(ensemble_files)
 plot(ens_mod)
+names(ens_mod)
 plot(ens_mod[[2]])
 maps::map( , , add = T)
+points(occs, pch = ".")
 ```
 
 
@@ -336,24 +359,44 @@ Our `coordenadas` dataset has data for four species.
 An option to do the several models is to use a `for` loop
 
 ```{r, eval = F}
+args(do_enm)
+args(setup_sdmdata)
 especies <- unique(coordenadas$sp)
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     do_enm(species_name = especie,
            coordinates = occs,
-           bootstrap = F,
-           crossvalidation = T,
+           partition_type = "crossvalidation",
            cv_partitions = 5,
            cv_n = 1,
            buffer = "mean",
            predictors = variaveis_preditoras,
            models_dir = "~/modelR_test/forlooptest",
-           n.back = 500,
+           n_back = 500,
            write_png = T,
            bioclim = T,
            maxent = T,
            rf = T,
-           svm.k = T)
+           svm.k = T,
+           centroid = T)
+}
+for (especie in especies) {
+    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
+    final_model(species_name = especie,
+                select_partitions = TRUE,
+                select_par = "TSS",
+                select_par_val = 0.5,
+                consensus_level = 0.5,
+                models_dir = "~/modelR_test/forlooptest",
+                which_models = "raw_mean")
+}
+for (especie in especies) {
+    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
+    ensemble_model(species_name = especie,
+                   occs = occs,
+                   which_models = "raw_mean",
+                   write_png = T,
+                   models_dir = "~/modelR_test/forlooptest")
     }
 ```
 
@@ -364,8 +407,9 @@ library(purrr)
 coordenadas %>% split(.$sp) %>%
     purrr::map(~ do_enm(species_name = unique(.$sp),
                         coordinates = .[, c("lon", "lat")],
-                        bootstrap = F,
-                        crossvalidation = T,
+                        #bootstrap = F,
+                        #crossvalidation = T,
+                        partition_type = "crossvalidation",
                         cv_partitions = 5,
                         cv_n = 1,
                         buffer = "mean",
@@ -376,7 +420,8 @@ coordenadas %>% split(.$sp) %>%
                         bioclim = T,
                         maxent = T,
                         rf = T,
-                        svm.k = T))
+                        svm.k = T, 
+                        centroid = T))
 ```
 
 ```{r purrr_final, eval = F}
@@ -387,7 +432,8 @@ coordenadas %>%
                              select_par = "TSS", 
                              select_par_val = 0.5,
                              consensus_level = 0.5,
-                             models_dir = "~/modelR_test/temp_purrr"))
+                             models_dir = "~/modelR_test/temp_purrr",
+                             which_models = "raw_mean"))
 ```
 
 ```{r purrr_ensemble, eval = F}
@@ -396,7 +442,7 @@ coordenadas %>%
     purrr::map(~ ensemble_model(
         species_name = unique(.$sp),
         occs = .[, c("lon", "lat")],
-        which_models = "final_model_7",
+        which_models = "raw_mean",
         write_png = T,
         models_dir = "~/modelR_test/temp_purrr"
         ))

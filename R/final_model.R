@@ -15,20 +15,24 @@
 #' @param select_par Which performance statistic should be used to select the
 #'  partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_par_val Threshold to select models from TSS values
-#' @param which_models Which final_model() will be used? Currently it can be:
 #' @param consensus_level Which proportion of models will be kept when creating
-#'                   \code{final_model_8} (binary)
+#'                   \code{bin_consensus} (binary)
 #' @param models_dir Character. Folder path where the input files are located
 #' @param final_dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
+#' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
 #'   by TSS or AUC}
-#'   \item{\code{final_model_3}}{the binary model created by selecting or not the
-#'    partitions, taking their mean and cutting by the mean threshold that
-#'    maximizes TSS (or other dismo thresholds)}
-#'   \item{\code{final_model_7}}{the mean of the selected binary models}
-#'   \item{\code{final_model_8}}{the binary consensus from \code{final_model_7}}
+#'   \item{\code{raw_mean}}{the mean of the selected raw models}
+#'   \item{\code{bin_mean_th}}{the binary model created by cutting \code{raw_mean} by the mean of the thresholds that
+#'    maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+#'    \item{\code{cut_mean_th}}{the cut model created by recovering \code{raw_mean} values above the mean threshold that
+#'    maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+#'   \item{\code{bin_mean}}{the mean of the selected binary models}
+#'   \item{\code{bin_consensus}}{the binary consensus from \code{bin_mean}.
+#'   \code{consensus_level} must be defined, 0.5 means a majority consensus}
+#'   \item{\code{cut_mean}}{the mean of the selected cut models}
 #' }
 #' @param write_png Writes png files of the final models
 #' @return A set of ecological niche models and figures (optional) written in the
@@ -46,7 +50,7 @@ final_model <- function(species_name,
                         consensus_level = 0.5,
                         models_dir = "./models",
                         final_dir = "final_models",
-                        which_models = c("final_model_3"),
+                        which_models = c("raw_mean"),
                         write_png = T,
                         ...) {
 
@@ -123,55 +127,68 @@ final_model <- function(species_name,
             sel.index <- 1:n.part
             }
             cont.sel.1  <- mod.cont[[sel.index]]  #(1)
-            bin.sel.5   <- mod.bin[[sel.index]]  #(5)
-            cut.sel     <- mod.cut[[sel.index]]  #(5)
+            bin.sel.2   <- mod.bin[[sel.index]]  #(2)
+            cut.sel.3     <- mod.cut[[sel.index]]  #(3)
             th.mean <- mean(stats.algo[, names(stats.algo) == threshold][sel.index])
 
             if (length(sel.index) == 0) {
                 cat(paste("No partition was selected for", species_name, algo, "\n"))
                 }
-            # if length(sel.index) == 1 many of the final models are the same
-            # 1 and 2 = continuous
-            # 3, 5, 7, 8 = binary because th.mean is TSSth
-            # 4, 9 = cut
+            # if length(sel.index) == 1 the mean models are equal to the originals
+            # 1 raw and 4 rawmean = continuous
+            # 2 bin and 5 binmean = binary
+            # 3 cut and 6 cutmean = cut
+            # 7 and 2 and 5 because th.mean is TSSth
+            # 8 se parece a 7 pero está cortado por 0.5. no tiene sentido porque es cortar un modelo binario por 0.5
+
             #I build the stack by repeating those, for homogeneity
             if (length(sel.index) == 1) {
                 #cat(paste(length(sel.index), "partition was selected for",
                  #   species_name, algo, "run",run,"\n"))
-                cat(paste(length(sel.index), "partition was selected for",
+                message(paste(length(sel.index), "partition was selected for",
                     species_name, algo, "\n"))
 
-                # bin.sel #[3] bin.sel #[7]
-                final <- raster::stack(cont.sel.1,#2
-                                       bin.sel.5, #3
-                                       cut.sel, #4
-                                       bin.sel.5, #7
-                                       bin.sel.5, #8
-                                       cut.sel #9
+                final <- raster::stack(cont.sel.1,#4
+                                       bin.sel.2, #5
+                                       cut.sel.3, #6
+                                       bin.sel.2, #7
+                                       bin.sel.2 > consensus_level, #8
+                                       cut.sel.3 #9
                                        )
-                names(final) <- c("final_model_2", "final_model_3","final_model_4", "final_model_7", "final_model_8","final_model_9")
+                names(final) <- c("raw_mean",
+                                  "bin_mean",
+                                  "cut_mean",
+                                  "bin_mean_th",
+                                  "bin_consensus",
+                                  "cut_mean_th")
                 warning("when only one partition is selected some final models are identical")
             }
 
             # When the selected models are more than one, refer to the map in the vignette
             if (length(sel.index) > 1) {
-                cat(paste(length(sel.index), "partitions were selected for",
+                message(paste(length(sel.index), "partitions were selected for",
                           species_name, algo, "\n"))
 
-                final.cont.mean.2 <- raster::mean(cont.sel.1)  #(2)
-                final.bin.mean.3 <- (final.cont.mean.2 > th.mean)  #(3)
-                final_model_4 <- final.bin.mean.3 * final.cont.mean.2 #(4)
-                final.sel.bin.7 <- raster::mean(bin.sel.5)  #(7)
-                final.sel.bin.8 <- final.sel.bin.7 > consensus_level  #(8)
-                final_model_9 <- final.sel.bin.8 * final.sel.bin.7
-                final <- raster::stack(final.cont.mean.2, final.bin.mean.3,
-                                       final_model_4,
-                                       final.sel.bin.7, final.sel.bin.8,
-                                       final_model_9)
-                names(final) <- c("final_model_2","final_model_3",
-                                  "final_model_4", "final_model_7",
-                                  "final_model_8",
-                                  "final_model_9")
+                raw_mean_4 <- raster::mean(cont.sel.1)  #(4)
+                bin_mean_5 <- raster::mean(bin.sel.2)  #(5)
+                cut_mean_6 <- raster::mean(cut.sel.3)  #(6)
+
+                mean_TSS_7 <- (raw_mean_4 > th.mean)  #(7)
+                bin_consensus_8 <- (bin_mean_5 > consensus_level)  #(8)
+                cut_tss_9 <- mean_TSS_7 * raw_mean_4 #(9)
+
+                final <- raster::stack(raw_mean_4,
+                                       bin_mean_5,
+                                       cut_mean_6,
+                                       mean_TSS_7,
+                                       bin_consensus_8,
+                                       cut_tss_9)
+                names(final) <- c("raw_mean",
+                                  "bin_mean",
+                                  "cut_mean",
+                                  "bin_mean_th",
+                                  "bin_consensus",
+                                  "cut_mean_th")
                 #cat(paste("selected final models for", species_name, algo, "run", run, "DONE", "\n"))
                 cat(paste("selected final models for", species_name, algo, "DONE", "\n"))
             }

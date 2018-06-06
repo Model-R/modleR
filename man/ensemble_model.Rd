@@ -6,8 +6,8 @@
 \usage{
 ensemble_model(species_name, occs, models_dir = "./models",
   final_dir = "final_models", ensemble_dir = "ensemble",
-  which_models = c("final_model_3"), consensus = FALSE,
-  consensus_level = 0.5, write_png = T, write_raw_map = F, ...)
+  which_models = c("raw_mean"), consensus = FALSE, consensus_level = 0.5,
+  write_png = T, write_raw_map = F, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -27,14 +27,17 @@ files. A subfolder will be created.}
 \describe{
   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
   by TSS or AUC}
-  \item{\code{final_model_3}}{the binary model created by selecting or not the
-   partitions, taking their mean and cutting by the mean threshold that
-   maximizes TSS (or other dismo thresholds)}
-  \item{\code{final_model_7}}{the mean of the selected binary models}
-  \item{\code{final_model_8}}{the binary consensus from \code{final_model_7}}
+  \item{\code{raw_mean}}{the mean of the selected raw models}
+  \item{\code{bin_mean_th}}{the binary model created by cutting \code{raw_mean} by the mean of the thresholds that
+   maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+   \item{\code{cut_mean_th}}{the cut model created by recovering \code{raw_mean} values above the mean threshold that
+   maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+  \item{\code{bin_mean}}{the mean of the selected binary models}
+  \item{\code{bin_consensus}}{the binary consensus from \code{bin_mean}}.
+  \item{\code{cut_mean}}{the mean of the selected cut models}
 }}
 
-\item{consensus}{Logical. Will a consensus rule be applied?}
+\item{consensus}{Logical. Will a consensus between the algorithms be applied?}
 
 \item{consensus_level}{Threshold for the consensus rule, betwen 0 and 1
 (0.5 means a majority rule).}
