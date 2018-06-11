@@ -29,7 +29,10 @@ Samples pseudoabsences inside a geographic buffer
 The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
 }
 \examples{
-create_buffer(coordenadas, 500, "mean", predictors = example_vars)
+library(dplyr)
+species <- sort(unique(coordenadas$sp))
+occs <- coordenadas \%>\% filter(sp == species[1]) \%>\% select(lon, lat)
+create_buffer(occs, 500, "mean", predictors = example_vars)
 
 }
 \references{
