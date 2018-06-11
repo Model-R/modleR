@@ -33,7 +33,8 @@ Imports:
     sp
 BugReports: https://github.com/Model-R/modelr_pkg/issues
 RoxygenNote: 6.0.1
-Suggests: dplyr,
+Suggests: devtools,
+    dplyr,
     knitr,
     rmarkdown
 VignetteBuilder: knitr

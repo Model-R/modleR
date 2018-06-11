@@ -16,16 +16,18 @@ bibliography: ModelR.bib
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = T
+  eval = F,
+  cache = F
 )
 ```
 
 
-__ModelR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, lack of environmental information and geographic <!--and environmental--> filters, executes crossvalidation, bootstrap or jacknife procedures depending on the number of occurrence points, then it performs ecological niche models using several algorithms already implemented in the `dismo` package. It also performs glm, Support Vector Machines, Random Forests and environmental distances.
+__ModelR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation, bootstrap or jacknife procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist environmental filters [@varela_environmental_2014].
+
 
 # Installing 
 
-Currently ModelR can be installed from github but we aim to submit to CRAN soon:
+Currently ModelR can be installed from github (but we aim to submit to CRAN soon):
 
 ```
 library(devtools)
@@ -35,13 +37,16 @@ install_github("Model-R/modelr_pkg", build_vignettes = TRUE)
 
 (`build_vignettes` will include this vignette on the installation)
 
+# Shiny app
+
+A shiny application currently available at: https://github.com/Model-R/Model-R uses a previous version of this workflow and is currently being updated to this newest version. 
+
 # The workflow
 
-The workflow consists of mainly four functions that should be used sequentially.
+The workflow consists of mainly three functions that should be used sequentially.
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
-2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, 
-`do_enm()` calls `do_any()` to fit multiple algorithms.
+2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_enm()` calls `do_any()` to fit multiple algorithms.
 3. Partition joining: `final_model()` selects and joins the partition models into a model per species per algorithm;  
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model.  
 
@@ -76,7 +81,7 @@ function `setup_sdmdata()`
 
 __ModelR__ comes with example data, a data frame called `coordenadas`, with 
 occurrence data for four species, and predictor variables called 
-`variaveis_preditoras`
+`example_vars`
 
 
 ```{r lib, echo = T, eval = T}
@@ -86,14 +91,14 @@ load_all()
 library(rJava) 
 library(raster)
 head(coordenadas)
-species <- unique(coordenadas$sp)
+species <- sort(unique(coordenadas$sp))
 species
 ```
 
 
 
-```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species."}
-raster::plot(variaveis_preditoras[[1]])
+```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = T}
+raster::plot(!is.na(example_vars[[1]]), legend = F)
 points(sp::SpatialPoints(coordenadas[,c(2,3)]),
        bg = as.numeric(unclass(coordenadas$sp)), pch = 21)
 ```
@@ -111,7 +116,7 @@ head(occs)
 
 `setupsdmdata()` has a large number of parameters: 
 
-```{r args_setup_sdmdata}
+```{r args_setup_sdmdata, eval = T}
 args(setup_sdmdata)
 ```
 
@@ -143,10 +148,10 @@ Pseudoabsence sampling has also some options:
 
 
 
-```{r}
+```{r, eval = F}
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              coordinates = occs,
-                             predictors = variaveis_preditoras,
+                             predictors = example_vars,
                              clean_nas = T,
                              models_dir = "~/modelR_test/1species",
                              partition_type = "crossvalidation",
@@ -160,10 +165,11 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 
 + The function will return a `sdmdata` data frame, with the groups for training and test in bootstrap or crossvalidation, a `pa` vector that marks presences and absences, and the environmental dataset. This same dataframe will be written in the hard disk, as `sdmdata.txt`
 + It will also write a `metadata.txt` with the parameters of the latest modeling round. If there has been a cleaning step, it will show different values in the "original.n" and "final.n" columns.
-+ If a call to the function encounters previously written metadata, it will check if the current round has the same parameters and skip the data partitioning. If a previous metadata file is found but it has different metadata (i.e. the paramteres were modified), it will run the function.
-
-__NOTE:__ `setup_sdmdata` will check if there's a prior folder structure and sdmdata.txt and metadata.txt files, in order to avoid repeating the data partitioning. If there is an inconsistency between the existing metadata and the current parameters, it will run the function with the current parameters. 
-
++ __NOTE:__ `setup_sdmdata` will check if there's a prior folder structure and `sdmdata.txt` and `metadata.txt` files, in order to avoid repeating the data partitioning. 
+    + If a call to the function encounters previously written metadata, it will check if the current round has the same parameters and skip the data partitioning. A message will be displayed:  
+    `#> metadata file found, checking metadata`  
+    `#> same metadata, no need to run data partition`  
+    + If a previous metadata file is found but it has different metadata (i.e. there is an inconsistency between the existing metadata and the current parameters), it will run the function with the current parameters. 
 
 ## Fitting a model per partition: `do_any()` and `do_enm()`
 
@@ -174,20 +180,19 @@ while `do_enm()` can select multiple algorithms, with TRUE or FALSE statements (
 
 The available algorithms are:
 
-+ "bioclim", "maxent", "mahal", "domain", as implemented in __dismo__ package [@hijmans_dismo_2017], 
++ `"bioclim"`, `"maxent"`, `"mahal"`, `"domain"`, as implemented in __dismo__ package [@hijmans_dismo_2017], 
 + Support Vector Machines (SVM), as implemented by packages __kernlab__ [`svm.k` @karatzoglou_kernlab_2004] and __e1071__ [`svm.e` @meyer_e1071_2017],
 + GLM from base R, here implemented with a stepwise selection approach
 + Random Forests (from package __randomForest__ @liaw_classification_2002) 
-+ Two euclidean algorithms are also implemented, a minimum distance algorithm ("minimum"), and a distance to the environmental centroid ("centroid"). 
++ Two euclidean algorithms are also implemented, a minimum distance algorithm (`"minimum"`), and a distance to the environmental centroid (`"centroid"`). 
 
 Details for the implementation of each model can be accessed in the documentation of the function.
 <!--Ö escrever os detalhes das implementações --> 
 
-Here you can see the differences between the parameters of both functions. 
-Actually `do_enm()` calls several instances of `do_any()` In practice you may only want to call `do_enm()`
+Here you can see the differences between the parameters of both functions. `do_enm()` calls several instances of `do_any()` In practice you may only want to call `do_enm()`
 but for parallelization by algorithm it may be better to call `do_any()` individually.
 
-```{r args_do_any_do_enm}
+```{r args_do_any_do_enm, eval = T}
 args(do_any)
 args(do_enm)
 ```
@@ -196,14 +201,14 @@ Calling `do_enm()` and setting `bioclim = TRUE` is therefore equivalent to call 
 
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
-```{r do_enm2, echo = F}
+```{r do_enm2, echo = T}
 do_enm(species_name = species[1],
        coordinates = occs,
        partition_type = "crossvalidation",
        cv_partitions = 5,
        cv_n = 1,
        buffer = "mean",
-       predictors = variaveis_preditoras,
+       predictors = example_vars,
        plot_sdmdata = T,
        models_dir = "~/modelR_test/1species",
        write_png = T,
@@ -286,12 +291,12 @@ There are many ways to create a final model per algorithm per species. `final_mo
 + NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
 
 
-```{r final_model}
+```{r final_model, eval = T}
 args(final_model)
 ```
 
 
-```{r final, echo = F}
+```{r final, echo = T}
 final_model(species_name = species[1],
             select_partitions = T,
             select_par_val = 0.5,
@@ -331,25 +336,25 @@ The third step of the workflow is joining the models for each algorithm into a f
 ```{r ensemble_model, eval = F}
 ensemble_model(species[1],
                occs = occs,
-               which_models = "raw_mean",
+               which_models = "cut_mean",
                models_dir = "~/modelR_test/1species/")
 ```
 
 At any point we can explore the outputs in the folders: 
 
 ```{r check_ensemble, fig.width = 5, fig.height = 5}
-ensemble_files <-  list.files("~/modelR_test/1species/Eugenia florida DC./present/ensemble/",
+ensemble_files <-  list.files("~/modelR_test/1species/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble",
                               recursive = T,
-                              pattern = "raw_mean.+tif",
+                              pattern = "cut_mean.+tif",
                               full.names = T)
 
 ensemble_files
-ens_mod <- stack(ensemble_files)
-plot(ens_mod)
+ens_mod <- raster::stack(ensemble_files)
+raster::plot(ens_mod)
 names(ens_mod)
 plot(ens_mod[[2]])
 maps::map( , , add = T)
-points(occs, pch = ".")
+points(occs, pch = 3)
 ```
 
 
@@ -370,7 +375,7 @@ for (especie in especies) {
            cv_partitions = 5,
            cv_n = 1,
            buffer = "mean",
-           predictors = variaveis_preditoras,
+           predictors = example_vars,
            models_dir = "~/modelR_test/forlooptest",
            n_back = 500,
            write_png = T,
@@ -400,7 +405,7 @@ for (especie in especies) {
     }
 ```
 
-Another option is to use the `purrr` package:
+Another option is to use the `purrr` package [@henry_purrr_2017]:
 
 ```{r purrr example, eval = F}
 library(purrr)
@@ -413,7 +418,7 @@ coordenadas %>% split(.$sp) %>%
                         cv_partitions = 5,
                         cv_n = 1,
                         buffer = "mean",
-                        predictors = variaveis_preditoras,
+                        predictors = example_vars,
                         models_dir = "~/modelR_test/temp_purrr",
                         n_back = 500,
                         write_png = T,
@@ -449,5 +454,12 @@ coordenadas %>%
 
 ```
 
+## Parallel computing
 
+```{r remedy001}
+
+library(parallel)
+
+
+```
 # References
