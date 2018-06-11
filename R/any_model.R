@@ -19,10 +19,10 @@
 #' @importFrom stats complete.cases formula glm step dist
 #' @export
 do_any <- function(species_name,
-                   algo = c("bioclim"), #um só
                    coordinates,
                    predictors,
                    models_dir = "./models",
+                   algo = c("bioclim"), #um só
                    project_model = FALSE,
                    projections = NULL,
                    mask = NULL,

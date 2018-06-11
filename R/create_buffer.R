@@ -16,7 +16,7 @@
 #' @seealso \code{\link[raster]{buffer}}
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
-#' create_buffer(coordenadas, 500, "mean", predictors = variaveis_preditoras)
+#' create_buffer(coordenadas, 500, "mean", predictors = example_vars)
 #'
 #' @import raster
 #' @importFrom dismo randomPoints

@@ -5,13 +5,12 @@
 \title{Prepares the dataset to perform ENM}
 \usage{
 setup_sdmdata(species_name = species_name, coordinates = coordinates,
-  predictors = predictors, real_absences = NULL, lon = "lon",
-  lat = "lat", buffer = FALSE, seed = 512, clean_dupl = T,
-  clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
-  models_dir = models_dir, plot_sdmdata = T, n_back = 1000,
-  partition_type = c("bootstrap", "crossvalidation"),
-  boot_proportion = NULL, boot_n = NULL, cv_partitions = NULL,
-  cv_n = NULL)
+  predictors = predictors, models_dir = models_dir, real_absences = NULL,
+  lon = "lon", lat = "lat", buffer = FALSE, seed = 512,
+  clean_dupl = T, clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
+  plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap",
+  "crossvalidation"), boot_n = NULL, boot_proportion = NULL, cv_n = NULL,
+  cv_partitions = NULL)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -19,6 +18,8 @@ setup_sdmdata(species_name = species_name, coordinates = coordinates,
 \item{coordinates}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
+
+\item{models_dir}{Folder path to save the output files}
 
 \item{real_absences}{User defined absence points}
 
@@ -41,22 +42,20 @@ information? Defaults to FALSE and can take a while for large datasets}
 
 \item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
 
-\item{models_dir}{Folder path to save the output files}
-
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
 \item{n_back}{Number of pseudoabsence points}
 
 \item{partition_type}{Perform bootstrap or k-fold crossvalidation?}
 
+\item{boot_n}{How many bootstrap runs}
+
 \item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled
 for bootstrap}
 
-\item{boot_n}{How many bootstrap runs}
+\item{cv_n}{How many crossvalidation runs}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
-
-\item{cv_n}{How many crossvalidation runs}
 }
 \value{
 A dataframe called sdmdata with the groups for each run
