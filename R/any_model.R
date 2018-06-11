@@ -7,6 +7,7 @@
 #' @param projections The RasterStack of projeciton variables
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
 #' @param write_png Logical, whether png files will be written
+#' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @author Andrea Sánchez-Tapia
 #' @seealso \code{\link[dismo]{bioclim}}

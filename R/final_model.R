@@ -51,8 +51,7 @@ final_model <- function(species_name,
                         models_dir = "./models",
                         final_dir = "final_models",
                         which_models = c("raw_mean"),
-                        write_png = T,
-                        ...) {
+                        write_png = T) {
 
     if (file.exists(paste0(models_dir, "/", species_name, "/present/",
                            final_dir)) == FALSE)

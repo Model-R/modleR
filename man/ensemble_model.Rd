@@ -7,7 +7,7 @@
 ensemble_model(species_name, occs, models_dir = "./models",
   final_dir = "final_models", ensemble_dir = "ensemble",
   which_models = c("raw_mean"), consensus = FALSE, consensus_level = 0.5,
-  write_png = T, write_raw_map = F, ...)
+  write_png = T, write_raw_map = F)
 }
 \arguments{
 \item{species_name}{A character string with the species name}

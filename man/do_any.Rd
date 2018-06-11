@@ -27,6 +27,8 @@ do_any(species_name, coordinates, predictors, models_dir = "./models",
 \item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
 \item{write_png}{Logical, whether png files will be written}
+
+\item{...}{Any parameter from \link{setup_sdmdata}}
 }
 \value{
 A data frame with the evaluation statistics (TSS, AUC, etc.)

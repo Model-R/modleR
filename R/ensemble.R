@@ -48,8 +48,7 @@ ensemble_model <- function(species_name,
                            consensus = FALSE,
                            consensus_level = 0.5,
                            write_png = T,
-                           write_raw_map = F,
-                           ...) {
+                           write_raw_map = F) {
 
 
     ## output folder

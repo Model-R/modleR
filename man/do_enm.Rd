@@ -38,6 +38,8 @@ by the dismo documentation}
 \item{mindist}{Execute minimum euclidean distance}
 
 \item{centroid}{Execute euclidean distance to the environmental centroid}
+
+\item{...}{Any parameter from \link{setup_sdmdata}}
 }
 \value{
 A set of ecological niche models for each partition and algorithm,
