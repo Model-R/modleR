@@ -17,5 +17,5 @@
 
 #' Predictor variables
 #'
-#' @format A RasterStack with 6 predictor variables issued from a PCA
-"variaveis_preditoras"
+#' @format A RasterStack with 6 predictor variables issued from a PCA, at 10min resolution
+"example_vars"
