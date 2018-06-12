@@ -106,12 +106,14 @@ setup_sdmdata <- function(species_name = species_name,
     # tabela de valores
     presvals <- raster::extract(predictors, coordinates)
     if (clean_dupl == TRUE) {
-        coordinates <- coordinates[!base::duplicated(coordinates),]
-        presvals <- presvals[!base::duplicated(coordinates),]
+        dupls <- !base::duplicated(coordinates)
+        coordinates <- coordinates[dupls,]
+        presvals <- presvals[dupls,]
     }
     if (clean_nas == TRUE) {
-        coordinates <- coordinates[complete.cases(presvals),]
-        presvals <- presvals[complete.cases(presvals),]
+        compl <- complete.cases(presvals)
+        coordinates <- coordinates[compl,]
+        presvals <- presvals[compl,]
     }
     if (geo_filt == TRUE) {
         coordinates <- geo_filt(coordinates = coordinates, min_distance = geo_filt_dist)
