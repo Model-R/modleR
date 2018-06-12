@@ -61,7 +61,7 @@ do_any <- function(species_name,
             pres_test <- coordinates[group == g, ]
             backg_test <- backgr[bg.grp == g, ]
             sdmdata_train <- sdmdata[group.all != g,]#presences and absences
-            envtrain <-  sdmdata_train[,grep("layer", names(sdmdata_train))]
+            envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
             sdmdata_test  <- sdmdata[group.all == g,]#presences and absences
 
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
