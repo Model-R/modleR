@@ -9,3 +9,8 @@ inst/doc
 *.pdf
 vignettes/modelR_cache
 *.odg
+1sdmtest_boot
+1sdmtest_cv
+1sdmtest_cvrep
+sdmtest
+docs

@@ -4,23 +4,22 @@
 \alias{final_model}
 \title{Joins ENM from several partitions, creating a model per algorithm.}
 \usage{
-final_model(species.name, algorithms = NULL, weight.par = NULL,
-  select.partitions = TRUE, TSS.value = 0.7, threshold = c("spec_sens"),
-  consensus.level = 0.5, models.dir = "./models",
-  final.dir = "final_models")
+final_model(species_name, algorithms = NULL, weight_par = NULL,
+  select_partitions = TRUE, threshold = c("spec_sens"),
+  select_par = "TSS", select_par_val = 0.7, consensus_level = 0.5,
+  models_dir = "./models", final_dir = "final_models",
+  which_models = c("raw_mean"), write_png = T)
 }
 \arguments{
-\item{species.name}{A character string with the species name}
+\item{species_name}{A character string with the species name}
 
 \item{algorithms}{Which algorithms will be processed. If no name is given it
 will process all algorithms present in the evaluation files}
 
-\item{weight.par}{Which performance statistic should be used to weight the
-partitions defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
+\item{weight_par}{Which performance statistic should be used to weight the
+partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 
-\item{select.partitions}{TRUE ou FALSE}
-
-\item{TSS.value}{Threshold to select models from TSS values}
+\item{select_partitions}{TRUE ou FALSE}
 
 \item{threshold}{Which selecting threshold will be used to cut the mean
 models in final_model_3 approach (see vignettes), it
@@ -28,17 +27,39 @@ defaults to "spec_sens" but any dismo threshold
 can be used: "kappa", "no_omission", "prevalence",
 "equal_sens_spec", "sensitivity".}
 
-\item{consensus.level}{Which proportion of models will be kept when creating
-\code{final_model_8} (binary)}
+\item{select_par}{Which performance statistic should be used to select the
+partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 
-\item{models.dir}{Character. Folder path where the input files are located}
+\item{select_par_val}{Threshold to select models from TSS values}
 
-\item{final.dir}{Character. Name of the folder to save the output files.
+\item{consensus_level}{Which proportion of models will be kept when creating
+\code{bin_consensus} (binary)}
+
+\item{models_dir}{Character. Folder path where the input files are located}
+
+\item{final_dir}{Character. Name of the folder to save the output files.
 A subfolder will be created.}
+
+\item{which_models}{Which final_model() will be used? Currently it can be:
+\describe{
+  \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
+  by TSS or AUC}
+  \item{\code{raw_mean}}{the mean of the selected raw models}
+  \item{\code{bin_mean_th}}{the binary model created by cutting \code{raw_mean} by the mean of the thresholds that
+   maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+   \item{\code{cut_mean_th}}{the cut model created by recovering \code{raw_mean} values above the mean threshold that
+   maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+  \item{\code{bin_mean}}{the mean of the selected binary models}
+  \item{\code{bin_consensus}}{the binary consensus from \code{bin_mean}.
+  \code{consensus_level} must be defined, 0.5 means a majority consensus}
+  \item{\code{cut_mean}}{the mean of the selected cut models}
+}}
+
+\item{write_png}{Writes png files of the final models}
 }
 \value{
 A set of ecological niche models and figures (optional) written in the
-         \code{final.dir} subfolder
+         \code{final_dir} subfolder
 }
 \description{
 This function reads the output from dismo.mod and creates a model per species

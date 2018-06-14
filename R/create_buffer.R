@@ -1,42 +1,67 @@
+#' Samples pseudoabsences inside a geographic buffer
+#'
+#' @param coord  A data frame with occurrence data. It should contain only two columns:
+#' lon and lat, in that order.
+#' @param n_back Number of pseudoabsence points
+#' @param buffer_type Character string indicating whether the buffer should be
+#' calculated using the mean, median or maximum distance between occurrence points
+#' @param seed for reproducibility purposes
+#' @param predictors A RasterStack of predictor variables
+#' @return Table of pseudoabsence points sampled within the selected distance
+#' @author Felipe Barros
+#' @author Fabrício Vilasboas
+#' @author Andrea Sánchez-Tapia
+#' @details The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
+#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseudo-absence data for presence-only distribution modeling: How far should you stray from what you know? Ecological Modelling, 220(4), 589-594. doi:10.1016/j.ecolmodel.2008.11.010
+#' @seealso \code{\link[raster]{buffer}}
+#' @seealso \code{\link[dismo]{randomPoints}}
+#' @examples
+#' library(dplyr)
+#' species <- sort(unique(coordenadas$sp))
+#' occs <- coordenadas %>% filter(sp == species[1]) %>% select(lon, lat)
+#' create_buffer(occs, 500, "mean", predictors = example_vars)
+#'
+#' @import raster
+#' @importFrom dismo randomPoints
+#' @export
 create_buffer <- function(coord,
-                          n.back,
-                          buffer.type,
+                          n_back,
+                          buffer_type,
                           seed = 512,
                           predictors) {
 
-# Transformando em spatial points
     sp::coordinates(coord) <- ~lon + lat
     raster::crs(coord) <- raster::crs(predictors)
-    if (buffer.type == "mean")
+    if (buffer_type == "mean")
         dist.buf <- mean(sp::spDists(x = coord,
-                                     longlat = T,
+                                     longlat = TRUE,
                                      segments = FALSE))
-    if (buffer.type == "max")
+    if (buffer_type == "max")
         dist.buf <-  max(sp::spDists(x = coord,
-                                    longlat = T,
-                                    segments = F))
-    if (buffer.type == "median")
+                                    longlat = TRUE,
+                                    segments = FALSE))
+    if (buffer_type == "median")
         dist.buf <- stats::median(sp::spDists(x = coord,
-                                              longlat = T,
-                                              segments = F))
+                                              longlat = TRUE,
+                                              segments = FALSE))
 
-    #cria o buffer - é um shape
+    #creates the buffer - it's a shapefile
     buffer.shape <- raster::buffer(coord,
                                    width = dist.buf * 1000,
                                    dissolve = TRUE)
 
-    #Rasterizando o buffer p/ geração dos ptos aleatorios
+    #rasterizes to sample the random points
     r_buffer <- raster::rasterize(buffer.shape,
                                   predictors,
                                   field = buffer.shape@plotOrder)
-    #o mask é o mínimo necessário para que o buffer fique sem NAs nos preditores
+    # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, predictors[[1]])
 
 
-    # Gerando pontos aleatorios no buffer
+    # Samples random points
     set.seed(seed + 2)
     backgr <- dismo::randomPoints(mask = r_buffer,
-                                  n = n.back,
+                                  n = n_back,
                                   p = coord,
                                   excludep = T)
     rm(buffer.shape)

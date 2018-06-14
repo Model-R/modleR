@@ -1,158 +1,127 @@
 #' Fits ecological niche models for various algorithms.
 #'
-#' @inheritParams do_bioclim
+#' @inheritParams do_any
 #' @param bioclim Execute bioclim from the dismo implementation
 #' @param domain Execute domain from the dismo implementation
 #' @param mahal Execute mahalanobis distance from the dismo implementation
 #' @param maxent Execute maxent from the dismo implementation
 #' @param glm Execute GLM as suggested by the dismo documentation
-#' @param rf Execute random forests from randomForest() as suggested by the dismo documentation
-#' @param svm Execute svm from kernlab package
-#' @param svm2 Execute svm from e1071 package
+#' @param rf Execute random forests from randomForest() as suggested
+#' by the dismo documentation
+#' @param svm.k Execute svm from kernlab package
+#' @param svm.e Execute svm from e1071 package
+#' @param mindist Execute minimum euclidean distance
+#' @param centroid Execute euclidean distance to the environmental centroid
+#' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A set of ecological niche models for each partition and algorithm,
-#'         written in the \code{models.dir} subfolder
+#'         written in the \code{models_dir} subfolder
+#' @author Andrea Sánchez-Tapia
 #' @export
 #'
-do_enm <- function(sp,
+do_enm <- function(species_name,
                    coordinates,
-                   partitions,
-                   buffer = FALSE,
-                   seed = 512,
                    predictors,
-                   models.dir = "./models",
-                   project.model = FALSE,
-                   projections = NULL,
-                   mask = NULL,
-                   write_png = FALSE,
-                   n.back,
+                   models_dir = "./models",
                    bioclim = FALSE,
                    domain = FALSE,
                    glm = FALSE,
                    mahal = FALSE,
                    maxent = FALSE,
                    rf = FALSE,
-                   svm = FALSE,
-                   svm2 = FALSE) {
-    #ocorrencias <- coordinates[coordinates$sp == sp, c("lon", "lat")]
+                   svm.k = FALSE,
+                   svm.e = FALSE,
+                   mindist = FALSE,
+                   centroid = FALSE,
+                   ...) {
 
     if (bioclim == T) {
-        do_bioclim(
-            sp,
+        do_any(
+            species_name,
+            algo = "bioclim",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
     if (domain == T) {
-        do_domain(
-            sp,
+        do_any(
+            species_name,
+            algo = "domain",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
     if (glm == T) {
-        do_GLM(
-            sp,
+        do_any(
+            species_name,
+            algo = "glm",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
     if (mahal == T) {
-        do_mahal(
-            sp,
+        do_any(
+            species_name,
+            algo = "mahal",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
     if (maxent == T) {
-        do_maxent(
-            sp,
+        do_any(
+            species_name,
+            algo = "maxent",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
     if (rf == T) {
-        do_rf(
-            sp,
+        do_any(
+            species_name,
+            algo = "rf",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
-    if (svm == T) {
-        do_SVM(
-            sp,
+    if (svm.k == T) {
+        do_any(
+            species_name,
+            algo = "svm.k",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
     }
-    if (svm2 == T) {
-        do_SVM2(
-            sp,
+    if (svm.e == T) {
+        do_any(
+            species_name,
+            algo = "svm.e",
             coordinates = coordinates,
-            partitions = partitions,
-            buffer = buffer,
-            seed = seed,
             predictors = predictors,
-            models.dir = models.dir,
-            project.model = project.model,
-            projections = projections,
-            mask = mask,
-            n.back = n.back,
-            write_png = write_png)
+            models_dir = models_dir,
+            ...)
+    }
+    if (mindist == T) {
+        do_any(
+            species_name,
+            algo = "mindist",
+            coordinates = coordinates,
+            predictors = predictors,
+            models_dir = models_dir,
+            ...)
+    }
+    if (centroid == T) {
+        do_any(
+            species_name,
+            algo = "centroid",
+            coordinates = coordinates,
+            predictors = predictors,
+            models_dir = models_dir,
+            ...)
     }
 }

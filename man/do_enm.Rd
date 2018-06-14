@@ -4,37 +4,19 @@
 \alias{do_enm}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
-  models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask = NULL, write_png = FALSE, n.back, bioclim = FALSE,
-  domain = FALSE, glm = FALSE, mahal = FALSE, maxent = FALSE,
-  rf = FALSE, svm = FALSE, svm2 = FALSE)
+do_enm(species_name, coordinates, predictors, models_dir = "./models",
+  bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
+  maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE,
+  mindist = FALSE, centroid = FALSE, ...)
 }
 \arguments{
-\item{sp}{A character string with the species name}
+\item{species_name}{A character string with the species name}
 
-\item{coordinates}{A two-column data frame with the occurrence points}
-
-\item{partitions}{The number of partitions for a cross validation}
-
-\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
-(F, "mean", "median", "max")}
-
-\item{seed}{For reproducibility purposes}
+\item{coordinates}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{models.dir}{Folder path to save the output files}
-
-\item{project.model}{Logical, whether to perform a projection}
-
-\item{projections}{The RasterStack of projeciton variables}
-
-\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
-
-\item{write_png}{Logical, whether png files will be written}
-
-\item{n.back}{Number of pseudoabsence points}
+\item{models_dir}{Folder path to save the output files}
 
 \item{bioclim}{Execute bioclim from the dismo implementation}
 
@@ -46,16 +28,26 @@ do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
 
 \item{maxent}{Execute maxent from the dismo implementation}
 
-\item{rf}{Execute random forests from randomForest() as suggested by the dismo documentation}
+\item{rf}{Execute random forests from randomForest() as suggested
+by the dismo documentation}
 
-\item{svm}{Execute svm from kernlab package}
+\item{svm.k}{Execute svm from kernlab package}
 
-\item{svm2}{Execute svm from e1071 package}
+\item{svm.e}{Execute svm from e1071 package}
+
+\item{mindist}{Execute minimum euclidean distance}
+
+\item{centroid}{Execute euclidean distance to the environmental centroid}
+
+\item{...}{Any parameter from \link{setup_sdmdata}}
 }
 \value{
 A set of ecological niche models for each partition and algorithm,
-        written in the \code{models.dir} subfolder
+        written in the \code{models_dir} subfolder
 }
 \description{
 Fits ecological niche models for various algorithms.
+}
+\author{
+Andrea Sánchez-Tapia
 }
