@@ -64,6 +64,17 @@ do_any <- function(species_name,
             envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
             sdmdata_test  <- sdmdata[group.all == g,]#presences and absences
 
+            if (buffer %in% c("mean", "max", "median")) {
+                stopifnot(!is.null(n_back), "to apply a buffer n_back must be specified")
+                message("creating buffer")
+                pbuffr <- create_buffer(coord = coordinates,
+                                        n_back = n_back,
+                                        buffer_type = buffer,
+                                        seed = seed,
+                                        predictors = predictors)
+                original_predictors <- predictors
+                predictors <- crop_model(predictors, mascara = pbuffr)
+            }
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "maxent")  mod <- dismo::maxent(predictors, pres_train)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
@@ -148,8 +159,8 @@ do_any <- function(species_name,
                 eval_mod <- eec
                 mod_cont <- ec_cont
             } else {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                mod_cont <- dismo::predict(predictors, mod, progress = "text")
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, original_predictors)
+                mod_cont <- dismo::predict(original_predictors, mod, progress = "text")
             }
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
@@ -226,7 +237,7 @@ do_any <- function(species_name,
                     mod_proj_bin <- mod_proj > th_mod
                     mod_proj_cut <- mod_proj_bin * mod_proj
                     # Normaliza o modelo cut
-                    mod_proj_cut <- mod_proj_cut / maxValue(mod_proj_cut)
+                    #mod_proj_cut <- mod_proj_cut / maxValue(mod_proj_cut)
                     if (class(mask) == "SpatialPolygonsDataFrame") {
                         mod_proj     <- crop_model(mod_proj, mask)
                         mod_proj_bin <- crop_model(mod_proj_bin, mask)
