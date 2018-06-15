@@ -58,14 +58,14 @@ create_buffer <- function(coord,
     r_buffer <- raster::mask(r_buffer, predictors[[1]])
 
 
-    # Samples random points
-    set.seed(seed + 2)
-    backgr <- dismo::randomPoints(mask = r_buffer,
-                                  n = n_back,
-                                  p = coord,
-                                  excludep = T)
+    # # Samples random points
+    # set.seed(seed + 2)
+    # backgr <- dismo::randomPoints(mask = r_buffer,
+    #                               n = n_back,
+    #                               p = coord,
+    #                               excludep = T)
     rm(buffer.shape)
-    rm(r_buffer)
+    #rm(r_buffer)
     gc()
-    return(backgr)
+    return(r_buffer)
 }

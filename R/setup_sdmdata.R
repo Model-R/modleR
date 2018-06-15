@@ -123,14 +123,23 @@ setup_sdmdata <- function(species_name = species_name,
         backgr <- real_absences[,c(lon, lat)]
     } else {
     if (buffer %in% c("mean", "max", "median")) {
-        backgr <- create_buffer(coord = coordinates,
+        message("creating buffer")
+
+        pbuffr <- create_buffer(coord = coordinates,
                                 n_back = n_back,
                                 buffer_type = buffer,
                                 seed = seed,
                                 predictors = predictors)
+        message("sampling pseudoabsence points")
+        backgr <- dismo::randomPoints(mask = pbuffr,
+                                      n = n_back,
+                                      p = coordinates,
+                                      excludep = T)
+
     } else {
         set.seed(seed)
-        backgr <- dismo::randomPoints(mask = predictors,
+        message("sampling pseudoabsence points")
+                backgr <- dismo::randomPoints(mask = predictors,
                                       n = n_back,
                                       p = coordinates,
                                       excludep = T)
