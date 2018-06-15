@@ -50,9 +50,9 @@ setup_sdmdata <- function(species_name = species_name,
                           geo_filt_dist = NULL,
                           plot_sdmdata = T,
                           n_back = 1000,
-                          partition_type = c("bootstrap", "crossvalidation"),
-                          boot_n = NULL,
-                          boot_proportion = NULL,
+                          partition_type = c("bootstrap"),
+                          boot_n = 1,
+                          boot_proportion = 0.7,
                           cv_n = NULL,
                           cv_partitions = NULL) {
     if (file.exists(paste0(models_dir)) == FALSE)
