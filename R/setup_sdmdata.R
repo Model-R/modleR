@@ -104,18 +104,22 @@ setup_sdmdata <- function(species_name = species_name,
     message("performing data partition")
 
     # tabela de valores
+    message("extracting environmental data")
     presvals <- raster::extract(predictors, coordinates)
     if (clean_dupl == TRUE) {
+        message("cleaning duplicates")
         dupls <- !base::duplicated(coordinates)
         coordinates <- coordinates[dupls,]
         presvals <- presvals[dupls,]
     }
     if (clean_nas == TRUE) {
+        message("cleaning occurrences with no environmental data")
         compl <- complete.cases(presvals)
         coordinates <- coordinates[compl,]
         presvals <- presvals[compl,]
     }
     if (geo_filt == TRUE) {
+        message("applying a geographical filter")
         coordinates <- geo_filt(coordinates = coordinates, min_distance = geo_filt_dist)
         presvals <- raster::extract(predictors, coordinates)
     }
@@ -150,6 +154,7 @@ setup_sdmdata <- function(species_name = species_name,
 
     final.n <- nrow(coordinates)
     # Extraindo dados ambientais dos bckgr
+    message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
 
     pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
@@ -163,7 +168,7 @@ setup_sdmdata <- function(species_name = species_name,
     #if (crossvalidation == TRUE) {
     if (partition_type == "crossvalidation") {
         if (nrow(coordinates) < 11) {
-            message("less than 11 occurrences, forcing jacknife")
+            message("data set has 10 occurrences or less, forcing jacknife")
             #forces jacknife
             cv_partitions <- nrow(coordinates)
             cv_n <- 1
