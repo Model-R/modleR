@@ -121,7 +121,7 @@ args(setup_sdmdata)
 ```
 
 + `species_name` is the name of the species to model
-+ `coordinates` is the dataframe with coordinates, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
++ `occurrences` is the dataframe with occurrences, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
 + `predictors`: is the rasterStack of the environmental variables
 
 There are a couple options for data cleaning: 
@@ -142,7 +142,7 @@ Pseudoabsence sampling has also some options:
 
 + `real_absences` can be used to specify a set of user-defined absences, with species name, lat and lon columns.
 + `geo_filt` will eliminate records that are at less than `geo_filt_dist` between them, in order to control for spatial autocorrelation
-+ `buffer`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) _within_ this buffer, in order to control for the area accessible to the species (M in the BAM diagram).
++ `buffer_type`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) _within_ this buffer, in order to control for the area accessible to the species (M in the BAM diagram).
 
 + `seed`: for reproducilibity purposes 
 
@@ -150,7 +150,7 @@ Pseudoabsence sampling has also some options:
 
 ```{r, eval = F}
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
-                             coordinates = occs,
+                             occurrences = occs,
                              predictors = example_vars,
                              clean_nas = T,
                              models_dir = "~/modelR_test/1species",
@@ -158,7 +158,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cv_partitions = 5,
                              cv_n = 1,
                              seed = 512,
-                             buffer = "mean",
+                             buffer_type = "mean",
                              plot_sdmdata = T,
                              n_back = 500)
 ```
@@ -203,11 +203,11 @@ The following lines call for bioclim, GLM, maxent, random forests and smv.k (fro
 
 ```{r do_enm2, echo = T}
 do_enm(species_name = species[1],
-       coordinates = occs,
+       occurrences = occs,
        partition_type = "crossvalidation",
        cv_partitions = 5,
        cv_n = 1,
-       buffer = "mean",
+       buffer_type = "mean",
        predictors = example_vars,
        plot_sdmdata = T,
        models_dir = "~/modelR_test/1species",
@@ -370,11 +370,11 @@ especies <- unique(coordenadas$sp)
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     do_enm(species_name = especie,
-           coordinates = occs,
+           occurrences = occs,
            partition_type = "crossvalidation",
            cv_partitions = 5,
            cv_n = 1,
-           buffer = "mean",
+           buffer_type = "mean",
            predictors = example_vars,
            models_dir = "~/modelR_test/forlooptest",
            n_back = 500,
@@ -411,13 +411,11 @@ Another option is to use the `purrr` package [@henry_purrr_2017]:
 library(purrr)
 coordenadas %>% split(.$sp) %>%
     purrr::map(~ do_enm(species_name = unique(.$sp),
-                        coordinates = .[, c("lon", "lat")],
-                        #bootstrap = F,
-                        #crossvalidation = T,
+                        occurrences = .[, c("lon", "lat")],
                         partition_type = "crossvalidation",
                         cv_partitions = 5,
                         cv_n = 1,
-                        buffer = "mean",
+                        buffer_type = "mean",
                         predictors = example_vars,
                         models_dir = "~/modelR_test/temp_purrr",
                         n_back = 500,
