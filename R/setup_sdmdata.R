@@ -123,22 +123,24 @@ setup_sdmdata <- function(species_name = species_name,
         occurrences <- geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)
         presvals <- raster::extract(predictors, occurrences)
     }
+    #background selection:
     if (!is.null(real_absences)) {
         backgr <- real_absences[,c(lon, lat)]
     } else {
-    if (buffer_type %in% c("mean", "max", "median")) {
-        message("creating buffer")
-
-        pbuffr <- create_buffer(coord = occurrences,
-                                n_back = n_back,
-                                buffer_type = buffer_type,
-                                seed = seed,
-                                predictors = predictors)
-        message("sampling pseudoabsence points")
-        backgr <- dismo::randomPoints(mask = pbuffr,
-                                      n = n_back,
-                                      p = occurrences,
-                                      excludep = T)
+        if (!is.null(buffer_type)) {
+            if (buffer_type %in% c("mean", "max", "median")) {
+                message("creating buffer")
+                pbuffr <- create_buffer(occurrences = occurrences,
+                                        n_back = n_back,
+                                        buffer_type = buffer_type,
+                                        seed = seed,
+                                        predictors = predictors)
+                message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
+                backgr <- dismo::randomPoints(mask = pbuffr,
+                                              n = n_back,
+                                              p = occurrences,
+                                              excludep = T)
+            }
 
     } else {
         set.seed(seed)
