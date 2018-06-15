@@ -4,7 +4,7 @@
 \alias{do_enm}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_enm(species_name, coordinates, predictors, models_dir = "./models",
+do_enm(species_name, occurrences, predictors, models_dir = "./models",
   bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
   maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE,
   mindist = FALSE, centroid = FALSE, ...)
@@ -12,7 +12,7 @@ do_enm(species_name, coordinates, predictors, models_dir = "./models",
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{coordinates}{A data frame with occurrence data}
+\item{occurrences}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
 

@@ -1,11 +1,11 @@
 #' Prepares the dataset to perform ENM
 #'
 #' @param species_name A character string with the species name
-#' @param coordinates A data frame with occurrence data
+#' @param occurrences A data frame with occurrence data
 #' @param real_absences User defined absence points
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
-#' @param buffer Defines if a buffer will be used to sample pseudo-absences
+#' @param buffer_type Defines if a buffer will be used to sample pseudo-absences
 #'        (F, "mean", "median", "max")
 #' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
@@ -36,13 +36,13 @@
 #'
 # tabela de valores
 setup_sdmdata <- function(species_name = species_name,
-                          coordinates = coordinates,
+                          occurrences = occurrences,
                           predictors = predictors,
                           models_dir = models_dir,
                           real_absences = NULL,
                           lon = "lon",
                           lat = "lat",
-                          buffer = FALSE,
+                          buffer_type = NULL,
                           seed = 512,
                           clean_dupl = T,
                           clean_nas = F,
@@ -64,13 +64,13 @@ setup_sdmdata <- function(species_name = species_name,
         dir.create(partition.folder, recursive = T)
 
     ## checking latitude and longitude columns
-    if (all(c(lon, lat) %in% names(coordinates))) {
-    coordinates <- coordinates[,c(lon, lat)]
-    names(coordinates) <- c("lon", "lat")
+    if (all(c(lon, lat) %in% names(occurrences))) {
+    occurrences <- occurrences[,c(lon, lat)]
+    names(occurrences) <- c("lon", "lat")
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
         }
-    original.n <- nrow(coordinates)
+    original.n <- nrow(occurrences)
         #checking metadata
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
@@ -79,7 +79,7 @@ setup_sdmdata <- function(species_name = species_name,
         metadata_new <- data.frame(
             species_name = as.character(species_name),
             original.n = original.n,
-            buffer = buffer,
+            buffer_type = ifelse(buffer_type %in% c("mean", "median", "max"), buffer_type, NA),
             seed = ifelse(is.null(seed), NA, seed),
             res.x = res(predictors)[1],
             res.y = res(predictors)[2],
@@ -105,39 +105,39 @@ setup_sdmdata <- function(species_name = species_name,
 
     # tabela de valores
     message("extracting environmental data")
-    presvals <- raster::extract(predictors, coordinates)
+    presvals <- raster::extract(predictors, occurrences)
     if (clean_dupl == TRUE) {
         message("cleaning duplicates")
-        dupls <- !base::duplicated(coordinates)
-        coordinates <- coordinates[dupls,]
+        dupls <- !base::duplicated(occurrences)
+        occurrences <- occurrences[dupls,]
         presvals <- presvals[dupls,]
     }
     if (clean_nas == TRUE) {
         message("cleaning occurrences with no environmental data")
         compl <- complete.cases(presvals)
-        coordinates <- coordinates[compl,]
+        occurrences <- occurrences[compl,]
         presvals <- presvals[compl,]
     }
     if (geo_filt == TRUE) {
         message("applying a geographical filter")
-        coordinates <- geo_filt(coordinates = coordinates, min_distance = geo_filt_dist)
-        presvals <- raster::extract(predictors, coordinates)
+        occurrences <- geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)
+        presvals <- raster::extract(predictors, occurrences)
     }
     if (!is.null(real_absences)) {
         backgr <- real_absences[,c(lon, lat)]
     } else {
-    if (buffer %in% c("mean", "max", "median")) {
+    if (buffer_type %in% c("mean", "max", "median")) {
         message("creating buffer")
 
-        pbuffr <- create_buffer(coord = coordinates,
+        pbuffr <- create_buffer(coord = occurrences,
                                 n_back = n_back,
-                                buffer_type = buffer,
+                                buffer_type = buffer_type,
                                 seed = seed,
                                 predictors = predictors)
         message("sampling pseudoabsence points")
         backgr <- dismo::randomPoints(mask = pbuffr,
                                       n = n_back,
-                                      p = coordinates,
+                                      p = occurrences,
                                       excludep = T)
 
     } else {
@@ -145,21 +145,21 @@ setup_sdmdata <- function(species_name = species_name,
         message("sampling pseudoabsence points")
                 backgr <- dismo::randomPoints(mask = predictors,
                                       n = n_back,
-                                      p = coordinates,
+                                      p = occurrences,
                                       excludep = T)
     }
     }
 
     colnames(backgr) <- c("lon", "lat")
 
-    final.n <- nrow(coordinates)
+    final.n <- nrow(occurrences)
     # Extraindo dados ambientais dos bckgr
     message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
 
     pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
 
-    pres <- cbind(coordinates, presvals)
+    pres <- cbind(occurrences, presvals)
     back <- cbind(backgr, backvals)
     coord_env_all <- rbind(pres, back)
     sdmdata <- cbind(pa,coord_env_all)
@@ -167,10 +167,10 @@ setup_sdmdata <- function(species_name = species_name,
     #Crossvalidation, repetated crossvalidation and jacknife
     #if (crossvalidation == TRUE) {
     if (partition_type == "crossvalidation") {
-        if (nrow(coordinates) < 11) {
+        if (nrow(occurrences) < 11) {
             message("data set has 10 occurrences or less, forcing jacknife")
             #forces jacknife
-            cv_partitions <- nrow(coordinates)
+            cv_partitions <- nrow(occurrences)
             cv_n <- 1
         }
         if (is.null(cv_n)) stop("cv_n must be specified in crossvalidation")
@@ -178,7 +178,7 @@ setup_sdmdata <- function(species_name = species_name,
         if (cv_n == 1) {
             #Crossvalidation
             set.seed(seed)  #reproducibility
-            group <- dismo::kfold(coordinates, cv_partitions)
+            group <- dismo::kfold(occurrences, cv_partitions)
             set.seed(seed)
             bg.grp <- dismo::kfold(backgr, cv_partitions)
             group.all <- c(group, bg.grp)
@@ -186,7 +186,7 @@ setup_sdmdata <- function(species_name = species_name,
         if (cv_n > 1) {
             # Repeated CV
             cv.pres <- replicate(n = cv_n,
-                                 dismo::kfold(coordinates, cv_partitions))
+                                 dismo::kfold(occurrences, cv_partitions))
             dimnames(cv.pres) <- list(NULL, paste0("cv", 1:cv_n))
             cv.back <- replicate(n = cv_n,
                                  dismo::kfold(backgr, cv_partitions))
@@ -203,8 +203,8 @@ setup_sdmdata <- function(species_name = species_name,
             stop("boot_n must be specified")
     boot.pres <- replicate(n = boot_n,
                            sample(
-                               x = seq_along(1:nrow(coordinates)),
-                               size = nrow(coordinates) * boot_proportion,
+                               x = seq_along(1:nrow(occurrences)),
+                               size = nrow(occurrences) * boot_proportion,
                                replace = FALSE
                            ))
     boot.back <- replicate(n = boot_n,
@@ -214,7 +214,7 @@ setup_sdmdata <- function(species_name = species_name,
                                replace = FALSE
                            ))
     boot_p <- matrix(data = 1,
-                     nrow = nrow(coordinates),
+                     nrow = nrow(occurrences),
                      ncol = boot_n,
                      dimnames = list(NULL,paste0("boot",1:boot_n)))
     boot_a <- matrix(data = 1,
@@ -255,7 +255,7 @@ setup_sdmdata <- function(species_name = species_name,
         species_name = as.character(species_name),
         original.n = original.n,
         final.n = final.n,
-        buffer = buffer,
+        buffer_type = ifelse(buffer_type %in% c("mean", "median", "max"), buffer_type, NA),
         seed = ifelse(is.null(seed), NA, seed),
         res.x = res(predictors)[1],
         res.y = res(predictors)[2],

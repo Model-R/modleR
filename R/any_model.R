@@ -20,7 +20,7 @@
 #' @importFrom stats complete.cases formula glm step dist
 #' @export
 do_any <- function(species_name,
-                   coordinates,
+                   occurrences,
                    predictors,
                    models_dir = "./models",
                    algo = c("bioclim"), #um só
@@ -36,7 +36,7 @@ do_any <- function(species_name,
 
         sdmdata <- setup_sdmdata(
             species_name = species_name,
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -53,27 +53,28 @@ do_any <- function(species_name,
         #para cada grupo
         for (g in setdiff(unique(group), 0)) {
             #excluding the zero allows for bootstrap. only 1 partition will run
-            cat(paste(species_name, algo, "run number", i, "partition number",
+            message(paste(species_name, algo, "run number", i, "partition number",
                       g, "\n"))
-            pres_train <- coordinates[group != g, ]
-            if (nrow(coordinates) == 1)
-                pres_train <- coordinates[group == g, ]
-            pres_test <- coordinates[group == g, ]
+            pres_train <- occurrences[group != g, ]
+            if (nrow(occurrences) == 1)
+                pres_train <- occurrences[group == g, ]
+            pres_test <- occurrences[group == g, ]
             backg_test <- backgr[bg.grp == g, ]
             sdmdata_train <- sdmdata[group.all != g,]#presences and absences
             envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
             sdmdata_test  <- sdmdata[group.all == g,]#presences and absences
 
-            if (buffer %in% c("mean", "max", "median")) {
-                stopifnot(!is.null(n_back), "to apply a buffer n_back must be specified")
+            if (buffer_type %in% c("mean", "max", "median")) {
+                #stop(is.null(n_back), "to apply a buffer n_back must be specified")
                 message("creating buffer")
-                pbuffr <- create_buffer(coord = coordinates,
+                pbuffr <- create_buffer(coord = occurrences,
                                         n_back = n_back,
-                                        buffer_type = buffer,
+                                        buffer_type = buffer_type,
                                         seed = seed,
                                         predictors = predictors)
                 original_predictors <- predictors
-                predictors <- crop_model(predictors, mascara = pbuffr)
+                #projections <- crop_model(predictors, mascara = pbuffr)
+                #writeRaster(projections, "./data/cropped_proj", format = "GTiff")
             }
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "maxent")  mod <- dismo::maxent(predictors, pres_train)
@@ -141,7 +142,7 @@ do_any <- function(species_name,
                 p <- raster::extract(ec_cont, y = pres_test)
                 a <- raster::extract(ec_cont, y = backg_test)
                 eec <- dismo::evaluate(p = p, a = a)
-                if (!nrow(coordinates) %in% c(1, 2)) {
+                if (!nrow(occurrences) %in% c(1, 2)) {
                     #sólo corta por LTP si hay más de dos puntos...
                     LPTec <- dismo::threshold(eec, 'no_omission')
                     ec_cont[ec_cont < LPTec] <- LPTec
@@ -159,8 +160,8 @@ do_any <- function(species_name,
                 eval_mod <- eec
                 mod_cont <- ec_cont
             } else {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, original_predictors)
-                mod_cont <- dismo::predict(original_predictors, mod, progress = "text")
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                mod_cont <- dismo::predict(predictors, mod, ...)
             }
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
@@ -233,7 +234,7 @@ do_any <- function(species_name,
                         dir.create(paste0(projection.folder), recursive = T)
                     data <- list.files(paste0("./env/", proj), pattern = proj)
                     data2 <- stack(data)
-                    mod_proj <- predict(data2, mod, progress = "text")
+                    mod_proj <- predict(data2, mod, ...)
                     mod_proj_bin <- mod_proj > th_mod
                     mod_proj_cut <- mod_proj_bin * mod_proj
                     # Normaliza o modelo cut

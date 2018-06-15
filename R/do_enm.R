@@ -19,7 +19,7 @@
 #' @export
 #'
 do_enm <- function(species_name,
-                   coordinates,
+                   occurrences,
                    predictors,
                    models_dir = "./models",
                    bioclim = FALSE,
@@ -38,7 +38,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "bioclim",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -47,7 +47,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "domain",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -56,7 +56,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "glm",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -65,7 +65,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "mahal",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -74,7 +74,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "maxent",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -83,7 +83,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "rf",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -92,7 +92,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "svm.k",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -101,7 +101,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "svm.e",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -110,7 +110,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "mindist",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)
@@ -119,7 +119,7 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "centroid",
-            coordinates = coordinates,
+            occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
             ...)

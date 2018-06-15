@@ -4,14 +4,14 @@
 \alias{do_any}
 \title{Fits ecological niche models using any dismo algorithm.}
 \usage{
-do_any(species_name, coordinates, predictors, models_dir = "./models",
+do_any(species_name, occurrences, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE, projections = NULL,
   mask = NULL, write_png = FALSE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{coordinates}{A data frame with occurrence data}
+\item{occurrences}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
 
