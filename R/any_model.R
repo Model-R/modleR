@@ -64,20 +64,26 @@ do_any <- function(species_name,
             envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
             sdmdata_test  <- sdmdata[group.all == g,]#presences and absences
 
-            if (buffer_type %in% c("mean", "max", "median")) {
-                #stop(is.null(n_back), "to apply a buffer n_back must be specified")
-                message("creating buffer")
-                pbuffr <- create_buffer(coord = occurrences,
-                                        n_back = n_back,
-                                        buffer_type = buffer_type,
-                                        seed = seed,
-                                        predictors = predictors)
-                original_predictors <- predictors
-                #projections <- crop_model(predictors, mascara = pbuffr)
-                #writeRaster(projections, "./data/cropped_proj", format = "GTiff")
-            }
+            message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
-            if (algo == "maxent")  mod <- dismo::maxent(predictors, pres_train)
+            if (algo == "maxent")  {
+                if (!is.null(buffer_type)) {
+                    if (buffer_type %in% c("mean", "max", "median")) {
+                        #stop(is.null(n_back), "to apply a buffer n_back must be specified")
+                        message("creating buffer for prdictor variables")
+                        pbuffr <- create_buffer(occurrences = occurrences,
+                                                n_back = n_back,
+                                                buffer_type = buffer_type,
+                                                seed = seed,
+                                                predictors = predictors)
+                        crop_pred <- crop_model(predictors, mascara = pbuffr)
+                        #writeRaster(projections, "./data/cropped_proj", format = "GTiff")
+                        mod <- dismo::maxent(crop_pred, pres_train)
+                    }
+                } else {
+                    mod <- dismo::maxent(predictors, pres_train)
+                }
+            }
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
