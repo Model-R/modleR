@@ -4,7 +4,7 @@
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent","domain",
 #'                                        "mahal", "glm", "svm.k","svm.e","rf")}
 #' @param project_model Logical, whether to perform a projection
-#' @param projections The RasterStack of projeciton variables
+#' @param projections The RasterStack of projection variables
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
 #' @param write_png Logical, whether png files will be written
 #' @param ... Any parameter from \link{setup_sdmdata}
@@ -71,7 +71,6 @@ do_any <- function(species_name,
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median")) {
-                        #stop(is.null(n_back), "to apply a buffer n_back must be specified")
                         message("creating buffer for prdictor variables")
                         pbuffr <- create_buffer(occurrences = occurrences,
                                                 n_back = n_back,
@@ -79,7 +78,6 @@ do_any <- function(species_name,
                                                 seed = seed,
                                                 predictors = predictors)
                         crop_pred <- crop_model(predictors, mascara = pbuffr)
-                        #writeRaster(projections, "./data/cropped_proj", format = "GTiff")
                         mod <- dismo::maxent(crop_pred, pres_train)
                     }
                 } else {
@@ -111,7 +109,7 @@ do_any <- function(species_name,
                 ec_cont <- predictors[[1]]
                 ec_cont[!is.na(ec_cont)] <- 1
                 predictors.st <- raster::scale(predictors)
-                pres.vals <- raster::extract(predictors.st, pres_train)#extrae valores
+                pres.vals <- raster::extract(predictors.st, pres_train)
                 pred.vals <- raster::values(predictors.st)
                 dist.vals <- vector(length = nrow(pred.vals))
 

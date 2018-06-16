@@ -22,7 +22,7 @@ do_any(species_name, occurrences, predictors, models_dir = "./models",
 
 \item{project_model}{Logical, whether to perform a projection}
 
-\item{projections}{The RasterStack of projeciton variables}
+\item{projections}{The RasterStack of projection variables}
 
 \item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
