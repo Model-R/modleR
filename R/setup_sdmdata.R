@@ -54,7 +54,8 @@ setup_sdmdata <- function(species_name = species_name,
                           boot_n = 1,
                           boot_proportion = 0.7,
                           cv_n = NULL,
-                          cv_partitions = NULL) {
+                          cv_partitions = NULL,
+                          ...) {
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
@@ -79,7 +80,7 @@ setup_sdmdata <- function(species_name = species_name,
         metadata_new <- data.frame(
             species_name = as.character(species_name),
             original.n = original.n,
-            buffer_type = ifelse(buffer_type %in% c("mean", "median", "max"), buffer_type, NA),
+            buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
             seed = ifelse(is.null(seed), NA, seed),
             res.x = res(predictors)[1],
             res.y = res(predictors)[2],
@@ -149,7 +150,7 @@ setup_sdmdata <- function(species_name = species_name,
                                       n = n_back,
                                       p = occurrences,
                                       excludep = T)
-    }
+}
     }
 
     colnames(backgr) <- c("lon", "lat")
@@ -257,7 +258,7 @@ setup_sdmdata <- function(species_name = species_name,
         species_name = as.character(species_name),
         original.n = original.n,
         final.n = final.n,
-        buffer_type = ifelse(buffer_type %in% c("mean", "median", "max"), buffer_type, NA),
+        buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
         seed = ifelse(is.null(seed), NA, seed),
         res.x = res(predictors)[1],
         res.y = res(predictors)[2],

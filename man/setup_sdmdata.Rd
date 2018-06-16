@@ -9,7 +9,8 @@ setup_sdmdata(species_name = species_name, occurrences = occurrences,
   lon = "lon", lat = "lat", buffer_type = NULL, seed = 512,
   clean_dupl = T, clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
   plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
-  boot_n = 1, boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL)
+  boot_n = 1, boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL,
+  ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}

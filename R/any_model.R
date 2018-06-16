@@ -28,6 +28,7 @@ do_any <- function(species_name,
                    projections = NULL,
                    mask = NULL,
                    write_png = FALSE,
+                   buffer_type = NULL,
                    ...) {
     message(paste(algo, "\n"))
 
@@ -39,6 +40,7 @@ do_any <- function(species_name,
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            buffer_type = buffer_type,
             ...)
 
     ##### Hace los modelos
