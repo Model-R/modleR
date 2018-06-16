@@ -4,7 +4,7 @@
 #'  model by calculating the mean of each final model per algorithm.
 #'
 #' @param species_name A character string with the species name
-#' @param occs A two-column data frame with the occurrence points
+#' @param occurrences A two-column data frame with the occurrence points
 #' @param models_dir Character string. Folder path where the input files
 #'                   are located
 #' @param final_dir Character string, name of the subfolder where the files
@@ -40,7 +40,7 @@
 #' deviation of the assembled models. A set of ensemble models and figures
 #' (optional) written in the \code{ensemble_dir} subfolder
 ensemble_model <- function(species_name,
-                           occs,
+                           occurrences,
                            models_dir = "./models",
                            final_dir = "final_models",
                            ensemble_dir = "ensemble",
@@ -97,7 +97,7 @@ ensemble_model <- function(species_name,
                                    ensemble.min, ensemble.max)
             names(ensemble.mods) <- c("mean", "median", "sd", "min", "max")
 
-            coord <- occs[occs$sp == species_name, c("lon", "lat")]
+            coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
 
             if (write_png) {
                 png(filename = paste0(models_dir, "/", species_name, "/present/",

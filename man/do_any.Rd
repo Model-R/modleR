@@ -4,14 +4,14 @@
 \alias{do_any}
 \title{Fits ecological niche models using any dismo algorithm.}
 \usage{
-do_any(species_name, coordinates, predictors, models_dir = "./models",
+do_any(species_name, occurrences, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE, projections = NULL,
-  mask = NULL, write_png = FALSE, ...)
+  mask = NULL, write_png = FALSE, buffer_type = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{coordinates}{A data frame with occurrence data}
+\item{occurrences}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
 
@@ -22,11 +22,14 @@ do_any(species_name, coordinates, predictors, models_dir = "./models",
 
 \item{project_model}{Logical, whether to perform a projection}
 
-\item{projections}{The RasterStack of projeciton variables}
+\item{projections}{The RasterStack of projection variables}
 
 \item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
 \item{write_png}{Logical, whether png files will be written}
+
+\item{buffer_type}{Defines if a buffer will be used to sample pseudo-absences
+(F, "mean", "median", "max")}
 
 \item{...}{Any parameter from \link{setup_sdmdata}}
 }

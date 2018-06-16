@@ -4,7 +4,7 @@
 \alias{ensemble_model}
 \title{Create ensemble models from several algorithms.}
 \usage{
-ensemble_model(species_name, occs, models_dir = "./models",
+ensemble_model(species_name, occurrences, models_dir = "./models",
   final_dir = "final_models", ensemble_dir = "ensemble",
   which_models = c("raw_mean"), consensus = FALSE, consensus_level = 0.5,
   write_png = T, write_raw_map = F)
@@ -12,7 +12,7 @@ ensemble_model(species_name, occs, models_dir = "./models",
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{occs}{A two-column data frame with the occurrence points}
+\item{occurrences}{A two-column data frame with the occurrence points}
 
 \item{models_dir}{Character string. Folder path where the input files
 are located}

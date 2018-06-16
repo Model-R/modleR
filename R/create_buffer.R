@@ -1,6 +1,6 @@
 #' Samples pseudoabsences inside a geographic buffer
 #'
-#' @param coord  A data frame with occurrence data. It should contain only two columns:
+#' @param occurrences  A data frame with occurrence data. It should contain only two columns:
 #' lon and lat, in that order.
 #' @param n_back Number of pseudoabsence points
 #' @param buffer_type Character string indicating whether the buffer should be
@@ -24,29 +24,29 @@
 #' @import raster
 #' @importFrom dismo randomPoints
 #' @export
-create_buffer <- function(coord,
+create_buffer <- function(occurrences,
                           n_back,
                           buffer_type,
                           seed = 512,
                           predictors) {
 
-    sp::coordinates(coord) <- ~lon + lat
-    raster::crs(coord) <- raster::crs(predictors)
+    sp::coordinates(occurrences) <- ~lon + lat
+    raster::crs(occurrences) <- raster::crs(predictors)
     if (buffer_type == "mean")
-        dist.buf <- mean(sp::spDists(x = coord,
+        dist.buf <- mean(sp::spDists(x = occurrences,
                                      longlat = TRUE,
                                      segments = FALSE))
     if (buffer_type == "max")
-        dist.buf <-  max(sp::spDists(x = coord,
+        dist.buf <-  max(sp::spDists(x = occurrences,
                                     longlat = TRUE,
                                     segments = FALSE))
     if (buffer_type == "median")
-        dist.buf <- stats::median(sp::spDists(x = coord,
+        dist.buf <- stats::median(sp::spDists(x = occurrences,
                                               longlat = TRUE,
                                               segments = FALSE))
 
     #creates the buffer - it's a shapefile
-    buffer.shape <- raster::buffer(coord,
+    buffer.shape <- raster::buffer(occurrences,
                                    width = dist.buf * 1000,
                                    dissolve = TRUE)
 
@@ -58,14 +58,14 @@ create_buffer <- function(coord,
     r_buffer <- raster::mask(r_buffer, predictors[[1]])
 
 
-    # Samples random points
-    set.seed(seed + 2)
-    backgr <- dismo::randomPoints(mask = r_buffer,
-                                  n = n_back,
-                                  p = coord,
-                                  excludep = T)
+    # # Samples random points
+    # set.seed(seed + 2)
+    # backgr <- dismo::randomPoints(mask = r_buffer,
+    #                               n = n_back,
+    #                               p = occurrences,
+    #                               excludep = T)
     rm(buffer.shape)
-    rm(r_buffer)
+    #rm(r_buffer)
     gc()
-    return(backgr)
+    return(r_buffer)
 }

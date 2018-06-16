@@ -4,10 +4,10 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
-create_buffer(coord, n_back, buffer_type, seed = 512, predictors)
+create_buffer(occurrences, n_back, buffer_type, seed = 512, predictors)
 }
 \arguments{
-\item{coord}{A data frame with occurrence data. It should contain only two columns:
+\item{occurrences}{A data frame with occurrence data. It should contain only two columns:
 lon and lat, in that order.}
 
 \item{n_back}{Number of pseudoabsence points}
