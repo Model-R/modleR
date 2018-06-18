@@ -15,10 +15,12 @@
 #' @seealso \code{\link[raster]{buffer}}
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
+#' library(raster)
 #' library(dplyr)
 #' species <- sort(unique(coordenadas$sp))
-#' occs <- coordenadas %>% filter(sp == species[1]) %>% select(lon, lat)
-#' create_buffer(occs, 500, "mean", predictors = example_vars)
+#' occs <- coordenadas %>% filter(sp == species[1]) %>% dplyr::select(lon, lat)
+#' buf <- create_buffer(occs, "mean", example_vars)
+#' plot(buf)
 #'
 #' @import raster
 #' @importFrom dismo randomPoints
