@@ -5,8 +5,9 @@
 \title{Fits ecological niche models using any dismo algorithm.}
 \usage{
 do_any(species_name, occurrences, predictors, models_dir = "./models",
-  algo = c("bioclim"), project_model = FALSE, projections = NULL,
-  mask = NULL, write_png = FALSE, buffer_type = NULL, ...)
+  algo = c("bioclim"), project_model = FALSE,
+  proj_data_folder = "./data/proj", proj_stack = proj_stack, mask = NULL,
+  write_png = FALSE, buffer_type = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -22,7 +23,10 @@ do_any(species_name, occurrences, predictors, models_dir = "./models",
 
 \item{project_model}{Logical, whether to perform a projection}
 
-\item{projections}{The RasterStack of projection variables}
+\item{proj_data_folder}{the path to projections -containing one or more
+folders with the projection datasets, ex. "./env/proj/proj1"}
+
+\item{proj_stack}{a single RasterStack of projection variables}
 
 \item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
