@@ -6,7 +6,6 @@
 #' @param project_model Logical, whether to perform a projection
 #' @param proj_data_folder the path to projections -containing one or more
 #'  folders with the projection datasets, ex. "./env/proj/proj1"
-#' @param proj_stack a single RasterStack of projection variables
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
 #' @param write_png Logical, whether png files will be written
 #' @param ... Any parameter from \link{setup_sdmdata}
@@ -28,7 +27,6 @@ do_any <- function(species_name,
                    algo = c("bioclim"), #um só
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
-                   proj_stack = proj_stack,
                    mask = NULL,
                    write_png = FALSE,
                    buffer_type = NULL,
@@ -234,7 +232,6 @@ do_any <- function(species_name,
             }
 
             if (project_model == T) {
-
                     pfiles <- list.dirs(proj_data_folder, recursive = F)
                     for (proje in pfiles) {
                         v <- strsplit(proje, "/")
@@ -246,6 +243,7 @@ do_any <- function(species_name,
                     pred_proj <- raster::stack(list.files(proje, full.names = T))
                     names(pred_proj) <- names(predictors)
                     message(name_proj)
+
                     message("projecting models")
                     mod_proj_cont <- dismo::predict(pred_proj, mod, ...)
                     mod_proj_bin <- mod_proj_cont > th_mod
