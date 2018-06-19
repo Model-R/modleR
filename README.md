@@ -1,7 +1,4 @@
-=======
 # ModelR: a workflow for ecological niche models based on dismo
-
-
 
 __ModelR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation, bootstrap or jacknife procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others (Elith et al 2006) they are useful in dataset with few occurrences (Kamino et al 2012) and can assist the creation of environmental filters (Varela et al 2014).
 
@@ -46,7 +43,7 @@ __ModelR__ writes the outputs in the hard disk, according to the following folde
 
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them. 
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.
-+ _Ensemble_ models join together the results obtained by different algorithms [@araujo_ensemble_2007].
++ _Ensemble_ models join together the results obtained by different algorithms (Araújo & New 2007).
 + When projecting models into the present, the projection folder is called `present`.  <!-- [The projection unto other areas and/or climate scenarios is being implemented] --> .
 + You can set `models_dir` wherever you want in the hard disk, but if you do not modify the default value, it will create the output under the working directory (its default value is `./models_dir`, where the period points to the working directory)
 + The _names_ of the `final` and `ensemble` folders can be modified, but __the nested subfolder structure will remain the same__. If you change `final_models` default value (`"final_model"`) you will need to include the new value when calling `ensemble_model()` (`final_dir = "[new name]"`), to indicate the function where to look for models. This partial flexibility allows for experimenting with final model and ensemble construction (by runnning final or ensemble twice in different output folders, for example). 
@@ -162,9 +159,9 @@ while `do_enm()` can select multiple algorithms, with TRUE or FALSE statements (
 The available algorithms are:
 
 + `"bioclim"`, `"maxent"`, `"mahal"`, `"domain"`, as implemented in __dismo__ package (Hijmans et al 2017), 
-+ Support Vector Machines (SVM), as implemented by packages __kernlab__ [`svm.k` @karatzoglou_kernlab_2004] and __e1071__ [`svm.e` @meyer_e1071_2017],
++ Support Vector Machines (SVM), as implemented by packages __kernlab__ (`svm.k` Karatzoglou et al. 2004) and __e1071__ (`svm.e` Meyer et al. 2017),
 + GLM from base R, here implemented with a stepwise selection approach
-+ Random Forests (from package __randomForest__ @liaw_classification_2002) 
++ Random Forests (from package __randomForest__ Liaw & Wiener 2002) 
 + Two euclidean algorithms are also implemented, a minimum distance algorithm (`"minimum"`), and a distance to the environmental centroid (`"centroid"`). 
 
 Details for the implementation of each model can be accessed in the documentation of the function.
@@ -386,7 +383,7 @@ for (especie in especies) {
     }
 ```
 
-Another option is to use the `purrr` package [@henry_purrr_2017]:
+Another option is to use the `purrr` package (Henry & Wickham 2017):
 
 ```{r purrr example, eval = F}
 library(purrr)

@@ -2,32 +2,31 @@
 #'
 #' @param occurrences  A data frame with occurrence data. It should contain only two columns:
 #' lon and lat, in that order.
-#' @param n_back Number of pseudoabsence points
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the mean, median or maximum distance between occurrence points
-#' @param seed for reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
-#' @author Fabrício Vilasboas
 #' @author Andrea Sánchez-Tapia
+#' @author Fabrício Vilasboas
+#' @return A buffer around the occurrence points
 #' @details The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
 #' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseudo-absence data for presence-only distribution modeling: How far should you stray from what you know? Ecological Modelling, 220(4), 589-594. doi:10.1016/j.ecolmodel.2008.11.010
 #' @seealso \code{\link[raster]{buffer}}
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
+#' library(raster)
 #' library(dplyr)
 #' species <- sort(unique(coordenadas$sp))
-#' occs <- coordenadas %>% filter(sp == species[1]) %>% select(lon, lat)
-#' create_buffer(occs, 500, "mean", predictors = example_vars)
+#' occs <- coordenadas %>% filter(sp == species[1]) %>% dplyr::select(lon, lat)
+#' buf <- create_buffer(occs, "mean", example_vars)
+#' plot(buf)
 #'
 #' @import raster
 #' @importFrom dismo randomPoints
 #' @export
 create_buffer <- function(occurrences,
-                          n_back,
                           buffer_type,
-                          seed = 512,
                           predictors) {
 
     sp::coordinates(occurrences) <- ~lon + lat
@@ -57,15 +56,5 @@ create_buffer <- function(occurrences,
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, predictors[[1]])
 
-
-    # # Samples random points
-    # set.seed(seed + 2)
-    # backgr <- dismo::randomPoints(mask = r_buffer,
-    #                               n = n_back,
-    #                               p = occurrences,
-    #                               excludep = T)
-    rm(buffer.shape)
-    #rm(r_buffer)
-    gc()
     return(r_buffer)
 }

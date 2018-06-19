@@ -54,8 +54,7 @@ setup_sdmdata <- function(species_name = species_name,
                           boot_n = 1,
                           boot_proportion = 0.7,
                           cv_n = NULL,
-                          cv_partitions = NULL,
-                          ...) {
+                          cv_partitions = NULL) {
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
@@ -132,9 +131,7 @@ setup_sdmdata <- function(species_name = species_name,
             if (buffer_type %in% c("mean", "max", "median")) {
                 message("creating buffer")
                 pbuffr <- create_buffer(occurrences = occurrences,
-                                        n_back = n_back,
                                         buffer_type = buffer_type,
-                                        seed = seed,
                                         predictors = predictors)
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
                 backgr <- dismo::randomPoints(mask = pbuffr,

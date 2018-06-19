@@ -4,23 +4,21 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
-create_buffer(occurrences, n_back, buffer_type, seed = 512, predictors)
+create_buffer(occurrences, buffer_type, predictors)
 }
 \arguments{
 \item{occurrences}{A data frame with occurrence data. It should contain only two columns:
 lon and lat, in that order.}
 
-\item{n_back}{Number of pseudoabsence points}
-
 \item{buffer_type}{Character string indicating whether the buffer should be
 calculated using the mean, median or maximum distance between occurrence points}
-
-\item{seed}{for reproducibility purposes}
 
 \item{predictors}{A RasterStack of predictor variables}
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance
+
+A buffer around the occurrence points
 }
 \description{
 Samples pseudoabsences inside a geographic buffer
@@ -29,10 +27,12 @@ Samples pseudoabsences inside a geographic buffer
 The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
 }
 \examples{
+library(raster)
 library(dplyr)
 species <- sort(unique(coordenadas$sp))
-occs <- coordenadas \%>\% filter(sp == species[1]) \%>\% select(lon, lat)
-create_buffer(occs, 500, "mean", predictors = example_vars)
+occs <- coordenadas \%>\% filter(sp == species[1]) \%>\% dplyr::select(lon, lat)
+buf <- create_buffer(occs, "mean", example_vars)
+plot(buf)
 
 }
 \references{
@@ -46,7 +46,7 @@ VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseu
 \author{
 Felipe Barros
 
-Fabrício Vilasboas
-
 Andrea Sánchez-Tapia
+
+Fabrício Vilasboas
 }
