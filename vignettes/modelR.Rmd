@@ -185,6 +185,7 @@ The available algorithms are:
 + GLM from base R, here implemented with a stepwise selection approach
 + Random Forests (from package __randomForest__ @liaw_classification_2002) 
 + Two euclidean algorithms are also implemented, a minimum distance algorithm (`"minimum"`), and a distance to the environmental centroid (`"centroid"`). 
++ Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package [@hastie_elements_2001; @elith_working_2009].
 
 Details for the implementation of each model can be accessed in the documentation of the function.
 <!--Ö escrever os detalhes das implementações --> 

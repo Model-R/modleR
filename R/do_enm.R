@@ -12,6 +12,7 @@
 #' @param svm.e Execute svm from e1071 package
 #' @param mindist Execute minimum euclidean distance
 #' @param centroid Execute euclidean distance to the environmental centroid
+#' @param brt Execute boosted regression trees
 #' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A set of ecological niche models for each partition and algorithm,
 #'         written in the \code{models_dir} subfolder
@@ -32,6 +33,7 @@ do_enm <- function(species_name,
                    svm.e = FALSE,
                    mindist = FALSE,
                    centroid = FALSE,
+                   brt = FALSE,
                    ...) {
 
     if (bioclim == T) {
@@ -119,6 +121,15 @@ do_enm <- function(species_name,
         do_any(
             species_name,
             algo = "centroid",
+            occurrences = occurrences,
+            predictors = predictors,
+            models_dir = models_dir,
+            ...)
+    }
+    if (brt == T) {
+        do_any(
+            species_name,
+            algo = "brt",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
