@@ -81,21 +81,29 @@ ensemble_model <- function(species_name,
                     return(sd(x, na.rm = T))
                     }
                     )
-                ensemble.min <- raster::overlay(mod2, fun = function(x) {
-                    return(min(x, na.rm = T))
-                    }
-                    )
-                ensemble.max <- raster::overlay(mod2, fun = function(x) {
-                    return(max(x, na.rm = T))
-                    }
-                    )
+                #ensemble.min <- raster::overlay(mod2, fun = function(x) {
+                 #   return(min(x, na.rm = T))
+                  #  }
+                   # )
+                #ensemble.max <- raster::overlay(mod2, fun = function(x) {
+                 #   return(max(x, na.rm = T))
+                  #  }
+                   # )
                 ensemble.median <- raster::overlay(mod2, fun = function(x) {
                     return(stats::median(x, na.rm = T))
                     }
                     )
-            ensemble.mods <- raster::stack(ensemble.mean, ensemble.median, ensemble.sd,
-                                   ensemble.min, ensemble.max)
-            names(ensemble.mods) <- c("mean", "median", "sd", "min", "max")
+            ensemble.mods <- raster::stack(ensemble.mean,
+                                           ensemble.median,
+                                           ensemble.sd#,
+                                           #ensemble.min,
+                                           #ensemble.max
+                                           )
+            names(ensemble.mods) <- c("mean",
+                                      "median",
+                                      "sd"#,
+                                      #"min", "max"
+                                      )
 
             coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
 
