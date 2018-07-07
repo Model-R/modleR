@@ -43,6 +43,7 @@ setup_sdmdata <- function(species_name = species_name,
                           lon = "lon",
                           lat = "lat",
                           buffer_type = NULL,
+                          dist_buf = NULL,
                           seed = 512,
                           clean_dupl = T,
                           clean_nas = F,
@@ -128,10 +129,11 @@ setup_sdmdata <- function(species_name = species_name,
         backgr <- real_absences[,c(lon, lat)]
     } else {
         if (!is.null(buffer_type)) {
-            if (buffer_type %in% c("mean", "max", "median")) {
+            if (buffer_type %in% c("mean", "max", "median", "distance")) {
                 message("creating buffer")
                 pbuffr <- create_buffer(occurrences = occurrences,
                                         buffer_type = buffer_type,
+                                        dist_buf = dist_buf,
                                         predictors = predictors)
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
                 backgr <- dismo::randomPoints(mask = pbuffr,

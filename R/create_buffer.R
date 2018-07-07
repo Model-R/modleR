@@ -4,6 +4,7 @@
 #' lon and lat, in that order.
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the mean, median or maximum distance between occurrence points
+#' @param dist_buf Optional, a distance in km for tbe buffer. If set it will override buffer_type
 #' @param predictors A RasterStack of predictor variables
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
@@ -27,6 +28,7 @@
 #' @export
 create_buffer <- function(occurrences,
                           buffer_type,
+                          dist_buf,
                           predictors) {
 
     sp::coordinates(occurrences) <- ~lon + lat
@@ -43,6 +45,8 @@ create_buffer <- function(occurrences,
         dist.buf <- stats::median(sp::spDists(x = occurrences,
                                               longlat = TRUE,
                                               segments = FALSE))
+    if (buffer_type == "distance")
+        dist.buf <- dist_buf
 
     #creates the buffer - it's a shapefile
     buffer.shape <- raster::buffer(occurrences,
