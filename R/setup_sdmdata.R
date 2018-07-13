@@ -160,6 +160,7 @@ setup_sdmdata <- function(species_name = species_name,
     backvals <- raster::extract(predictors, backgr)
     if (any(complete.cases(backvals) == F)) {
     backvals <- backvals[complete.cases(backvals), ]
+    backgr   <- backgr[complete.cases(backvals), ]
         warning(paste("Your background data had NA values,", nrow(backvals),
                       "points were retained"))
         }
