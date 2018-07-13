@@ -158,6 +158,11 @@ setup_sdmdata <- function(species_name = species_name,
     # Extraindo dados ambientais dos bckgr
     message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
+    if (any(complete.cases(backvals) == F)) {
+    backvals <- backvals[complete.cases(backvals), ]
+        warning(paste("Your background data had NA values,", nrow(backvals),
+                      "points were retained"))
+        }
 
     pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
 
