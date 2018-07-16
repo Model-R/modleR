@@ -4,7 +4,7 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
-create_buffer(occurrences, buffer_type, predictors)
+create_buffer(occurrences, buffer_type, dist_buf, predictors)
 }
 \arguments{
 \item{occurrences}{A data frame with occurrence data. It should contain only two columns:
@@ -12,6 +12,8 @@ lon and lat, in that order.}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
 calculated using the mean, median or maximum distance between occurrence points}
+
+\item{dist_buf}{Optional, a distance in km for tbe buffer. If set it will override buffer_type}
 
 \item{predictors}{A RasterStack of predictor variables}
 }

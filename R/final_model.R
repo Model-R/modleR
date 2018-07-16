@@ -74,8 +74,7 @@ final_model <- function(species_name,
     stats <- as.data.frame(stats)
     write.csv(stats, file = paste0(models_dir,"/", species_name, "/present/",
                                    final_dir,"/",species_name,
-                                   "final_statistics.csv"))
-
+                                   "_final_statistics.csv"))
     # Extracts only for the selected algorithm
     if (is.null(algorithms)) {
         algorithms <- unique(stats$algoritmo)

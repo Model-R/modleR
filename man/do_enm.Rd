@@ -7,7 +7,7 @@
 do_enm(species_name, occurrences, predictors, models_dir = "./models",
   bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
   maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE,
-  mindist = FALSE, centroid = FALSE, ...)
+  mindist = FALSE, centroid = FALSE, brt = FALSE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -38,6 +38,8 @@ by the dismo documentation}
 \item{mindist}{Execute minimum euclidean distance}
 
 \item{centroid}{Execute euclidean distance to the environmental centroid}
+
+\item{brt}{Execute boosted regression trees}
 
 \item{...}{Any parameter from \link{setup_sdmdata}}
 }

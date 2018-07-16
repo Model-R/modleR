@@ -16,7 +16,7 @@ bibliography: ModelR.bib
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = F,
+  eval = T,
   cache = F
 )
 ```
@@ -185,6 +185,7 @@ The available algorithms are:
 + GLM from base R, here implemented with a stepwise selection approach
 + Random Forests (from package __randomForest__ @liaw_classification_2002) 
 + Two euclidean algorithms are also implemented, a minimum distance algorithm (`"minimum"`), and a distance to the environmental centroid (`"centroid"`). 
++ Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package [@hastie_elements_2001; @elith_working_2009].
 
 Details for the implementation of each model can be accessed in the documentation of the function.
 <!--Ö escrever os detalhes das implementações --> 
@@ -202,22 +203,29 @@ Calling `do_enm()` and setting `bioclim = TRUE` is therefore equivalent to call 
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
 ```{r do_enm2, echo = T}
+test_folder <- "~/modelR_test/all_algo"
 do_enm(species_name = species[1],
        occurrences = occs,
-       partition_type = "crossvalidation",
+       partition_type = "bootstrap",
+       boot_proportion = 0.8, 
+       boot_n = 1,
        cv_partitions = 5,
        cv_n = 1,
        buffer_type = "mean",
        predictors = example_vars,
        plot_sdmdata = T,
-       models_dir = "~/modelR_test/1species",
+       models_dir = test_folder,
        write_png = T,
        n_back = 500,
        bioclim = T,
+       domain = T, 
        glm = T,
+       svm.k = T,
+       svm.e = T, 
        maxent = T,
        rf = T,
-       svm.k = T)
+       mahal = T, 
+       brt = T)
 ```
 
 Both functions admit the parameters from `setupsdmdata()` and run it  <!-- [Ö acá toca saber qué tan obligatorio es usar los parámetros y qué tanto va a darle tranquilo. Si es bligatorio deberíamosdejar de hablar de la primera función] --> . In addition: 
@@ -229,7 +237,7 @@ You can explore the list of files created at this phase, for example:
 
 ```{r partfiles}
 partitions.folder <-
-     list.files("~/modelR_test/1species", recursive = T,
+     list.files(test_folder, recursive = T,
                 pattern = "partitions",
                 include.dirs = T, full.names = T)
 partitions.folder
@@ -302,7 +310,7 @@ final_model(species_name = species[1],
             select_par_val = 0.5,
             consensus_level = 0.5,
             weight_par = c("TSS"),
-            models_dir = "~/modelR_test/1species",
+            models_dir = test_folder,
             which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
 ```
 
@@ -311,7 +319,7 @@ final_model(species_name = species[1],
 We can explore these models from the files:
 
 ```{r final_folder}
-final.folder <- list.files("~/modelR_test/1species",
+final.folder <- list.files(test_folder,
                            recursive = T,
                            pattern = "final_models",
                            include.dirs = T,
@@ -333,17 +341,17 @@ The third step of the workflow is joining the models for each algorithm into a f
 
 `ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
-```{r ensemble_model, eval = F}
+```{r ensemble_model, eval = T}
 ensemble_model(species[1],
-               occs = occs,
+               occurrences = occs,
                which_models = "cut_mean",
-               models_dir = "~/modelR_test/1species/")
+               models_dir = test_folder)
 ```
 
 At any point we can explore the outputs in the folders: 
 
-```{r check_ensemble, fig.width = 5, fig.height = 5}
-ensemble_files <-  list.files("~/modelR_test/1species/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble",
+```{r check_ensemble, fig.width = 5, fig.height = 5, eval= T}
+ensemble_files <-  list.files(paste0(test_folder,"/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble"),
                               recursive = T,
                               pattern = "cut_mean.+tif",
                               full.names = T)
@@ -383,7 +391,7 @@ for (especie in especies) {
            maxent = T,
            rf = T,
            svm.k = T,
-           centroid = T)
+           brt = T)
 }
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
@@ -413,6 +421,8 @@ coordenadas %>% split(.$sp) %>%
     purrr::map(~ do_enm(species_name = unique(.$sp),
                         occurrences = .[, c("lon", "lat")],
                         partition_type = "crossvalidation",
+                        clean_na = T,
+                        clean_dupl = T,
                         cv_partitions = 5,
                         cv_n = 1,
                         buffer_type = "mean",
@@ -424,7 +434,7 @@ coordenadas %>% split(.$sp) %>%
                         maxent = T,
                         rf = T,
                         svm.k = T, 
-                        centroid = T))
+                        brt = T))
 ```
 
 ```{r purrr_final, eval = F}
@@ -442,13 +452,12 @@ coordenadas %>%
 ```{r purrr_ensemble, eval = F}
 coordenadas %>% 
     split(.$sp) %>%
-    purrr::map(~ ensemble_model(
-        species_name = unique(.$sp),
-        occs = .[, c("lon", "lat")],
-        which_models = "raw_mean",
-        write_png = T,
-        models_dir = "~/modelR_test/temp_purrr"
-        ))
+    purrr::map(~ ensemble_model(species_name = unique(.$sp),
+                                occurrences = .[, c("lon", "lat")],
+                                which_models = "raw_mean",
+                                write_png = T,
+                                models_dir = "~/modelR_test/temp_purrr"
+                                ))
 
 ```
 
@@ -460,4 +469,7 @@ library(parallel)
 
 
 ```
+
+
+
 # References

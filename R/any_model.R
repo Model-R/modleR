@@ -65,14 +65,13 @@ do_any <- function(species_name,
             backg_test <- backgr[bg.grp == g, ]
             sdmdata_train <- sdmdata[group.all != g,]#presences and absences
             envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
-            sdmdata_test  <- sdmdata[group.all == g,]#presences and absences
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median")) {
-                        message("creating buffer for prdictor variables")
+                        message("creating buffer for predictor variables")
                         pbuffr <- create_buffer(occurrences = occurrences,
                                                 buffer_type = buffer_type,
                                                 predictors = predictors)
@@ -99,10 +98,22 @@ do_any <- function(species_name,
                 }
             if (algo == "svm.k") {
             mod <- kernlab::ksvm(sdmdata_train$pa ~ ., data = envtrain)
+
             }
             if (algo == "svm.e") {
                 mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
                                         data = envtrain)
+            }
+            if (algo == "brt") {
+                mod <- dismo::gbm.step(data = sdmdata_train,
+                                       gbm.x = 5:10,
+                                       gbm.y = 2,
+                                       family = "bernoulli",
+                                       tree.complexity = 5,
+                                       learning.rate = 0.005,
+                                       bag.fraction = 0.5,
+                                       plot.main = FALSE)
+                n.trees <- mod$n.trees
                 }
             if (algo %in% c("centroid", "mindist")) {
                 ec_cont <- predictors[[1]]
@@ -164,10 +175,18 @@ do_any <- function(species_name,
             if (algo %in% c("mindist", "centroid")) {
                 eval_mod <- eec
                 mod_cont <- ec_cont
-            } else {
+            } else if (algo == "brt") {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                                            predictors, n.trees = n.trees)
+                mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees, ...)
+            } else if (algo %in% c("bioclim", "domain", "glm", "svm.k", "svm.e",
+                                  "maxent", "rf", "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                mod_cont <- dismo::predict(predictors, mod, ...)
-            }
+                mod_cont <- dismo::predict(predictors, mod)
+
+            }# else if (algo %in% c("svm.k")) {
+              #  eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+            #}
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
             th_table <- dismo::threshold(eval_mod)
