@@ -13,7 +13,7 @@ install_github("Model-R/modelr_pkg", build_vignettes = TRUE)
 #install.packages(xxx)#soon!
 ```
 
-(`build_vignettes` will include this vignette on the installation)
+(`build_vignettes` will include this vignette on the installation. It may ask for some missing packages, which you can install by running `install.packages()`. Also, make sure that the maxent.jar file is available and in the java folder of dismo package. Please download it here: http://www.cs.princeton.edu/~schapire/maxent/)
 
 # Shiny app
 
