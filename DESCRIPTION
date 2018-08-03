@@ -22,12 +22,14 @@ Imports:
     data.table,
     dismo,
     e1071,
+    gbm,
     graphics,
     kernlab,
     maps,
     randomForest,
     raster,
     rgeos,
+    rgdal,
     rJava,
     scales,
     sp
@@ -36,5 +38,7 @@ RoxygenNote: 6.0.1
 Suggests: devtools,
     dplyr,
     knitr,
-    rmarkdown
+    purrr,
+    rmarkdown,
+    stringr
 VignetteBuilder: knitr
