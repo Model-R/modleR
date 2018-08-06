@@ -404,7 +404,7 @@ for (especie in especies) {
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     ensemble_model(species_name = especie,
-                   occs = occs,
+                   occurrences = occs,
                    which_models = "raw_mean",
                    write_png = T,
                    models_dir = "~/modelR_test/forlooptest")
