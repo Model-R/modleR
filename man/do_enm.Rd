@@ -4,58 +4,52 @@
 \alias{do_enm}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_enm(sp, coordinates, partitions, buffer = FALSE, seed = 512, predictors,
-  models.dir = "./models", project.model = FALSE, projections = NULL,
-  mask, write_png = FALSE, n.back, bioclim = TRUE, domain = TRUE,
-  glm = TRUE, mahal = TRUE, maxent = TRUE, rf = TRUE, svm = TRUE,
-  svm2 = TRUE)
+do_enm(species_name, occurrences, predictors, models_dir = "./models",
+  bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
+  maxent = FALSE, rf = FALSE, svm.k = FALSE, svm.e = FALSE,
+  mindist = FALSE, centroid = FALSE, brt = FALSE, ...)
 }
 \arguments{
-\item{sp}{A character string with the species name}
+\item{species_name}{A character string with the species name}
 
-\item{coordinates}{A two-column data frame with the occurrence points}
-
-\item{partitions}{The number of partitions for a cross validation}
-
-\item{buffer}{Defines if a buffer will be used to sample pseudo-absences
-(F, "mean", "median", "max")}
-
-\item{seed}{For reproducibility purposes}
+\item{occurrences}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{models.dir}{Folder path to save the output files}
+\item{models_dir}{Folder path to save the output files}
 
-\item{project.model}{Logical, whether to perform a projection}
+\item{bioclim}{Execute bioclim from the dismo implementation}
 
-\item{projections}{The RasterStack of projeciton variables}
+\item{domain}{Execute domain from the dismo implementation}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
+\item{glm}{Execute GLM as suggested by the dismo documentation}
 
-\item{write_png}{Logical, whether png files will be written}
+\item{mahal}{Execute mahalanobis distance from the dismo implementation}
 
-\item{n.back}{Number of pseudoabsence points}
+\item{maxent}{Execute maxent from the dismo implementation}
 
-\item{bioclim}{Execute bioclim from its dismo implementation}
+\item{rf}{Execute random forests from randomForest() as suggested
+by the dismo documentation}
 
-\item{domain}{Execute domain from its dismo implementation}
+\item{svm.k}{Execute svm from kernlab package}
 
-\item{glm}{Execute glm from the dismo implementation}
+\item{svm.e}{Execute svm from e1071 package}
 
-\item{mahal}{Execute mahalanobis distance from its dismo implementation}
+\item{mindist}{Execute minimum euclidean distance}
 
-\item{maxent}{Execute maxent from its dismo implementation}
+\item{centroid}{Execute euclidean distance to the environmental centroid}
 
-\item{rf}{Execute random forests from its dismo implementation}
+\item{brt}{Execute boosted regression trees}
 
-\item{svm}{Execute svm from kernlab package}
-
-\item{svm2}{Execute svm from e1071 package}
+\item{...}{Any parameter from \link{setup_sdmdata}}
 }
 \value{
-A set of ecological niche models for each partiion and algorithm,
-        written in the \code{models.dir} subfolder
+A set of ecological niche models for each partition and algorithm,
+        written in the \code{models_dir} subfolder
 }
 \description{
 Fits ecological niche models for various algorithms.
+}
+\author{
+Andrea Sánchez-Tapia
 }
