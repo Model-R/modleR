@@ -187,6 +187,7 @@ do_any <- function(species_name,
             }# else if (algo %in% c("svm.k")) {
               #  eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
             #}
+            message("evaluating the models...")
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
             th_table <- dismo::threshold(eval_mod)
@@ -201,6 +202,7 @@ do_any <- function(species_name,
             th_table$partition <- g
             row.names(th_table) <- paste(species_name, i, g, algo)
 
+            message("writing evaluation tables...")
             write.table(th_table, file = paste0(partition.folder, "/evaluate_",
                                                 species_name, "_", i, "_", g,
                                                 "_", algo, ".txt"))
@@ -210,6 +212,7 @@ do_any <- function(species_name,
                 mod_bin <- crop_model(mod_bin, mask)
                 mod_cut <- crop_model(mod_cut, mask)
             }
+            message("writing raster files...")
             raster::writeRaster(x = mod_cont,
                                 filename = paste0(partition.folder, "/", algo,
                                                   "_cont_", species_name, "_",
@@ -227,6 +230,7 @@ do_any <- function(species_name,
                 overwrite = T)
 
             if (write_png == T) {
+                message("writing png files...")
                 png(paste0(partition.folder, "/", algo, "_cont_", species_name,
                            "_", i, "_", g, ".png"))
                 raster::plot(mod_cont,

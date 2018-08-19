@@ -29,8 +29,8 @@
 #' @export
 create_buffer <- function(occurrences,
                           buffer_type,
-                          dist_buf,
-                          predictors) {
+                          predictors,
+                          dist_buf = NULL) {
 
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
