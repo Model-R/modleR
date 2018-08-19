@@ -6,11 +6,11 @@
 \usage{
 setup_sdmdata(species_name = species_name, occurrences = occurrences,
   predictors = predictors, models_dir = models_dir, real_absences = NULL,
-  lon = "lon", lat = "lat", buffer_type = NULL, dist_buf = NULL,
-  seed = 512, clean_dupl = T, clean_nas = F, geo_filt = F,
-  geo_filt_dist = NULL, plot_sdmdata = T, n_back = 1000,
-  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
-  cv_n = NULL, cv_partitions = NULL)
+  lon = "lon", lat = "lat", buffer_type = NULL, seed = 512,
+  clean_dupl = T, clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
+  plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
+  boot_n = 1, boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL,
+  ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -56,6 +56,8 @@ for bootstrap}
 \item{cv_n}{How many crossvalidation runs}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
+
+\item{...}{parameters from create_buffer()}
 }
 \value{
 A dataframe called sdmdata with the groups for each run

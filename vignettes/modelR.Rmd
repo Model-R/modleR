@@ -156,7 +156,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cv_partitions = 5,
                              cv_n = 1,
                              seed = 512,
-                             buffer_type = "mean",
+                             buffer_type = "median",
                              plot_sdmdata = T,
                              n_back = 500)
 ```

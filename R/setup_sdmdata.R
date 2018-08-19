@@ -24,6 +24,7 @@
 #' @param boot_n How many bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n How many crossvalidation runs
+#' @param ... parameters from create_buffer()
 #' @return A dataframe called sdmdata with the groups for each run
 #' (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
 #' the geographical coordinates, of the occurrence and pseudoabsence points, and
@@ -43,7 +44,6 @@ setup_sdmdata <- function(species_name = species_name,
                           lon = "lon",
                           lat = "lat",
                           buffer_type = NULL,
-                          dist_buf = NULL,
                           seed = 512,
                           clean_dupl = T,
                           clean_nas = F,
@@ -55,7 +55,8 @@ setup_sdmdata <- function(species_name = species_name,
                           boot_n = 1,
                           boot_proportion = 0.7,
                           cv_n = NULL,
-                          cv_partitions = NULL) {
+                          cv_partitions = NULL,
+                          ...) {
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
@@ -133,8 +134,8 @@ setup_sdmdata <- function(species_name = species_name,
                 message("creating buffer")
                 pbuffr <- create_buffer(occurrences = occurrences,
                                         buffer_type = buffer_type,
-                                        dist_buf = dist_buf,
-                                        predictors = predictors)
+                                        predictors = predictors,
+                                        ...)
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
                 backgr <- dismo::randomPoints(mask = pbuffr,
                                               n = n_back,
