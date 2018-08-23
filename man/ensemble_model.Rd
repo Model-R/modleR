@@ -6,8 +6,9 @@
 \usage{
 ensemble_model(species_name, occurrences, models_dir = "./models",
   final_dir = "final_models", ensemble_dir = "ensemble",
-  which_models = c("raw_mean"), consensus = FALSE, consensus_level = 0.5,
-  write_png = T, write_raw_map = F)
+  which_models = c("raw_mean"), consensus = FALSE,
+  consensus_level = 0.5, write_png = T, scale_models = TRUE,
+  write_raw_map = F)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -43,6 +44,9 @@ files. A subfolder will be created.}
 (0.5 means a majority rule).}
 
 \item{write_png}{Write png? Defaults to TRUE}
+
+\item{scale_models}{Sets the maximum value of the input models to 1.
+Defaults to TRUE.}
 
 \item{write_raw_map}{Create a mean raw map without margins}
 }
