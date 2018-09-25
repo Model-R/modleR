@@ -213,7 +213,7 @@ ensemble_model <- function(species_name,
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
                 raster::image(ensemble.consensus,
-                              col = rev(terrain.colors(25)), axes = F, asp = 1)
+                              col = rev(terrain.colors(25)), axes = F)
                 dev.off()
                 }
             }
