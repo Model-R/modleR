@@ -36,23 +36,22 @@ create_buffer <- function(occurrences,
     raster::crs(occurrences) <- raster::crs(predictors)
     if (buffer_type == "mean")
         dist.buf <- mean(sp::spDists(x = occurrences,
-                                     longlat = TRUE,
+                                     longlat = T,
                                      segments = FALSE))
     if (buffer_type == "max")
         dist.buf <-  max(sp::spDists(x = occurrences,
-                                    longlat = TRUE,
+                                    longlat = T,
                                     segments = FALSE))
     if (buffer_type == "median")
         dist.buf <- stats::median(sp::spDists(x = occurrences,
-                                              longlat = TRUE,
+                                              longlat = T,
                                               segments = FALSE))
     if (buffer_type == "distance")
         dist.buf <- dist_buf
 
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
-                                   byid = F, width = dist.buf,
-                                   )
+                                   byid = F, width = dist.buf)
 
     #rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
@@ -60,7 +59,7 @@ create_buffer <- function(occurrences,
      #                             predictors.crop,
       #                            field = buffer.shape@plotOrder)
     # masks the buffer to avoid sampling outside the predictors
-    r_buffer <- raster::mask(r_buffer, buffer_shape)
+    r_buffer <- raster::mask(r_buffer, buffer.shape)
 
     return(r_buffer)
 }
