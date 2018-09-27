@@ -27,6 +27,7 @@ do_any <- function(species_name,
                    algo = c("bioclim"), #um só
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
+                   #proj_cut = NULL,
                    mask = NULL,
                    write_png = FALSE,
                    buffer_type = NULL,
@@ -179,14 +180,18 @@ do_any <- function(species_name,
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
                                             predictors, n.trees = n.trees)
                 mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees, ...)
-            } else if (algo %in% c("bioclim", "domain", "glm", "svm.k", "svm.e",
-                                  "maxent", "rf", "mahal")) {
+            } else if (algo %in% c("bioclim",
+                                   "domain",
+                                   "maxent",
+                                   "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                mod_cont <- dismo::predict(predictors, mod)
+                mod_cont <- dismo::predict(mod, predictors)
+            } else if (algo %in% c("glm", "svm.k", "svm.e", "rf")) {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                mod_cont <- raster::predict(predictors, mod)
+            }
 
-            }# else if (algo %in% c("svm.k")) {
-              #  eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-            #}
+
             message("evaluating the models...")
 
             th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
@@ -268,7 +273,18 @@ do_any <- function(species_name,
                     message(name_proj)
 
                     message("projecting models")
+                    if (algo == "brt") {
+                        mod_proj_cont <- dismo::predict(pred_proj, mod, n.trees = n.trees, ...)
+                    } else if (algo %in% c("bioclim",
+                                           "domain",
+                                           "maxent",
+                                           "mahal")) {
                     mod_proj_cont <- dismo::predict(pred_proj, mod, ...)
+                        } else if (algo %in% c("glm", "svm.k", "svm.e", "rf")) {
+                            mod_proj_cont <- raster::predict(pred_proj, mod)
+                        }
+
+                    #mod_proj_bin <- ifelse(is.null(proj_cut), mod_proj_cont > th_mod, mod_proj_cont > proj_cut)
                     mod_proj_bin <- mod_proj_cont > th_mod
                     mod_proj_cut <- mod_proj_bin * mod_proj_cont
                     # Normaliza o modelo cut
