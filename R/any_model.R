@@ -262,7 +262,7 @@ do_any <- function(species_name,
                     projection.folder <- paste0(models_dir, "/", species_name,
                                                 "/", name_proj,"/partitions")
                     if (file.exists(projection.folder) == FALSE)
-                        dir.create(paste0(projection.folder), recursive = T)
+                        dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
                     pred_proj <- raster::stack(list.files(proje, full.names = T))
                     names(pred_proj) <- names(predictors)
                     message(name_proj)
