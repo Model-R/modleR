@@ -36,15 +36,15 @@ create_buffer <- function(occurrences,
     raster::crs(occurrences) <- raster::crs(predictors)
     if (buffer_type == "mean")
         dist.buf <- mean(sp::spDists(x = occurrences,
-                                     longlat = T,
+                                     longlat = F,
                                      segments = FALSE))
     if (buffer_type == "max")
         dist.buf <-  max(sp::spDists(x = occurrences,
-                                    longlat = T,
+                                    longlat = F,
                                     segments = FALSE))
     if (buffer_type == "median")
         dist.buf <- stats::median(sp::spDists(x = occurrences,
-                                              longlat = T,
+                                              longlat = F,
                                               segments = FALSE))
     if (buffer_type == "distance")
         dist.buf <- dist_buf
