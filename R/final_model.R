@@ -45,6 +45,7 @@ final_model <- function(species_name,
                         weight_par = NULL,
                         select_partitions = TRUE,
                         threshold = c("spec_sens"),
+						scale_models = TRUE,
                         select_par = "TSS",
                         select_par_val = 0.7,
                         consensus_level = 0.5,
@@ -111,10 +112,15 @@ final_model <- function(species_name,
                 pattern = paste0(algo, "_cut_",".*tif$")
             )
 
-        mod.cont <- raster::stack(modelos.cont)  #(0)
         mod.bin <- raster::stack(modelos.bin)  #(0)
+		mod.cont <- raster::stack(modelos.cont)  #(0)
         mod.cut <- raster::stack(modelos.cut)  #(0)
-        #names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
+        
+		if (scale_models == T) {
+		mod.cont = rescale.layer(mod.cont)
+		mod.cut = rescale.layer(mod.cut)}
+		
+		#names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
         #names(mod.bin) <- names(mod.cont)
 
         if (select_partitions == T) {
