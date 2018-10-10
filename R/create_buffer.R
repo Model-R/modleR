@@ -35,17 +35,14 @@ create_buffer <- function(occurrences,
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (buffer_type == "mean")
-        dist.buf <- mean(sp::spDists(x = occurrences,
-                                     longlat = F,
-                                     segments = FALSE))
+        dist.buf <- mean(rgeos::gDistance(spgeom1 = occurrences,
+                                          byid = T))
     if (buffer_type == "max")
-        dist.buf <-  max(sp::spDists(x = occurrences,
-                                    longlat = F,
-                                    segments = FALSE))
+        dist.buf <-  max(rgeos::gDistance(spgeom1 = occurrences, 
+                                          byid = T))
     if (buffer_type == "median")
-        dist.buf <- stats::median(sp::spDists(x = occurrences,
-                                              longlat = F,
-                                              segments = FALSE))
+        dist.buf <- stats::median(rgeos::gDistance(spgeom1 = occurrences,
+                                              byid = T))
     if (buffer_type == "distance")
         dist.buf <- dist_buf
 
