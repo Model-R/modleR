@@ -30,6 +30,7 @@ do_any <- function(species_name,
                    #proj_cut = NULL,
                    mask = NULL,
                    write_png = FALSE,
+                   write_bin_cut = TRUE,
                    buffer_type = NULL,
                    ...) {
     message(paste(algo, "\n"))
@@ -219,16 +220,19 @@ do_any <- function(species_name,
                                                   "_cont_", species_name, "_",
                                                   i, "_", g, ".tif"),
                                 overwrite = T)
-            raster::writeRaster(x = mod_bin,
-                                filename = paste0(partition.folder,  "/", algo,
-                                                  "_bin_", species_name, "_",
-                                                  i, "_", g, ".tif"),
-                                overwrite = T)
-            raster::writeRaster(x = mod_cut,
-                                filename = paste0(partition.folder, "/", algo,
-                                                  "_cut_", species_name, "_",
-                                                  i, "_", g, ".tif"),
-                overwrite = T)
+            if(write_bin_cut == T){
+              raster::writeRaster(x = mod_bin,
+                                  filename = paste0(partition.folder,  "/", algo,
+                                                    "_bin_", species_name, "_",
+                                                    i, "_", g, ".tif"),
+                                  overwrite = T)
+              raster::writeRaster(x = mod_cut,
+                                  filename = paste0(partition.folder, "/", algo,
+                                                    "_cut_", species_name, "_",
+                                                    i, "_", g, ".tif"),
+                                  overwrite = T)
+            }
+
 
             if (write_png == T) {
                 message("writing png files...")
@@ -239,20 +243,24 @@ do_any <- function(species_name,
                                           round(eval_mod@auc, 2), "-", "TSS =",
                                           round(mod_TSS, 2)))
                 dev.off()
-                png(paste0(partition.folder, "/", algo, "_bin_", species_name,
-                           "_", i, "_", g, ".png"))
-                raster::plot(mod_bin,
-                             main = paste(algo, "bin", "\n", "AUC =",
-                                          round(eval_mod@auc, 2), "-", "TSS =",
-                                          round(mod_TSS, 2)))
-                dev.off()
-                png(paste0(partition.folder, "/", algo, "_cut_", species_name,
-                           "_", i, "_", g, ".png"))
-                raster::plot(mod_cut,
-                             main = paste(algo, "cut", "\n", "AUC =",
-                                          round(eval_mod@auc, 2), "-", "TSS =",
-                                          round(mod_TSS, 2)))
-                dev.off()
+                
+                if(write_bin_cut == T){
+                  png(paste0(partition.folder, "/", algo, "_bin_", species_name,
+                             "_", i, "_", g, ".png"))
+                  raster::plot(mod_bin,
+                               main = paste(algo, "bin", "\n", "AUC =",
+                                            round(eval_mod@auc, 2), "-", "TSS =",
+                                            round(mod_TSS, 2)))
+                  dev.off()
+                  png(paste0(partition.folder, "/", algo, "_cut_", species_name,
+                             "_", i, "_", g, ".png"))
+                  raster::plot(mod_cut,
+                               main = paste(algo, "cut", "\n", "AUC =",
+                                            round(eval_mod@auc, 2), "-", "TSS =",
+                                            round(mod_TSS, 2)))
+                  dev.off()
+                }
+                
             }
 
             if (project_model == T) {
@@ -297,18 +305,21 @@ do_any <- function(species_name,
                                                           species_name, "_",
                                                           i, "_", g, ".tif"),
                                         overwrite = T)
-                    raster::writeRaster(x = mod_proj_bin,
-                                        filename = paste0(projection.folder,
-                                                          "/", algo, "_bin_",
-                                                          species_name, "_",
-                                                          i, "_", g, ".tif"),
-                                        overwrite = T)
-                    raster::writeRaster(x = mod_proj_cut,
-                                        filename = paste0(projection.folder,
-                                                          "/", algo, "_cut_",
-                                                          species_name, "_",
-                                                          i, "_", g, ".tif"),
-                                        overwrite = T)
+                    if(write_bin_cut == T){
+                      raster::writeRaster(x = mod_proj_bin,
+                                          filename = paste0(projection.folder,
+                                                            "/", algo, "_bin_",
+                                                            species_name, "_",
+                                                            i, "_", g, ".tif"),
+                                          overwrite = T)
+                      raster::writeRaster(x = mod_proj_cut,
+                                          filename = paste0(projection.folder,
+                                                            "/", algo, "_cut_",
+                                                            species_name, "_",
+                                                            i, "_", g, ".tif"),
+                                          overwrite = T)
+                    }
+
                     if (write_png == T) {
                         message("writing projected models .png")
                         png(paste0(projection.folder, "/", algo, "_cont_",
@@ -319,22 +330,26 @@ do_any <- function(species_name,
                                                   round(eval_mod@auc, 2), "-",
                                                   "TSS =", round(mod_TSS, 2)))
                         dev.off()
-                        png(paste0(projection.folder, "/", algo, "_bin_",
-                                   species_name, "_", i, "_", g, ".png"))
-                        raster::plot(mod_proj_bin,
-                                     main = paste(algo, "proj_bin", "\n",
-                                                  "AUC =",
-                                                  round(eval_mod@auc, 2), "-",
-                                                  "TSS =", round(mod_TSS, 2)))
-                        dev.off()
-                        png(paste0(projection.folder, "/", algo, "_cut_",
-                                   species_name, "_", i, "_", g, ".png"))
-                        raster::plot(mod_proj_cut,
-                                     main = paste(algo, "proj_cut", "\n",
-                                                  "AUC =",
-                                                  round(eval_mod@auc, 2), "-",
-                                                  "TSS =", round(mod_TSS, 2)))
-                        dev.off()
+                        
+                        if(write_bin_cut == T){
+                          png(paste0(projection.folder, "/", algo, "_bin_",
+                                     species_name, "_", i, "_", g, ".png"))
+                          raster::plot(mod_proj_bin,
+                                       main = paste(algo, "proj_bin", "\n",
+                                                    "AUC =",
+                                                    round(eval_mod@auc, 2), "-",
+                                                    "TSS =", round(mod_TSS, 2)))
+                          dev.off()
+                          png(paste0(projection.folder, "/", algo, "_cut_",
+                                     species_name, "_", i, "_", g, ".png"))
+                          raster::plot(mod_proj_cut,
+                                       main = paste(algo, "proj_cut", "\n",
+                                                    "AUC =",
+                                                    round(eval_mod@auc, 2), "-",
+                                                    "TSS =", round(mod_TSS, 2)))
+                          dev.off()
+                        }
+                        
                     }
                     rm(pred_proj)
 
