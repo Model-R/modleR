@@ -205,7 +205,7 @@ do_any <- function(species_name,
             row.names(th_table) <- paste(species_name, i, g, algo)
             
             #confusion matrix
-            conf_mat <- evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+            conf_mat <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
             
             th_table$presence <- conf_mat@np
             th_table$absence <- conf_mat@na
