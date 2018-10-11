@@ -203,11 +203,38 @@ do_any <- function(species_name,
             th_table$run <- i
             th_table$partition <- g
             row.names(th_table) <- paste(species_name, i, g, algo)
+            
+            #confusion matrix
+            conf_mat <- evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+            
+            th_table$presence <- conf_mat@np
+            th_table$absence <- conf_mat@na
+            th_table$correlation <- conf_mat@cor
+            th_table$pvaluecor <- conf_mat@pcor
+            th_table$prevalence.value <- conf_mat@prevalence
+            th_table$PPP <- conf_mat@PPP
+            th_table$NPP <- conf_mat@NPP
+            th_table$sensitivity <- conf_mat@TPR/(conf_mat@TPR+conf_mat@FPR)
+            th_table$specificity <- conf_mat@TNR/(conf_mat@FNR+conf_mat@TNR)
+            th_table$comission <- conf_mat@FNR/(conf_mat@FNR+conf_mat@TNR)
+            th_table$omission <- conf_mat@FPR/(conf_mat@TPR+conf_mat@FPR)
+            th_table$accuracy <- (conf_mat@TPR+conf_mat@TNR)/(conf_mat@TPR+conf_mat@TNR+conf_mat@FNR+conf_mat@FPR)
+            th_table$KAPPA.value <- conf_mat@kappa 
+            
+            conf_mat <- data.frame(presence_record = conf_mat@confusion[,c("tp", "fp")] , ausence_record = conf_mat@confusion[,c("fn", "tn")])
+            rownames(conf_mat) <- c("presence_predicted", "ausence_predicted") 
+            
+
+            
+            #writing evaluation tables
 
             message("writing evaluation tables...")
             write.table(th_table, file = paste0(partition.folder, "/evaluate_",
                                                 species_name, "_", i, "_", g,
                                                 "_", algo, ".txt"))
+            write.csv(th_table, file = paste0(partition.folder, "/confusion_matrices_",
+                                                species_name, "_", i, "_", g,
+                                                "_", algo, ".csv"))
 
             if (class(mask) == "SpatialPolygonsDataFrame") {
                 mod_cont <- crop_model(mod_cont, mask)
