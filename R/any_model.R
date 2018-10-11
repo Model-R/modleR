@@ -73,11 +73,7 @@ do_any <- function(species_name,
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median")) {
                         message("creating buffer for predictor variables")
-                        pbuffr <- create_buffer(occurrences = occurrences,
-                                                buffer_type = buffer_type,
-                                                predictors = predictors)
-                        crop_pred <- crop_model(predictors, mascara = pbuffr)
-                        mod <- dismo::maxent(crop_pred, pres_train)
+                        mod <- dismo::maxent(pbuffr, pres_train)
                     }
                 } else {
                     mod <- dismo::maxent(predictors, pres_train)

@@ -52,9 +52,6 @@ create_buffer <- function(occurrences,
 
     #rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
-    #r_buffer <- raster::rasterize(buffer.shape,
-     #                             predictors.crop,
-      #                            field = buffer.shape@plotOrder)
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
 
