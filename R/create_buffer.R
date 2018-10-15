@@ -31,7 +31,7 @@ create_buffer <- function(occurrences,
                           buffer_type,
                           predictors,
                           dist_buf = NULL) {
-
+  if(!is.null(buffer_type)){
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (buffer_type == "mean")
@@ -54,6 +54,7 @@ create_buffer <- function(occurrences,
     r_buffer <- raster::crop(predictors, buffer.shape)
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
+  }else(r_buffer = predictors)
 
     return(r_buffer)
 }
