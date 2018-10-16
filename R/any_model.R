@@ -33,6 +33,7 @@ do_any <- function(species_name,
                    write_bin_cut = TRUE,
                    buffer_type = NULL,
                    conf_mat = T,
+                   equalize = T,
                    ...) {
     message(paste(algo, "\n"))
 
@@ -84,17 +85,18 @@ do_any <- function(species_name,
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
+              if(equalize == T){
                 #balanceando as ausencias 
                 aus = dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
                 pres = dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
                 prop = pres:aus
                 aus.eq = sample(prop[-1], pres)
-                envtrain.2 = envtrain[c(1:pres, aus.eq),]
-                sdmdata_train.2 = sdmdata_train[c(1:pres, aus.eq),]
-                sdmdata_train.2$pa
+                envtrain = envtrain[c(1:pres, aus.eq),]
+                sdmdata_train = sdmdata_train[c(1:pres, aus.eq),]
+              }
                 
-                mod <- randomForest::randomForest(sdmdata_train.2$pa ~ .,
-                                                  data = envtrain.2)
+                mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
+                                                  data = envtrain)
             }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
@@ -113,15 +115,17 @@ do_any <- function(species_name,
                                         data = envtrain)
             }
             if (algo == "brt") {
+              if(equalize == T){
               #balanceando as ausencias 
               aus = dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
               pres = dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
               prop = pres:aus
               aus.eq = sample(prop[-1], pres)
-              envtrain.2 = envtrain[c(1:pres, aus.eq),]
-              sdmdata_train.2 = sdmdata_train[c(1:pres, aus.eq),]
+              envtrain = envtrain[c(1:pres, aus.eq),]
+              sdmdata_train = sdmdata_train[c(1:pres, aus.eq),]
+              }
                 
-                mod <- dismo::gbm.step(data = sdmdata_train.2,
+                mod <- dismo::gbm.step(data = sdmdata_train,
                                        gbm.x = 5:10,
                                        gbm.y = 2,
                                        family = "bernoulli",
