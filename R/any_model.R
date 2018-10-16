@@ -32,6 +32,7 @@ do_any <- function(species_name,
                    write_png = FALSE,
                    write_bin_cut = TRUE,
                    buffer_type = NULL,
+                   conf_mat = T,
                    ...) {
     message(paste(algo, "\n"))
 
@@ -83,8 +84,17 @@ do_any <- function(species_name,
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
-                mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
-                                                  data = envtrain)
+                #balanceando as ausencias 
+                aus = dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
+                pres = dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
+                prop = pres:aus
+                aus.eq = sample(prop[-1], pres)
+                envtrain.2 = envtrain[c(1:pres, aus.eq),]
+                sdmdata_train.2 = sdmdata_train[c(1:pres, aus.eq),]
+                sdmdata_train.2$pa
+                
+                mod <- randomForest::randomForest(sdmdata_train.2$pa ~ .,
+                                                  data = envtrain.2)
             }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
@@ -103,7 +113,15 @@ do_any <- function(species_name,
                                         data = envtrain)
             }
             if (algo == "brt") {
-                mod <- dismo::gbm.step(data = sdmdata_train,
+              #balanceando as ausencias 
+              aus = dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
+              pres = dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
+              prop = pres:aus
+              aus.eq = sample(prop[-1], pres)
+              envtrain.2 = envtrain[c(1:pres, aus.eq),]
+              sdmdata_train.2 = sdmdata_train[c(1:pres, aus.eq),]
+                
+                mod <- dismo::gbm.step(data = sdmdata_train.2,
                                        gbm.x = 5:10,
                                        gbm.y = 2,
                                        family = "bernoulli",
@@ -205,8 +223,15 @@ do_any <- function(species_name,
             row.names(th_table) <- paste(species_name, i, g, algo)
             
             #confusion matrix
-            conf_mat <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-            
+            if(conf_mat==TRUE){
+              conf_mat <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+              conf_mat <- data.frame(presence_record = conf_mat@confusion[,c("tp", "fp")] , ausence_record = conf_mat@confusion[,c("fn", "tn")])
+              rownames(conf_mat) <- c("presence_predicted", "ausence_predicted")
+              write.csv(th_table, file = paste0(partition.folder, "/confusion_matrices_",
+                                                species_name, "_", i, "_", g,
+                                                "_", algo, ".csv"))
+            }
+
             th_table$presence <- conf_mat@np
             th_table$absence <- conf_mat@na
             th_table$correlation <- conf_mat@cor
@@ -214,27 +239,20 @@ do_any <- function(species_name,
             th_table$prevalence.value <- conf_mat@prevalence
             th_table$PPP <- conf_mat@PPP
             th_table$NPP <- conf_mat@NPP
-            th_table$sensitivity <- conf_mat@TPR/(conf_mat@TPR+conf_mat@FPR)
+            th_table$sensitivity.value <- conf_mat@TPR/(conf_mat@TPR+conf_mat@FPR)
             th_table$specificity <- conf_mat@TNR/(conf_mat@FNR+conf_mat@TNR)
             th_table$comission <- conf_mat@FNR/(conf_mat@FNR+conf_mat@TNR)
             th_table$omission <- conf_mat@FPR/(conf_mat@TPR+conf_mat@FPR)
             th_table$accuracy <- (conf_mat@TPR+conf_mat@TNR)/(conf_mat@TPR+conf_mat@TNR+conf_mat@FNR+conf_mat@FPR)
             th_table$KAPPA.value <- conf_mat@kappa 
-            
-            conf_mat <- data.frame(presence_record = conf_mat@confusion[,c("tp", "fp")] , ausence_record = conf_mat@confusion[,c("fn", "tn")])
-            rownames(conf_mat) <- c("presence_predicted", "ausence_predicted") 
-            
-
-            
+             
             #writing evaluation tables
 
             message("writing evaluation tables...")
             write.table(th_table, file = paste0(partition.folder, "/evaluate_",
                                                 species_name, "_", i, "_", g,
                                                 "_", algo, ".txt"))
-            write.csv(th_table, file = paste0(partition.folder, "/confusion_matrices_",
-                                                species_name, "_", i, "_", g,
-                                                "_", algo, ".csv"))
+
 
             if (class(mask) == "SpatialPolygonsDataFrame") {
                 mod_cont <- crop_model(mod_cont, mask)
