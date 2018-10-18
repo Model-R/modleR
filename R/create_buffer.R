@@ -31,35 +31,30 @@ create_buffer <- function(occurrences,
                           buffer_type,
                           predictors,
                           dist_buf = NULL) {
-
+  if(!is.null(buffer_type)){
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (buffer_type == "mean")
-        dist.buf <- mean(sp::spDists(x = occurrences,
-                                     longlat = FALSE,
-                                     segments = FALSE))
+        dist.buf <- mean(rgeos::gDistance(spgeom1 = occurrences,
+                                          byid = T))
     if (buffer_type == "max")
-        dist.buf <-  max(sp::spDists(x = occurrences,
-                                    longlat = FALSE,
-                                    segments = FALSE))
+        dist.buf <-  max(rgeos::gDistance(spgeom1 = occurrences, 
+                                          byid = T))
     if (buffer_type == "median")
-        dist.buf <- stats::median(sp::spDists(x = occurrences,
-                                              longlat = FALSE,
-                                              segments = FALSE))
+        dist.buf <- stats::median(rgeos::gDistance(spgeom1 = occurrences,
+                                              byid = T))
     if (buffer_type == "distance")
         dist.buf <- dist_buf
 
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
-                                   byid = F, width = dist.buf,
-                                   )
+                                   byid = F, width = dist.buf)
 
     #rasterizes to sample the random points
-    r_buffer <- raster::rasterize(buffer.shape,
-                                  predictors,
-                                  field = buffer.shape@plotOrder)
+    r_buffer <- raster::crop(predictors, buffer.shape)
     # masks the buffer to avoid sampling outside the predictors
-    r_buffer <- raster::mask(r_buffer, predictors[[1]])
+    r_buffer <- raster::mask(r_buffer, buffer.shape)
+  }else(r_buffer = predictors)
 
     return(r_buffer)
 }

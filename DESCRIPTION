@@ -34,7 +34,7 @@ Imports:
     scales,
     sp
 BugReports: https://github.com/Model-R/modelr_pkg/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: devtools,
     dplyr,
     knitr,

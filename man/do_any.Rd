@@ -7,7 +7,8 @@
 do_any(species_name, occurrences, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
-  buffer_type = NULL, ...)
+  write_bin_cut = TRUE, buffer_type = NULL, conf_mat = T,
+  equalize = T, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}

@@ -44,7 +44,7 @@ setup_sdmdata <- function(species_name = species_name,
                           lon = "lon",
                           lat = "lat",
                           buffer_type = NULL,
-                          seed = 512,
+                          seed = NULL,
                           clean_dupl = T,
                           clean_nas = F,
                           geo_filt = F,
@@ -58,7 +58,7 @@ setup_sdmdata <- function(species_name = species_name,
                           cv_partitions = NULL,
                           ...) {
     if (file.exists(paste0(models_dir)) == FALSE)
-        dir.create(paste0(models_dir), recursive = T)
+        dir.create(paste0(models_dir), recursive = T, showWarnings = F)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
         dir.create(paste0(models_dir, "/", species_name))
     partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
