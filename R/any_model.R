@@ -85,16 +85,16 @@ do_any <- function(species_name,
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
-              if(equalize == T){
-                #balanceando as ausencias 
-                aus = dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
-                pres = dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
-                prop = pres:aus
-                aus.eq = sample(prop[-1], pres)
-                envtrain = envtrain[c(1:pres, aus.eq),]
-                sdmdata_train = sdmdata_train[c(1:pres, aus.eq),]
+              if (equalize == T) {
+                #balanceando as ausencias
+                aus <- dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
+                pres <- dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
+                prop <- pres:aus
+                aus.eq <- sample(prop[-1], pres)
+                envtrain <- envtrain[c(1:pres, aus.eq),]
+                sdmdata_train <- sdmdata_train[c(1:pres, aus.eq),]
               }
-                
+
                 mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
                                                   data = envtrain)
             }
@@ -115,16 +115,16 @@ do_any <- function(species_name,
                                         data = envtrain)
             }
             if (algo == "brt") {
-              if(equalize == T){
-              #balanceando as ausencias 
-              aus = dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
-              pres = dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
-              prop = pres:aus
-              aus.eq = sample(prop[-1], pres)
-              envtrain = envtrain[c(1:pres, aus.eq),]
-              sdmdata_train = sdmdata_train[c(1:pres, aus.eq),]
+              if (equalize == T) {
+              #balanceando as ausencias
+              aus <- dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
+              pres <- dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
+              prop <- pres:aus
+              aus.eq <- sample(prop[-1], pres)
+              envtrain <- envtrain[c(1:pres, aus.eq),]
+              sdmdata_train <- sdmdata_train[c(1:pres, aus.eq),]
               }
-                
+
                 mod <- dismo::gbm.step(data = sdmdata_train,
                                        gbm.x = 5:10,
                                        gbm.y = 2,
@@ -243,13 +243,13 @@ do_any <- function(species_name,
             th_table$prevalence.value <- conf_mat@prevalence
             th_table$PPP <- conf_mat@PPP
             th_table$NPP <- conf_mat@NPP
-            th_table$sensitivity.value <- conf_mat@TPR/(conf_mat@TPR+conf_mat@FPR)
-            th_table$specificity <- conf_mat@TNR/(conf_mat@FNR+conf_mat@TNR)
-            th_table$comission <- conf_mat@FNR/(conf_mat@FNR+conf_mat@TNR)
-            th_table$omission <- conf_mat@FPR/(conf_mat@TPR+conf_mat@FPR)
-            th_table$accuracy <- (conf_mat@TPR+conf_mat@TNR)/(conf_mat@TPR+conf_mat@TNR+conf_mat@FNR+conf_mat@FPR)
-            th_table$KAPPA.value <- conf_mat@kappa 
-             
+            th_table$sensitivity.value <- conf_mat@TPR / (conf_mat@TPR + conf_mat@FPR)
+            th_table$specificity <- conf_mat@TNR / (conf_mat@FNR + conf_mat@TNR)
+            th_table$comission <- conf_mat@FNR / (conf_mat@FNR + conf_mat@TNR)
+            th_table$omission <- conf_mat@FPR / (conf_mat@TPR + conf_mat@FPR)
+            th_table$accuracy <- (conf_mat@TPR + conf_mat@TNR) / (conf_mat@TPR + conf_mat@TNR + conf_mat@FNR + conf_mat@FPR)
+            th_table$KAPPA.value <- conf_mat@kappa
+
             #writing evaluation tables
 
             message("writing evaluation tables...")
@@ -292,7 +292,7 @@ do_any <- function(species_name,
                                           round(eval_mod@auc, 2), "-", "TSS =",
                                           round(mod_TSS, 2)))
                 dev.off()
-                
+
                 if(write_bin_cut == T){
                   png(paste0(partition.folder, "/", algo, "_bin_", species_name,
                              "_", i, "_", g, ".png"))
@@ -309,7 +309,7 @@ do_any <- function(species_name,
                                             round(mod_TSS, 2)))
                   dev.off()
                 }
-                
+
             }
 
             if (project_model == T) {
@@ -379,7 +379,7 @@ do_any <- function(species_name,
                                                   round(eval_mod@auc, 2), "-",
                                                   "TSS =", round(mod_TSS, 2)))
                         dev.off()
-                        
+
                         if(write_bin_cut == T){
                           png(paste0(projection.folder, "/", algo, "_bin_",
                                      species_name, "_", i, "_", g, ".png"))
@@ -398,7 +398,7 @@ do_any <- function(species_name,
                                                     "TSS =", round(mod_TSS, 2)))
                           dev.off()
                         }
-                        
+
                     }
                     rm(pred_proj)
 
