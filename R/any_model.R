@@ -96,12 +96,15 @@ do_any <- function(species_name,
                 pres <- nrow(sdmdata_train[sdmdata_train$pa == 1,])
                 prop <- pres:aus
                 aus.eq <- sample(prop[-1], pres)
-                envtrain <- envtrain[c(1:pres, aus.eq),]
-                sdmdata_train <- sdmdata_train[c(1:pres, aus.eq),]
+                envtrain.eq <- envtrain[c(1:pres, aus.eq),]
+                sdmdata_train.eq <- sdmdata_train[c(1:pres, aus.eq),]
+              } else {
+                  envtrain.eq <- envtrain
+                  sdmdata_train.eq <- sdmdata_train
               }
                 #mod <- randomForest::randomForest(sdmdata_train$pa ~ ., mtry = 3,
                  #                                 data = envtrain, importance = T)
-                mod <- randomForest::tuneRF(envtrain, sdmdata_train$pa,
+                mod <- randomForest::tuneRF(envtrain.eq, sdmdata_train.eq$pa,
                                             trace = F, plot = F, doBest = T,
                                             importance = T)
                 randomForest::varImpPlot(mod)
@@ -129,11 +132,14 @@ do_any <- function(species_name,
               pres <- dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
               prop <- pres:aus
               aus.eq <- sample(prop[-1], pres)
-              envtrain <- envtrain[c(1:pres, aus.eq),]
-              sdmdata_train <- sdmdata_train[c(1:pres, aus.eq),]
+              envtrain.eq <- envtrain[c(1:pres, aus.eq),]
+              sdmdata_train.eq <- sdmdata_train[c(1:pres, aus.eq),]
+              } else {
+                  envtrain.eq <- envtrain
+                  sdmdata_train.eq <- sdmdata_train
               }
 
-                mod <- dismo::gbm.step(data = sdmdata_train,
+                mod <- dismo::gbm.step(data = sdmdata_train.eq,
                                        gbm.x = 5:10,
                                        gbm.y = 2,
                                        family = "bernoulli",
