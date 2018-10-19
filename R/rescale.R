@@ -7,7 +7,7 @@
 #'                  A subfolder will be created.
 #' @return A RasterStack or Rasterlayer with values between 0 and 1.
 #' @author Diogo S. B. Rocha
-#' @examples 
+#' @examples
 #' rescale.layer(example_vars)
 #' @import raster
 #' @export
@@ -16,9 +16,9 @@ rescale.layer <- function(layers) {
   if (missing(layers)) {
     stop("No layers were provided. Please enter a Raster layer or a Rasterstack")
   }
-  pb <- txtProgressBar(min = 1, max = dim(layers)[3], style = 3)
+  #pb <- txtProgressBar(min = 1, max = dim(layers)[3], style = 3)
   for (i in 1:dim(layers)[3]) {
-    setTxtProgressBar(pb, i)
+   # setTxtProgressBar(pb, i)
     stand <-
       function(x) {
         (x - min(layers[[i]][], na.rm = T)) / (max(layers[[i]][], na.rm = T) - min(layers[[i]][], na.rm = T))
