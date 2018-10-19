@@ -210,27 +210,36 @@ do_any <- function(species_name,
                 eval_mod <- eec
                 mod_cont <- ec_cont
             } else if (algo == "brt") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
                                             predictors, n.trees = n.trees)
-                mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees, ...)
+                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
+                                        n.trees = n.trees, tr = th_mod)
+
+                mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
+                }
             } else if (algo %in% c("bioclim",
                                    "domain",
                                    "maxent",
                                    "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- dismo::predict(mod, predictors)
             } else if (algo %in% c("svm.k", "svm.e", "rf")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod)
             } else if (algo %in% "glm") {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
             }
 
 
             message("evaluating the models...")
-
-            th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
             th_table <- dismo::threshold(eval_mod)
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
 
@@ -244,8 +253,8 @@ do_any <- function(species_name,
             row.names(th_table) <- paste(species_name, i, g, algo)
 
             #confusion matrix
+                #conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
             if (conf_mat == TRUE) {
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 conf_res <- data.frame(presence_record = conf@confusion[,c("tp", "fp")],
                                        absence_record = conf@confusion[,c("fn", "tn")])
                 rownames(conf_res) <- c("presence_predicted", "absence_predicted")
@@ -259,15 +268,15 @@ do_any <- function(species_name,
             th_table$absence <- eval_mod@na
             th_table$correlation <- eval_mod@cor
             th_table$pvaluecor <- eval_mod@pcor
-            th_table$prevalence.value <- eval_mod@prevalence
-            th_table$PPP <- eval_mod@PPP
-            th_table$NPP <- eval_mod@NPP
-            th_table$sensitivity.value <- eval_mod@TPR / (eval_mod@TPR + eval_mod@FPR)
-            th_table$specificity <- eval_mod@TNR / (eval_mod@FNR + eval_mod@TNR)
-            th_table$comission <- eval_mod@FNR / (eval_mod@FNR + eval_mod@TNR)
-            th_table$omission <- eval_mod@FPR / (eval_mod@TPR + eval_mod@FPR)
-            th_table$accuracy <- (eval_mod@TPR + eval_mod@TNR) / (eval_mod@TPR + eval_mod@TNR + eval_mod@FNR + eval_mod@FPR)
-            th_table$KAPPA.value <- eval_mod@kappa
+            th_table$prevalence.value <- conf@prevalence
+            th_table$PPP <- conf@PPP
+            th_table$NPP <- conf@NPP
+            th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
+            th_table$specificity <- conf@TNR / (conf@FNR + conf@TNR)
+            th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
+            th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
+            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
+            th_table$KAPPA.value <- conf@kappa
 
             #writing evaluation tables
 
