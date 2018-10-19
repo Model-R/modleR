@@ -138,10 +138,10 @@ do_any <- function(species_name,
                   envtrain.eq <- envtrain
                   sdmdata_train.eq <- sdmdata_train
               }
-
+                ind <- names(predictors)
                 mod <- dismo::gbm.step(data = sdmdata_train.eq,
-                                       gbm.x = 5:10,
-                                       gbm.y = 2,
+                                       gbm.x = ind,
+                                       gbm.y = "pa",
                                        family = "bernoulli",
                                        tree.complexity = 5,
                                        learning.rate = 0.005,
@@ -210,7 +210,7 @@ do_any <- function(species_name,
                 eval_mod <- eec
                 mod_cont <- ec_cont
             } else if (algo == "brt") {
-                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
                                             predictors, n.trees = n.trees)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
