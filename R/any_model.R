@@ -243,8 +243,7 @@ do_any <- function(species_name,
             th_table <- dismo::threshold(eval_mod)
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
 
-            mod_bin  <- mod_cont > th_mod
-            mod_cut  <- mod_cont * mod_bin
+
             th_table$AUC <- eval_mod@auc
             th_table$TSS <- mod_TSS
             th_table$algoritmo <- algo
@@ -288,8 +287,6 @@ do_any <- function(species_name,
 
             if (class(mask) == "SpatialPolygonsDataFrame") {
                 mod_cont <- crop_model(mod_cont, mask)
-                mod_bin <- crop_model(mod_bin, mask)
-                mod_cut <- crop_model(mod_cut, mask)
             }
             message("writing raster files...")
             raster::writeRaster(x = mod_cont,
@@ -297,7 +294,14 @@ do_any <- function(species_name,
                                                   "_cont_", species_name, "_",
                                                   i, "_", g, ".tif"),
                                 overwrite = T)
-            if(write_bin_cut == T){
+            if (write_bin_cut == T) {
+                message("writing binary and cut raster files...")
+                mod_bin  <- mod_cont > th_mod
+                mod_cut  <- mod_cont * mod_bin
+                if (class(mask) == "SpatialPolygonsDataFrame") {
+                    mod_bin <- crop_model(mod_bin, mask)
+                    mod_cut <- crop_model(mod_cut, mask)
+                }
               raster::writeRaster(x = mod_bin,
                                   filename = paste0(partition.folder,  "/", algo,
                                                     "_bin_", species_name, "_",
@@ -321,7 +325,7 @@ do_any <- function(species_name,
                                           round(mod_TSS, 2)))
                 dev.off()
 
-                if(write_bin_cut == T){
+                if (write_bin_cut == T){
                   png(paste0(partition.folder, "/", algo, "_bin_", species_name,
                              "_", i, "_", g, ".png"))
                   raster::plot(mod_bin,
