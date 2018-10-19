@@ -32,6 +32,7 @@ do_any <- function(species_name,
                    write_png = FALSE,
                    write_bin_cut = TRUE,
                    buffer_type = NULL,
+                   dist_buf = NULL,
                    conf_mat = T,
                    equalize = T,
                    ...) {
@@ -76,6 +77,10 @@ do_any <- function(species_name,
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median")) {
                         message("creating buffer for predictor variables")
+                        pbuffr <- create_buffer(occurrences = occurrences,
+                                                buffer_type = buffer_type,
+                                                predictors = predictors,
+                                                dist_buf = dist_buf)
                         mod <- dismo::maxent(pbuffr, pres_train)
                     }
                 } else {
@@ -87,16 +92,19 @@ do_any <- function(species_name,
             if (algo == "rf") {
               if (equalize == T) {
                 #balanceando as ausencias
-                aus <- dim(sdmdata_train[sdmdata_train$pa == 0,])[1]
-                pres <- dim(sdmdata_train[sdmdata_train$pa == 1,])[1]
+                aus <- nrow(sdmdata_train[sdmdata_train$pa == 0,])
+                pres <- nrow(sdmdata_train[sdmdata_train$pa == 1,])
                 prop <- pres:aus
                 aus.eq <- sample(prop[-1], pres)
                 envtrain <- envtrain[c(1:pres, aus.eq),]
                 sdmdata_train <- sdmdata_train[c(1:pres, aus.eq),]
               }
-
-                mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
-                                                  data = envtrain)
+                #mod <- randomForest::randomForest(sdmdata_train$pa ~ ., mtry = 3,
+                 #                                 data = envtrain, importance = T)
+                mod <- randomForest::tuneRF(envtrain, sdmdata_train$pa,
+                                            trace = F, plot = F, doBest = T,
+                                            importance = T)
+                randomForest::varImpPlot(mod)
             }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
@@ -205,9 +213,12 @@ do_any <- function(species_name,
                                    "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 mod_cont <- dismo::predict(mod, predictors)
-            } else if (algo %in% c("glm", "svm.k", "svm.e", "rf")) {
+            } else if (algo %in% c("svm.k", "svm.e", "rf")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 mod_cont <- raster::predict(predictors, mod)
+            } else if (algo %in% "glm") {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                mod_cont <- raster::predict(predictors, mod, type = "response")
             }
 
 
@@ -225,30 +236,32 @@ do_any <- function(species_name,
             th_table$run <- i
             th_table$partition <- g
             row.names(th_table) <- paste(species_name, i, g, algo)
-            
+
             #confusion matrix
-            if(conf_mat==TRUE){
-              conf_mat <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-              conf_mat <- data.frame(presence_record = conf_mat@confusion[,c("tp", "fp")] , ausence_record = conf_mat@confusion[,c("fn", "tn")])
-              rownames(conf_mat) <- c("presence_predicted", "ausence_predicted")
-              write.csv(th_table, file = paste0(partition.folder, "/confusion_matrices_",
-                                                species_name, "_", i, "_", g,
-                                                "_", algo, ".csv"))
+            if (conf_mat == TRUE) {
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+                conf_res <- data.frame(presence_record = conf@confusion[,c("tp", "fp")],
+                                       absence_record = conf@confusion[,c("fn", "tn")])
+                rownames(conf_res) <- c("presence_predicted", "absence_predicted")
+                write.csv(conf_res, file = paste0(partition.folder,
+                                                  "/confusion_matrices_",
+                                                  species_name, "_", i, "_", g,
+                                                  "_", algo, ".csv"))
             }
 
-            th_table$presence <- conf_mat@np
-            th_table$absence <- conf_mat@na
-            th_table$correlation <- conf_mat@cor
-            th_table$pvaluecor <- conf_mat@pcor
-            th_table$prevalence.value <- conf_mat@prevalence
-            th_table$PPP <- conf_mat@PPP
-            th_table$NPP <- conf_mat@NPP
-            th_table$sensitivity.value <- conf_mat@TPR / (conf_mat@TPR + conf_mat@FPR)
-            th_table$specificity <- conf_mat@TNR / (conf_mat@FNR + conf_mat@TNR)
-            th_table$comission <- conf_mat@FNR / (conf_mat@FNR + conf_mat@TNR)
-            th_table$omission <- conf_mat@FPR / (conf_mat@TPR + conf_mat@FPR)
-            th_table$accuracy <- (conf_mat@TPR + conf_mat@TNR) / (conf_mat@TPR + conf_mat@TNR + conf_mat@FNR + conf_mat@FPR)
-            th_table$KAPPA.value <- conf_mat@kappa
+            th_table$presence <- eval_mod@np
+            th_table$absence <- eval_mod@na
+            th_table$correlation <- eval_mod@cor
+            th_table$pvaluecor <- eval_mod@pcor
+            th_table$prevalence.value <- eval_mod@prevalence
+            th_table$PPP <- eval_mod@PPP
+            th_table$NPP <- eval_mod@NPP
+            th_table$sensitivity.value <- eval_mod@TPR / (eval_mod@TPR + eval_mod@FPR)
+            th_table$specificity <- eval_mod@TNR / (eval_mod@FNR + eval_mod@TNR)
+            th_table$comission <- eval_mod@FNR / (eval_mod@FNR + eval_mod@TNR)
+            th_table$omission <- eval_mod@FPR / (eval_mod@TPR + eval_mod@FPR)
+            th_table$accuracy <- (eval_mod@TPR + eval_mod@TNR) / (eval_mod@TPR + eval_mod@TNR + eval_mod@FNR + eval_mod@FPR)
+            th_table$KAPPA.value <- eval_mod@kappa
 
             #writing evaluation tables
 

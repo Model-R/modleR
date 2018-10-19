@@ -3,7 +3,6 @@
 .RData
 .Rapp.history
 script.R
-modelr.Rproj
 inst/doc
 *.html
 *.pdf
@@ -18,3 +17,4 @@ setupsdmdata
 setupsdmdatamed
 test
 wc10
+*.Rproj
