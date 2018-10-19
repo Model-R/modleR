@@ -217,7 +217,6 @@ do_any <- function(species_name,
                                         n.trees = n.trees, tr = th_mod)
 
                 mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
-                }
             } else if (algo %in% c("bioclim",
                                    "domain",
                                    "maxent",
