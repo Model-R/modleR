@@ -31,10 +31,11 @@ create_buffer <- function(occurrences,
                           buffer_type,
                           predictors,
                           dist_buf = NULL) {
-  if (buffer_type %in% c("mean", "median", "max", "distance")) {
-      #sp::coordinates(occurrences) <- ~lon + lat
+    if (buffer_type %in% c("distance")) {
+    dist.buf <- distance
+    } else if (buffer_type %in% c("mean", "median", "max")) {
+      sp::coordinates(occurrences) <- ~lon + lat
       #raster::crs(occurrences) <- raster::crs(predictors)
-    if (buffer_type == "distance") dist.buf <- dist_buf
       dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
       if (buffer_type == "mean")
           dist.buf <- mean(dists)
@@ -42,7 +43,7 @@ create_buffer <- function(occurrences,
           dist.buf <-  max(dists)
       if (buffer_type == "median")
           dist.buf <- stats::median(dists)
-
+}
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
                                    byid = F, width = dist.buf)
@@ -51,7 +52,7 @@ create_buffer <- function(occurrences,
     r_buffer <- raster::crop(predictors, buffer.shape)
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
-  } else {
+    if (is.null(buffer_type) | length(setdiff(buffer_type, c("distance", "mean","median", "max")) > 0)) {
       warning("buffer_type not recognized, returning predictors")
       r_buffer <- predictors
   }
