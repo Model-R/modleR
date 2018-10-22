@@ -94,33 +94,20 @@ final_model <- function(species_name,
                 #pattern = paste0(algo, "_cont_",species_name,"_",run,"_")
                 pattern = paste0(algo, "_cont_",".*tif$")
             )
-
-        modelos.bin <-
-            list.files(
-                path = paste0(models_dir, "/", species_name, "/present/partitions"),
-                full.names = T,
-                #pattern = paste0(algo, "_bin_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_bin_",".*tif$")
-            )
-        modelos.cut <-
-            list.files(
-                path = paste0(models_dir, "/", species_name, "/present/partitions"),
-                full.names = T,
-                #pattern = paste0(algo, "_bin_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_cut_",".*tif$")
-            )
-
-        mod.bin <- raster::stack(modelos.bin)  #(0)
 		mod.cont <- raster::stack(modelos.cont)  #(0)
-        mod.cut <- raster::stack(modelos.cut)  #(0)
-        
+
+        mod.bin <- mod.cont > stats.algo[,threshold] #(0)
+        mod.cut <- mod.cont * mod.bin #(0)
+
+
 		if (scale_models == T) {
-		mod.cont = rescale.layer(mod.cont)
-		mod.cut = rescale.layer(mod.cut)}
-		
+		mod.cont <- rescale.layer(mod.cont)
+		mod.cut <- rescale.layer(mod.cut)
+		}
+
 		#names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
         #names(mod.bin) <- names(mod.cont)
-
+#select partitions----
         if (select_partitions == T) {
             cat(paste("selecting partitions for", species_name, algo, "\n"))
             sel.index <- which(stats.algo[, select_par] >= select_par_val)
@@ -131,10 +118,10 @@ final_model <- function(species_name,
             cont.sel.1  <- mod.cont[[sel.index]]  #(1)
             bin.sel.2   <- mod.bin[[sel.index]]  #(2)
             cut.sel.3     <- mod.cut[[sel.index]]  #(3)
-            th.mean <- mean(stats.algo[, names(stats.algo) == threshold][sel.index])
+            th.mean <- mean(stats.algo[, threshold][sel.index])
 
             if (length(sel.index) == 0) {
-                cat(paste("No partition was selected for", species_name, algo, "\n"))
+                cat(paste("NO partition selected", species_name, algo,proj_dir, "\n"))
                 }
             # if length(sel.index) == 1 the mean models are equal to the originals
             # 1 raw and 4 rawmean = continuous
@@ -148,7 +135,7 @@ final_model <- function(species_name,
                 #cat(paste(length(sel.index), "partition was selected for",
                  #   species_name, algo, "run",run,"\n"))
                 message(paste(length(sel.index), "partition was selected for",
-                    species_name, algo, "\n"))
+                    species_name, algo, proj_dir,"\n"))
 
                 final <- raster::stack(cont.sel.1,#4
                                        bin.sel.2, #5
