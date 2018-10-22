@@ -8,7 +8,7 @@ do_any(species_name, occurrences, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
   write_bin_cut = TRUE, buffer_type = NULL, dist_buf = NULL,
-  conf_mat = T, equalize = T, ...)
+  conf_mat = TRUE, equalize = TRUE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -31,8 +31,17 @@ folders with the projection datasets, ex. "./env/proj/proj1"}
 
 \item{write_png}{Logical, whether png files will be written}
 
+\item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png) should be written}
+
 \item{buffer_type}{Defines if a buffer will be used to sample pseudo-absences
-(F, "mean", "median", "max")}
+(F, "mean", "median", "max", "distance")}
+
+\item{dist_buf}{Defines the width of the buffer}
+
+\item{conf_mat}{Logical, whether confusion tables should be written in the HD}
+
+\item{equalize}{Logical, whether the number of presences and absences should be
+equalized in randomForest and brt.}
 
 \item{...}{Any parameter from \link{setup_sdmdata}}
 }

@@ -8,8 +8,8 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   select_partitions = TRUE, threshold = c("spec_sens"),
   scale_models = TRUE, select_par = "TSS", select_par_val = 0.7,
   consensus_level = 0.5, models_dir = "./models",
-  final_dir = "final_models", which_models = c("raw_mean"),
-  write_png = T)
+  final_dir = "final_models", proj_dir = "present",
+  which_models = c("raw_mean"), write_png = T)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -41,15 +41,23 @@ partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 \item{final_dir}{Character. Name of the folder to save the output files.
 A subfolder will be created.}
 
+\item{proj_dir}{Character. The name of the subfolder with the projection.
+Defaults to "present" but can be set according to the other projections (i.e.
+to execute the function in projected models)}
+
 \item{which_models}{Which final_model() will be used? Currently it can be:
 \describe{
   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
   by TSS or AUC}
   \item{\code{raw_mean}}{the mean of the selected raw models}
-  \item{\code{bin_mean_th}}{the binary model created by cutting \code{raw_mean} by the mean of the thresholds that
-   maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
-   \item{\code{cut_mean_th}}{the cut model created by recovering \code{raw_mean} values above the mean threshold that
-   maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+  \item{\code{bin_mean_th}}{the binary model created by cutting
+  \code{raw_mean} by the mean of the thresholds that
+   maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
+   other dismo thresholds)}
+   \item{\code{cut_mean_th}}{the cut model created by recovering
+   \code{raw_mean} values above the mean threshold that
+   maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
+   other dismo thresholds)}
   \item{\code{bin_mean}}{the mean of the selected binary models}
   \item{\code{bin_consensus}}{the binary consensus from \code{bin_mean}.
   \code{consensus_level} must be defined, 0.5 means a majority consensus}
@@ -57,6 +65,9 @@ A subfolder will be created.}
 }}
 
 \item{write_png}{Writes png files of the final models}
+
+\item{scale_model}{Logical. Whether input models should be scaled between 0
+and 1}
 }
 \value{
 A set of ecological niche models and figures (optional) written in the

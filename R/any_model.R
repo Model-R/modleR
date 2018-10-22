@@ -7,7 +7,11 @@
 #' @param proj_data_folder the path to projections -containing one or more
 #'  folders with the projection datasets, ex. "./env/proj/proj1"
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
+#' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written
 #' @param write_png Logical, whether png files will be written
+#' @param equalize Logical, whether the number of presences and absences should be
+#' equalized in randomForest and brt.
+#' @param conf_mat Logical, whether confusion tables should be written in the HD
 #' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @author Andrea Sánchez-Tapia
@@ -33,8 +37,8 @@ do_any <- function(species_name,
                    write_bin_cut = TRUE,
                    buffer_type = NULL,
                    dist_buf = NULL,
-                   conf_mat = T,
-                   equalize = T,
+                   conf_mat = TRUE,
+                   equalize = TRUE,
                    ...) {
     message(paste(algo, "\n"))
 
