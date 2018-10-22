@@ -61,19 +61,15 @@ final_model <- function(species_name,
     print(date())
 
     cat(paste(species_name, "\n"))
-    cat(paste("Reading the evaluation files", "\n"))
+    cat(paste("Reading the evaluation files for",species_name,"in", proj_dir, "\n"))
     evall <- list.files(
-        path = paste0(models_dir, "/", species_name, "/present/partitions"),
-        pattern = "evaluate", full.names = T)
-    lista <- list()
-    for (i in 1:length(evall)) {
-        lista[[i]] <- read.table(file = evall[i],
-                                 header = T,
-                                 row.names = 1)
-    }
-    stats <- data.table::rbindlist(lista)
+        path = paste0(models_dir, "/", species_name, "/", proj_dir, "/partitions"),
+        pattern = "^evaluate.+.csv$", full.names = T)
+    lista_eval <- lapply(evall, read.csv, header = T)
+    stats <- data.table::rbindlist(lista_eval)
     stats <- as.data.frame(stats)
-    write.csv(stats, file = paste0(models_dir,"/", species_name, "/present/",
+    names(stats)[1] <- "species"
+    write.csv(stats, file = paste0(models_dir,"/", species_name, "/", proj_dir, "/",
                                    final_dir,"/",species_name,
                                    "_final_statistics.csv"))
     # Extracts only for the selected algorithm

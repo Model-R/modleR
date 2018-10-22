@@ -107,7 +107,7 @@ do_any <- function(species_name,
                 mod <- randomForest::tuneRF(envtrain.eq, sdmdata_train.eq$pa,
                                             trace = F, plot = F, doBest = T,
                                             importance = T)
-                randomForest::varImpPlot(mod)
+                #randomForest::varImpPlot(mod)
             }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
@@ -279,9 +279,9 @@ do_any <- function(species_name,
             #writing evaluation tables
 
             message("writing evaluation tables...")
-            write.table(th_table, file = paste0(partition.folder, "/evaluate_",
+            write.csv(th_table, file = paste0(partition.folder, "/evaluate_",
                                                 species_name, "_", i, "_", g,
-                                                "_", algo, ".txt"))
+                                                "_", algo, ".csv"))
 
 
             if (class(mask) == "SpatialPolygonsDataFrame") {
