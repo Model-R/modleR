@@ -20,6 +20,7 @@
 #' @param models_dir Character. Folder path where the input files are located
 #' @param final_dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
+#' @param proj_dir Character. The name of the subfolder with the projection. Default is set to "present" but can be set according to the other projections (i.e. to perform the function in projected models)
 #' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
@@ -51,12 +52,13 @@ final_model <- function(species_name,
                         consensus_level = 0.5,
                         models_dir = "./models",
                         final_dir = "final_models",
+						proj_dir = "present",
                         which_models = c("raw_mean"),
                         write_png = T) {
 
-    if (file.exists(paste0(models_dir, "/", species_name, "/present/",
+    if (file.exists(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                            final_dir)) == FALSE)
-        dir.create(paste0(models_dir, "/", species_name, "/present/", final_dir),
+        dir.create(paste0(models_dir, "/", species_name, "/", proj_dir, "/", final_dir),
                    recursive = TRUE)
     print(date())
 
@@ -87,7 +89,7 @@ final_model <- function(species_name,
         cat(paste("Reading models from .tif files", "\n"))
         modelos.cont <-
             list.files(
-                path = paste0(models_dir, "/", species_name, "/present/partitions"),
+                path = paste0(models_dir, "/", species_name, "/", proj_dir, "/partitions"),
                 full.names = T,
                 #pattern = paste0(algo, "_cont_",species_name,"_",run,"_")
                 pattern = paste0(algo, "_cont_",".*tif$")
@@ -225,7 +227,7 @@ final_model <- function(species_name,
                         for (i in 1:dim(which_final)[[3]]) {
                         raster::writeRaster(x = which_final[[i]],
                                             filename = paste0(models_dir, "/",
-                                                species_name, "/present/",
+                                                species_name, "/", proj_dir, "/",
                                                 final_dir, "/", species_name,
                                                 "_", algo, "_",
                                                 names(which_final)[i], ".tif"),
@@ -235,7 +237,7 @@ final_model <- function(species_name,
                         if (write_png == T) {
                             for (i in 1:dim(which_final)[[3]]) {
                                 png(filename = paste0(models_dir, "/", species_name,
-                                                      "/present/", final_dir, "/",
+                                                      "/", proj_dir, "/", final_dir, "/",
                                                       species_name,"_", algo, "_",
                                                       names(which_final)[i], ".png"))
                                 plot(which_final[[i]], main = names(which_final)[i])
