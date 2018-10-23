@@ -28,6 +28,8 @@ defaults to "spec_sens" but any dismo threshold
 can be used: "kappa", "no_omission", "prevalence",
 "equal_sens_spec", "sensitivity".}
 
+\item{scale_models}{Logical. Whether input models should be scaled between 0 and 1}
+
 \item{select_par}{Which performance statistic should be used to select the
 partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 
@@ -65,9 +67,6 @@ to execute the function in projected models)}
 }}
 
 \item{write_png}{Writes png files of the final models}
-
-\item{scale_model}{Logical. Whether input models should be scaled between 0
-and 1}
 }
 \value{
 A set of ecological niche models and figures (optional) written in the

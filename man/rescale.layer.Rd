@@ -7,12 +7,7 @@
 rescale.layer(layers)
 }
 \arguments{
-\item{layers}{A RasterStack or Rasterlayer of predictor variables}
-
-\item{models_dir}{Character. Folder path where the input files are located}
-
-\item{final_dir}{Character. Name of the folder to save the output files.
-A subfolder will be created.}
+\item{layers}{A RasterStack or Rasterlayer of predictor variables to scale}
 }
 \value{
 A RasterStack or Rasterlayer with values between 0 and 1.
