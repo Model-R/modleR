@@ -1,10 +1,7 @@
 #' Rescaling rasters to values between 0 and 1.
 #'
 #' This function rescales rasters to values between 0 and 1.
-#' @param layers A RasterStack or Rasterlayer of predictor variables
-#' @param models_dir Character. Folder path where the input files are located
-#' @param final_dir Character. Name of the folder to save the output files.
-#'                  A subfolder will be created.
+#' @param layers A RasterStack or Rasterlayer of predictor variables to scale
 #' @return A RasterStack or Rasterlayer with values between 0 and 1.
 #' @author Diogo S. B. Rocha
 #' @examples
@@ -18,7 +15,7 @@ rescale.layer <- function(layers) {
   }
   #pb <- txtProgressBar(min = 1, max = dim(layers)[3], style = 3)
   for (i in 1:dim(layers)[3]) {
-   # setTxtProgressBar(pb, i)
+    # setTxtProgressBar(pb, i)
     stand <-
       function(x) {
         (x - min(layers[[i]][], na.rm = T)) / (max(layers[[i]][], na.rm = T) - min(layers[[i]][], na.rm = T))

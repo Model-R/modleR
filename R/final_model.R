@@ -12,8 +12,7 @@
 #'                  defaults to "spec_sens" but any dismo threshold
 #'                  can be used: "kappa", "no_omission", "prevalence",
 #'                  "equal_sens_spec", "sensitivity".
-#' @param scale_model Logical. Whether input models should be scaled between 0
-#' and 1
+#' @param scale_models Logical. Whether input models should be scaled between 0 and 1
 #' @param select_par Which performance statistic should be used to select the
 #'  partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_par_val Threshold to select models from TSS values
@@ -130,7 +129,7 @@ final_model <- function(species_name,
             th.mean <- mean(stats.algo[, threshold][sel.index])
 
             if (length(sel.index) == 0) {
-                cat(paste("NO partition selected", species_name, algo,proj_dir, "\n"))
+                cat(paste("No partition selected", species_name, algo,proj_dir, "\n"))
                 }
             # if length(sel.index) == 1 the mean models are equal to the originals
             # 1 raw and 4 rawmean = continuous

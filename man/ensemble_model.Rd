@@ -45,8 +45,7 @@ files. A subfolder will be created.}
 
 \item{write_png}{Write png? Defaults to TRUE}
 
-\item{scale_models}{Sets the maximum value of the input models to 1.
-Defaults to TRUE.}
+\item{scale_models}{Logical. If TRUE (default), sets the values of the input models between 0 and 1.}
 
 \item{write_raw_map}{Create a mean raw map without margins}
 }
