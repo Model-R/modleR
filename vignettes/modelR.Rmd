@@ -146,7 +146,7 @@ Pseudoabsence sampling has also some options:
 
 
 
-```{r, eval = F}
+```{r, eval = T}
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              occurrences = occs,
                              predictors = example_vars,
@@ -206,7 +206,7 @@ do_enm(species_name = species[1],
        occurrences = occs,
        partition_type = "bootstrap",
        boot_proportion = 0.8, 
-       boot_n = 1,
+       boot_n = 3,
        cv_partitions = 5,
        cv_n = 1,
        buffer_type = "mean",
@@ -214,6 +214,7 @@ do_enm(species_name = species[1],
        plot_sdmdata = T,
        models_dir = test_folder,
        write_png = T,
+       write_bin_cut = F,
        n_back = 500,
        bioclim = T,
        domain = T, 
@@ -222,8 +223,9 @@ do_enm(species_name = species[1],
        svm.e = T, 
        maxent = T,
        rf = T,
-       mahal = T, 
-       brt = T)
+       mahal = F, 
+       brt = T, 
+       equalize = F)
 ```
 
 Both functions admit the parameters from `setupsdmdata()` and run it  <!-- [Ö acá toca saber qué tan obligatorio es usar los parámetros y qué tanto va a darle tranquilo. Si es bligatorio deberíamosdejar de hablar de la primera función] --> . In addition: 
@@ -302,21 +304,22 @@ args(final_model)
 ```
 
 
-```{r final, echo = T}
+```{r final, echo = T, eval = T}
 final_model(species_name = species[1],
             select_partitions = T,
             select_par_val = 0.5,
             consensus_level = 0.5,
             weight_par = c("TSS"),
             models_dir = test_folder,
-            which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
+            #which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
+            which_models = c("raw_mean"))
 ```
 
 `final_model()` creates a .tif file for each final.model (one per algorithm) under the specified folder (default: `final_models`)
  
 We can explore these models from the files:
 
-```{r final_folder}
+```{r final_folder, eval = T}
 final.folder <- list.files(test_folder,
                            recursive = T,
                            pattern = "final_models",
@@ -327,9 +330,12 @@ final_mods <- list.files(final.folder, full.names = T, pattern = "tif$")
 final_mods
 ```
 
-```{r plot_final, fig.width = 7, fig.height = 6}
+```{r plot_final, fig.width = 7, fig.height = 6, eval = T}
 library(raster)
 final_models <- stack(final_mods)
+library(stringr)
+names(final_models) <- str_split(names(final_models), "_", simplify = T) %>%
+    data.frame() %>% dplyr::select(7) %>% dplyr::pull()
 plot(final_models)
 ```
 
@@ -340,9 +346,10 @@ The third step of the workflow is joining the models for each algorithm into a f
 `ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
 ```{r ensemble_model, eval = T}
-ensemble_model(species[1],
+args(ensemble_model)
+ens <- ensemble_model(species[1],
                occurrences = occs,
-               which_models = "cut_mean",
+               which_models = "raw_mean",
                models_dir = test_folder)
 ```
 
@@ -351,16 +358,16 @@ At any point we can explore the outputs in the folders:
 ```{r check_ensemble, fig.width = 5, fig.height = 5, eval= T}
 ensemble_files <-  list.files(paste0(test_folder,"/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble"),
                               recursive = T,
-                              pattern = "cut_mean.+tif",
+                              pattern = "raw_mean.+tif",
                               full.names = T)
 
 ensemble_files
 ens_mod <- raster::stack(ensemble_files)
+names(ens_mod) <- c("mean", "median", "st. dev")
 raster::plot(ens_mod)
-names(ens_mod)
 plot(ens_mod[[2]])
 maps::map( , , add = T)
-points(occs, pch = 3)
+points(occs, pch = ".", col = "red")
 ```
 
 

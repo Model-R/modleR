@@ -1,6 +1,6 @@
 
-crop_model <- function(modelo, mascara) {
-    modelo <- raster::crop(modelo, mascara)
-    modelo <- raster::mask(modelo, mascara)
+crop_model <- function(modelo, mask) {
+    modelo <- raster::crop(modelo, mask)
+    modelo <- raster::mask(modelo, mask)
     return(modelo)
 }

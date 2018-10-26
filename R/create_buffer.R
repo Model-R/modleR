@@ -31,35 +31,30 @@ create_buffer <- function(occurrences,
                           buffer_type,
                           predictors,
                           dist_buf = NULL) {
-
-    sp::coordinates(occurrences) <- ~lon + lat
-    raster::crs(occurrences) <- raster::crs(predictors)
-    if (buffer_type == "mean")
-        dist.buf <- mean(sp::spDists(x = occurrences,
-                                     longlat = F,
-                                     segments = FALSE))
-    if (buffer_type == "max")
-        dist.buf <-  max(sp::spDists(x = occurrences,
-                                    longlat = F,
-                                    segments = FALSE))
-    if (buffer_type == "median")
-        dist.buf <- stats::median(sp::spDists(x = occurrences,
-                                              longlat = F,
-                                              segments = FALSE))
-    if (buffer_type == "distance")
-        dist.buf <- dist_buf
-
+    if (buffer_type %in% c("distance")) {
+    dist.buf <- distance
+    } else if (buffer_type %in% c("mean", "median", "max")) {
+      sp::coordinates(occurrences) <- ~lon + lat
+      #raster::crs(occurrences) <- raster::crs(predictors)
+      dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
+      if (buffer_type == "mean")
+          dist.buf <- mean(dists)
+      if (buffer_type == "max")
+          dist.buf <-  max(dists)
+      if (buffer_type == "median")
+          dist.buf <- stats::median(dists)
+}
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
                                    byid = F, width = dist.buf)
 
     #rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
-    #r_buffer <- raster::rasterize(buffer.shape,
-     #                             predictors.crop,
-      #                            field = buffer.shape@plotOrder)
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
-
+    if (is.null(buffer_type) | length(setdiff(buffer_type, c("distance", "mean","median", "max")) > 0)) {
+      warning("buffer_type not recognized, returning predictors")
+      r_buffer <- predictors
+  }
     return(r_buffer)
 }

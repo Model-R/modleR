@@ -28,8 +28,7 @@
 #' @param consensus_level Threshold for the consensus rule, betwen 0 and 1
 #'                        (0.5 means a majority rule).
 #' @param write_png Write png? Defaults to TRUE
-#' @param scale_models Sets the maximum value of the input models to 1.
-#' Defaults to TRUE.
+#' @param scale_models Logical. If TRUE (default), sets the values of the input models between 0 and 1.
 #' @param write_raw_map Create a mean raw map without margins
 #'
 #' @import raster
@@ -75,7 +74,7 @@ ensemble_model <- function(species_name,
             mod2 <- raster::stack(tif.files)
             #scale models to 0-1
             if (scale_models == T) {
-                mod2 <- mod2/raster::maxValue(mod2)
+                mod2 <- rescale.layer(mod2)
             }
             ensemble.mean <- raster::overlay(mod2, fun = function(x) {
                 return(mean(x, na.rm = T))
@@ -109,7 +108,8 @@ ensemble_model <- function(species_name,
                                       #"min", "max"
                                       )
 
-            coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
+            #coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
+            coord <- occurrences
 
             if (write_png) {
                 png(filename = paste0(models_dir, "/", species_name, "/present/",
@@ -221,5 +221,3 @@ ensemble_model <- function(species_name,
     }
     print(date())
 }
-
-

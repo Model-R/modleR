@@ -6,7 +6,8 @@
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
 #' @param buffer_type Defines if a buffer will be used to sample pseudo-absences
-#'        (F, "mean", "median", "max")
+#'        (F, "mean", "median", "max", "distance")
+#' @param dist_buf Defines the width of the buffer
 #' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
 #' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
@@ -44,6 +45,7 @@ setup_sdmdata <- function(species_name = species_name,
                           lon = "lon",
                           lat = "lat",
                           buffer_type = NULL,
+                          dist_buf = NULL,
                           seed = NULL,
                           clean_dupl = T,
                           clean_nas = F,

@@ -12,6 +12,7 @@
 #'                  defaults to "spec_sens" but any dismo threshold
 #'                  can be used: "kappa", "no_omission", "prevalence",
 #'                  "equal_sens_spec", "sensitivity".
+#' @param scale_models Logical. Whether input models should be scaled between 0 and 1
 #' @param select_par Which performance statistic should be used to select the
 #'  partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_par_val Threshold to select models from TSS values
@@ -20,15 +21,22 @@
 #' @param models_dir Character. Folder path where the input files are located
 #' @param final_dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
+#' @param proj_dir Character. The name of the subfolder with the projection.
+#' Defaults to "present" but can be set according to the other projections (i.e.
+#' to execute the function in projected models)
 #' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
 #'   by TSS or AUC}
 #'   \item{\code{raw_mean}}{the mean of the selected raw models}
-#'   \item{\code{bin_mean_th}}{the binary model created by cutting \code{raw_mean} by the mean of the thresholds that
-#'    maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
-#'    \item{\code{cut_mean_th}}{the cut model created by recovering \code{raw_mean} values above the mean threshold that
-#'    maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or other dismo thresholds)}
+#'   \item{\code{bin_mean_th}}{the binary model created by cutting
+#'   \code{raw_mean} by the mean of the thresholds that
+#'    maximize the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
+#'    other dismo thresholds)}
+#'    \item{\code{cut_mean_th}}{the cut model created by recovering
+#'    \code{raw_mean} values above the mean threshold that
+#'    maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
+#'    other dismo thresholds)}
 #'   \item{\code{bin_mean}}{the mean of the selected binary models}
 #'   \item{\code{bin_consensus}}{the binary consensus from \code{bin_mean}.
 #'   \code{consensus_level} must be defined, 0.5 means a majority consensus}
@@ -38,40 +46,39 @@
 #' @return A set of ecological niche models and figures (optional) written in the
 #'          \code{final_dir} subfolder
 #' @import raster
-#' @importFrom utils read.table write.csv
+#' @importFrom utils read.table write.csv read.csv
 #' @export
 final_model <- function(species_name,
                         algorithms = NULL,
                         weight_par = NULL,
                         select_partitions = TRUE,
                         threshold = c("spec_sens"),
+						scale_models = TRUE,
                         select_par = "TSS",
                         select_par_val = 0.7,
                         consensus_level = 0.5,
                         models_dir = "./models",
                         final_dir = "final_models",
+						proj_dir = "present",
                         which_models = c("raw_mean"),
                         write_png = T) {
 
-    if (file.exists(paste0(models_dir, "/", species_name, "/present/",
+    if (file.exists(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                            final_dir)) == FALSE)
-        dir.create(paste0(models_dir, "/", species_name, "/present/", final_dir),
+        dir.create(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
+                          final_dir),
                    recursive = TRUE)
     print(date())
 
     cat(paste(species_name, "\n"))
-    cat(paste("Reading the evaluation files", "\n"))
+    cat(paste("Reading the evaluation files for",species_name,"in", proj_dir, "\n"))
     evall <- list.files(
         path = paste0(models_dir, "/", species_name, "/present/partitions"),
-        pattern = "evaluate", full.names = T)
-    lista <- list()
-    for (i in 1:length(evall)) {
-        lista[[i]] <- read.table(file = evall[i],
-                                 header = T,
-                                 row.names = 1)
-    }
-    stats <- data.table::rbindlist(lista)
+        pattern = "^evaluate.+.csv$", full.names = T)
+    lista_eval <- lapply(evall, read.csv, header = T)
+    stats <- data.table::rbindlist(lista_eval)
     stats <- as.data.frame(stats)
+    names(stats)[1] <- "species"
     write.csv(stats, file = paste0(models_dir,"/", species_name, "/present/",
                                    final_dir,"/",species_name,
                                    "_final_statistics.csv"))
@@ -90,33 +97,25 @@ final_model <- function(species_name,
         cat(paste("Reading models from .tif files", "\n"))
         modelos.cont <-
             list.files(
-                path = paste0(models_dir, "/", species_name, "/present/partitions"),
+                path = paste0(models_dir, "/", species_name, "/", proj_dir, "/partitions"),
                 full.names = T,
                 #pattern = paste0(algo, "_cont_",species_name,"_",run,"_")
                 pattern = paste0(algo, "_cont_",".*tif$")
             )
+		mod.cont <- raster::stack(modelos.cont)  #(0)
 
-        modelos.bin <-
-            list.files(
-                path = paste0(models_dir, "/", species_name, "/present/partitions"),
-                full.names = T,
-                #pattern = paste0(algo, "_bin_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_bin_",".*tif$")
-            )
-        modelos.cut <-
-            list.files(
-                path = paste0(models_dir, "/", species_name, "/present/partitions"),
-                full.names = T,
-                #pattern = paste0(algo, "_bin_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_cut_",".*tif$")
-            )
+        mod.bin <- mod.cont > stats.algo[,threshold] #(0)
+        mod.cut <- mod.cont * mod.bin #(0)
 
-        mod.cont <- raster::stack(modelos.cont)  #(0)
-        mod.bin <- raster::stack(modelos.bin)  #(0)
-        mod.cut <- raster::stack(modelos.cut)  #(0)
-        #names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
+
+		if (scale_models == T) {
+		mod.cont <- rescale.layer(mod.cont)
+		mod.cut <- rescale.layer(mod.cut)
+		}
+
+		#names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
         #names(mod.bin) <- names(mod.cont)
-
+#select partitions----
         if (select_partitions == T) {
             cat(paste("selecting partitions for", species_name, algo, "\n"))
             sel.index <- which(stats.algo[, select_par] >= select_par_val)
@@ -127,10 +126,10 @@ final_model <- function(species_name,
             cont.sel.1  <- mod.cont[[sel.index]]  #(1)
             bin.sel.2   <- mod.bin[[sel.index]]  #(2)
             cut.sel.3     <- mod.cut[[sel.index]]  #(3)
-            th.mean <- mean(stats.algo[, names(stats.algo) == threshold][sel.index])
+            th.mean <- mean(stats.algo[, threshold][sel.index])
 
             if (length(sel.index) == 0) {
-                cat(paste("No partition was selected for", species_name, algo, "\n"))
+                cat(paste("No partition selected", species_name, algo,proj_dir, "\n"))
                 }
             # if length(sel.index) == 1 the mean models are equal to the originals
             # 1 raw and 4 rawmean = continuous
@@ -144,7 +143,7 @@ final_model <- function(species_name,
                 #cat(paste(length(sel.index), "partition was selected for",
                  #   species_name, algo, "run",run,"\n"))
                 message(paste(length(sel.index), "partition was selected for",
-                    species_name, algo, "\n"))
+                    species_name, algo, proj_dir,"\n"))
 
                 final <- raster::stack(cont.sel.1,#4
                                        bin.sel.2, #5
@@ -223,7 +222,7 @@ final_model <- function(species_name,
                         for (i in 1:dim(which_final)[[3]]) {
                         raster::writeRaster(x = which_final[[i]],
                                             filename = paste0(models_dir, "/",
-                                                species_name, "/present/",
+                                                species_name, "/", proj_dir, "/",
                                                 final_dir, "/", species_name,
                                                 "_", algo, "_",
                                                 names(which_final)[i], ".tif"),
@@ -233,7 +232,7 @@ final_model <- function(species_name,
                         if (write_png == T) {
                             for (i in 1:dim(which_final)[[3]]) {
                                 png(filename = paste0(models_dir, "/", species_name,
-                                                      "/present/", final_dir, "/",
+                                                      "/", proj_dir, "/", final_dir, "/",
                                                       species_name,"_", algo, "_",
                                                       names(which_final)[i], ".png"))
                                 plot(which_final[[i]], main = names(which_final)[i])
