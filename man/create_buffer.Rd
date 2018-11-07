@@ -4,7 +4,8 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
-create_buffer(occurrences, buffer_type, predictors, dist_buf = NULL)
+create_buffer(occurrences, buffer_type = NULL, predictors,
+  dist_buf = NULL)
 }
 \arguments{
 \item{occurrences}{A data frame with occurrence data. It should contain only two columns:
