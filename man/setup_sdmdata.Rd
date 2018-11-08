@@ -11,7 +11,7 @@ setup_sdmdata(species_name = species_name, occurrences = occurrences,
   clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
   plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
   boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
-  cv_partitions = NULL, ...)
+  cv_partitions = NULL, equalize = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -59,6 +59,9 @@ for bootstrap}
 \item{cv_n}{How many crossvalidation runs}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
+
+\item{equalize}{Logical, whether the number of presences and absences should be
+equalized in randomForest and brt.}
 
 \item{...}{parameters from create_buffer()}
 }
