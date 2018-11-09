@@ -109,7 +109,7 @@ ensemble_model <- function(species_name,
                                       )
 
             #coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
-            coord <- occurrences
+            coord <- occurrences[, c("lon", "lat")]
 
             if (write_png) {
                 png(filename = paste0(models_dir, "/", species_name, "/present/",
