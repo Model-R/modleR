@@ -49,6 +49,8 @@ do_any <- function(species_name,
             predictors = predictors,
             models_dir = models_dir,
             buffer_type = buffer_type,
+            dist_buf = dist_buf,
+            equalize = equalize,
             ...)
 
     ##### Hace los modelos
@@ -235,7 +237,8 @@ do_any <- function(species_name,
             } else if (algo %in% "glm") {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
+                                        tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
             }
 
