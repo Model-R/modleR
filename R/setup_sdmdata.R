@@ -154,11 +154,15 @@ setup_sdmdata <- function(species_name = species_name,
                 vals <- values(pbuffr)
                 available_cells <- sum(!is.na(vals)) - nrow(occurrences)
                 # and corrects accordingly
-                if (available_cells < n_back) n_back <- available_cells
-                message(paste0(available_cells, "available cells"))
-                message(paste("Using", n_back, "pseudoabsences","\n"))
+                if (available_cells < n_back) {
+                    n_back_mod <- available_cells
+                    message(paste0(available_cells, "available cells"))
+                    message(paste("Using", n_back_mod, "pseudoabsences","\n"))
+                } else {
+                    n_back_mod <- n_back
+                }
                 backgr <- dismo::randomPoints(mask = pbuffr,
-                                              n = n_back,
+                                              n = n_back_mod,
                                               p = occurrences,
                                               excludep = T)
             }
@@ -170,11 +174,15 @@ setup_sdmdata <- function(species_name = species_name,
         vals <- values(predictors)
         available_cells <- sum(!is.na(vals)) - nrow(occurrences)
         # and corrects accordingly
-        if (available_cells < n_back) n_back <- available_cells
-        message(paste0(available_cells, "available cells"))
-        message(paste("Using", n_back, "pseudoabsences","\n"))
+        if (available_cells < n_back) {
+            n_back_mod <- available_cells
+            message(paste0(available_cells, "available cells"))
+            message(paste("Using", n_back_mod, "pseudoabsences","\n"))
+        } else {
+            n_back_mod <- n_back
+        }
                 backgr <- dismo::randomPoints(mask = predictors,
-                                      n = n_back,
+                                      n = n_back_mod,
                                       p = occurrences,
                                       excludep = T)
 }
