@@ -225,7 +225,7 @@ do_enm(species_name = species[1],
        rf = T,
        mahal = F, 
        brt = T, 
-       equalize = F)
+       equalize = T)
 ```
 
 Both functions admit the parameters from `setupsdmdata()` and run it  <!-- [Ö acá toca saber qué tan obligatorio es usar los parámetros y qué tanto va a darle tranquilo. Si es bligatorio deberíamosdejar de hablar de la primera función] --> . In addition: 
@@ -376,7 +376,7 @@ points(occs, pch = ".", col = "red")
 Our `coordenadas` dataset has data for four species. 
 An option to do the several models is to use a `for` loop
 
-```{r, eval = F}
+```{r forloop, eval = T}
 args(do_enm)
 args(setup_sdmdata)
 especies <- unique(coordenadas$sp)
@@ -390,13 +390,19 @@ for (especie in especies) {
            buffer_type = "mean",
            predictors = example_vars,
            models_dir = "~/modelR_test/forlooptest",
-           n_back = 500,
+           n_back = 1000,
            write_png = T,
            bioclim = T,
            maxent = T,
            rf = T,
            svm.k = T,
-           brt = T)
+           svm.e = T, 
+           brt = T,
+           glm = T,
+           equalize = T,
+           plot_sdmdata = T,
+           write_bin_cut = F,
+           clean_nas = T)
 }
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
@@ -426,7 +432,7 @@ coordenadas %>% split(.$sp) %>%
     purrr::map(~ do_enm(species_name = unique(.$sp),
                         occurrences = .[, c("lon", "lat")],
                         partition_type = "crossvalidation",
-                        clean_na = T,
+                        clean_nas = T,
                         clean_dupl = T,
                         cv_partitions = 5,
                         cv_n = 1,
