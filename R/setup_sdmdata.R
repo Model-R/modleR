@@ -77,15 +77,18 @@ setup_sdmdata <- function(species_name = species_name,
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
         }
-    original.n <- nrow(occurrences)
+    original_n <- nrow(occurrences)
+    original_n_back <- n_back
+
         #checking metadata
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
         metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F,row.names = 1)
-        metadata_old <- metadata_old[, setdiff(names(metadata_old),"final.n")]
+        metadata_old <- metadata_old[, setdiff(names(metadata_old),c("final.n", "final.n.back"))]
         metadata_new <- data.frame(
             species_name = as.character(species_name),
-            original.n = original.n,
+            original.n = original_n,
+            n_back = original_n_back,
             buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
             dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
             seed = ifelse(is.null(seed), NA, seed),
@@ -96,7 +99,6 @@ setup_sdmdata <- function(species_name = species_name,
             geo_filt = geo_filt,
             geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
             models_dir = models_dir,
-            n_back = n_back,
             partition = partition_type,
             boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
             boot_n = ifelse(is.null(boot_n), NA, boot_n),
@@ -180,7 +182,7 @@ setup_sdmdata <- function(species_name = species_name,
 
     colnames(backgr) <- c("lon", "lat")
 
-    final.n <- nrow(occurrences)
+    final_n <- nrow(occurrences)
     # Extraindo dados ambientais dos bckgr
     message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
@@ -287,8 +289,10 @@ setup_sdmdata <- function(species_name = species_name,
     #metadata
     metadata <- data.frame(
         species_name = as.character(species_name),
-        original.n = original.n,
-        final.n = final.n,
+        original.n = original_n,
+        final.n = final_n,
+        original.n.back = original_n_back,
+        final.n.back = n_back_mod,
         buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
         dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
         seed = ifelse(is.null(seed), NA, seed),
@@ -299,7 +303,6 @@ setup_sdmdata <- function(species_name = species_name,
         geo_filt = geo_filt,
         geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
         models_dir = models_dir,
-        n_back = n_back,
         partition = partition_type,
         boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
         boot_n = ifelse(is.null(boot_n),NA,boot_n),
