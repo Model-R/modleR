@@ -73,13 +73,13 @@ do_any <- function(species_name,
             pres_test <- occurrences[group == g, ]
             backg_test <- backgr[bg.grp == g, ]
             sdmdata_train <- sdmdata[group.all != g,]#presences and absences
-            envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
+            envtrain <-  sdmdata_train[, names(predictors)] #ö ajeitar isto com grep.
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
-                    if (buffer_type %in% c("mean", "max", "median")) {
+                    if (buffer_type %in% c("mean", "max", "median", "distance")) {
                         message("creating buffer for predictor variables")
                         pbuffr <- create_buffer(occurrences = occurrences,
                                                 buffer_type = buffer_type,
