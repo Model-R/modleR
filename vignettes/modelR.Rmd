@@ -146,7 +146,7 @@ Pseudoabsence sampling has also some options:
 
 
 
-```{r, eval = T}
+```{r sdmdata1sp, eval = T}
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              occurrences = occs,
                              predictors = example_vars,
@@ -156,7 +156,8 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cv_partitions = 5,
                              cv_n = 1,
                              seed = 512,
-                             buffer_type = "median",
+                             buffer_type = "distance",
+                             dist_buf = 5,
                              plot_sdmdata = T,
                              n_back = 500)
 ```
@@ -200,16 +201,18 @@ Calling `do_enm()` and setting `bioclim = TRUE` is therefore equivalent to call 
 
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
-```{r do_enm2, echo = T}
+```{r do_enm, echo = T, eval = T}
 test_folder <- "~/modelR_test/all_algo"
 do_enm(species_name = species[1],
        occurrences = occs,
        partition_type = "bootstrap",
        boot_proportion = 0.8, 
-       boot_n = 3,
+       boot_n = 5,
        cv_partitions = 5,
        cv_n = 1,
-       buffer_type = "mean",
+       seed = 512,
+       buffer_type = "distance",
+       dist_buf = 5,
        predictors = example_vars,
        plot_sdmdata = T,
        models_dir = test_folder,
@@ -376,7 +379,7 @@ points(occs, pch = ".", col = "red")
 Our `coordenadas` dataset has data for four species. 
 An option to do the several models is to use a `for` loop
 
-```{r forloop, eval = T}
+```{r forloop, eval = F}
 args(do_enm)
 args(setup_sdmdata)
 especies <- unique(coordenadas$sp)
@@ -387,7 +390,8 @@ for (especie in especies) {
            partition_type = "crossvalidation",
            cv_partitions = 5,
            cv_n = 1,
-           buffer_type = "mean",
+           buffer_type = "distance",
+           dist_buf = 4,
            predictors = example_vars,
            models_dir = "~/modelR_test/forlooptest",
            n_back = 1000,
@@ -436,16 +440,23 @@ coordenadas %>% split(.$sp) %>%
                         clean_dupl = T,
                         cv_partitions = 5,
                         cv_n = 1,
-                        buffer_type = "mean",
+                        buffer_type = "distance",
+                        dist_buf = 4,
                         predictors = example_vars,
-                        models_dir = "~/modelR_test/temp_purrr",
+                        models_dir =
+                            "~/modelR_test/temp_purrr",
                         n_back = 500,
                         write_png = T,
                         bioclim = T,
                         maxent = T,
                         rf = T,
-                        svm.k = T, 
-                        brt = T))
+                        svm.e = T, 
+                        svm.k = T,
+                        domain = T,
+                        glm = T,
+                        mahal = F,
+                        brt = T,
+                        equalize = T))
 ```
 
 ```{r purrr_final, eval = F}
