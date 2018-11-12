@@ -6,9 +6,9 @@
 \usage{
 ensemble_model(species_name, occurrences, models_dir = "./models",
   final_dir = "final_models", ensemble_dir = "ensemble",
-  which_models = c("raw_mean"), consensus = FALSE,
-  consensus_level = 0.5, write_png = T, scale_models = TRUE,
-  write_raw_map = F)
+  proj_dir = "present", which_models = c("raw_mean"),
+  consensus = FALSE, consensus_level = 0.5, write_png = T,
+  scale_models = TRUE, write_raw_map = F)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -23,6 +23,10 @@ for the final models are located}
 
 \item{ensemble_dir}{Character string, name of the folder to save the output
 files. A subfolder will be created.}
+
+\item{proj_dir}{Character. The name of the subfolder with the projection.
+Defaults to "present" but can be set according to the other projections (i.e.
+to execute the function in projected models)}
 
 \item{which_models}{Which final_model() will be used? Currently it can be:
 \describe{

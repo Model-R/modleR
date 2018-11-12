@@ -11,6 +11,10 @@
 #'                  for the final models are located
 #' @param ensemble_dir Character string, name of the folder to save the output
 #'                     files. A subfolder will be created.
+#' @param proj_dir Character. The name of the subfolder with the projection.
+#' Defaults to "present" but can be set according to the other projections (i.e.
+#' to execute the function in projected models)
+#' 
 #' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
@@ -45,6 +49,7 @@ ensemble_model <- function(species_name,
                            models_dir = "./models",
                            final_dir = "final_models",
                            ensemble_dir = "ensemble",
+                           proj_dir = "present",
                            which_models = c("raw_mean"),
                            consensus = FALSE,
                            consensus_level = 0.5,
@@ -55,14 +60,14 @@ ensemble_model <- function(species_name,
 
     ## output folder
     if (file.exists(
-        paste0(models_dir, "/", species_name, "/present/", ensemble_dir, "/")) == FALSE) {
-        dir.create(paste0(models_dir, "/", species_name, "/present/", ensemble_dir, "/"))
+        paste0(models_dir, "/", species_name, "/", proj_dir, "/", ensemble_dir, "/")) == FALSE) {
+        dir.create(paste0(models_dir, "/", species_name, "/", proj_dir, "/", ensemble_dir, "/"))
     }
 
     ## for each model specified in final_models
     for (whi in which_models) {
         cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
-        tif.files <- list.files(paste0(models_dir, "/", species_name, "/present/",
+        tif.files <- list.files(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                        final_dir),
                                 full.names = T, pattern = paste0(whi, ".*tif$"))
 
@@ -112,7 +117,7 @@ ensemble_model <- function(species_name,
             coord <- occurrences[, c("lon", "lat")]
 
             if (write_png) {
-                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/", species_name, "_", whi,
                                       "_ensemble_mean.png"),
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
@@ -125,7 +130,7 @@ ensemble_model <- function(species_name,
                 points(coord, pch = 21, cex = 0.6,
                        bg = scales::alpha("cyan", 0.6))
                 dev.off()
-                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/", species_name, "_", whi,
                                       "_ensemble_median.png"),
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
@@ -138,7 +143,7 @@ ensemble_model <- function(species_name,
                 points(coord, pch = 21, cex = 0.6,
                        bg = scales::alpha("cyan", 0.6))
                 dev.off()
-                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/", species_name, "_", whi,
                                       "_ensemble_sd.png"),
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
@@ -153,7 +158,7 @@ ensemble_model <- function(species_name,
                 dev.off()
             }
             if (write_raw_map) {
-                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                   ensemble_dir, "/", species_name, "_", whi,
                                   "_ensemble_without_margins.png"),
                     bg = "transparent",
@@ -167,7 +172,7 @@ ensemble_model <- function(species_name,
 
             raster::writeRaster(ensemble.mods,
                                 filename = paste0(models_dir, "/", species_name,
-                                                  "/present/",
+                                                  "/", proj_dir, "/",
                                                   ensemble_dir, "/", species_name, "_",
                                                   whi,
                                                   "_ensemble.tif"),
@@ -180,7 +185,7 @@ ensemble_model <- function(species_name,
                 ensemble.consensus <- ensemble.mean >= consensus_level
                 raster::writeRaster(ensemble.consensus,
                                     filename = paste0(models_dir, "/", species_name,
-                                                      "/present/",
+                                                      "/", proj_dir, "/",
                                                       ensemble_dir, "/", species_name,
                                                       "_", whi,
                                                       "_ensemble", "_meanconsensus",
@@ -189,7 +194,7 @@ ensemble_model <- function(species_name,
 
 
                 if (write_png) {
-                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/",
                                       species_name, "_", whi,
                                       "_ensemble", "_meanconsensus",
@@ -204,7 +209,7 @@ ensemble_model <- function(species_name,
                 dev.off()
                 }
                 if (write_raw_map) {
-                png(filename = paste0(models_dir, "/", species_name, "/present/",
+                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/",
                                        species_name, "_", whi, "_ensemble",
                                        consensus_level * 100,
