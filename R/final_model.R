@@ -103,6 +103,11 @@ final_model <- function(species_name,
                 pattern = paste0(algo, "_cont_",".*tif$")
             )
 		mod.cont <- raster::stack(modelos.cont)  #(0)
+		if (is.numeric(threshold)) {
+		  mod.bin <- mod.cont > threshold #(0)
+		} else{
+		  mod.bin <- mod.cont > stats.algo[, threshold] #(0)
+		  }
 
         mod.bin <- mod.cont > stats.algo[,threshold] #(0)
         mod.cut <- mod.cont * mod.bin #(0)
@@ -126,7 +131,12 @@ final_model <- function(species_name,
             cont.sel.1  <- mod.cont[[sel.index]]  #(1)
             bin.sel.2   <- mod.bin[[sel.index]]  #(2)
             cut.sel.3     <- mod.cut[[sel.index]]  #(3)
-            th.mean <- mean(stats.algo[, threshold][sel.index])
+            if (is.numeric(threshold)){
+              th.mean <- threshold
+            }else{
+              th.mean <- mean(stats.algo[, threshold][sel.index])
+            }
+            
 
             if (length(sel.index) == 0) {
                 cat(paste("No partition selected", species_name, algo,proj_dir, "\n"))
