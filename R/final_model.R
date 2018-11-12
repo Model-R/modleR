@@ -104,12 +104,13 @@ final_model <- function(species_name,
             )
 		mod.cont <- raster::stack(modelos.cont)  #(0)
 		if (is.numeric(threshold)) {
+		  mod.cont <- rescale.layer(mod.cont)
 		  mod.bin <- mod.cont > threshold #(0)
 		} else{
 		  mod.bin <- mod.cont > stats.algo[, threshold] #(0)
 		  }
 
-        mod.bin <- mod.cont > stats.algo[,threshold] #(0)
+        
         mod.cut <- mod.cont * mod.bin #(0)
 
 
