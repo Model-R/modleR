@@ -106,14 +106,14 @@ do_any <- function(species_name,
                   envtrain.eq <- envtrain
                   sdmdata_train.eq <- sdmdata_train
               }
-                #mod <- randomForest::randomForest(sdmdata_train$pa ~ ., mtry = 3,
-                 #                                 data = envtrain, importance = T)
-                mod <- randomForest::tuneRF(envtrain.eq,
-                                            sdmdata_train.eq$pa,
-                                            trace = F,
-                                            plot = F,
-                                            doBest = T,
-                                            importance = F)
+                mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
+                                                data = envtrain, importance = T)
+                # mod <- randomForest::tuneRF(envtrain.eq,
+                #                             sdmdata_train.eq$pa,
+                #                             trace = F,
+                #                             plot = F,
+                #                             doBest = T,
+                #                             importance = F)
                 #randomForest::varImpPlot(mod)
             }
             if (algo == "glm") {
