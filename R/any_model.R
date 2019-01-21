@@ -80,12 +80,7 @@ do_any <- function(species_name,
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median", "distance")) {
-                        message("creating buffer for predictor variables")
-                        pbuffr <- create_buffer(occurrences = occurrences,
-                                                buffer_type = buffer_type,
-                                                predictors = predictors,
-                                                dist_buf = dist_buf)
-                        mod <- dismo::maxent(pbuffr, pres_train)
+                        mod <- dismo::maxent(sdmdata_train[,-c(1:4)], sdmdata_train$pa)
                     }
                 } else {
                     mod <- dismo::maxent(predictors, pres_train)
@@ -278,7 +273,7 @@ do_any <- function(species_name,
             th_table$PPP <- conf@PPP
             th_table$NPP <- conf@NPP
             th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-            th_table$specificity <- conf@TNR / (conf@FNR + conf@TNR)
+            th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
             th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
             th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
             th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
