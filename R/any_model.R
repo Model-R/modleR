@@ -80,7 +80,7 @@ do_any <- function(species_name,
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median", "distance")) {
-                        mod <- dismo::maxent(sdmdata_train[,-c(1:4)], sdmdata_train$pa)
+                        mod <- dismo::maxent(envtrain, sdmdata_train$pa)
                     }
                 } else {
                     mod <- dismo::maxent(predictors, pres_train)
