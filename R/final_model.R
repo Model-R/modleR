@@ -53,13 +53,13 @@ final_model <- function(species_name,
                         weight_par = NULL,
                         select_partitions = TRUE,
                         threshold = c("spec_sens"),
-						scale_models = TRUE,
+                        scale_models = TRUE,
                         select_par = "TSS",
                         select_par_val = 0.7,
                         consensus_level = 0.5,
                         models_dir = "./models",
                         final_dir = "final_models",
-						proj_dir = "present",
+                        proj_dir = "present",
                         which_models = c("raw_mean"),
                         write_png = T) {
 
@@ -103,8 +103,14 @@ final_model <- function(species_name,
                 pattern = paste0(algo, "_cont_",".*tif$")
             )
 		mod.cont <- raster::stack(modelos.cont)  #(0)
+		if (is.numeric(threshold)) {
+		  mod.cont <- rescale.layer(mod.cont)
+		  mod.bin <- mod.cont > threshold #(0)
+		} else{
+		  mod.bin <- mod.cont > stats.algo[, threshold] #(0)
+		  }
 
-        mod.bin <- mod.cont > stats.algo[,threshold] #(0)
+        
         mod.cut <- mod.cont * mod.bin #(0)
 
 
@@ -126,7 +132,12 @@ final_model <- function(species_name,
             cont.sel.1  <- mod.cont[[sel.index]]  #(1)
             bin.sel.2   <- mod.bin[[sel.index]]  #(2)
             cut.sel.3     <- mod.cut[[sel.index]]  #(3)
-            th.mean <- mean(stats.algo[, threshold][sel.index])
+            if (is.numeric(threshold)){
+              th.mean <- threshold
+            }else{
+              th.mean <- mean(stats.algo[, threshold][sel.index])
+            }
+            
 
             if (length(sel.index) == 0) {
                 cat(paste("No partition selected", species_name, algo,proj_dir, "\n"))

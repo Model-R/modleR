@@ -28,14 +28,20 @@
 #' @importFrom rgeos gBuffer
 #' @export
 create_buffer <- function(occurrences,
-                          buffer_type,
+                          buffer_type = NULL,
                           predictors,
                           dist_buf = NULL) {
+    sp::coordinates(occurrences) <- ~lon + lat
+    raster::crs(occurrences) <- raster::crs(predictors)
+    if (is.null(buffer_type) | length(setdiff(buffer_type, c("distance", "mean","median", "max")) > 0)) {
+      warning("buffer_type NULL or not recognized, returning predictors")
+      r_buffer <- predictors
+      return(r_buffer)
+  }
     if (buffer_type %in% c("distance")) {
-    dist.buf <- distance
+        if (is.null(dist_buf)) stop("dist_buf must be set when using a distance buffer")
+        else dist.buf <- dist_buf
     } else if (buffer_type %in% c("mean", "median", "max")) {
-      sp::coordinates(occurrences) <- ~lon + lat
-      #raster::crs(occurrences) <- raster::crs(predictors)
       dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
       if (buffer_type == "mean")
           dist.buf <- mean(dists)
@@ -52,9 +58,5 @@ create_buffer <- function(occurrences,
     r_buffer <- raster::crop(predictors, buffer.shape)
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
-    if (is.null(buffer_type) | length(setdiff(buffer_type, c("distance", "mean","median", "max")) > 0)) {
-      warning("buffer_type not recognized, returning predictors")
-      r_buffer <- predictors
-  }
     return(r_buffer)
 }

@@ -25,6 +25,8 @@
 #' @param boot_n How many bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n How many crossvalidation runs
+#' @param equalize Logical, whether the number of presences and absences should be
+#' equalized in randomForest and brt.
 #' @param ... parameters from create_buffer()
 #' @return A dataframe called sdmdata with the groups for each run
 #' (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
@@ -58,6 +60,7 @@ setup_sdmdata <- function(species_name = species_name,
                           boot_proportion = 0.7,
                           cv_n = NULL,
                           cv_partitions = NULL,
+                          equalize = NULL,
                           ...) {
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T, showWarnings = F)
@@ -74,16 +77,20 @@ setup_sdmdata <- function(species_name = species_name,
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
         }
-    original.n <- nrow(occurrences)
+    original_n <- nrow(occurrences)
+    original_n_back <- n_back
+
         #checking metadata
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
         metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F,row.names = 1)
-        metadata_old <- metadata_old[,-3]
+        metadata_old <- metadata_old[, setdiff(names(metadata_old),c("final.n", "final.n.back"))]
         metadata_new <- data.frame(
             species_name = as.character(species_name),
-            original.n = original.n,
+            original.n = original_n,
+            n_back = original_n_back,
             buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
+            dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
             seed = ifelse(is.null(seed), NA, seed),
             res.x = res(predictors)[1],
             res.y = res(predictors)[2],
@@ -92,12 +99,14 @@ setup_sdmdata <- function(species_name = species_name,
             geo_filt = geo_filt,
             geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
             models_dir = models_dir,
-            n_back = n_back,
             partition = partition_type,
             boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
             boot_n = ifelse(is.null(boot_n), NA, boot_n),
             cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
-            cv_n = ifelse(is.null(cv_n), NA, cv_n), row.names = 1)
+            cv_n = ifelse(is.null(cv_n), NA, cv_n),
+            equalize = ifelse(is.null(equalize), NA, equalize),
+            row.names = 1
+            )
 
             if (all(all.equal(metadata_old, metadata_new) == T)) {
             message("same metadata, no need to run data partition")
@@ -137,10 +146,23 @@ setup_sdmdata <- function(species_name = species_name,
                 pbuffr <- create_buffer(occurrences = occurrences,
                                         buffer_type = buffer_type,
                                         predictors = predictors,
+                                        dist_buf = dist_buf,
                                         ...)
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
+
+                #checks if there will be enough cells to sample pseudoabsences from
+                vals <- values(pbuffr)
+                available_cells <- sum(!is.na(vals)) - nrow(occurrences)
+                # and corrects accordingly
+                if (available_cells < n_back) {
+                    n_back_mod <- available_cells
+                    message(paste0(available_cells, "available cells"))
+                    message(paste("Using", n_back_mod, "pseudoabsences","\n"))
+                } else {
+                    n_back_mod <- n_back
+                }
                 backgr <- dismo::randomPoints(mask = pbuffr,
-                                              n = n_back,
+                                              n = n_back_mod,
                                               p = occurrences,
                                               excludep = T)
             }
@@ -148,8 +170,19 @@ setup_sdmdata <- function(species_name = species_name,
     } else {
         set.seed(seed)
         message("sampling pseudoabsence points")
+        #checks if there will be enough cells to sample pseudoabsences from
+        vals <- values(predictors)
+        available_cells <- sum(!is.na(vals)) - nrow(occurrences)
+        # and corrects accordingly
+        if (available_cells < n_back) {
+            n_back_mod <- available_cells
+            message(paste0(available_cells, "available cells"))
+            message(paste("Using", n_back_mod, "pseudoabsences","\n"))
+        } else {
+            n_back_mod <- n_back
+        }
                 backgr <- dismo::randomPoints(mask = predictors,
-                                      n = n_back,
+                                      n = n_back_mod,
                                       p = occurrences,
                                       excludep = T)
 }
@@ -157,7 +190,7 @@ setup_sdmdata <- function(species_name = species_name,
 
     colnames(backgr) <- c("lon", "lat")
 
-    final.n <- nrow(occurrences)
+    final_n <- nrow(occurrences)
     # Extraindo dados ambientais dos bckgr
     message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
@@ -264,9 +297,12 @@ setup_sdmdata <- function(species_name = species_name,
     #metadata
     metadata <- data.frame(
         species_name = as.character(species_name),
-        original.n = original.n,
-        final.n = final.n,
+        original.n = original_n,
+        final.n = final_n,
+        original.n.back = original_n_back,
+        final.n.back = n_back_mod,
         buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
+        dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
         seed = ifelse(is.null(seed), NA, seed),
         res.x = res(predictors)[1],
         res.y = res(predictors)[2],
@@ -275,12 +311,12 @@ setup_sdmdata <- function(species_name = species_name,
         geo_filt = geo_filt,
         geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
         models_dir = models_dir,
-        n_back = n_back,
         partition = partition_type,
         boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
         boot_n = ifelse(is.null(boot_n),NA,boot_n),
         cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
-        cv_n = ifelse(is.null(cv_n), NA, cv_n)
+        cv_n = ifelse(is.null(cv_n), NA, cv_n),
+        equalize = ifelse(is.null(equalize), NA, equalize)
     )
     message("saving metadata")
     write.table(metadata, file = paste0(partition.folder, "/metadata.txt"))

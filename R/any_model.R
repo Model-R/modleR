@@ -9,8 +9,6 @@
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written
 #' @param write_png Logical, whether png files will be written
-#' @param equalize Logical, whether the number of presences and absences should be
-#' equalized in randomForest and brt.
 #' @param conf_mat Logical, whether confusion tables should be written in the HD
 #' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
@@ -51,6 +49,8 @@ do_any <- function(species_name,
             predictors = predictors,
             models_dir = models_dir,
             buffer_type = buffer_type,
+            dist_buf = dist_buf,
+            equalize = equalize,
             ...)
 
     ##### Hace los modelos
@@ -73,19 +73,14 @@ do_any <- function(species_name,
             pres_test <- occurrences[group == g, ]
             backg_test <- backgr[bg.grp == g, ]
             sdmdata_train <- sdmdata[group.all != g,]#presences and absences
-            envtrain <-  sdmdata_train[,(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)] #ö ajeitar isto com grep.
+            envtrain <-  sdmdata_train[, names(predictors)] #ö ajeitar isto com grep.
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
-                    if (buffer_type %in% c("mean", "max", "median")) {
-                        message("creating buffer for predictor variables")
-                        pbuffr <- create_buffer(occurrences = occurrences,
-                                                buffer_type = buffer_type,
-                                                predictors = predictors,
-                                                dist_buf = dist_buf)
-                        mod <- dismo::maxent(pbuffr, pres_train)
+                    if (buffer_type %in% c("mean", "max", "median", "distance")) {
+                        mod <- dismo::maxent(envtrain, sdmdata_train$pa)
                     }
                 } else {
                     mod <- dismo::maxent(predictors, pres_train)
@@ -106,11 +101,14 @@ do_any <- function(species_name,
                   envtrain.eq <- envtrain
                   sdmdata_train.eq <- sdmdata_train
               }
-                #mod <- randomForest::randomForest(sdmdata_train$pa ~ ., mtry = 3,
-                 #                                 data = envtrain, importance = T)
-                mod <- randomForest::tuneRF(envtrain.eq, sdmdata_train.eq$pa,
-                                            trace = F, plot = F, doBest = T,
-                                            importance = T)
+                mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
+                                                data = envtrain, importance = T)
+                # mod <- randomForest::tuneRF(envtrain.eq,
+                #                             sdmdata_train.eq$pa,
+                #                             trace = F,
+                #                             plot = F,
+                #                             doBest = T,
+                #                             importance = F)
                 #randomForest::varImpPlot(mod)
             }
             if (algo == "glm") {
@@ -237,7 +235,8 @@ do_any <- function(species_name,
             } else if (algo %in% "glm") {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
+                                        tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
             }
 
@@ -274,7 +273,7 @@ do_any <- function(species_name,
             th_table$PPP <- conf@PPP
             th_table$NPP <- conf@NPP
             th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-            th_table$specificity <- conf@TNR / (conf@FNR + conf@TNR)
+            th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
             th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
             th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
             th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
