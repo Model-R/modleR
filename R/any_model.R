@@ -223,13 +223,12 @@ do_any <- function(species_name,
                 mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
             } else if (algo %in% c("bioclim",
                                    "domain",
-                                   "maxent",
                                    "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-                mod_cont <- dismo::predict(mod, predictors)
-            } else if (algo %in% c("svm.k", "svm.e", "rf")) {
+                mod_cont <- raster::predict(mod, predictors)
+            } else if (algo %in% c("svm.k", "svm.e", "rf", "maxent")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
