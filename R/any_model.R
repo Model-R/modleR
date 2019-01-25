@@ -20,6 +20,7 @@
 #' @import raster
 #' @import grDevices
 #' @importFrom utils write.table
+#' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
 #' @export
 do_any <- function(species_name,
@@ -80,7 +81,8 @@ do_any <- function(species_name,
             if (algo == "maxent")  {
                 if (!is.null(buffer_type)) {
                     if (buffer_type %in% c("mean", "max", "median", "distance")) {
-                        mod <- dismo::maxent(envtrain, sdmdata_train$pa)
+                        #mod <- dismo::maxent(envtrain, sdmdata_train$pa)
+                        mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
                     }
                 } else {
                     mod <- dismo::maxent(predictors, pres_train)
