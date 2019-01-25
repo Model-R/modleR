@@ -228,7 +228,7 @@ do_any <- function(species_name,
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- raster::predict(mod, predictors)
-            } else if (algo %in% c("svm.k", "svm.e", "rf", "maxent")) {
+            } else if (algo %in% c("svm.k", "svm.e", "rf")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
@@ -239,7 +239,12 @@ do_any <- function(species_name,
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                         tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
-            }
+            }else if (algo %in% c( "maxent")) {
+              eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+              th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
+              conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+              mod_cont <- raster::predict(predictors, mod, type = "logistic")
+              }
 
 
             message("evaluating the models...")
