@@ -63,9 +63,7 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-library(devtools)
-load_all()
-#library(ModelR)
+Library(ModelR)
 library(rJava) 
 library(raster)
 head(coordenadas)
@@ -99,7 +97,7 @@ args(setup_sdmdata)
 ```
 
 + `species_name` is the name of the species to model
-+ `coordinates` is the dataframe with coordinates, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
++ `occurrences` is the dataframe with occurrences, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
 + `predictors`: is the rasterStack of the environmental variables
 
 There are a couple options for data cleaning: 
@@ -120,15 +118,15 @@ Pseudoabsence sampling has also some options:
 
 + `real_absences` can be used to specify a set of user-defined absences, with species name, lat and lon columns.
 + `geo_filt` will eliminate records that are at less than `geo_filt_dist` between them, in order to control for spatial autocorrelation
-+ `buffer`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) _within_ this buffer, in order to control for the area accessible to the species (M in the BAM diagram).
++ `buffer_type`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) _within_ this buffer, in order to control for the area accessible to the species (M in the BAM diagram).
 
 + `seed`: for reproducilibity purposes 
 
 
 
-```{r, eval = F}
+```{r sdmdata1sp, eval = T}
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
-                             coordinates = occs,
+                             occurrences = occs,
                              predictors = example_vars,
                              clean_nas = T,
                              models_dir = "~/modelR_test/1species",
@@ -136,7 +134,8 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cv_partitions = 5,
                              cv_n = 1,
                              seed = 512,
-                             buffer = "mean",
+                             buffer_type = "distance",
+                             dist_buf = 5,
                              plot_sdmdata = T,
                              n_back = 500)
 ```
@@ -163,6 +162,7 @@ The available algorithms are:
 + GLM from base R, here implemented with a stepwise selection approach
 + Random Forests (from package __randomForest__ Liaw & Wiener 2002) 
 + Two euclidean algorithms are also implemented, a minimum distance algorithm (`"minimum"`), and a distance to the environmental centroid (`"centroid"`). 
++ Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package (Hastie et al. 2001, Elith & Hijmans 2009).
 
 Details for the implementation of each model can be accessed in the documentation of the function.
 <!--Ö escrever os detalhes das implementações --> 
@@ -179,23 +179,34 @@ Calling `do_enm()` and setting `bioclim = TRUE` is therefore equivalent to call 
 
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
-```{r do_enm2, echo = T}
+```{r do_enm, echo = T, eval = T}
+test_folder <- "~/modelR_test/all_algo"
 do_enm(species_name = species[1],
-       coordinates = occs,
-       partition_type = "crossvalidation",
+       occurrences = occs,
+       partition_type = "bootstrap",
+       boot_proportion = 0.8, 
+       boot_n = 5,
        cv_partitions = 5,
        cv_n = 1,
-       buffer = "mean",
+       seed = 512,
+       buffer_type = "distance",
+       dist_buf = 5,
        predictors = example_vars,
        plot_sdmdata = T,
-       models_dir = "~/modelR_test/1species",
+       models_dir = test_folder,
        write_png = T,
+       write_bin_cut = F,
        n_back = 500,
        bioclim = T,
+       domain = T, 
        glm = T,
+       svm.k = T,
+       svm.e = T, 
        maxent = T,
        rf = T,
-       svm.k = T)
+       mahal = F, 
+       brt = T, 
+       equalize = T)
 ```
 
 Both functions admit the parameters from `setupsdmdata()` and run it  <!-- [Ö acá toca saber qué tan obligatorio es usar los parámetros y qué tanto va a darle tranquilo. Si es bligatorio deberíamosdejar de hablar de la primera función] --> . In addition: 
@@ -207,7 +218,7 @@ You can explore the list of files created at this phase, for example:
 
 ```{r partfiles}
 partitions.folder <-
-     list.files("~/modelR_test/1species", recursive = T,
+     list.files(test_folder, recursive = T,
                 pattern = "partitions",
                 include.dirs = T, full.names = T)
 partitions.folder
@@ -274,22 +285,23 @@ args(final_model)
 ```
 
 
-```{r final, echo = T}
+```{r final, echo = T, eval = T}
 final_model(species_name = species[1],
             select_partitions = T,
             select_par_val = 0.5,
             consensus_level = 0.5,
             weight_par = c("TSS"),
-            models_dir = "~/modelR_test/1species",
-            which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
+            models_dir = test_folder,
+            #which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
+            which_models = c("raw_mean"))
 ```
 
 `final_model()` creates a .tif file for each final.model (one per algorithm) under the specified folder (default: `final_models`)
  
 We can explore these models from the files:
 
-```{r final_folder}
-final.folder <- list.files("~/modelR_test/1species",
+```{r final_folder, eval = T}
+final.folder <- list.files(test_folder,
                            recursive = T,
                            pattern = "final_models",
                            include.dirs = T,
@@ -299,7 +311,7 @@ final_mods <- list.files(final.folder, full.names = T, pattern = "tif$")
 final_mods
 ```
 
-```{r plot_final, fig.width = 7, fig.height = 6}
+```{r plot_final, fig.width = 7, fig.height = 6, eval = T}
 library(raster)
 final_models <- stack(final_mods)
 plot(final_models)
@@ -311,28 +323,30 @@ The third step of the workflow is joining the models for each algorithm into a f
 
 `ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
-```{r ensemble_model, eval = F}
-ensemble_model(species[1],
-               occs = occs,
-               which_models = "cut_mean",
-               models_dir = "~/modelR_test/1species/")
+```{r ensemble_model, eval = T}
+args(ensemble_model)
+ens <- ensemble_model(species[1],
+               occurrences = occs,
+               which_models = "raw_mean",
+               models_dir = test_folder)
 ```
 
 At any point we can explore the outputs in the folders: 
 
-```{r check_ensemble, fig.width = 5, fig.height = 5}
-ensemble_files <-  list.files("~/modelR_test/1species/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble",
+```{r check_ensemble, fig.width = 5, fig.height = 5, eval= T}
+ensemble_files <-  list.files(paste0(test_folder,"/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble"),
                               recursive = T,
-                              pattern = "cut_mean.+tif",
+                              pattern = "raw_mean.+tif$",
                               full.names = T)
 
 ensemble_files
 ens_mod <- raster::stack(ensemble_files)
+names(ens_mod) <- c("mean", "median", "st. dev")
 raster::plot(ens_mod)
 names(ens_mod)
 plot(ens_mod[[2]])
 maps::map( , , add = T)
-points(occs, pch = 3)
+points(occs, pch = ".", col = "red")
 ```
 
 
@@ -341,27 +355,34 @@ points(occs, pch = 3)
 Our `coordenadas` dataset has data for four species. 
 An option to do the several models is to use a `for` loop
 
-```{r, eval = F}
+```{r forloop, eval = F}
 args(do_enm)
 args(setup_sdmdata)
 especies <- unique(coordenadas$sp)
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     do_enm(species_name = especie,
-           coordinates = occs,
+           occurrences = occs,
            partition_type = "crossvalidation",
            cv_partitions = 5,
            cv_n = 1,
-           buffer = "mean",
+           buffer_type = "distance",
+           dist_buf = 4,
            predictors = example_vars,
            models_dir = "~/modelR_test/forlooptest",
-           n_back = 500,
+           n_back = 1000,
            write_png = T,
            bioclim = T,
            maxent = T,
            rf = T,
            svm.k = T,
-           centroid = T)
+           svm.e = T, 
+           brt = T,
+           glm = T,
+           equalize = T,
+           plot_sdmdata = T,
+           write_bin_cut = F,
+           clean_nas = T)
 }
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
@@ -376,7 +397,7 @@ for (especie in especies) {
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     ensemble_model(species_name = especie,
-                   occs = occs,
+                   occurrences = occs,
                    which_models = "raw_mean",
                    write_png = T,
                    models_dir = "~/modelR_test/forlooptest")
@@ -389,13 +410,14 @@ Another option is to use the `purrr` package (Henry & Wickham 2017):
 library(purrr)
 coordenadas %>% split(.$sp) %>%
     purrr::map(~ do_enm(species_name = unique(.$sp),
-                        coordinates = .[, c("lon", "lat")],
-                        #bootstrap = F,
-                        #crossvalidation = T,
+                        occurrences = .[, c("lon", "lat")],
                         partition_type = "crossvalidation",
+                        clean_nas = T,
+                        clean_dupl = T,
                         cv_partitions = 5,
                         cv_n = 1,
-                        buffer = "mean",
+                        buffer_type = "distance",
+                        dist_buf = 4,
                         predictors = example_vars,
                         models_dir = "~/modelR_test/temp_purrr",
                         n_back = 500,
@@ -403,8 +425,13 @@ coordenadas %>% split(.$sp) %>%
                         bioclim = T,
                         maxent = T,
                         rf = T,
-                        svm.k = T, 
-                        centroid = T))
+                        svm.e = T, 
+                        svm.k = T,
+                        domain = T,
+                        glm = T,
+                        mahal = F,
+                        brt = T,
+                        equalize = T))
 ```
 
 ```{r purrr_final, eval = F}
@@ -422,13 +449,12 @@ coordenadas %>%
 ```{r purrr_ensemble, eval = F}
 coordenadas %>% 
     split(.$sp) %>%
-    purrr::map(~ ensemble_model(
-        species_name = unique(.$sp),
-        occs = .[, c("lon", "lat")],
-        which_models = "raw_mean",
-        write_png = T,
-        models_dir = "~/modelR_test/temp_purrr"
-        ))
+    purrr::map(~ ensemble_model(species_name = unique(.$sp),
+                                occurrences = .[, c("lon", "lat")],
+                                which_models = "raw_mean",
+                                write_png = T,
+                                models_dir = "~/modelR_test/temp_purrr"
+                                ))
 
 ```
 
