@@ -234,13 +234,13 @@ do_any <- function(species_name,
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod)
             } else if (algo %in% "glm") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "response")
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                         tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
             }else if (algo %in% c( "maxent")) {
-              eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+              eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "logistic")
               th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
               conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
               mod_cont <- raster::predict(predictors, mod, type = "logistic")
