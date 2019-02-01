@@ -78,16 +78,7 @@ do_any <- function(species_name,
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
-            if (algo == "maxent")  {
-                if (!is.null(buffer_type)) {
-                    if (buffer_type %in% c("mean", "max", "median", "distance")) {
-                        #mod <- dismo::maxent(envtrain, sdmdata_train$pa)
-                        mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
-                    }
-                } else {
-                    mod <- dismo::maxent(predictors, pres_train)
-                }
-            }
+            if (algo == "maxent")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
