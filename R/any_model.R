@@ -356,7 +356,8 @@ do_any <- function(species_name,
                     if (file.exists(projection.folder) == FALSE)
                         dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
                     pred_proj <- raster::stack(list.files(proje, full.names = T))
-                    names(pred_proj) <- names(predictors)
+                    pred_proj <- raster::subset(pred_proj, names(predictors))
+                    #names(pred_proj) <- names(predictors)
                     message(name_proj)
 
                     message("projecting models")
