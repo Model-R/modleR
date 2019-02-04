@@ -12,6 +12,8 @@
 #' @param predictors A RasterStack of predictor variables
 #' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
 #'  TRUE
+#'  @param clean_uni Logical, selecting spatially unique points. Only one point per pixel. defaults to
+#'  TRUE
 #' @param clean_nas Logical, delete occurrence points with no environmental
 #' information? Defaults to FALSE and can take a while for large datasets
 #' @param geo_filt Logical, delete occurrence that are too close?
@@ -33,6 +35,13 @@
 #' the geographical coordinates, of the occurrence and pseudoabsence points, and
 #' the associated environmental variables.
 #' @author Andrea Sánchez-Tapia
+#' @examples
+#' predictors <- example_vars
+#' species = unique(coordenadas$sp)
+#' setup_sdmdata(species_name = species[1], occurrences = coordenadas[-1], predictors = predictors, models_dir = './models_dir',
+#' real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"), 
+#' cv_n = 1, cv_partitions = 3, equalize = T)
+#' 
 #' @seealso \code{\link[dismo]{gridSample}}
 
 #' @export
@@ -51,6 +60,7 @@ setup_sdmdata <- function(species_name = species_name,
                           seed = NULL,
                           clean_dupl = T,
                           clean_nas = F,
+                          clean_uni = T,
                           geo_filt = F,
                           geo_filt_dist = NULL,
                           plot_sdmdata = T,
@@ -116,21 +126,25 @@ setup_sdmdata <- function(species_name = species_name,
     }
     message("performing data partition")
 
+    occurrences <- clean(occurrences, predictors, clean_dupl = clean_dupl, clean_nas = clean_nas, clean_uni = clean_uni)
+    
     # tabela de valores
     message("extracting environmental data")
     presvals <- raster::extract(predictors, occurrences)
-    if (clean_dupl == TRUE) {
-        message("cleaning duplicates")
-        dupls <- !base::duplicated(occurrences)
-        occurrences <- occurrences[dupls,]
-        presvals <- presvals[dupls,]
-    }
-    if (clean_nas == TRUE) {
-        message("cleaning occurrences with no environmental data")
-        compl <- complete.cases(presvals)
-        occurrences <- occurrences[compl,]
-        presvals <- presvals[compl,]
-    }
+    
+    # if (clean_dupl == TRUE) {
+    #     message("cleaning duplicates")
+    #     dupls <- !base::duplicated(occurrences)
+    #     occurrences <- occurrences[dupls,]
+    #     presvals <- presvals[dupls,]
+    # }
+    # if (clean_nas == TRUE) {
+    #     message("cleaning occurrences with no environmental data")
+    #     compl <- complete.cases(presvals)
+    #     occurrences <- occurrences[compl,]
+    #     presvals <- presvals[compl,]
+    # }
+    
     if (geo_filt == TRUE) {
         message("applying a geographical filter")
         occurrences <- geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)

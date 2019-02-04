@@ -1,0 +1,2 @@
+"species_name" "original.n" "final.n" "original.n.back" "final.n.back" "buffer_type" "dist_buf" "seed" "res.x" "res.y" "clean_dupl" "clean_nas" "geo_filt" "geo_filt_dist" "models_dir" "partition" "boot_proportion" "boot_n" "cv_partitions" "cv_n" "equalize"
+"1" "Eugenia florida DC." 617 421 1000 1000 NA NA 55 0.166666666666667 0.166666666666667 TRUE TRUE FALSE NA "./models_dir" "crossvalidation" 0.7 1 3 1 TRUE
