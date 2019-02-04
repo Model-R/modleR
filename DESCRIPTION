@@ -32,7 +32,8 @@ Imports:
     rgdal,
     rJava,
     scales,
-    sp
+    sp,
+    maxnet
 BugReports: https://github.com/Model-R/modelr_pkg/issues
 RoxygenNote: 6.1.0
 Suggests: devtools,
