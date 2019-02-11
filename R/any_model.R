@@ -20,6 +20,7 @@
 #' @import raster
 #' @import grDevices
 #' @importFrom utils write.table
+#' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
 #' @export
 do_any <- function(species_name,
@@ -77,15 +78,7 @@ do_any <- function(species_name,
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
-            if (algo == "maxent")  {
-                if (!is.null(buffer_type)) {
-                    if (buffer_type %in% c("mean", "max", "median", "distance")) {
-                        mod <- dismo::maxent(envtrain, sdmdata_train$pa)
-                    }
-                } else {
-                    mod <- dismo::maxent(predictors, pres_train)
-                }
-            }
+            if (algo == "maxent")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
@@ -221,24 +214,28 @@ do_any <- function(species_name,
                 mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
             } else if (algo %in% c("bioclim",
                                    "domain",
-                                   "maxent",
                                    "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-                mod_cont <- dismo::predict(mod, predictors)
+                mod_cont <- raster::predict(mod, predictors)
             } else if (algo %in% c("svm.k", "svm.e", "rf")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod)
             } else if (algo %in% "glm") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "response")
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                         tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
-            }
+            }else if (algo %in% c( "maxent")) {
+              eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "logistic")
+              th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
+              conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+              mod_cont <- raster::predict(predictors, mod, type = "logistic")
+              }
 
 
             message("evaluating the models...")
