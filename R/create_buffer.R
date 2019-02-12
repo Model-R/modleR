@@ -42,7 +42,7 @@ create_buffer <- function(occurrences,
   }
     if (buffer_type %in% c("distance")) {
         if (is.null(dist_buf)) stop("dist_buf must be set when using a distance buffer")
-        else dist.buf <- dist_buf
+        else dist.buf <- dist_buf*0.00833333
     } else if (buffer_type %in% c("mean", "median", "max")) {
       dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
       if (buffer_type == "mean")
@@ -54,7 +54,7 @@ create_buffer <- function(occurrences,
 }
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
-                                   byid = F, width = dist.buf*0.00833333)
+                                   byid = F, width = dist.buf)
     
     if (is.numeric(dist_min)){
       buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
