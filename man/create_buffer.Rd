@@ -5,7 +5,7 @@
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
 create_buffer(occurrences, buffer_type = NULL, predictors,
-  dist_buf = NULL)
+  dist_buf = NULL, dist_min = NULL)
 }
 \arguments{
 \item{occurrences}{A data frame with occurrence data. It should contain only two columns:
@@ -16,7 +16,9 @@ calculated using the mean, median or maximum distance between occurrence points}
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{dist_buf}{Optional, a distance in km for tbe buffer. If set it will override buffer_type}
+\item{dist_buf}{Optional, a distance in km for the inclusion buffer. If set it will override buffer_type}
+
+\item{dist_min}{Optional, a distance in km for the exclusion buffer. ###If set it will override buffer_type}
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance

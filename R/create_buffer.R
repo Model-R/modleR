@@ -4,7 +4,8 @@
 #' lon and lat, in that order.
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the mean, median or maximum distance between occurrence points
-#' @param dist_buf Optional, a distance in km for tbe buffer. If set it will override buffer_type
+#' @param dist_buf Optional, a distance in km for the inclusion buffer. If set it will override buffer_type
+#' @param dist_min Optional, a distance in km for the exclusion buffer. ###If set it will override buffer_type
 #' @param predictors A RasterStack of predictor variables
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
@@ -30,7 +31,8 @@
 create_buffer <- function(occurrences,
                           buffer_type = NULL,
                           predictors,
-                          dist_buf = NULL) {
+                          dist_buf = NULL,
+                          dist_min = NULL) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) | length(setdiff(buffer_type, c("distance", "mean","median", "max")) > 0)) {
@@ -52,11 +54,20 @@ create_buffer <- function(occurrences,
 }
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
-                                   byid = F, width = dist.buf)
-
-    #rasterizes to sample the random points
-    r_buffer <- raster::crop(predictors, buffer.shape)
-    # masks the buffer to avoid sampling outside the predictors
-    r_buffer <- raster::mask(r_buffer, buffer.shape)
+                                   byid = F, width = dist.buf*0.00833333)
+    
+    if (is.numeric(dist_min)){
+      buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
+                                         byid = F, width = dist_min*0.00833333)
+      #rasterizes to sample the random points
+      r_buffer <- raster::crop(predictors, buffer.shape)
+      # masks the buffer to avoid sampling outside the predictors
+      r_buffer <- raster::mask(r_buffer, buffer.shape)
+      r_buffer <- raster::mask(r_buffer, buffer.shape.min, inverse = TRUE)
+    }else{
+      r_buffer <- raster::crop(predictors, buffer.shape)
+      # masks the buffer to avoid sampling outside the predictors
+      r_buffer <- raster::mask(r_buffer, buffer.shape)}
+    
     return(r_buffer)
 }

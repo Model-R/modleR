@@ -35,7 +35,7 @@ Imports:
     sp,
     maxnet
 BugReports: https://github.com/Model-R/modelr_pkg/issues
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: devtools,
     dplyr,
     knitr,
