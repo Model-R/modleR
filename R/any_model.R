@@ -204,6 +204,7 @@ do_any <- function(species_name,
             if (algo %in% c("mindist", "centroid")) {
                 eval_mod <- eec
                 mod_cont <- ec_cont
+                th_mod <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
             } else if (algo == "brt") {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
                                             predictors, n.trees = n.trees)
@@ -253,6 +254,7 @@ do_any <- function(species_name,
             #confusion matrix
                 #conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
             if (conf_mat == TRUE) {
+              if(!algo %in% c("mindist", "centroid")){
                 conf_res <- data.frame(presence_record = conf@confusion[,c("tp", "fp")],
                                        absence_record = conf@confusion[,c("fn", "tn")])
                 rownames(conf_res) <- c("presence_predicted", "absence_predicted")
@@ -260,21 +262,28 @@ do_any <- function(species_name,
                                                   "/confusion_matrices_",
                                                   species_name, "_", i, "_", g,
                                                   "_", algo, ".csv"))
-            }
+                }
+              }
 
             th_table$presence <- eval_mod@np
             th_table$absence <- eval_mod@na
             th_table$correlation <- eval_mod@cor
             th_table$pvaluecor <- eval_mod@pcor
-            th_table$prevalence.value <- conf@prevalence
-            th_table$PPP <- conf@PPP
-            th_table$NPP <- conf@NPP
-            th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-            th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
-            th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
-            th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
-            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
-            th_table$KAPPA.value <- conf@kappa
+
+            
+            if(conf_mat == TRUE) {
+              if (!algo %in% c("mindist", "centroid")) {
+                th_table$prevalence.value <- conf@prevalence
+                th_table$PPP <- conf@PPP
+                th_table$NPP <- conf@NPP
+                th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
+                th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
+                th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
+                th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
+                th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
+                th_table$KAPPA.value <- conf@kappa
+              }
+            }
 
             #writing evaluation tables
 
