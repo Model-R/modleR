@@ -9,7 +9,7 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   scale_models = TRUE, select_par = "TSS", select_par_val = 0.7,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
-  which_models = c("raw_mean"), write_png = T)
+  which_models = c("raw_mean"), write_png = TRUE, by_algo = FALSE)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -67,6 +67,8 @@ to execute the function in projected models)}
 }}
 
 \item{write_png}{Writes png files of the final models}
+
+\item{by_algo}{Writes final models by algorithms}
 }
 \value{
 A set of ecological niche models and figures (optional) written in the
