@@ -2,12 +2,14 @@
 #'
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
-#' @param real_absences User defined absence points
+#' @param real_absences User-defined absence points
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
 #' @param buffer_type Defines if a buffer will be used to sample pseudo-absences
-#'        (F, "mean", "median", "max", "distance")
-#' @param dist_buf Defines the width of the buffer
+#'        (F, "mean", "median", "max", "distance", "user"). If set to "distance",
+#'         "dist_buf" needs to be specified, if set to "user", "buffer_shape" needs to be specified
+#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
+#' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
 #' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
 #' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
@@ -48,6 +50,7 @@ setup_sdmdata <- function(species_name = species_name,
                           lat = "lat",
                           buffer_type = NULL,
                           dist_buf = NULL,
+                          buffer_shape = NULL,
                           seed = NULL,
                           clean_dupl = T,
                           clean_nas = F,
@@ -148,6 +151,16 @@ setup_sdmdata <- function(species_name = species_name,
                                         predictors = predictors,
                                         dist_buf = dist_buf,
                                         ...)
+            }
+            if (buffer_type == "user") {
+                   if (is.null(buffer_shape) | class(buffer_shape) != "SpatialPolygonsDataFrame") {
+                       stop("buffer_shape needs to be specified and be a shapefile")
+                       }
+                   if (class(buffer_shape) == "SpatialPolygonsDataFrame") {
+                           pbuffr <- buffer_shape
+                       }
+               }
+
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
 
                 #checks if there will be enough cells to sample pseudoabsences from
@@ -165,7 +178,7 @@ setup_sdmdata <- function(species_name = species_name,
                                               n = n_back_mod,
                                               p = occurrences,
                                               excludep = T)
-            }
+
 
     } else {
         set.seed(seed)

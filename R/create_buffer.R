@@ -28,9 +28,11 @@
 #' @importFrom rgeos gBuffer
 #' @export
 create_buffer <- function(occurrences,
-                          buffer_type = NULL,
                           predictors,
-                          dist_buf = NULL) {
+                          buffer_type = NULL,
+                          dist_buf = NULL,
+                          models_dir,
+                          species_name) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) | length(setdiff(buffer_type, c("distance", "mean","median", "max")) > 0)) {
@@ -53,6 +55,8 @@ create_buffer <- function(occurrences,
     #creates the buffer - it's a shapefile
     buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
                                    byid = F, width = dist.buf)
+    partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
+    rgdal::writeOGR(buffer.shape, paste0(partition.folder, "/buffer.shp"))
 
     #rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
