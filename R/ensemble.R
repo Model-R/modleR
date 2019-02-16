@@ -46,6 +46,8 @@
 #' (optional) written in the \code{ensemble_dir} subfolder
 ensemble_model <- function(species_name,
                            occurrences,
+                           lon = "lon",
+                           lat = "lat",
                            models_dir = "./models",
                            final_dir = "final_models",
                            ensemble_dir = "ensemble",
@@ -114,7 +116,7 @@ ensemble_model <- function(species_name,
                                       )
 
             #coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
-            coord <- occurrences[, c("lon", "lat")]
+            coord <- occurrences[, c(lon, lat)]
 
             if (write_png) {
                 png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
