@@ -5,7 +5,8 @@
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
 create_buffer(occurrences, predictors, buffer_type = NULL,
-  dist_buf = NULL, models_dir, species_name)
+  dist_buf = NULL, models_dir = "./models", species_name,
+  write_buffer = T)
 }
 \arguments{
 \item{occurrences}{A data frame with occurrence data. It should contain only two columns:

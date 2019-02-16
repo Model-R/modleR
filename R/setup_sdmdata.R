@@ -148,22 +148,17 @@ setup_sdmdata <- function(species_name = species_name,
         backgr <- real_absences[,c(lon, lat)]
     } else {
         if (!is.null(buffer_type)) {
-            if (buffer_type %in% c("mean", "max", "median", "distance")) {
+            if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
                 message("creating buffer")
                 pbuffr <- create_buffer(occurrences = occurrences,
+                                        models_dir = models_dir,
+                                        species_name = species_name,
                                         buffer_type = buffer_type,
                                         predictors = predictors,
                                         dist_buf = dist_buf,
                                         ...)
             }
-            if (buffer_type == "user") {
-                   if (is.null(buffer_shape) | class(buffer_shape) != "SpatialPolygonsDataFrame") {
-                       stop("buffer_shape needs to be specified and be a shapefile")
-                       }
-                   if (class(buffer_shape) == "SpatialPolygonsDataFrame") {
-                           pbuffr <- buffer_shape
-                       }
-               }
+
 
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
 
