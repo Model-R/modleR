@@ -34,9 +34,10 @@ folders with the projection datasets, ex. "./env/proj/proj1"}
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png) should be written}
 
 \item{buffer_type}{Defines if a buffer will be used to sample pseudo-absences
-(F, "mean", "median", "max", "distance")}
+(F, "mean", "median", "max", "distance", "user"). If set to "distance",
+ "dist_buf" needs to be specified, if set to "user", "buffer_shape" needs to be specified}
 
-\item{dist_buf}{Defines the width of the buffer}
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 

@@ -7,11 +7,11 @@
 setup_sdmdata(species_name = species_name, occurrences = occurrences,
   predictors = predictors, models_dir = models_dir,
   real_absences = NULL, lon = "lon", lat = "lat",
-  buffer_type = NULL, dist_buf = NULL, seed = NULL, clean_dupl = T,
-  clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
-  plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
-  boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
-  cv_partitions = NULL, equalize = NULL, ...)
+  buffer_type = NULL, dist_buf = NULL, buffer_shape = NULL,
+  seed = NULL, clean_dupl = T, clean_nas = F, geo_filt = F,
+  geo_filt_dist = NULL, plot_sdmdata = T, n_back = 1000,
+  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
+  cv_n = NULL, cv_partitions = NULL, equalize = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -22,16 +22,19 @@ setup_sdmdata(species_name = species_name, occurrences = occurrences,
 
 \item{models_dir}{Folder path to save the output files}
 
-\item{real_absences}{User defined absence points}
+\item{real_absences}{User-defined absence points}
 
 \item{lon}{the name of the longitude column. defaults to "lon"}
 
 \item{lat}{the name of the latitude column. defaults to "lat"}
 
 \item{buffer_type}{Defines if a buffer will be used to sample pseudo-absences
-(F, "mean", "median", "max", "distance")}
+(F, "mean", "median", "max", "distance", "user"). If set to "distance",
+ "dist_buf" needs to be specified, if set to "user", "buffer_shape" needs to be specified}
 
-\item{dist_buf}{Defines the width of the buffer}
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
+
+\item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
 
 \item{seed}{For reproducibility purposes}
 
@@ -72,7 +75,9 @@ the geographical coordinates, of the occurrence and pseudoabsence points, and
 the associated environmental variables.
 }
 \description{
-Prepares the dataset to perform ENM
+This function takes the occurrence points files and makes the data cleaning,
+data partitioning and the pseudo-absence point sampling, and saves the
+metadata and sdmdata files into the hard disk.
 }
 \seealso{
 \code{\link[dismo]{gridSample}}

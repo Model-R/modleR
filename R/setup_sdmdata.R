@@ -1,5 +1,9 @@
 #' Prepares the dataset to perform ENM
 #'
+#' This function takes the occurrence points files and makes the data cleaning,
+#' data partitioning and the pseudo-absence point sampling, and saves the
+#' metadata and sdmdata files into the hard disk.
+#'
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
 #' @param real_absences User-defined absence points
