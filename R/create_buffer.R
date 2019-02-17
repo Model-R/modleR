@@ -75,7 +75,7 @@ create_buffer <- function(occurrences,
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
     if (write_buffer) {
-        writeRaster(r_buffer, filename = paste0(partition.folder,"/buffer"), format = "GTiff")
+        writeRaster(r_buffer, filename = paste0(partition.folder,"/buffer"), format = "GTiff", overwrite = T)
     }
     return(r_buffer)
 }
