@@ -14,7 +14,7 @@
 #' @param proj_dir Character. The name of the subfolder with the projection.
 #' Defaults to "present" but can be set according to the other projections (i.e.
 #' to execute the function in projected models)
-#' 
+#'
 #' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
@@ -33,6 +33,8 @@
 #'                        (0.5 means a majority rule).
 #' @param write_png Write png? Defaults to TRUE
 #' @param scale_models Logical. If TRUE (default), sets the values of the input models between 0 and 1.
+#' @param lon the name of the longitude column. defaults to "lon"
+#' @param lat the name of the latitude column. defaults to "lat"
 #' @param write_raw_map Create a mean raw map without margins
 #'
 #' @import raster

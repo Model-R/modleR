@@ -16,6 +16,10 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
 
 \item{occurrences}{A two-column data frame with the occurrence points}
 
+\item{lon}{the name of the longitude column. defaults to "lon"}
+
+\item{lat}{the name of the latitude column. defaults to "lat"}
+
 \item{models_dir}{Character string. Folder path where the input files
 are located}
 

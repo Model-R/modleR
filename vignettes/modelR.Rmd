@@ -85,10 +85,10 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-#library(ModelR)
+library(ModelR)
 library(rJava) 
 library(raster)
-devtools::load_all()
+#devtools::load_all()
 head(coordenadas)
 species <- sort(unique(coordenadas$sp))
 species
@@ -314,7 +314,8 @@ final_model(species_name = species[1],
             weight_par = NULL,
             models_dir = test_folder,
             #which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
-            which_models = c("raw_mean"))
+            which_models = c("raw_mean"),
+            overwrite = T)
 ```
 
 `final_model()` creates a .tif file for each final.model (one per algorithm) under the specified folder (default: `final_models`)

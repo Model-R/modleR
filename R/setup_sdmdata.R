@@ -4,18 +4,14 @@
 #' data partitioning and the pseudo-absence point sampling, and saves the
 #' metadata and sdmdata files into the hard disk.
 #'
+#' @inheritParams create_buffer
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
-#' @param real_absences User-defined absence points
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
-#' @param buffer_type Defines if a buffer will be used to sample pseudo-absences
-#'        (F, "mean", "median", "max", "distance", "user"). If set to "distance",
-#'         "dist_buf" needs to be specified, if set to "user", "buffer_shape" needs to be specified
-#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
-#' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
-#' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
+#' @param seed For reproducibility purposes
+#' @param real_absences User-defined absence points
 #' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
 #'  TRUE
 #' @param clean_nas Logical, delete occurrence points with no environmental

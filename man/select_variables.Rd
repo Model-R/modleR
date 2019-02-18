@@ -5,7 +5,7 @@
 \title{Helper function to select environmental variables from a stack}
 \usage{
 select_variables(species_name = species_name, predictors = predictors,
-  models_dir = models_dir, buffer = NULL, cutoff = 0.8, ...)
+  models_dir = "./models_dir", buffer = NULL, cutoff = 0.8, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -27,17 +27,6 @@ A raster stack of independent environmental variables based on a
 }
 \description{
 This function takes a stack of environmental variables and the calibration area. The function calculates Pearson correlations between all environmental variables and returns a new stack with uncorrelated variables based on a cutoff.
-}
-\examples{
-# using shapefile from create_buffer()
-## selecting data for only sp1
-coord1sp <- coordenadas[coordenadas$sp == unique(coordenadas$sp)[1],]
-## selecting only columns with longitude and latitude
-occ <- coord1sp[,c(2,3)]
-## using coord1sp to create buffer w/ mean distance between points
-buf <- create_buffer(occ, buffer_type="mean", example_vars)
-# running select_variables w/ output from create_buffer
-select_variables(predictors=example_vars)
 }
 \seealso{
 \code{\link[ModelR]{create_buffer}}

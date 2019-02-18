@@ -68,6 +68,8 @@ to execute the function in projected models)}
 }}
 
 \item{write_png}{Writes png files of the final models}
+
+\item{...}{Other parameters from writeRaster}
 }
 \value{
 A set of ecological niche models and figures (optional) written in the

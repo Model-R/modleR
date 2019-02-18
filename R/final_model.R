@@ -44,6 +44,7 @@
 #'   \item{\code{cut_mean}}{the mean of the selected cut models}
 #' }
 #' @param write_png Writes png files of the final models
+#' @param ... Other parameters from writeRaster
 #' @return A set of ecological niche models and figures (optional) written in the
 #'          \code{final_dir} subfolder
 #' @import raster

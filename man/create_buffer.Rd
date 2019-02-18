@@ -4,20 +4,30 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
-create_buffer(occurrences, predictors, buffer_type = NULL,
-  dist_buf = NULL, models_dir = "./models", species_name,
-  write_buffer = T)
+create_buffer(occurrences, buffer_type = NULL, predictors,
+  dist_buf = NULL, buffer_shape = NULL, models_dir = "./models",
+  species_name, write_buffer = F, ...)
 }
 \arguments{
-\item{occurrences}{A data frame with occurrence data. It should contain only two columns:
-lon and lat, in that order.}
+\item{occurrences}{A data frame with occurrence data}
+
+\item{buffer_type}{Character string indicating whether the buffer should be
+calculated using the "mean", "median", "maximum" distance between occurrence points, or an absolute "distance". If set to "distance",
+        "dist_buf" needs to be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{buffer_type}{Character string indicating whether the buffer should be
-calculated using the mean, median or maximum distance between occurrence points}
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
-\item{dist_buf}{Optional, a distance in km for tbe buffer. If set it will override buffer_type}
+\item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
+
+\item{models_dir}{Folder path to save the output files}
+
+\item{species_name}{A character string with the species name}
+
+\item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
+
+\item{...}{Other parameters from writeRaster}
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance

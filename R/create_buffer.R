@@ -1,11 +1,14 @@
 #' Samples pseudoabsences inside a geographic buffer
 #'
-#' @param occurrences  A data frame with occurrence data. It should contain only two columns:
-#' lon and lat, in that order.
+#' @inheritParams setup_sdmdata
 #' @param buffer_type Character string indicating whether the buffer should be
-#' calculated using the mean, median or maximum distance between occurrence points
-#' @param dist_buf Optional, a distance in km for tbe buffer. If set it will override buffer_type
+#' calculated using the "mean", "median", "maximum" distance between occurrence points, or an absolute "distance". If set to "distance",
+#'         "dist_buf" needs to be specified. If set to "user", "buffer_shape" needs to be specified.
+#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
+#' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
 #' @param predictors A RasterStack of predictor variables
+#' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
+#' @param ... Other parameters from writeRaster
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
 #' @author Andrea Sánchez-Tapia
@@ -28,12 +31,14 @@
 #' @importFrom rgeos gBuffer
 #' @export
 create_buffer <- function(occurrences,
-                          predictors,
                           buffer_type = NULL,
+                          predictors,
                           dist_buf = NULL,
+                          buffer_shape = NULL,
                           models_dir = "./models",
                           species_name,
-                          write_buffer = T) {
+                          write_buffer = F,
+                          ...) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) | !buffer_type %in% c("distance", "mean", "median", "max", "user")) {
@@ -67,7 +72,6 @@ create_buffer <- function(occurrences,
         #creates the buffer - it's a shapefile
         buffer.shape <- rgeos::gBuffer(spgeom = occurrences, byid = F, width = dist.buf)
         }
-    partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
 
     #rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
@@ -75,7 +79,8 @@ create_buffer <- function(occurrences,
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
     if (write_buffer) {
-        writeRaster(r_buffer, filename = paste0(partition.folder,"/buffer"), format = "GTiff", overwrite = T)
+        partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
+        writeRaster(r_buffer, filename = paste0(partition.folder,"/buffer"), format = "GTiff", ...)
     }
     return(r_buffer)
 }
