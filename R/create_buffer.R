@@ -1,15 +1,18 @@
 #' Samples pseudoabsences inside a geographic buffer
 #'
-#' @param occurrences  A data frame with occurrence data. It should contain only two columns:
-#' lon and lat, in that order.
+#' @inheritParams setup_sdmdata
 #' @param buffer_type Character string indicating whether the buffer should be
-#' calculated using the mean, median or maximum distance between occurrence points
-#' @param dist_buf Optional, a distance in km for tbe buffer. If set it will override buffer_type
+#' calculated using the "mean", "median", "maximum" distance between occurrence points, or an absolute "distance". If set to "distance",
+#'         "dist_buf" needs to be specified. If set to "user", "buffer_shape" needs to be specified.
+#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
+#' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
 #' @param predictors A RasterStack of predictor variables
+#' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
+#' @param ... Other parameters from writeRaster
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
 #' @author Andrea Sánchez-Tapia
-#' @author Diogo S.B. Rocha
+#' @author Diogo S.B. Rocha#'
 #' @author Sara Mortara
 #' @return A buffer around the occurrence points
 #' @details The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)

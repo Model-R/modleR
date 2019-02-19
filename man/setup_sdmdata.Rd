@@ -7,11 +7,12 @@
 setup_sdmdata(species_name = species_name, occurrences = occurrences,
   predictors = predictors, models_dir = models_dir,
   real_absences = NULL, lon = "lon", lat = "lat",
-  buffer_type = NULL, dist_buf = NULL, buffer_shape = NULL,
-  seed = NULL, clean_dupl = T, clean_nas = F, geo_filt = F,
+  buffer_type = NULL, dist_buf = NULL, seed = NULL, clean_dupl = T,
+  clean_nas = F, clean_uni = T, geo_filt = F,
   geo_filt_dist = NULL, plot_sdmdata = T, n_back = 1000,
   partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
   cv_n = NULL, cv_partitions = NULL, equalize = NULL, ...)
+
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -39,6 +40,8 @@ calculated using the "mean", "median", "maximum" distance between occurrence poi
 \item{seed}{For reproducibility purposes}
 
 \item{clean_dupl}{Logical, delete duplicate occurrence points? defaults to
+TRUE
+@param clean_uni Logical, selecting spatially unique points. Only one point per pixel. defaults to
 TRUE}
 
 \item{clean_nas}{Logical, delete occurrence points with no environmental
@@ -78,6 +81,14 @@ the associated environmental variables.
 This function takes the occurrence points files and makes the data cleaning,
 data partitioning and the pseudo-absence point sampling, and saves the
 metadata and sdmdata files into the hard disk.
+}
+\examples{
+predictors <- example_vars
+species = unique(coordenadas$sp)
+setup_sdmdata(species_name = species[1], occurrences = coordenadas[-1], predictors = predictors, models_dir = './models_dir',
+real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"), 
+cv_n = 1, cv_partitions = 3, equalize = T)
+
 }
 \seealso{
 \code{\link[dismo]{gridSample}}

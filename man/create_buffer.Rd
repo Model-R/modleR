@@ -4,8 +4,7 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer}
 \usage{
-create_buffer(occurrences, buffer_type = NULL, predictors,
-  dist_buf = NULL, buffer_shape = NULL, models_dir = "./models",
+create_buffer(occurrences, buffer_type = NULL, predictors, dist_buf = NULL,dist_min = NULL, buffer_shape = NULL, models_dir = "./models",
   species_name, write_buffer = F, ...)
 }
 \arguments{
@@ -19,6 +18,8 @@ calculated using the "mean", "median", "maximum" distance between occurrence poi
 
 \item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
+\item{dist_min}{Optional, a distance in km for the exclusion buffer. ###If set it will override buffer_type}
+                
 \item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
 
 \item{models_dir}{Folder path to save the output files}
@@ -28,6 +29,7 @@ calculated using the "mean", "median", "maximum" distance between occurrence poi
 \item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
 
 \item{...}{Other parameters from writeRaster}
+
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance
@@ -62,5 +64,5 @@ Felipe Barros
 
 Andrea Sánchez-Tapia
 
-Fabrício Vilasboas
+
 }
