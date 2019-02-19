@@ -85,10 +85,10 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-#library(ModelR)
+library(ModelR)
 library(rJava) 
 library(raster)
-devtools::load_all()
+#devtools::load_all()
 head(coordenadas)
 species <- sort(unique(coordenadas$sp))
 species
@@ -157,8 +157,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cv_partitions = 5,
                              cv_n = 1,
                              seed = 512,
-                             buffer_type = "distance",
-                             dist_buf = 5,
+                             buffer_type = "mean",
                              plot_sdmdata = T,
                              n_back = 500)
 ```
@@ -212,8 +211,7 @@ do_enm(species_name = species[1],
        cv_partitions = 5,
        cv_n = 1,
        seed = 512,
-       buffer_type = "distance",
-       dist_buf = 5,
+       buffer_type = "mean",
        predictors = example_vars,
        plot_sdmdata = T,
        models_dir = test_folder,
@@ -225,7 +223,7 @@ do_enm(species_name = species[1],
        glm = T,
        svm.k = T,
        svm.e = T, 
-       maxent = T,
+       maxent = F,
        rf = T,
        mahal = F, 
        brt = T, 
@@ -313,10 +311,11 @@ final_model(species_name = species[1],
             select_partitions = T,
             select_par_val = 0.5,
             consensus_level = 0.5,
-            weight_par = c("TSS"),
+            weight_par = NULL,
             models_dir = test_folder,
             #which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
-            which_models = c("raw_mean"))
+            which_models = c("raw_mean"),
+            overwrite = T)
 ```
 
 `final_model()` creates a .tif file for each final.model (one per algorithm) under the specified folder (default: `final_models`)

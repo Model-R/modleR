@@ -1,15 +1,17 @@
 #' Prepares the dataset to perform ENM
 #'
+#' This function takes the occurrence points files and makes the data cleaning,
+#' data partitioning and the pseudo-absence point sampling, and saves the
+#' metadata and sdmdata files into the hard disk.
+#'
+#' @inheritParams create_buffer
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
-#' @param real_absences User defined absence points
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
-#' @param buffer_type Defines if a buffer will be used to sample pseudo-absences
-#'        (F, "mean", "median", "max", "distance")
-#' @param dist_buf Defines the width of the buffer
-#' @param seed For reproducibility purposes
 #' @param predictors A RasterStack of predictor variables
+#' @param seed For reproducibility purposes
+#' @param real_absences User-defined absence points
 #' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
 #'  TRUE
 #'  @param clean_uni Logical, selecting spatially unique points. Only one point per pixel. defaults to
@@ -57,6 +59,7 @@ setup_sdmdata <- function(species_name = species_name,
                           lat = "lat",
                           buffer_type = NULL,
                           dist_buf = NULL,
+                          buffer_shape = NULL,
                           seed = NULL,
                           clean_dupl = T,
                           clean_nas = F,
@@ -155,13 +158,18 @@ setup_sdmdata <- function(species_name = species_name,
         backgr <- real_absences[,c(lon, lat)]
     } else {
         if (!is.null(buffer_type)) {
-            if (buffer_type %in% c("mean", "max", "median", "distance")) {
+            if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
                 message("creating buffer")
                 pbuffr <- create_buffer(occurrences = occurrences,
+                                        models_dir = models_dir,
+                                        species_name = species_name,
                                         buffer_type = buffer_type,
                                         predictors = predictors,
                                         dist_buf = dist_buf,
                                         ...)
+            }
+
+
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
 
                 #checks if there will be enough cells to sample pseudoabsences from
@@ -179,7 +187,7 @@ setup_sdmdata <- function(species_name = species_name,
                                               n = n_back_mod,
                                               p = occurrences,
                                               excludep = T)
-            }
+
 
     } else {
         set.seed(seed)

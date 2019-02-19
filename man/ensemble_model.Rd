@@ -4,16 +4,21 @@
 \alias{ensemble_model}
 \title{Create ensemble models from several algorithms.}
 \usage{
-ensemble_model(species_name, occurrences, models_dir = "./models",
-  final_dir = "final_models", ensemble_dir = "ensemble",
-  proj_dir = "present", which_models = c("raw_mean"),
-  consensus = FALSE, consensus_level = 0.5, write_png = T,
-  scale_models = TRUE, write_raw_map = F)
+ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
+  models_dir = "./models", final_dir = "final_models",
+  ensemble_dir = "ensemble", proj_dir = "present",
+  which_models = c("raw_mean"), consensus = FALSE,
+  consensus_level = 0.5, write_png = T, scale_models = TRUE,
+  write_raw_map = F)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
 \item{occurrences}{A two-column data frame with the occurrence points}
+
+\item{lon}{the name of the longitude column. defaults to "lon"}
+
+\item{lat}{the name of the latitude column. defaults to "lat"}
 
 \item{models_dir}{Character string. Folder path where the input files
 are located}
