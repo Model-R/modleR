@@ -35,7 +35,7 @@ create_buffer <- function(occurrences,
                           buffer_type = NULL,
                           predictors,
                           dist_buf = NULL,
-                          dist_min = NULL
+                          dist_min = NULL,
                           buffer_shape = NULL,
                           models_dir = "./models",
                           species_name,
@@ -44,18 +44,15 @@ create_buffer <- function(occurrences,
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) | !buffer_type %in% c("distance", "mean", "median", "max", "user")) {
-      warning("buffer_type NULL or not recognized, returning predictors")
-      r_buffer <- predictors
-      return(r_buffer)
-  }
-    
-
+        warning("buffer_type NULL or not recognized, returning predictors")
+        r_buffer <- predictors
+        return(r_buffer)
     }
     if (buffer_type == "user") {
-        if (is.null(buffer_shape) | class(buffer_shape) != "SpatialPolygonsDataFrame") {
+        if (is.null(buffer_shape) | !class(buffer_shape) %in% c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
             stop("if buffer_type == 'user', buffer_shape needs to be specified and to be a shapefile")
         }
-        if (class(buffer_shape) == "SpatialPolygonsDataFrame") {
+        if (class(buffer_shape) %in% c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
             buffer.shape <- buffer_shape
         }
     }
@@ -64,7 +61,7 @@ create_buffer <- function(occurrences,
         if (buffer_type %in% c("distance")) {
             if (is.null(dist_buf)) stop("dist_buf must be set when using a distance buffer")
             else dist.buf <- dist_buf
-            }
+        }
         if (buffer_type %in% c("mean", "median", "max")) {
             dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
             if (buffer_type == "mean")
@@ -73,29 +70,20 @@ create_buffer <- function(occurrences,
                 dist.buf <-  max(dists)
             if (buffer_type == "median")
                 dist.buf <- stats::median(dists)
-            }
-      
-      if (is.numeric(dist_min)) {
-      buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
-                                         byid = F, width = dist_min*0.00833333)
-      #rasterizes to sample the random points
-      r_buffer <- raster::crop(predictors, buffer.shape)
-      # masks the buffer to avoid sampling outside the predictors
-      r_buffer <- raster::mask(r_buffer, buffer.shape)
-      r_buffer <- raster::mask(r_buffer, buffer.shape.min, inverse = TRUE)
-      } else {
-      r_buffer <- raster::crop(predictors, buffer.shape)
-      # masks the buffer to avoid sampling outside the predictors
-      r_buffer <- raster::mask(r_buffer, buffer.shape)
-      }
-      
-      #creates the buffer - it's a shapefile
-      buffer.shape <- rgeos::gBuffer(spgeom = occurrences, byid = F, width = dist.buf)
-      }
-
-    #rasterizes to sample the random points
+        }
+        # creates the buffer - it's a shapefile
+        buffer.shape <- rgeos::gBuffer(spgeom = occurrences, byid = F, width = dist.buf)
+    }
+    # rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
 
+    if (is.numeric(dist_min)) {
+        if (dist_min <= dist.buf) {stop("dist_min is higher than dist.buf")}
+        buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
+                                           byid = F, width = dist_min)
+
+        r_buffer <- raster::mask(r_buffer, buffer.shape.min, inverse = TRUE)
+    }
     # masks the buffer to avoid sampling outside the predictors
     r_buffer <- raster::mask(r_buffer, buffer.shape)
     if (write_buffer) {
