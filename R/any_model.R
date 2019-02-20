@@ -59,7 +59,7 @@ do_any <- function(species_name,
 
     #para cada columna de la matriz de diseño
     for (i in seq_along(1:runs)) {
-        group.all <- sdmdata[,i]
+        group.all <- sdmdata[, i]
         group <- group.all[sdmdata$pa == 1]
         bg.grp <- group.all[sdmdata$pa == 0]
         backgr <- sdmdata[sdmdata$pa == 0, c("lon", "lat")]
@@ -95,14 +95,7 @@ do_any <- function(species_name,
                   sdmdata_train.eq <- sdmdata_train
               }
                 mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
-                                                data = envtrain, importance = T)
-                # mod <- randomForest::tuneRF(envtrain.eq,
-                #                             sdmdata_train.eq$pa,
-                #                             trace = F,
-                #                             plot = F,
-                #                             doBest = T,
-                #                             importance = F)
-                #randomForest::varImpPlot(mod)
+                                                data = envtrain.eq, importance = T)
             }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
@@ -154,7 +147,7 @@ do_any <- function(species_name,
 
                 #esto es centroid
                 if (algo == "centroid") {
-                    cat(paste("Euclidean environmental distance to centroid",'\n'))
+                    cat(paste("Euclidean environmental distance to centroid","\n"))
                     #calcula la media ambiental de los puntos de train
                     centroid.val <- apply(pres.vals, 2, mean, na.rm = TRUE)
                     #calcula la distancia a ese centroide
@@ -189,7 +182,7 @@ do_any <- function(species_name,
                 eec <- dismo::evaluate(p = p, a = a)
                 if (!nrow(occurrences) %in% c(1, 2)) {
                     #sólo corta por LTP si hay más de dos puntos...
-                    LPTec <- dismo::threshold(eec, 'no_omission')
+                    LPTec <- dismo::threshold(eec, "no_omission")
                     ec_cont[ec_cont < LPTec] <- LPTec
                     ec_cont <- (ec_cont - raster::minValue(ec_cont)) /
                         raster::maxValue(ec_cont - raster::minValue(ec_cont))
@@ -270,8 +263,8 @@ do_any <- function(species_name,
             th_table$correlation <- eval_mod@cor
             th_table$pvaluecor <- eval_mod@pcor
 
-            
-            if(conf_mat == TRUE) {
+
+            if (conf_mat == TRUE) {
               if (!algo %in% c("mindist", "centroid")) {
                 th_table$prevalence.value <- conf@prevalence
                 th_table$PPP <- conf@PPP
