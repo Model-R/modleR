@@ -7,6 +7,7 @@
 #' @inheritParams create_buffer
 #' @inheritParams rescale_layer
 #' @inheritParams clean
+#' @inheritParams geo_filt
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
 #' @param lon the name of the longitude column. defaults to "lon"
@@ -14,12 +15,6 @@
 #' @param predictors A RasterStack of predictor variables
 #' @param seed For reproducibility purposes
 #' @param real_absences User-defined absence points
-#' @param clean_dupl Logical, delete duplicate occurrence points? defaults to
-#'  TRUE
-#'  @param clean_uni Logical, selecting spatially unique points. Only one point per pixel. defaults to
-#'  TRUE
-#' @param clean_nas Logical, delete occurrence points with no environmental
-#' information? Defaults to FALSE and can take a while for large datasets
 #' @param geo_filt Logical, delete occurrence that are too close?
 #' @param geo_filt_dist The distance of the geographic filter (in kilometers)
 #' @param models_dir Folder path to save the output files
@@ -68,6 +63,8 @@ setup_sdmdata <- function(species_name = species_name,
                           clean_uni = T,
                           geo_filt = F,
                           geo_filt_dist = NULL,
+                          select_variables = F,
+                          percent_correlation = 0.8,
                           plot_sdmdata = T,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
@@ -92,18 +89,21 @@ setup_sdmdata <- function(species_name = species_name,
     names(occurrences) <- c("lon", "lat")
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
-        }
+    }
+    #writes some original metadata that will be modified later
     original_n <- nrow(occurrences)
     original_n_back <- n_back
+    original_predictors <- paste(names(predictors), collapse = '-')
 
         #checking metadata
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
         metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
-        metadata_old <- metadata_old[, setdiff(names(metadata_old), c("final.n", "final.n.back"))]
+        metadata_old <- metadata_old[, setdiff(names(metadata_old), c("final.n", "final.n.back", "selected_predictors"))]
         metadata_new <- data.frame(
             species_name = as.character(species_name),
-            predictors = paste(names(predictors), collapse = '-'),
+            original_predictors = original_predictors,
+            select_variables = select_variables,
             original.n = original_n,
             original.n.back = original_n_back,
             buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
@@ -318,7 +318,8 @@ setup_sdmdata <- function(species_name = species_name,
     #metadata
     metadata <- data.frame(
         species_name = as.character(species_name),
-        predictors = paste(names(predictors), collapse = '-'),
+        select_variables = select_variables,
+        selected_predictors = paste(names(predictors), collapse = '-'),
         original.n = original_n,
         final.n = final_n,
         original.n.back = original_n_back,
