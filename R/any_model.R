@@ -84,9 +84,9 @@ do_any <- function(species_name,
             if (algo == "rf") {
               if (equalize == T) {
                 #balanceando as ausencias
-                aus <- nrow(sdmdata_train[sdmdata_train$pa == 0,])
+                abs <- nrow(sdmdata_train[sdmdata_train$pa == 0,])
                 pres <- nrow(sdmdata_train[sdmdata_train$pa == 1,])
-                prop <- pres:aus
+                prop <- pres:abs
                 aus.eq <- sample(prop[-1], pres)
                 envtrain.eq <- envtrain[c(1:pres, aus.eq),]
                 sdmdata_train.eq <- sdmdata_train[c(1:pres, aus.eq),]
@@ -94,8 +94,9 @@ do_any <- function(species_name,
                   envtrain.eq <- envtrain
                   sdmdata_train.eq <- sdmdata_train
               }
-                mod <- randomForest::randomForest(sdmdata_train$pa ~ .,
-                                                data = envtrain.eq, importance = T)
+                mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
+                                                data = envtrain.eq,
+                                                importance = T)
             }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
