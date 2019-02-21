@@ -1,8 +1,9 @@
-#' Fits ecological niche models using any dismo algorithm.
+#' Fits ecological niche models using several algorithms.
 #'
 #' @inheritParams setup_sdmdata
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent","domain",
-#'                                        "mahal", "glm", "svm.k","svm.e","rf")}
+#'                                        "mahal", "glm", "svm.k", "svm.e",
+#'                                         "rf", "brt", "mindist", "centroid")}
 #' @param project_model Logical, whether to perform a projection
 #' @param proj_data_folder the path to projections -containing one or more
 #'  folders with the projection datasets, ex. "./env/proj/proj1"
@@ -94,10 +95,16 @@ do_any <- function(species_name,
                   envtrain.eq <- envtrain
                   sdmdata_train.eq <- sdmdata_train
               }
-                mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
-                                                data = envtrain.eq,
-                                                importance = T)
-            }
+                #mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
+                 #                               data = envtrain.eq,
+                  #                              importance = T)
+                mod <- randomForest::tuneRF(envtrain.eq,
+                                            sdmdata_train.eq$pa,
+                                            trace = F,
+                                            plot = F,
+                                            doBest = T,
+                                            importance = F)
+                }
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
                                   family = "binomial")
