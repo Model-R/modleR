@@ -83,7 +83,7 @@ ensemble_model <- function(species_name,
             mod2 <- raster::stack(tif.files)
             #scale models to 0-1
             if (scale_models == T) {
-                mod2 <- rescale.layer(mod2)
+                mod2 <- rescale_layer(mod2)
             }
             ensemble.mean <- raster::overlay(mod2, fun = function(x) {
                 return(mean(x, na.rm = T))

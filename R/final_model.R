@@ -109,7 +109,7 @@ final_model <- function(species_name,
 		mod.cont <- raster::stack(modelos.cont)  #(0)
 
 		if (scale_models == T) {#o scale models não deve ser aqui, ou deve? thmean fica ruim
-		mod.cont <- rescale.layer(mod.cont)
+		mod.cont <- rescale_layer(mod.cont)
 		}
 
 		#select partitions----
@@ -162,7 +162,7 @@ final_model <- function(species_name,
 		     #second column of the figure. creates binany selected
              if (any(c("bin_mean", "cut_mean","bin_consensus") %in% which_models)) {
                 if (is.numeric(threshold)) {#este aqui se repete, linha 145, é equivalente cortar aqui e lá?
-                    cont.sel.1 <- rescale.layer(cont.sel.1)
+                    cont.sel.1 <- rescale_layer(cont.sel.1)
                     mod.sel.bin <- cont.sel.1 > threshold #(0)
                 } else {
                     mod.sel.bin <- cont.sel.1 > (stats.algo[, threshold][sel.index]) #(0)

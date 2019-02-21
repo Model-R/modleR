@@ -8,7 +8,7 @@
 #' rescale.layer(example_vars)
 #' @import raster
 #' @export
-rescale.layer <- function(layers) {
+rescale_layer <- function(layers) {
   cat(paste("Standardizing models from 0 to 1", "\n"))
   if (missing(layers)) {
     stop("No layers were provided. Please enter a Raster layer or a Rasterstack")
@@ -23,15 +23,15 @@ rescale.layer <- function(layers) {
     bb <- calc(layers[[i]], stand)
     bb
     if (i == 1) {
-      cc = stack(bb)
+      cc <- stack(bb)
       names(cc)[i] = names(layers)[i]
     }
     else{
-      cc = stack(cc, bb)
+      cc <- stack(cc, bb)
       names(cc)[i] = names(layers)[i]
     }
     if (i == dim(layers)[3]) {
-      layers = cc
+      layers <- cc
       rm(cc)
       return(layers)
     }
