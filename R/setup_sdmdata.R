@@ -1,10 +1,12 @@
-#' Prepares the dataset to perform ENM
+#' Prepares the dataset to perform ENM.
 #'
 #' This function takes the occurrence points files and makes the data cleaning,
 #' data partitioning and the pseudo-absence point sampling, and saves the
 #' metadata and sdmdata files into the hard disk.
 #'
 #' @inheritParams create_buffer
+#' @inheritParams rescale_layer
+#' @inheritParams clean
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
 #' @param lon the name of the longitude column. defaults to "lon"
@@ -41,9 +43,9 @@
 #' predictors <- example_vars
 #' species = unique(coordenadas$sp)
 #' setup_sdmdata(species_name = species[1], occurrences = coordenadas[-1], predictors = predictors, models_dir = './models_dir',
-#' real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"), 
+#' real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"),
 #' cv_n = 1, cv_partitions = 3, equalize = T)
-#' 
+#'
 #' @seealso \code{\link[dismo]{gridSample}}
 
 #' @export
@@ -79,13 +81,14 @@ setup_sdmdata <- function(species_name = species_name,
         dir.create(paste0(models_dir), recursive = T, showWarnings = F)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
         dir.create(paste0(models_dir, "/", species_name))
-    partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
+    partition.folder <-
+        paste0(models_dir, "/", species_name, "/present", "/partitions")
     if (file.exists(partition.folder) == FALSE)
         dir.create(partition.folder, recursive = T)
 
     ## checking latitude and longitude columns
     if (all(c(lon, lat) %in% names(occurrences))) {
-    occurrences <- occurrences[,c(lon, lat)]
+    occurrences <- occurrences[, c(lon, lat)]
     names(occurrences) <- c("lon", "lat")
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
@@ -96,12 +99,13 @@ setup_sdmdata <- function(species_name = species_name,
         #checking metadata
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
-        metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F,row.names = 1)
-        metadata_old <- metadata_old[, setdiff(names(metadata_old),c("final.n", "final.n.back"))]
+        metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
+        metadata_old <- metadata_old[, setdiff(names(metadata_old), c("final.n", "final.n.back"))]
         metadata_new <- data.frame(
             species_name = as.character(species_name),
+            predictors = paste(names(predictors), collapse = '-'),
             original.n = original_n,
-            n_back = original_n_back,
+            original.n.back = original_n_back,
             buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
             dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
             seed = ifelse(is.null(seed), NA, seed),
@@ -109,6 +113,7 @@ setup_sdmdata <- function(species_name = species_name,
             res.y = res(predictors)[2],
             clean_dupl = clean_dupl,
             clean_nas = clean_nas,
+            clean_uni = clean_uni,
             geo_filt = geo_filt,
             geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
             models_dir = models_dir,
@@ -129,25 +134,19 @@ setup_sdmdata <- function(species_name = species_name,
     }
     message("performing data partition")
 
-    occurrences <- clean(occurrences, predictors, clean_dupl = clean_dupl, clean_nas = clean_nas, clean_uni = clean_uni)
-    
+    occurrences <-
+        clean(occurrences,
+              lon = lon,
+              lat = lat,
+              predictors,
+              clean_dupl = clean_dupl,
+              clean_nas = clean_nas,
+              clean_uni = clean_uni)
+
     # tabela de valores
     message("extracting environmental data")
     presvals <- raster::extract(predictors, occurrences)
-    
-    # if (clean_dupl == TRUE) {
-    #     message("cleaning duplicates")
-    #     dupls <- !base::duplicated(occurrences)
-    #     occurrences <- occurrences[dupls,]
-    #     presvals <- presvals[dupls,]
-    # }
-    # if (clean_nas == TRUE) {
-    #     message("cleaning occurrences with no environmental data")
-    #     compl <- complete.cases(presvals)
-    #     occurrences <- occurrences[compl,]
-    #     presvals <- presvals[compl,]
-    # }
-    
+
     if (geo_filt == TRUE) {
         message("applying a geographical filter")
         occurrences <- geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)
@@ -155,7 +154,7 @@ setup_sdmdata <- function(species_name = species_name,
     }
     #background selection:
     if (!is.null(real_absences)) {
-        backgr <- real_absences[,c(lon, lat)]
+        backgr <- real_absences[, c(lon, lat)]
     } else {
         if (!is.null(buffer_type)) {
             if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
@@ -179,7 +178,7 @@ setup_sdmdata <- function(species_name = species_name,
                 if (available_cells < n_back) {
                     n_back_mod <- available_cells
                     message(paste0(available_cells, "available cells"))
-                    message(paste("Using", n_back_mod, "pseudoabsences","\n"))
+                    message(paste("Using", n_back_mod, "pseudoabsences", "\n"))
                 } else {
                     n_back_mod <- n_back
                 }
@@ -199,7 +198,7 @@ setup_sdmdata <- function(species_name = species_name,
         if (available_cells < n_back) {
             n_back_mod <- available_cells
             message(paste0(available_cells, "available cells"))
-            message(paste("Using", n_back_mod, "pseudoabsences","\n"))
+            message(paste("Using", n_back_mod, "pseudoabsences", "\n"))
         } else {
             n_back_mod <- n_back
         }
@@ -219,7 +218,7 @@ setup_sdmdata <- function(species_name = species_name,
     if (any(complete.cases(backvals) == F)) {
     backvals <- backvals[complete.cases(backvals), ]
     backgr   <- backgr[complete.cases(backvals), ]
-        warning(paste("Your background data had NA values,", nrow(backvals),
+        warning(paste("Your background data had NA values, ", nrow(backvals),
                       "points were retained"))
         }
 
@@ -228,7 +227,7 @@ setup_sdmdata <- function(species_name = species_name,
     pres <- cbind(occurrences, presvals)
     back <- cbind(backgr, backvals)
     coord_env_all <- rbind(pres, back)
-    sdmdata <- cbind(pa,coord_env_all)
+    sdmdata <- cbind(pa, coord_env_all)
     # Data partition-----
     #Crossvalidation, repetated crossvalidation and jacknife
     #if (crossvalidation == TRUE) {
@@ -282,11 +281,11 @@ setup_sdmdata <- function(species_name = species_name,
     boot_p <- matrix(data = 1,
                      nrow = nrow(occurrences),
                      ncol = boot_n,
-                     dimnames = list(NULL,paste0("boot",1:boot_n)))
+                     dimnames = list(NULL, paste0("boot", 1:boot_n)))
     boot_a <- matrix(data = 1,
                      nrow = nrow(backgr),
                      ncol = boot_n,
-                     dimnames = list(NULL,paste0("boot",1:boot_n)))
+                     dimnames = list(NULL, paste0("boot", 1:boot_n)))
     for (i in seq_along(1:boot_n)) {
         boot_p[, i][boot.pres[, i]] <- 0
         }
@@ -305,20 +304,21 @@ setup_sdmdata <- function(species_name = species_name,
 
 
     if (plot_sdmdata) {
-        message("Plotting the dataset...",'\n')
-        png(filename = paste0(partition.folder, "/sdmdata_", species_name,".png"))
+        message("Plotting the dataset...", '\n')
+        png(filename = paste0(partition.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
         points(back, pch = ".", col = "black")
         points(pres, pch = 3, col = "grey50")
-        legend("topleft", pch = c("+","."),
-               col = c("grey50", "black"), legend = c("Occs","Back"))
+        legend("topleft", pch = c("+", "."),
+               col = c("grey50", "black"), legend = c("Occs", "Back"))
         dev.off()
     }
 
     #metadata
     metadata <- data.frame(
         species_name = as.character(species_name),
+        predictors = paste(names(predictors), collapse = '-'),
         original.n = original_n,
         final.n = final_n,
         original.n.back = original_n_back,
@@ -330,12 +330,13 @@ setup_sdmdata <- function(species_name = species_name,
         res.y = res(predictors)[2],
         clean_dupl = clean_dupl,
         clean_nas = clean_nas,
+        clean_uni = clean_uni,
         geo_filt = geo_filt,
         geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
         models_dir = models_dir,
         partition = partition_type,
         boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
-        boot_n = ifelse(is.null(boot_n),NA,boot_n),
+        boot_n = ifelse(is.null(boot_n), NA, boot_n),
         cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
         cv_n = ifelse(is.null(cv_n), NA, cv_n),
         equalize = ifelse(is.null(equalize), NA, equalize)

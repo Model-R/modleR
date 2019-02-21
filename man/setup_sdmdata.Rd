@@ -2,17 +2,17 @@
 % Please edit documentation in R/setup_sdmdata.R
 \name{setup_sdmdata}
 \alias{setup_sdmdata}
-\title{Prepares the dataset to perform ENM}
+\title{Prepares the dataset to perform ENM.}
 \usage{
 setup_sdmdata(species_name = species_name, occurrences = occurrences,
   predictors = predictors, models_dir = models_dir,
   real_absences = NULL, lon = "lon", lat = "lat",
-  buffer_type = NULL, dist_buf = NULL, seed = NULL, clean_dupl = T,
-  clean_nas = F, clean_uni = T, geo_filt = F,
-  geo_filt_dist = NULL, plot_sdmdata = T, n_back = 1000,
-  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
-  cv_n = NULL, cv_partitions = NULL, equalize = NULL, ...)
-
+  buffer_type = NULL, dist_buf = NULL, buffer_shape = NULL,
+  seed = NULL, clean_dupl = T, clean_nas = F, clean_uni = T,
+  geo_filt = F, geo_filt_dist = NULL, plot_sdmdata = T,
+  n_back = 1000, partition_type = c("bootstrap"), boot_n = 1,
+  boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL,
+  equalize = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -30,8 +30,9 @@ setup_sdmdata(species_name = species_name, occurrences = occurrences,
 \item{lat}{the name of the latitude column. defaults to "lat"}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
-calculated using the "mean", "median", "maximum" distance between occurrence points, or an absolute "distance". If set to "distance",
-        "dist_buf" needs to be specified. If set to "user", "buffer_shape" needs to be specified.}
+calculated using the "mean", "median", "maximum" distance between occurrence
+points, or an absolute "distance". If set to "distance", "dist_buf" needs to
+be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
@@ -46,6 +47,8 @@ TRUE}
 
 \item{clean_nas}{Logical, delete occurrence points with no environmental
 information? Defaults to FALSE and can take a while for large datasets}
+
+\item{clean_uni}{logical. If TURE selects only one point per pixel}
 
 \item{geo_filt}{Logical, delete occurrence that are too close?}
 
@@ -86,7 +89,7 @@ metadata and sdmdata files into the hard disk.
 predictors <- example_vars
 species = unique(coordenadas$sp)
 setup_sdmdata(species_name = species[1], occurrences = coordenadas[-1], predictors = predictors, models_dir = './models_dir',
-real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"), 
+real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"),
 cv_n = 1, cv_partitions = 3, equalize = T)
 
 }
