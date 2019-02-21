@@ -1,4 +1,4 @@
-#' @title Clean the occurrence records
+#' @title Clean the occurrence records.
 #' @name clean
 #'
 #' @description A function to remove the points that are outside the extension of the raster and to maintain, at most one register per pixel.
@@ -9,7 +9,7 @@
 #' @param clean_nas logical. If TURE removes points that are outside the bounds of the raster
 #' @param clean_uni logical. If TURE selects only one point per pixel
 #'
-#' @details Used internally in function \code{\link[ModelR]{setup_sdmdata}}.
+#' @details Used internally in function \code{\link[modelr]{setup_sdmdata}}.
 #'
 #' @return data.frame containing longitude and latitude.
 #'
@@ -25,34 +25,52 @@
 #' @import raster
 #'
 #' @export
-clean = function(occurrences, predictors, clean_dupl = TRUE, clean_nas = TRUE, clean_uni = TRUE) {
-    if (dim(occurrences)[2] == 2) {
-        if (exists("predictors")) {
-          ori <- dim(occurrences)[1]
-          if (clean_dupl == TRUE) {
+clean <- function(occurrences,
+                  lon = "lon",
+                  lat = "lat",
+                  predictors = example_vars,
+                  clean_dupl = TRUE,
+                  clean_nas = F,
+                  clean_uni = F) {
+    ## checking latitude and longitude columns
+    if (all(c(lon, lat) %in% names(occurrences))) {
+        occurrences <- occurrences[, c(lon, lat)]
+        names(occurrences) <- c("lon", "lat")
+    } else {
+        stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
+    }
+    if (exists("predictors")) {
+        ori <- nrow(occurrences)
+        if (clean_dupl == TRUE) {
             message("cleaning duplicates")
-            dupls <- !base::duplicated(occurrences)
-            occurrences <- occurrences[dupls,]
-          }
-          if (clean_nas == TRUE) {
+            dupls <- base::duplicated(occurrences)
+            if (any(dupls)) {
+            occurrences <- occurrences[!dupls, ]
+            }
+        }
+        if (clean_nas == TRUE) {
             message("cleaning occurrences with no environmental data")
             presvals <- raster::extract(predictors, occurrences)
             compl <- complete.cases(presvals)
-            occurrences <- occurrences[compl,]
-          }
-
-          if (clean_uni == TRUE) {
-            if(clean_nas == FALSE){warning("There may be points that are outside the raster")}
-            mask = predictors[[1]]
-            cell <- cellFromXY(mask, occurrences)
-            dup <- duplicated(cell)
-            occurrences <- occurrences[!dup, ]
+            if (any(compl)) {
+            occurrences <- occurrences[compl, ]
             }
+        }
+        if (clean_uni == TRUE) {
+            if (clean_nas == FALSE) {
+                warning("There may be points that are outside the raster")
+            }
+            mask <- predictors[[1]]
+            cell <- raster::cellFromXY(mask, occurrences)
+            dup <- duplicated(cell)
+            if (any(dup)) {
+                occurrences <- occurrences[!dup,]
+                }
+        }
 
-            cat(ori - dim(occurrences)[1], "points removed\n")
-            cat(dim(occurrences)[1], " clean points\n")
-            #names(occurrences) = c("lon", "lat")
-            return(occurrences)
-        } else (cat("Indicate the object with the predictive variables"))
-    } else (stop("Coordinate table has more than two columns.\nThis table should only have longitude and latitude in this order."))
+        cat(ori - nrow(occurrences), "points removed\n")
+        cat(nrow(occurrences), " clean points\n")
+        return(occurrences)
+    } else
+        (cat("Indicate the object with the predictive variables"))
 }

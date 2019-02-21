@@ -2,10 +2,11 @@
 % Please edit documentation in R/clean.R
 \name{clean}
 \alias{clean}
-\title{Clean the occurrence records}
+\title{Clean the occurrence records.}
 \usage{
-clean(occurrences, predictors, clean_dupl = TRUE, clean_nas = TRUE,
-  clean_uni = TRUE)
+clean(occurrences, lon = "lon", lat = "lat",
+  predictors = example_vars, clean_dupl = TRUE, clean_nas = F,
+  clean_uni = F)
 }
 \arguments{
 \item{occurrences}{data.frame with the coordinates}
@@ -25,7 +26,7 @@ data.frame containing longitude and latitude.
 A function to remove the points that are outside the extension of the raster and to maintain, at most one register per pixel.
 }
 \details{
-Used internally in function \code{\link[ModelR]{setup_sdmdata}}.
+Used internally in function \code{\link[modelr]{setup_sdmdata}}.
 }
 \examples{
 sp <- unique(coordenadas$sp)[1]
