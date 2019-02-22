@@ -143,19 +143,20 @@ setup_sdmdata <- function(species_name = species_name,
               clean_nas = clean_nas,
               clean_uni = clean_uni)
 
-    # tabela de valores
-    message("extracting environmental data")
-    presvals <- raster::extract(predictors, occurrences)
-
     if (geo_filt == TRUE) {
         message("applying a geographical filter")
-        occurrences <- geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)
-        presvals <- raster::extract(predictors, occurrences)
+        occurrences <-
+            geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)
     }
+    final_n <- nrow(occurrences)
+
+
     #background selection:
+    #first option: user-supplied background
     if (!is.null(real_absences)) {
         backgr <- real_absences[, c(lon, lat)]
     } else {
+        #second option: there is a buffer
         if (!is.null(buffer_type)) {
             if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
                 message("creating buffer")
@@ -165,12 +166,15 @@ setup_sdmdata <- function(species_name = species_name,
                                         buffer_type = buffer_type,
                                         predictors = predictors,
                                         dist_buf = dist_buf,
+                                        dist_min = dist_min,
                                         ...)
             }
-
-
-                message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
-
+            # third option: there is no buffer
+        } else {
+            buffer_type <- "no"
+            pbuffr <- predictors[[1]]
+        }
+        #before sampling pseudoabsence points
                 #checks if there will be enough cells to sample pseudoabsences from
                 vals <- values(pbuffr)
                 available_cells <- sum(!is.na(vals)) - nrow(occurrences)
@@ -182,42 +186,35 @@ setup_sdmdata <- function(species_name = species_name,
                 } else {
                     n_back_mod <- n_back
                 }
+        #Now it does the sampling
+                message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
+        set.seed(seed)
                 backgr <- dismo::randomPoints(mask = pbuffr,
                                               n = n_back_mod,
                                               p = occurrences,
                                               excludep = T)
-
-
-    } else {
-        set.seed(seed)
-        message("sampling pseudoabsence points")
-        #checks if there will be enough cells to sample pseudoabsences from
-        vals <- values(predictors)
-        available_cells <- sum(!is.na(vals)) - nrow(occurrences)
-        # and corrects accordingly
-        if (available_cells < n_back) {
-            n_back_mod <- available_cells
-            message(paste0(available_cells, "available cells"))
-            message(paste("Using", n_back_mod, "pseudoabsences", "\n"))
-        } else {
-            n_back_mod <- n_back
-        }
-                backgr <- dismo::randomPoints(mask = predictors,
-                                      n = n_back_mod,
-                                      p = occurrences,
-                                      excludep = T)
-}
+    colnames(backgr) <- c("lon", "lat")
     }
 
-    colnames(backgr) <- c("lon", "lat")
+    # Seleccionando variables if sel_vars ==T
+    if (select_variables == T) {
+        predictors <- select_variables(species_name = species_name,
+                                       predictors = predictors,
+                                       models_dir = models_dir,
+                                       buffer = pbuffr,
+                                       cutoff = cutoff,
+                                       percent = percent_correlation)
 
-    final_n <- nrow(occurrences)
+        }
+    # tabela de valores
+    message("extracting environmental data")
+    presvals <- raster::extract(predictors, occurrences)
     # Extraindo dados ambientais dos bckgr
     message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
     if (any(complete.cases(backvals) == F)) {
-    backvals <- backvals[complete.cases(backvals), ]
-    backgr   <- backgr[complete.cases(backvals), ]
+        backvals <- backvals[complete.cases(backvals), ]
+        backgr   <- backgr[complete.cases(backvals), ]
         warning(paste("Your background data had NA values, ", nrow(backvals),
                       "points were retained"))
         }

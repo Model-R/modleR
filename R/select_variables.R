@@ -1,4 +1,4 @@
-#' Helper function to select environmental variables from a stack
+#' Helper function to select environmental variables from a stack.
 #'
 #' This function takes a stack of environmental variables and the calibration area. The function calculates Pearson correlations between all environmental variables and returns a new stack with uncorrelated variables based on a cutoff.
 #'
@@ -16,6 +16,7 @@
 #' @import raster
 #' @export
 #' @examples
+#'
 #' # using shapefile from create_buffer()
 #' ## selecting data for only sp1
 #' coord1sp <- coordenadas[coordenadas$sp == unique(coordenadas$sp)[1],]
@@ -26,39 +27,40 @@
 #' # running select_variables w/ output from create_buffer
 #' select_variables(predictors=example_vars)
 select_variables <- function(species_name = species_name,
+                             models_dir = "./models",
                              predictors = predictors,
-                             models_dir = models_dir,
                              buffer = NULL,
                              cutoff = 0.8,
+                             percent = 0.8,
                              ...) {
-    partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
-    if (is.null(buffer)) {
-        # checks if there is a buffer.shp file in partition folder
-        if (list.files(path = partition.folder, pattern = "*.shp", full.names = TRUE) != paste0(partition.folder, "/", "buffer.shp")) {
-stop("could not find buffer.shp in output directory, specify your own buffer")
-            }
-        }
-    else buffer <- rgdal::readOGR(paste0(partition.folder, "/", "buffer.shp"))
-if (class(predictors) != "RasterBrick") {
-  stop("predictors must be a RasterBrick object")
+
+#     if (is.null(buffer)) {
+#     partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
+#     # checks if there is a buffer.tif file in partition folder
+#     if (list.files(path = partition.folder, pattern = "*.tif", full.names = TRUE) != paste0(partition.folder, "/", "buffer.tif")) {
+# stop("could not find buffer.tif in output directory, specify your own buffer")
+#             }
+#         }
+  #  else
+   #     buffer <- raster::raster(paste0(partition.folder, "/", "buffer.tif"))
+
+    if (!class(predictors) %in% c("RasterBrick","RasterStack")) {
+  stop("predictors must be a RasterBrick or RasterStack object")
     }
-    else crop.buffer <- crop(predictors, buffer) # cutting raster by shapefile
-# correlation matrix for all layers
-    cor.layer <- raster::layerStats(crop.buffer, "pearson", na.rm = TRUE)$`pearson correlation coefficient`
-# selecting only values > cutoff
-  cor.layer[upper.tri(cor.layer, diag = TRUE)] <- 0
-# if no correlation value > cutoff, returns predictors
-  if (sum(abs(cor.layer) > cutoff) == 0) {
-    final_vars <- predictors
-     selected_vars <- list(final_vars,
-                           message("all variables retained")) }
-# excluding variables w/ cor > cutoff
-  else exclude.vars <- which(abs(cor.layer) > cutoff, arr.ind = TRUE)
-  names.vars <-
-      names(predictors)[!names(predictors) %in% row.names(exclude.vars)]
-    final_vars <- predictors[[names.vars]]
-    selected_vars <- list(final_vars,
-                          message(paste0("excluded variable(s) on layers ",
-                                         row.names(exclude.vars))))
-    return(selected_vars)
+    else crop.buffer <- crop_model(predictors, buffer)
+
+  sample <- dismo::randomPoints(mask = crop.buffer,
+                                n = floor(sum(!is.na(raster::values(crop.buffer[[1]]))) * percent))
+  vals <- raster::extract(x = crop.buffer, sample)
+  exclude.vars <- caret::findCorrelation(cor(vals), cutoff = cutoff)
+  if (length(exclude.vars) > 0) {
+      excluded <- names(crop.buffer)[exclude.vars]
+      retained <- setdiff(names(crop.buffer), excluded)
+    final_vars <- raster::subset(crop.buffer,retained, drop = F)
+    message(paste(excluded, "excluded"))
+  } else {
+      final_vars <- crop.buffer
+      message(paste("No variables were excluded with cutoff =", cutoff))
+  }
+      return(final_vars)
 }
