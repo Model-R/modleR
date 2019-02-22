@@ -1,10 +1,12 @@
-#' Samples pseudoabsences inside a geographic buffer
+#' Samples pseudoabsences inside a geographic buffer.
 #'
 #' @inheritParams setup_sdmdata
 #' @param buffer_type Character string indicating whether the buffer should be
-#' calculated using the "mean", "median", "maximum" distance between occurrence points, or an absolute "distance". If set to "distance",
-#'         "dist_buf" needs to be specified. If set to "user", "buffer_shape" needs to be specified.
+#' calculated using the "mean", "median", "maximum" distance between occurrence
+#' points, or an absolute "distance". If set to "distance", "dist_buf" needs to
+#' be specified. If set to "user", "buffer_shape" needs to be specified.
 #' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
+#' @param dist_min Optional, a distance in km for the exclusion buffer.
 #' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
 #' @param predictors A RasterStack of predictor variables
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
@@ -12,7 +14,7 @@
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
 #' @author Andrea Sánchez-Tapia
-#' @author Diogo S.B. Rocha#'
+#' @author Diogo S.B. Rocha
 #' @author Sara Mortara
 #' @return A buffer around the occurrence points
 #' @details The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
@@ -88,6 +90,8 @@ create_buffer <- function(occurrences,
     r_buffer <- raster::mask(r_buffer, buffer.shape)
     if (write_buffer) {
         partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
+        if (file.exists(partition.folder) == FALSE)
+            dir.create(partition.folder, recursive = T)
         writeRaster(r_buffer, filename = paste0(partition.folder,"/buffer"), format = "GTiff", ...)
     }
     return(r_buffer)
