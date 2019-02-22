@@ -14,6 +14,8 @@
 #' @author Andrea Sánchez-Tapia and Sara Mortara
 #' @seealso \code{\link[ModelR]{create_buffer}}
 #' @import raster
+#' @importFrom caret findCorrelation
+#' @importFrom stats cor
 #' @export
 #' @examples
 #'
@@ -25,10 +27,10 @@
 #' ## using coord1sp to create buffer w/ mean distance between points
 #' buf <- create_buffer(occ, buffer_type="mean", example_vars)
 #' # running select_variables w/ output from create_buffer
-#' select_variables(predictors=example_vars)
+#' select_variables(predictors = example_vars)
 select_variables <- function(species_name = species_name,
                              models_dir = "./models",
-                             predictors = predictors,
+                             predictors = example_vars,
                              buffer = NULL,
                              cutoff = 0.8,
                              percent = 0.8,
@@ -47,20 +49,22 @@ select_variables <- function(species_name = species_name,
     if (!class(predictors) %in% c("RasterBrick","RasterStack")) {
   stop("predictors must be a RasterBrick or RasterStack object")
     }
-    else crop.buffer <- crop_model(predictors, buffer)
+    if (!is.null(buffer) & class(buffer) %in% c("RasterBrick", "RasterStack")) {
+        predictors <- crop_model(predictors, buffer)
+    }
 
-  sample <- dismo::randomPoints(mask = crop.buffer,
-                                n = floor(sum(!is.na(raster::values(crop.buffer[[1]]))) * percent))
-  vals <- raster::extract(x = crop.buffer, sample)
+  sample <- dismo::randomPoints(mask = predictors,
+                                n = floor(sum(!is.na(raster::values(predictors[[1]]))) * percent))
+  vals <- raster::extract(x = predictors, sample)
   exclude.vars <- caret::findCorrelation(cor(vals), cutoff = cutoff)
   if (length(exclude.vars) > 0) {
-      excluded <- names(crop.buffer)[exclude.vars]
-      retained <- setdiff(names(crop.buffer), excluded)
-    final_vars <- raster::subset(crop.buffer,retained, drop = F)
-    message(paste(excluded, "excluded"))
-  } else {
-      final_vars <- crop.buffer
-      message(paste("No variables were excluded with cutoff =", cutoff))
-  }
+      excluded <- names(predictors)[exclude.vars]
+      retained <- setdiff(names(predictors), excluded)
+      final_vars <- raster::subset(predictors, retained, drop = F)
+      message(paste(paste(excluded, collapse = ','), "excluded with cutoff =", cutoff))
+      } else {
+          final_vars <- predictors
+          message(paste("No variables were excluded with cutoff =", cutoff))
+          }
       return(final_vars)
 }

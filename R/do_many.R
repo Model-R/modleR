@@ -19,22 +19,22 @@
 #' @author Andrea Sánchez-Tapia
 #' @export
 #'
-do_enm <- function(species_name,
-                   occurrences,
-                   predictors,
-                   models_dir = "./models",
-                   bioclim = FALSE,
-                   domain = FALSE,
-                   glm = FALSE,
-                   mahal = FALSE,
-                   maxent = FALSE,
-                   rf = FALSE,
-                   svm.k = FALSE,
-                   svm.e = FALSE,
-                   mindist = FALSE,
-                   centroid = FALSE,
-                   brt = FALSE,
-                   ...) {
+do_many <- function(species_name,
+                    occurrences,
+                    predictors,
+                    models_dir = "./models",
+                    bioclim = FALSE,
+                    domain = FALSE,
+                    glm = FALSE,
+                    mahal = FALSE,
+                    maxent = FALSE,
+                    rf = FALSE,
+                    svm.k = FALSE,
+                    svm.e = FALSE,
+                    mindist = FALSE,
+                    centroid = FALSE,
+                    brt = FALSE,
+                    ...) {
 
     if (bioclim == T) {
         do_any(

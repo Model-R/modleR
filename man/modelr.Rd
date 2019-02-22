@@ -6,8 +6,8 @@
 \alias{modelr-package}
 \title{modelr: A workflow to perform Environmental Niche Modeling based on dismo.}
 \description{
-The modelr package wraps commonly used enm functions into a three-step
-workflow: do_enm, final_models and ensemble.
+The modelr package wraps commonly used enm functions into a four-step
+workflow: setup_sdmdata, do_(m)any, final_models and ensemble.
 }
 \section{modelr functions}{
 

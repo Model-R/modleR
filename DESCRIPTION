@@ -6,10 +6,12 @@ Authors@R: c(
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3521-4338")),
     person("Guilherme", "Gall", email = "gmgall@gmail.com", 
     role = c("aut")),
+    person("Diogo", "Rocha", email = "diogosbr@gmail.com", 
+    role = c("aut")),
+    person("Sara", "Mortara", email = "saramortara@gmail.com", 
+    role = c("aut")),
     person("Felipe", "Barros", email = "felipe.b4rros@gmail.com", 
     role = c("aut")),
-    person("Diogo", "Rocha", email = "diogosbr@gmail.com", 
-    role = c("aut")),    
     person("Tiago", "Castro Silva", email = "tiago.castro.icmbio@gmail.com", 
     role = c("ctb"))
     )

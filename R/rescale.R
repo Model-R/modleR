@@ -5,7 +5,7 @@
 #' @return A RasterStack or Rasterlayer with values between 0 and 1.
 #' @author Diogo S. B. Rocha
 #' @examples
-#' rescale.layer(example_vars)
+#' rescale_layer(example_vars)
 #' @import raster
 #' @export
 rescale_layer <- function(layers) {

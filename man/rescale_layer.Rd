@@ -16,7 +16,7 @@ A RasterStack or Rasterlayer with values between 0 and 1.
 This function rescales rasters to values between 0 and 1.
 }
 \examples{
-rescale.layer(example_vars)
+rescale_layer(example_vars)
 }
 \author{
 Diogo S. B. Rocha

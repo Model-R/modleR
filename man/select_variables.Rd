@@ -5,7 +5,7 @@
 \title{Helper function to select environmental variables from a stack.}
 \usage{
 select_variables(species_name = species_name, models_dir = "./models",
-  predictors = predictors, buffer = NULL, cutoff = 0.8,
+  predictors = example_vars, buffer = NULL, cutoff = 0.8,
   percent = 0.8, ...)
 }
 \arguments{
@@ -39,7 +39,7 @@ occ <- coord1sp[,c(2,3)]
 ## using coord1sp to create buffer w/ mean distance between points
 buf <- create_buffer(occ, buffer_type="mean", example_vars)
 # running select_variables w/ output from create_buffer
-select_variables(predictors=example_vars)
+select_variables(predictors = example_vars)
 }
 \seealso{
 \code{\link[ModelR]{create_buffer}}
