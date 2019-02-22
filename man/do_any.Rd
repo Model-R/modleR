@@ -2,7 +2,7 @@
 % Please edit documentation in R/any_model.R
 \name{do_any}
 \alias{do_any}
-\title{Fits ecological niche models using any dismo algorithm.}
+\title{Fits ecological niche models using several algorithms.}
 \usage{
 do_any(species_name, occurrences, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE,
@@ -20,7 +20,8 @@ do_any(species_name, occurrences, predictors, models_dir = "./models",
 \item{models_dir}{Folder path to save the output files}
 
 \item{algo}{The algorithm to be fitted \code{c("bioclim", "maxent","domain",
-"mahal", "glm", "svm.k","svm.e","rf")}}
+"mahal", "glm", "svm.k", "svm.e",
+ "rf", "brt", "mindist", "centroid")}}
 
 \item{project_model}{Logical, whether to perform a projection}
 
@@ -34,8 +35,9 @@ folders with the projection datasets, ex. "./env/proj/proj1"}
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png) should be written}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
-calculated using the "mean", "median", "maximum" distance between occurrence points, or an absolute "distance". If set to "distance",
-        "dist_buf" needs to be specified. If set to "user", "buffer_shape" needs to be specified.}
+calculated using the "mean", "median", "maximum" distance between occurrence
+points, or an absolute "distance". If set to "distance", "dist_buf" needs to
+be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
@@ -50,7 +52,7 @@ equalized in randomForest and brt.}
 A data frame with the evaluation statistics (TSS, AUC, etc.)
 }
 \description{
-Fits ecological niche models using any dismo algorithm.
+Fits ecological niche models using several algorithms.
 }
 \seealso{
 \code{\link[dismo]{bioclim}}

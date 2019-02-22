@@ -1,4 +1,4 @@
-#' modelr: A workflow to perform Environmental Niche Modeling based on dismo
+#' modelr: A workflow to perform Environmental Niche Modeling based on dismo.
 #'
 #' The modelr package wraps commonly used enm functions into a three-step
 #' workflow: do_enm, final_models and ensemble.

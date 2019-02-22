@@ -9,10 +9,10 @@ setup_sdmdata(species_name = species_name, occurrences = occurrences,
   real_absences = NULL, lon = "lon", lat = "lat",
   buffer_type = NULL, dist_buf = NULL, buffer_shape = NULL,
   seed = NULL, clean_dupl = T, clean_nas = F, clean_uni = T,
-  geo_filt = F, geo_filt_dist = NULL, plot_sdmdata = T,
-  n_back = 1000, partition_type = c("bootstrap"), boot_n = 1,
-  boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL,
-  equalize = NULL, ...)
+  geo_filt = F, geo_filt_dist = NULL, select_variables = F,
+  percent_correlation = 0.8, plot_sdmdata = T, n_back = 1000,
+  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
+  cv_n = NULL, cv_partitions = NULL, equalize = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -40,13 +40,9 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{seed}{For reproducibility purposes}
 
-\item{clean_dupl}{Logical, delete duplicate occurrence points? defaults to
-TRUE
-@param clean_uni Logical, selecting spatially unique points. Only one point per pixel. defaults to
-TRUE}
+\item{clean_dupl}{logical. If TURE removes points with the same longitude and latitude}
 
-\item{clean_nas}{Logical, delete occurrence points with no environmental
-information? Defaults to FALSE and can take a while for large datasets}
+\item{clean_nas}{logical. If TURE removes points that are outside the bounds of the raster}
 
 \item{clean_uni}{logical. If TURE selects only one point per pixel}
 

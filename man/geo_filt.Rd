@@ -2,7 +2,7 @@
 % Please edit documentation in R/geo_filt.R
 \name{geo_filt}
 \alias{geo_filt}
-\title{Excludes occurrence points within a geographic distance}
+\title{Excludes occurrence points within a geographic distance.}
 \usage{
 geo_filt(occurrences, min_distance = 10)
 }
@@ -15,7 +15,7 @@ geo_filt(occurrences, min_distance = 10)
 Table of occurrence points with minimum distance indicated in min.distance
 }
 \description{
-Excludes occurrence points within a geographic distance
+Excludes occurrence points within a geographic distance.
 }
 \references{
 Varela, S., Anderson, R. P., García-Valdés, R., &

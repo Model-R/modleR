@@ -4,7 +4,7 @@
 \name{modelr}
 \alias{modelr}
 \alias{modelr-package}
-\title{modelr: A workflow to perform Environmental Niche Modeling based on dismo}
+\title{modelr: A workflow to perform Environmental Niche Modeling based on dismo.}
 \description{
 The modelr package wraps commonly used enm functions into a three-step
 workflow: do_enm, final_models and ensemble.

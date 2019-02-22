@@ -1,4 +1,4 @@
-#' Crop environmental raster based on specific buffer
+#' Crop environmental raster based on specific buffer.
 #'
 #' @param modelo raster with the ecological niche model
 #' @param mask shapefile object to be used as mask for cropping the model

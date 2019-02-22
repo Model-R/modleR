@@ -1,4 +1,4 @@
-#' Excludes occurrence points within a geographic distance
+#' Excludes occurrence points within a geographic distance.
 #'
 #' @param occurrences data.frame. Table with the species' data. It should contain only two columns: lon and lat, in that order.
 #' @param min_distance numeric. Minimum distance (in Km) between points.
