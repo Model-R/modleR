@@ -8,6 +8,7 @@
 #' @inheritParams rescale_layer
 #' @inheritParams clean
 #' @inheritParams geo_filt
+#' @inheritParams select_variables
 #' @param species_name A character string with the species name
 #' @param occurrences A data frame with occurrence data
 #' @param lon the name of the longitude column. defaults to "lon"
@@ -17,6 +18,8 @@
 #' @param real_absences User-defined absence points
 #' @param geo_filt Logical, delete occurrence that are too close?
 #' @param geo_filt_dist The distance of the geographic filter (in kilometers)
+#' @param select_variables Logical. Whether a call to \link{select_variables}
+#' should be performed. cutoff and percent parameters can be specified
 #' @param models_dir Folder path to save the output files
 #' @param plot_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points
@@ -35,11 +38,8 @@
 #' the associated environmental variables.
 #' @author Andrea Sánchez-Tapia
 #' @examples
-#' predictors <- example_vars
-#' species = unique(coordenadas$sp)
-#' setup_sdmdata(species_name = species[1], occurrences = coordenadas[-1], predictors = predictors, models_dir = './models_dir',
-#' real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"),
-#' cv_n = 1, cv_partitions = 3, equalize = T)
+#' sp <- unique(coordenadas$sp)[1]
+#' setup_sdmdata(sp, coordenadas[sp == sp,], example_vars)
 #'
 #' @seealso \code{\link[dismo]{gridSample}}
 
@@ -47,24 +47,27 @@
 #'
 #'
 # tabela de valores
-setup_sdmdata <- function(species_name = species_name,
-                          occurrences = occurrences,
-                          predictors = predictors,
-                          models_dir = models_dir,
+setup_sdmdata <- function(species_name,
+                          occurrences,
+                          predictors,
+                          models_dir = "./models",
                           real_absences = NULL,
                           lon = "lon",
                           lat = "lat",
                           buffer_type = NULL,
                           dist_buf = NULL,
+                          dist_min = NULL,
                           buffer_shape = NULL,
+                          write_buffer = F,
                           seed = NULL,
-                          clean_dupl = T,
-                          clean_nas = F,
-                          clean_uni = T,
-                          geo_filt = F,
+                          clean_dupl = FALSE,
+                          clean_nas = FALSE,
+                          clean_uni = FALSE,
+                          geo_filt = FALSE,
                           geo_filt_dist = NULL,
                           select_variables = F,
-                          percent_correlation = 0.8,
+                          cutoff = 0.8,
+                          percent = 0.8,
                           plot_sdmdata = T,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
@@ -93,9 +96,9 @@ setup_sdmdata <- function(species_name = species_name,
     #writes some original metadata that will be modified later
     original_n <- nrow(occurrences)
     original_n_back <- n_back
-    original_predictors <- paste(names(predictors), collapse = '-')
+    original_predictors <- paste(names(predictors), collapse = "-")
 
-        #checking metadata
+        #checking metadata----
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
         metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
@@ -111,9 +114,9 @@ setup_sdmdata <- function(species_name = species_name,
             seed = ifelse(is.null(seed), NA, seed),
             res.x = res(predictors)[1],
             res.y = res(predictors)[2],
-            clean_dupl = clean_dupl,
-            clean_nas = clean_nas,
-            clean_uni = clean_uni,
+            clean_dupl = ifelse(is.null(clean_dupl), NA, clean_dupl),
+            clean_nas = ifelse(is.null(clean_nas), NA, clean_nas),
+            clean_uni = ifelse(is.null(clean_uni), NA, clean_uni),
             geo_filt = geo_filt,
             geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
             models_dir = models_dir,
@@ -129,15 +132,15 @@ setup_sdmdata <- function(species_name = species_name,
             if (all(all.equal(metadata_old, metadata_new) == T)) {
             message("same metadata, no need to run data partition")
             sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
+            #class(sdmdata) <- "sdmdata"
+            #class(sdmdata) <- "data.frame"
             return(sdmdata)
             }
     }
-    message("performing data partition")
 
+    ##cleaning occurrences with clean and geo_filt----
     occurrences <-
         clean(occurrences,
-              lon = lon,
-              lat = lat,
               predictors,
               clean_dupl = clean_dupl,
               clean_nas = clean_nas,
@@ -146,17 +149,15 @@ setup_sdmdata <- function(species_name = species_name,
     if (geo_filt == TRUE) {
         message("applying a geographical filter")
         occurrences <-
-            geo_filt(occurrences = occurrences, min_distance = geo_filt_dist)
+            geo_filt(occurrences = occurrences,
+                     min_distance = geo_filt_dist)
     }
     final_n <- nrow(occurrences)
 
 
     #background selection:
-    #first option: user-supplied background
-    if (!is.null(real_absences)) {
-        backgr <- real_absences[, c(lon, lat)]
-    } else {
-        #second option: there is a buffer
+
+        #first option: there is a buffer
         if (!is.null(buffer_type)) {
             if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
                 message("creating buffer")
@@ -165,18 +166,28 @@ setup_sdmdata <- function(species_name = species_name,
                                         species_name = species_name,
                                         buffer_type = buffer_type,
                                         predictors = predictors,
-                                        dist_buf = dist_buf,
+                                        dist_buf = dist_buf,#tiene que estar
                                         dist_min = dist_min,
+                                        buffer_shape = buffer_shape,
+                                        write_buffer = write_buffer,
                                         ...)
-            }
+
             # third option: there is no buffer
-        } else {
-            buffer_type <- "no"
-            pbuffr <- predictors[[1]]
+            } else {
+            warning("buffer_type not recognized, returning predictors")
+                pbuffr <- predictors # second option, there is no buffer
         }
-        #before sampling pseudoabsence points
+            }
+    else pbuffr <- predictors # second option, there is no buffer
+
+    #third option: user-supplied absences
+    if (!is.null(real_absences)) {
+        backgr <- real_absences[, c(lon, lat)]
+        n_back_mod <- nrow(backgr)
+    } else {
+        #fourth option: sampling pseudoabsence points
                 #checks if there will be enough cells to sample pseudoabsences from
-                vals <- values(pbuffr)
+                vals <- values(pbuffr[[1]])
                 available_cells <- sum(!is.na(vals)) - nrow(occurrences)
                 # and corrects accordingly
                 if (available_cells < n_back) {
@@ -193,18 +204,18 @@ setup_sdmdata <- function(species_name = species_name,
                                               n = n_back_mod,
                                               p = occurrences,
                                               excludep = T)
-    colnames(backgr) <- c("lon", "lat")
     }
+    colnames(backgr) <- c("lon", "lat")
 
     # Seleccionando variables if sel_vars ==T
     if (select_variables == T) {
+    message(paste("selecting variables...", "\n"))
         predictors <- select_variables(species_name = species_name,
                                        predictors = predictors,
                                        models_dir = models_dir,
                                        buffer = pbuffr,
                                        cutoff = cutoff,
-                                       percent = percent_correlation)
-
+                                       percent = percent)
         }
     # tabela de valores
     message("extracting environmental data")
@@ -220,12 +231,11 @@ setup_sdmdata <- function(species_name = species_name,
         }
 
     pa <- c(rep(1, nrow(presvals)), rep(0, nrow(backvals)))
-
     pres <- cbind(occurrences, presvals)
     back <- cbind(backgr, backvals)
-    coord_env_all <- rbind(pres, back)
-    sdmdata <- cbind(pa, coord_env_all)
+    sdmdata <- cbind(pa, rbind(pres, back))
     # Data partition-----
+    message("performing data partition")
     #Crossvalidation, repetated crossvalidation and jacknife
     #if (crossvalidation == TRUE) {
     if (partition_type == "crossvalidation") {
@@ -295,13 +305,13 @@ setup_sdmdata <- function(species_name = species_name,
     if (exists("group.all"))   sdmdata <- data.frame(group.all, sdmdata)
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
-    message("saving sdmdata")
+    message(paste("saving sdmdata", "\n"))
     write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
 
 
 
     if (plot_sdmdata) {
-        message("Plotting the dataset...", '\n')
+        message(paste("Plotting the dataset...", "\n"))
         png(filename = paste0(partition.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
@@ -316,7 +326,7 @@ setup_sdmdata <- function(species_name = species_name,
     metadata <- data.frame(
         species_name = as.character(species_name),
         select_variables = select_variables,
-        selected_predictors = paste(names(predictors), collapse = '-'),
+        selected_predictors = paste(names(predictors), collapse = "-"),
         original.n = original_n,
         final.n = final_n,
         original.n.back = original_n_back,
@@ -326,9 +336,9 @@ setup_sdmdata <- function(species_name = species_name,
         seed = ifelse(is.null(seed), NA, seed),
         res.x = res(predictors)[1],
         res.y = res(predictors)[2],
-        clean_dupl = clean_dupl,
-        clean_nas = clean_nas,
-        clean_uni = clean_uni,
+        clean_dupl = ifelse(is.null(clean_dupl), NA, clean_dupl),
+        clean_nas = ifelse(is.null(clean_nas), NA, clean_nas),
+        clean_uni = ifelse(is.null(clean_uni), NA, clean_uni),
         geo_filt = geo_filt,
         geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
         models_dir = models_dir,
@@ -339,13 +349,8 @@ setup_sdmdata <- function(species_name = species_name,
         cv_n = ifelse(is.null(cv_n), NA, cv_n),
         equalize = ifelse(is.null(equalize), NA, equalize)
     )
-    message("saving metadata")
+    message(paste("saving metadata"), "\n")
     write.table(metadata, file = paste0(partition.folder, "/metadata.txt"))
-
-
-    rm(coord_env_all)
-    rm(pres)
-    rm(back)
-    gc()
+    #class(sdmdata) <- c("sdmdata", "data.frame")
     return(sdmdata)
 }

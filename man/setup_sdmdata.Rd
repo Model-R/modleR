@@ -7,12 +7,13 @@
 setup_sdmdata(species_name, occurrences, predictors,
   models_dir = "./models", real_absences = NULL, lon = "lon",
   lat = "lat", buffer_type = NULL, dist_buf = NULL,
-  buffer_shape = NULL, seed = NULL, clean_dupl = FALSE,
-  clean_nas = FALSE, clean_uni = FALSE, geo_filt = FALSE,
-  geo_filt_dist = NULL, select_variables = F, plot_sdmdata = T,
-  n_back = 1000, partition_type = c("bootstrap"), boot_n = 1,
-  boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL,
-  equalize = NULL, ...)
+  dist_min = NULL, buffer_shape = NULL, write_buffer = F,
+  seed = NULL, clean_dupl = FALSE, clean_nas = FALSE,
+  clean_uni = FALSE, geo_filt = FALSE, geo_filt_dist = NULL,
+  select_variables = F, cutoff = 0.8, percent = 0.8,
+  plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
+  boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
+  cv_partitions = NULL, equalize = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -36,7 +37,11 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
+\item{dist_min}{Optional, a distance in km for the exclusion buffer.}
+
 \item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
+
+\item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
 
 \item{seed}{For reproducibility purposes}
 
@@ -52,6 +57,10 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{select_variables}{Logical. Whether a call to \link{select_variables}
 should be performed. cutoff and percent parameters can be specified}
+
+\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.}
+
+\item{percent}{percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
