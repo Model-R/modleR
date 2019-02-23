@@ -17,7 +17,7 @@
 #' @author Diogo S.B. Rocha
 #' @author Sara Mortara
 #' @return A buffer around the occurrence points
-#' @details The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
+#' @details It will return a raster object with the same resolution and extent, and cropped by the predictors stack.
 #' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseudo-absence data for presence-only distribution modeling: How far should you stray from what you know? Ecological Modelling, 220(4), 589-594. doi:10.1016/j.ecolmodel.2008.11.010
 #' @seealso \code{\link[raster]{buffer}}
 #' @seealso \code{\link[dismo]{randomPoints}}
@@ -26,26 +26,27 @@
 #' library(dplyr)
 #' species <- sort(unique(coordenadas$sp))
 #' occs <- coordenadas %>% filter(sp == species[1]) %>% dplyr::select(lon, lat)
-#' buf <- create_buffer(occs, "mean", example_vars)
+#' buf <- create_buffer(species[1], occs, example_vars)
 #' plot(buf)
 #'
 #' @import raster
 #' @importFrom dismo randomPoints
 #' @importFrom rgeos gBuffer
 #' @export
-create_buffer <- function(occurrences,
-                          buffer_type = NULL,
+create_buffer <- function(species_name,
+                          occurrences,
                           predictors,
+                          buffer_type = "median",
                           dist_buf = NULL,
                           dist_min = NULL,
                           buffer_shape = NULL,
                           models_dir = "./models",
-                          species_name,
                           write_buffer = F,
                           ...) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
-    if (is.null(buffer_type) | !buffer_type %in% c("distance", "mean", "median", "max", "user")) {
+    if (is.null(buffer_type) |
+        !buffer_type %in% c("distance", "mean", "median", "max", "user")) {
         warning("buffer_type NULL or not recognized, returning predictors")
         r_buffer <- predictors
         return(r_buffer)
@@ -80,7 +81,9 @@ create_buffer <- function(occurrences,
     r_buffer <- raster::crop(predictors, buffer.shape)
 
     if (is.numeric(dist_min)) {
-        if (dist_min <= dist.buf) {stop("dist_min is higher than dist.buf")}
+        if (dist_min <= dist.buf) {
+            stop("dist_min is higher than dist.buf")
+            }
         buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
                                            byid = F, width = dist_min)
 
@@ -92,7 +95,7 @@ create_buffer <- function(occurrences,
         partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
         if (file.exists(partition.folder) == FALSE)
             dir.create(partition.folder, recursive = T)
-        writeRaster(r_buffer, filename = paste0(partition.folder,"/buffer"), format = "GTiff", ...)
+        writeRaster(r_buffer, filename = paste0(partition.folder, "/buffer"), format = "GTiff", ...)
     }
     return(r_buffer)
 }

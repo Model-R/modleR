@@ -1,6 +1,6 @@
 #' Excludes occurrence points within a geographic distance.
 #'
-#' @param occurrences data.frame. Table with the species' data. It should contain only two columns: lon and lat, in that order.
+#' @param occurrences data.frame. Table with the species" data. It should contain only two columns: lon and lat, in that order.
 #' @param min_distance numeric. Minimum distance (in Km) between points.
 #' @return Table of occurrence points with minimum distance indicated in min.distance
 #' @author Diogo S. B. Rocha
@@ -12,14 +12,15 @@
 #'
 #' @importFrom dismo gridSample
 #' @export
-geo_filt <- function(occurrences, min_distance = 10) {
-    res  <-  min_distance * 0.008333333
-    r <- raster::raster(extent(range(occurrences[,1]),
-                               range(occurrences[,2])) + res)
+geo_filt <- function(occurrences,
+                     min_distance = 10) {
+    res <- min_distance * 0.008333333
+    r <- raster::raster(extent(range(occurrences[, 1]),
+                               range(occurrences[, 2])) + res)
     res(r) <- res
     pts <- dismo::gridSample(occurrences, r, n = 1)
     message(paste0(dim(pts)[1],
-               ' Points remaining after the geographic filter of ',
-               min_distance , "km", '\n'))
+               " Points remaining after the geographic filter of ",
+               min_distance , "km", "\n"))
     return(pts)
 }

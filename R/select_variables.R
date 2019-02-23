@@ -4,33 +4,29 @@
 #'
 #' @param species_name A character string with the species name
 #' @param predictors Stack of environmental variables
-#' @param models_dir Character name of output directory where the
-#'  buffer created with create_buffer() is
-#' @param buffer Shapefile specified by user or use NULL to use the output from create_buffer()
+#' @param buffer Raster specified by the user or output from create_buffer()
 #' @param cutoff Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.
+#' @param percent percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters
 #' @param ... parameters from create_buffer()
 #' @return A raster stack of independent environmental variables based on a
 #'  specific cutoff
 #' @author Andrea Sánchez-Tapia and Sara Mortara
 #' @seealso \code{\link[ModelR]{create_buffer}}
 #' @import raster
-#' @importFrom caret findCorrelation
 #' @importFrom stats cor
 #' @export
 #' @examples
 #'
-#' # using shapefile from create_buffer()
 #' ## selecting data for only sp1
 #' coord1sp <- coordenadas[coordenadas$sp == unique(coordenadas$sp)[1],]
 #' ## selecting only columns with longitude and latitude
 #' occ <- coord1sp[,c(2,3)]
 #' ## using coord1sp to create buffer w/ mean distance between points
-#' buf <- create_buffer(occ, buffer_type="mean", example_vars)
+#' buf <- create_buffer("foo", occ, example_vars)
 #' # running select_variables w/ output from create_buffer
-#' select_variables(predictors = example_vars)
-select_variables <- function(species_name = species_name,
-                             models_dir = "./models",
-                             predictors = example_vars,
+#' select_variables("foo", predictors = example_vars, buffer = buf)
+select_variables <- function(species_name,
+                             predictors,
                              buffer = NULL,
                              cutoff = 0.8,
                              percent = 0.8,
@@ -61,7 +57,7 @@ select_variables <- function(species_name = species_name,
       excluded <- names(predictors)[exclude.vars]
       retained <- setdiff(names(predictors), excluded)
       final_vars <- raster::subset(predictors, retained, drop = F)
-      message(paste(paste(excluded, collapse = ','), "excluded with cutoff =", cutoff))
+      message(paste(paste(excluded, collapse = ","), "excluded with cutoff =", cutoff))
       } else {
           final_vars <- predictors
           message(paste("No variables were excluded with cutoff =", cutoff))

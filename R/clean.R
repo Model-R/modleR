@@ -19,14 +19,14 @@
 #'
 #' @examples
 #' sp <- unique(coordenadas$sp)[1]
-#' sp.coord <- coordenadas[coordenadas$sp == sp,-1]
+#' sp.coord <- coordenadas[coordenadas$sp == sp, -1]
 #' clean(occurrences = sp.coord, predictors = example_vars)
 #'
 #' @import raster
 #'
 #' @export
 clean <- function(occurrences,
-                  predictors = example_vars,
+                  predictors,
                   clean_dupl = FALSE,
                   clean_nas = FALSE,
                   clean_uni = FALSE) {
@@ -56,7 +56,7 @@ clean <- function(occurrences,
             cell <- raster::cellFromXY(mask, occurrences)
             dup <- duplicated(cell)
             if (any(dup)) {
-                occurrences <- occurrences[!dup,]
+                occurrences <- occurrences[!dup, ]
                 }
         }
 

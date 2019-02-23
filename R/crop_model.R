@@ -9,7 +9,8 @@
 #' @import raster
 #' @export
 
-crop_model <- function(modelo, mask) {
+crop_model <- function(modelo,
+                       mask) {
     modelo <- raster::crop(modelo, mask)
     modelo <- raster::mask(modelo, mask)
     return(modelo)
