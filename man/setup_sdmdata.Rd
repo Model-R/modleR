@@ -4,15 +4,15 @@
 \alias{setup_sdmdata}
 \title{Prepares the dataset to perform ENM.}
 \usage{
-setup_sdmdata(species_name = species_name, occurrences = occurrences,
-  predictors = predictors, models_dir = models_dir,
-  real_absences = NULL, lon = "lon", lat = "lat",
-  buffer_type = NULL, dist_buf = NULL, buffer_shape = NULL,
-  seed = NULL, clean_dupl = T, clean_nas = F, clean_uni = T,
-  geo_filt = F, geo_filt_dist = NULL, select_variables = F,
-  percent_correlation = 0.8, plot_sdmdata = T, n_back = 1000,
-  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
-  cv_n = NULL, cv_partitions = NULL, equalize = NULL, ...)
+setup_sdmdata(species_name, occurrences, predictors,
+  models_dir = "./models", real_absences = NULL, lon = "lon",
+  lat = "lat", buffer_type = NULL, dist_buf = NULL,
+  buffer_shape = NULL, seed = NULL, clean_dupl = FALSE,
+  clean_nas = FALSE, clean_uni = FALSE, geo_filt = FALSE,
+  geo_filt_dist = NULL, select_variables = F, plot_sdmdata = T,
+  n_back = 1000, partition_type = c("bootstrap"), boot_n = 1,
+  boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL,
+  equalize = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -50,6 +50,9 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
 
+\item{select_variables}{Logical. Whether a call to \link{select_variables}
+should be performed. cutoff and percent parameters can be specified}
+
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
 \item{n_back}{Number of pseudoabsence points}
@@ -82,11 +85,8 @@ data partitioning and the pseudo-absence point sampling, and saves the
 metadata and sdmdata files into the hard disk.
 }
 \examples{
-predictors <- example_vars
-species = unique(coordenadas$sp)
-setup_sdmdata(species_name = species[1], occurrences = coordenadas[-1], predictors = predictors, models_dir = './models_dir',
-real_absences = NULL, seed = 55, clean_dupl = T, clean_nas = T, clean_uni = T, partition_type = c("crossvalidation"),
-cv_n = 1, cv_partitions = 3, equalize = T)
+sp <- unique(coordenadas$sp)[1]
+setup_sdmdata(sp, coordenadas[sp == sp,], example_vars)
 
 }
 \seealso{

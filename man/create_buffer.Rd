@@ -4,19 +4,22 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer.}
 \usage{
-create_buffer(occurrences, buffer_type = NULL, predictors,
-  dist_buf = NULL, dist_min = NULL, buffer_shape = NULL,
-  models_dir = "./models", species_name, write_buffer = F, ...)
+create_buffer(species_name, occurrences, predictors,
+  buffer_type = "median", dist_buf = NULL, dist_min = NULL,
+  buffer_shape = NULL, models_dir = "./models", write_buffer = F,
+  ...)
 }
 \arguments{
+\item{species_name}{A character string with the species name}
+
 \item{occurrences}{A data frame with occurrence data}
+
+\item{predictors}{A RasterStack of predictor variables}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
 calculated using the "mean", "median", "maximum" distance between occurrence
 points, or an absolute "distance". If set to "distance", "dist_buf" needs to
 be specified. If set to "user", "buffer_shape" needs to be specified.}
-
-\item{predictors}{A RasterStack of predictor variables}
 
 \item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
@@ -25,8 +28,6 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 \item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
 
 \item{models_dir}{Folder path to save the output files}
-
-\item{species_name}{A character string with the species name}
 
 \item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
 
@@ -41,14 +42,14 @@ A buffer around the occurrence points
 Samples pseudoabsences inside a geographic buffer.
 }
 \details{
-The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
+It will return a raster object with the same resolution and extent, and cropped by the predictors stack.
 }
 \examples{
 library(raster)
 library(dplyr)
 species <- sort(unique(coordenadas$sp))
 occs <- coordenadas \%>\% filter(sp == species[1]) \%>\% dplyr::select(lon, lat)
-buf <- create_buffer(occs, "mean", example_vars)
+buf <- create_buffer(species[1], occs, example_vars)
 plot(buf)
 
 }

@@ -7,7 +7,7 @@
 geo_filt(occurrences, min_distance = 10)
 }
 \arguments{
-\item{occurrences}{data.frame. Table with the species' data. It should contain only two columns: lon and lat, in that order.}
+\item{occurrences}{data.frame. Table with the species" data. It should contain only two columns: lon and lat, in that order.}
 
 \item{min_distance}{numeric. Minimum distance (in Km) between points.}
 }

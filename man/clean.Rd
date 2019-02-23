@@ -4,9 +4,8 @@
 \alias{clean}
 \title{Clean the occurrence records.}
 \usage{
-clean(occurrences, lon = "lon", lat = "lat",
-  predictors = example_vars, clean_dupl = TRUE, clean_nas = F,
-  clean_uni = F)
+clean(occurrences, predictors, clean_dupl = FALSE, clean_nas = FALSE,
+  clean_uni = FALSE)
 }
 \arguments{
 \item{occurrences}{data.frame with the coordinates}
@@ -30,7 +29,7 @@ Used internally in function \code{\link[modelr]{setup_sdmdata}}.
 }
 \examples{
 sp <- unique(coordenadas$sp)[1]
-sp.coord <- coordenadas[coordenadas$sp == sp,-1]
+sp.coord <- coordenadas[coordenadas$sp == sp, -1]
 clean(occurrences = sp.coord, predictors = example_vars)
 
 }

@@ -85,10 +85,10 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-library(ModelR)
+#library(ModelR)
 library(rJava) 
 library(raster)
-#devtools::load_all()
+devtools::load_all()
 head(coordenadas)
 species <- sort(unique(coordenadas$sp))
 species
@@ -148,18 +148,27 @@ Pseudoabsence sampling has also some options:
 
 
 ```{r sdmdata1sp, eval = T}
+test_folder <- "~/modelR_test"
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              occurrences = occs,
                              predictors = example_vars,
-                             clean_nas = T,
-                             models_dir = "~/modelR_test/1species",
+                             models_dir = test_folder,
                              partition_type = "crossvalidation",
                              cv_partitions = 5,
                              cv_n = 1,
                              seed = 512,
                              buffer_type = "mean",
                              plot_sdmdata = T,
-                             n_back = 500)
+                             n_back = 500,
+                             clean_dupl = F,
+                             clean_uni = F,
+                             clean_nas = F,
+                             geo_filt = F, 
+                             geo_filt_dist = 10,
+                             select_variables = T, 
+                             percent = 0.5,
+                             cutoff = 0.7
+                             )
 ```
 
 + The function will return a `sdmdata` data frame, with the groups for training and test in bootstrap or crossvalidation, a `pa` vector that marks presences and absences, and the environmental dataset. This same dataframe will be written in the hard disk, as `sdmdata.txt`
@@ -199,17 +208,32 @@ args(do_many)
 
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
 
+
+```{r do_any, echo = T, eval = T}
+do_any(species_name = species[1],
+       sdmdata = sdmdata_1sp,
+       occurrences = occs,
+       algo = "maxent",
+       #partition_type = "bootstrap",
+       seed = 512,
+       buffer_type = "mean",
+       predictors = example_vars,
+       plot_sdmdata = T,
+       models_dir = test_folder,,
+       write_png = T,
+       write_bin_cut = F,
+       n_back = 500,
+       equalize = T)
+```
+
+
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
 ```{r do_many, echo = T, eval = T}
-test_folder <- "~/modelR_test/all_algo"
 do_many(species_name = species[1],
+       sdmdata = sdmdata_1sp,
        occurrences = occs,
-       partition_type = "bootstrap",
-       boot_proportion = 0.8, 
-       boot_n = 5,
-       cv_partitions = 5,
-       cv_n = 1,
+       #partition_type = "bootstrap",
        seed = 512,
        buffer_type = "mean",
        predictors = example_vars,
@@ -223,7 +247,7 @@ do_many(species_name = species[1],
        glm = T,
        svm.k = T,
        svm.e = T, 
-       maxent = F,
+       maxent = T,
        rf = T,
        mahal = F, 
        brt = T, 
@@ -308,13 +332,13 @@ args(final_model)
 
 ```{r final, echo = T, eval = T}
 final_model(species_name = species[1],
-            select_partitions = T,
-            select_par_val = 0.5,
-            consensus_level = 0.5,
-            weight_par = NULL,
             models_dir = test_folder,
-            #which_models = c("bin_consensus", "cut_mean", "final_model_weighted_TSS"))
+            select_partitions = TRUE,
+            select_par = "TSS",
+            select_par_val = 0,
+            consensus_level = 0.5,
             which_models = c("raw_mean"),
+            uncertainty = F,
             overwrite = T)
 ```
 
@@ -329,11 +353,11 @@ final.folder <- list.files(test_folder,
                            include.dirs = T,
                            full.names = T)
 final.folder
-final_mods <- list.files(final.folder, full.names = T, pattern = "tif$")
+final_mods <- list.files(final.folder, full.names = T, pattern = "tif$", recursive = T)
 final_mods
 ```
 
-```{r plot_final, fig.width = 7, fig.height = 6, eval = T}
+```{r plot_final, fig.width = 7, fig.height = 6, eval = F}
 library(raster)
 final_models <- stack(final_mods)
 library(stringr)
@@ -359,18 +383,15 @@ ens <- ensemble_model(species[1],
 At any point we can explore the outputs in the folders: 
 
 ```{r check_ensemble, fig.width = 5, fig.height = 5, eval= T}
-ensemble_files <-  list.files(paste0(test_folder,"/Abarema langsdorffii (Benth.) Barneby & J.W.Grimes/present/ensemble"),
+ensemble_files <-  list.files(paste0(test_folder,"/", species[1],"/present/ensemble"),
                               recursive = T,
                               pattern = "raw_mean.+tif",
                               full.names = T)
 
 ensemble_files
 ens_mod <- raster::stack(ensemble_files)
-names(ens_mod) <- c("mean", "median", "st. dev")
+names(ens_mod) <- c("mean", "median", "range", "st.dev")
 raster::plot(ens_mod)
-plot(ens_mod[[2]])
-maps::map( , , add = T)
-points(occs, pch = ".", col = "red")
 ```
 
 

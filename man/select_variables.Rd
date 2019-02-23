@@ -4,21 +4,19 @@
 \alias{select_variables}
 \title{Helper function to select environmental variables from a stack.}
 \usage{
-select_variables(species_name = species_name, models_dir = "./models",
-  predictors = example_vars, buffer = NULL, cutoff = 0.8,
+select_variables(species_name, predictors, buffer = NULL, cutoff = 0.8,
   percent = 0.8, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{models_dir}{Character name of output directory where the
-buffer created with create_buffer() is}
-
 \item{predictors}{Stack of environmental variables}
 
-\item{buffer}{Shapefile specified by user or use NULL to use the output from create_buffer()}
+\item{buffer}{Raster specified by the user or output from create_buffer()}
 
 \item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.}
+
+\item{percent}{percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters}
 
 \item{...}{parameters from create_buffer()}
 }
@@ -31,15 +29,14 @@ This function takes a stack of environmental variables and the calibration area.
 }
 \examples{
 
-# using shapefile from create_buffer()
 ## selecting data for only sp1
 coord1sp <- coordenadas[coordenadas$sp == unique(coordenadas$sp)[1],]
 ## selecting only columns with longitude and latitude
 occ <- coord1sp[,c(2,3)]
 ## using coord1sp to create buffer w/ mean distance between points
-buf <- create_buffer(occ, buffer_type="mean", example_vars)
+buf <- create_buffer("foo", occ, example_vars)
 # running select_variables w/ output from create_buffer
-select_variables(predictors = example_vars)
+select_variables("foo", predictors = example_vars, buffer = buf)
 }
 \seealso{
 \code{\link[ModelR]{create_buffer}}

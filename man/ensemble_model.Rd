@@ -8,8 +8,7 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   models_dir = "./models", final_dir = "final_models",
   ensemble_dir = "ensemble", proj_dir = "present",
   which_models = c("raw_mean"), consensus = FALSE,
-  consensus_level = 0.5, write_png = T, scale_models = TRUE,
-  write_raw_map = F)
+  consensus_level = 0.5, write_png = T, scale_models = TRUE)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -55,8 +54,6 @@ to execute the function in projected models)}
 \item{write_png}{Write png? Defaults to TRUE}
 
 \item{scale_models}{Logical. If TRUE (default), sets the values of the input models between 0 and 1.}
-
-\item{write_raw_map}{Create a mean raw map without margins}
 }
 \value{
 A rasterStack with the minimun, maximum, median, mean and standard

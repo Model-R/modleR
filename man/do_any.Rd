@@ -4,14 +4,17 @@
 \alias{do_any}
 \title{Fits ecological niche models using several algorithms.}
 \usage{
-do_any(species_name, occurrences, predictors, models_dir = "./models",
-  algo = c("bioclim"), project_model = FALSE,
-  proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
-  write_bin_cut = TRUE, buffer_type = NULL, dist_buf = NULL,
-  conf_mat = TRUE, equalize = TRUE, ...)
+do_any(species_name, sdmdata, occurrences, predictors,
+  models_dir = "./models", algo = c("bioclim"),
+  project_model = FALSE, proj_data_folder = "./data/proj",
+  mask = NULL, write_png = FALSE, write_bin_cut = FALSE,
+  buffer_type = NULL, dist_buf = NULL, conf_mat = TRUE,
+  equalize = TRUE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
+
+\item{sdmdata}{sdmdata object resulting from \link{setup_sdmdata}}
 
 \item{occurrences}{A data frame with occurrence data}
 
@@ -19,8 +22,8 @@ do_any(species_name, occurrences, predictors, models_dir = "./models",
 
 \item{models_dir}{Folder path to save the output files}
 
-\item{algo}{The algorithm to be fitted \code{c("bioclim", "maxent","domain",
-"mahal", "glm", "svm.k", "svm.e",
+\item{algo}{The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
+"mahal", "glm", "svmk", "svme",
  "rf", "brt", "mindist", "centroid")}}
 
 \item{project_model}{Logical, whether to perform a projection}
