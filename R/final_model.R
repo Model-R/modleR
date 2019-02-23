@@ -211,8 +211,13 @@ final_model <- function(species_name,
 #################
 
         if (raster::nlayers(final_algo) != 0) {
-            if (uncertainty == T) which_f <- c(which_models, "raw_uncertainty")#ö check
+            if (uncertainty == T) {
+                which_f <- c(which_models, "raw_uncertainty")
+                } else {
+                    which_f <- which_models
+                }
             which_final <- final_algo[[which_f]]
+
            message(paste("writing models", algo, names(which_final), "\n"))
            if (raster::nlayers(which_final) > 1 ) {
            raster::writeRaster(which_final,
