@@ -8,8 +8,8 @@
 #' @param glm Execute GLM as suggested by the dismo documentation
 #' @param rf Execute random forests from randomForest() as suggested
 #' by the dismo documentation
-#' @param svm.k Execute svm from kernlab package
-#' @param svm.e Execute svm from e1071 package
+#' @param svmk Execute svm from kernlab package
+#' @param svme Execute svm from e1071 package
 #' @param mindist Execute minimum euclidean distance
 #' @param centroid Execute euclidean distance to the environmental centroid
 #' @param brt Execute boosted regression trees
@@ -29,8 +29,8 @@ do_many <- function(species_name,
                     mahal = FALSE,
                     maxent = FALSE,
                     rf = FALSE,
-                    svm.k = FALSE,
-                    svm.e = FALSE,
+                    svmk = FALSE,
+                    svme = FALSE,
                     mindist = FALSE,
                     centroid = FALSE,
                     brt = FALSE,
@@ -39,100 +39,100 @@ do_many <- function(species_name,
     if (bioclim == T) {
         do_any(
             species_name,
-            algo = "bioclim",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "bioclim",
             ...)
     }
     if (domain == T) {
         do_any(
             species_name,
-            algo = "domain",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "domain",
             ...)
     }
     if (glm == T) {
         do_any(
             species_name,
-            algo = "glm",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "glm",
             ...)
     }
     if (mahal == T) {
         do_any(
             species_name,
-            algo = "mahal",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "mahal",
             ...)
     }
     if (maxent == T) {
         do_any(
             species_name,
-            algo = "maxent",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "maxent",
             ...)
     }
     if (rf == T) {
         do_any(
             species_name,
+            occurrences = occurrences,
+            predictors = predictors,
+            models_dir = models_dir,
             algo = "rf",
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             ...)
     }
-    if (svm.k == T) {
+    if (svmk == T) {
         do_any(
             species_name,
-            algo = "svm.k",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "svmk",
             ...)
     }
-    if (svm.e == T) {
+    if (svme == T) {
         do_any(
             species_name,
-            algo = "svm.e",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "svme",
             ...)
     }
     if (mindist == T) {
         do_any(
             species_name,
-            algo = "mindist",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "mindist",
             ...)
     }
     if (centroid == T) {
         do_any(
             species_name,
-            algo = "centroid",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "centroid",
             ...)
     }
     if (brt == T) {
         do_any(
             species_name,
-            algo = "brt",
             occurrences = occurrences,
             predictors = predictors,
             models_dir = models_dir,
+            algo = "brt",
             ...)
     }
 }
