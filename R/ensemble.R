@@ -35,7 +35,6 @@
 #' @param scale_models Logical. If TRUE (default), sets the values of the input models between 0 and 1.
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
-#' @param write_raw_map Create a mean raw map without margins
 #'
 #' @import raster
 #' @importFrom scales alpha
@@ -58,8 +57,7 @@ ensemble_model <- function(species_name,
                            consensus = FALSE,
                            consensus_level = 0.5,
                            write_png = T,
-                           scale_models = TRUE,
-                           write_raw_map = F) {
+                           scale_models = TRUE) {
 
 
     ## output folder
@@ -72,7 +70,7 @@ ensemble_model <- function(species_name,
     for (whi in which_models) {
         cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
         tif.files <- list.files(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                       final_dir),
+                                       final_dir), recursive = T,
                                 full.names = T, pattern = paste0(whi, ".*tif$"))
 
         if (length(tif.files) == 0) {
@@ -85,103 +83,87 @@ ensemble_model <- function(species_name,
             if (scale_models == T) {
                 mod2 <- rescale_layer(mod2)
             }
-            ensemble.mean <- raster::overlay(mod2, fun = function(x) {
-                return(mean(x, na.rm = T))
-                }
-                )
-            ensemble.sd <- raster::overlay(mod2, fun = function(x) {
-                return(sd(x, na.rm = T))
-                }
-                )
-            #ensemble.min <- raster::overlay(mod2, fun = function(x) {
-             #   return(min(x, na.rm = T))
-              #  }
-               # )
-            #ensemble.max <- raster::overlay(mod2, fun = function(x) {
-             #   return(max(x, na.rm = T))
-              #  }
-               # )
-            ensemble.median <- raster::overlay(mod2, fun = function(x) {
-                return(stats::median(x, na.rm = T))
-                }
-                )
+            message("Calculating mean")
+            ensemble.mean <- raster::calc(mod2,
+                                          fun = function(x) {
+                                              mean(x, na.rm = T)
+                                          }
+            )
+            message("Calculating sd")
+            ensemble.sd <- raster::calc(mod2,
+                                        fun = function(x) {
+                                            sd(x, na.rm = T)
+                                        }
+            )
+            # message("Calculating min")
+            # ensemble.min <- raster::calc(mod2,
+            #                              fun = function(x) {
+            #                                  min(x, na.rm = T)
+            #                              }
+            # )
+            # message("Calculating max")
+            # ensemble.max <- raster::calc(mod2,
+            #                              fun = function(x) {
+            #                                  max(x, na.rm = T)
+            #                              }
+            # )
+            message("Calculating median")
+            ensemble.median <- raster::calc(mod2,
+                                            fun = function(x) {
+                                                stats::median(x, na.rm = T)
+                                            }
+            )
+            message("Calculating range")
+            ensemble.inctz <- raster::calc(mod2,
+                                           fun = function(x) {
+                                               max(x) - min(x)
+                                           }
+            )
+            message("Stack results")
             ensemble.mods <- raster::stack(ensemble.mean,
                                            ensemble.median,
-                                           ensemble.sd#,
+                                           ensemble.sd,
                                            #ensemble.min,
-                                           #ensemble.max
+                                           #ensemble.max,
+                                           ensemble.inctz
                                            )
             names(ensemble.mods) <- c("mean",
                                       "median",
-                                      "sd"#,
-                                      #"min", "max"
+                                      "sd",
+                                      #"min",
+                                      #"max",
+                                      "range"
                                       )
 
-            #coord <- occurrences[occurrences$sp == species_name, c("lon", "lat")]
             coord <- occurrences[, c(lon, lat)]
 
             if (write_png) {
+            message("Writing pngs")
+                for (i in 1:dim(ensemble.mods)[3]) {
                 png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/", species_name, "_", whi,
-                                      "_ensemble_mean.png"),
+                                      "_", names(ensemble.mods)[i], ".png"),
                     res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
-                raster::plot(ensemble.mean)
+                raster::plot(ensemble.mods[[i]])
                 maps::map("world",
                           c("", "South America"),
                           add = T,
                           col = "grey")
                 points(coord, pch = 21, cex = 0.6,
                        bg = scales::alpha("cyan", 0.6))
-                dev.off()
-                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name, "_", whi,
-                                      "_ensemble_median.png"),
-                    res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
-                raster::plot(ensemble.median)
-                maps::map("world",
-                          c("", "South America"),
-                          add = T,
-                          col = "grey")
-                points(coord, pch = 21, cex = 0.6,
-                       bg = scales::alpha("cyan", 0.6))
-                dev.off()
-                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name, "_", whi,
-                                      "_ensemble_sd.png"),
-                    res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
-                raster::plot(ensemble.sd)
-                maps::map("world",
-                          c("", "South America"),
-                          add = T,
-                          col = "grey")
-                points(coord, pch = 21, cex = 0.6,
-                       bg = scales::alpha("cyan", 0.6))
-                dev.off()
-            }
-            if (write_raw_map) {
-                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                  ensemble_dir, "/", species_name, "_", whi,
-                                  "_ensemble_without_margins.png"),
-                    bg = "transparent",
-                res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
-                raster::image(ensemble.mean, col = rev(terrain.colors(25)),
-                          axes = F)
-
                 dev.off()
                 }
+            }
 
             raster::writeRaster(ensemble.mods,
                                 filename = paste0(models_dir, "/", species_name,
                                                   "/", proj_dir, "/",
                                                   ensemble_dir, "/", species_name, "_",
-                                                  whi,
-                                                  "_ensemble.tif"),
+                                                  whi),
                                 bylayer = T,
                                 suffix = "names",
+                                format = "GTiff",
                                 overwrite = T)
 
             #### Consensus models
@@ -195,7 +177,6 @@ ensemble_model <- function(species_name,
                                                       "_ensemble", "_meanconsensus",
                                                       consensus_level * 100,
                                                       ".tif"), overwrite = T)
-
 
                 if (write_png) {
                 png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
@@ -212,21 +193,9 @@ ensemble_model <- function(species_name,
                        col = scales::alpha("cyan", 0.6))
                 dev.off()
                 }
-                if (write_raw_map) {
-                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                      ensemble_dir, "/",
-                                       species_name, "_", whi, "_ensemble",
-                                       consensus_level * 100,
-                                      "without_margins.png"),
-                    bg = "transparent",
-                    res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(0, 0, 0, 0))
-                raster::image(ensemble.consensus,
-                              col = rev(terrain.colors(25)), axes = F)
-                dev.off()
-                }
             }
         }
     }
     print(date())
+    return(ensemble.mods)
 }
