@@ -1,4 +1,4 @@
-# ModelR: a workflow for ecological niche models based on dismo
+﻿# ModelR: a workflow for ecological niche models based on dismo
 
 __ModelR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation, bootstrap or jacknife procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others (Elith et al 2006) they are useful in dataset with few occurrences (Kamino et al 2012) and can assist the creation of environmental filters (Varela et al 2014).
 
@@ -148,7 +148,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
     `#> same metadata, no need to run data partition`  
     + If a previous metadata file is found but it has different metadata (i.e. there is an inconsistency between the existing metadata and the current parameters), it will run the function with the current parameters. 
 
-## Fitting a model per partition: `do_any()` and `do_enm()`
+## Fitting a model per partition: `do_any()` and `do_many()`
 
 Functions `do_any` and `do_enm()` create a *model per partition, per algorithm*.
 The difference between these functions that `do_any()` performs modeling for one
@@ -172,25 +172,37 @@ but for parallelization by algorithm it may be better to call `do_any()` individ
 
 ```{r args_do_any_do_enm, eval = T}
 args(do_any)
-args(do_enm)
+args(do_many)
 ```
 
-Calling `do_enm()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
+Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
+
+```{r do_any, echo = T, eval = T}
+do_any(species_name = species[1],
+       sdmdata = sdmdata_1sp,
+       occurrences = occs,
+       algo = "maxent",
+       #partition_type = "bootstrap",
+       seed = 512,
+       buffer_type = "mean",
+       predictors = example_vars,
+       plot_sdmdata = T,
+       models_dir = test_folder,,
+       write_png = T,
+       write_bin_cut = F,
+       n_back = 500,
+       equalize = T)
+```
 
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
-```{r do_enm, echo = T, eval = T}
-test_folder <- "~/modelR_test/all_algo"
-do_enm(species_name = species[1],
+```{r do_many, echo = T, eval = T}
+do_many(species_name = species[1],
+       sdmdata = sdmdata_1sp,
        occurrences = occs,
-       partition_type = "bootstrap",
-       boot_proportion = 0.8, 
-       boot_n = 5,
-       cv_partitions = 5,
-       cv_n = 1,
+       #partition_type = "bootstrap",
        seed = 512,
-       buffer_type = "distance",
-       dist_buf = 5,
+       buffer_type = "mean",
        predictors = example_vars,
        plot_sdmdata = T,
        models_dir = test_folder,
@@ -356,12 +368,12 @@ Our `coordenadas` dataset has data for four species.
 An option to do the several models is to use a `for` loop
 
 ```{r forloop, eval = F}
-args(do_enm)
+args(do_many)
 args(setup_sdmdata)
 especies <- unique(coordenadas$sp)
 for (especie in especies) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
-    do_enm(species_name = especie,
+    do_many(species_name = especie,
            occurrences = occs,
            partition_type = "crossvalidation",
            cv_partitions = 5,
@@ -409,7 +421,7 @@ Another option is to use the `purrr` package (Henry & Wickham 2017):
 ```{r purrr example, eval = F}
 library(purrr)
 coordenadas %>% split(.$sp) %>%
-    purrr::map(~ do_enm(species_name = unique(.$sp),
+    purrr::map(~ do_many(species_name = unique(.$sp),
                         occurrences = .[, c("lon", "lat")],
                         partition_type = "crossvalidation",
                         clean_nas = T,
@@ -419,7 +431,8 @@ coordenadas %>% split(.$sp) %>%
                         buffer_type = "distance",
                         dist_buf = 4,
                         predictors = example_vars,
-                        models_dir = "~/modelR_test/temp_purrr",
+                        models_dir =
+                            "~/modelR_test/temp_purrr",
                         n_back = 500,
                         write_png = T,
                         bioclim = T,
