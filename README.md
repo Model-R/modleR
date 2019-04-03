@@ -24,11 +24,11 @@ A shiny application currently available at: https://github.com/Model-R/Model-R u
 The workflow consists of mainly three functions that should be used sequentially.
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
-2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_enm()` calls `do_any()` to fit multiple algorithms.
+2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
 3. Partition joining: `final_model()` selects and joins the partition models into a model per species per algorithm;  
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model.  
 
-NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_any()` or `do_enm()`. Likewise, `do_enm()` is just a wrapper that will call several instances of `do_any()`.
+NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_any()` or `do_many()`. Likewise, `do_many()` is just a wrapper that will call several instances of `do_any()`.
 
 ## Folder structure created by this package
 
@@ -150,10 +150,10 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 
 ## Fitting a model per partition: `do_any()` and `do_many()`
 
-Functions `do_any` and `do_enm()` create a *model per partition, per algorithm*.
+Functions `do_any` and `do_many()` create a *model per partition, per algorithm*.
 The difference between these functions that `do_any()` performs modeling for one
 individual algorithm at a time, that can be chosen by using parameter `algo`, 
-while `do_enm()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
+while `do_many()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
 
 The available algorithms are:
 
@@ -167,10 +167,10 @@ The available algorithms are:
 Details for the implementation of each model can be accessed in the documentation of the function.
 <!--Ö escrever os detalhes das implementações --> 
 
-Here you can see the differences between the parameters of both functions. `do_enm()` calls several instances of `do_any()` In practice you may only want to call `do_enm()`
+Here you can see the differences between the parameters of both functions. `do_many()` calls several instances of `do_any()` In practice you may only want to call `do_many()`
 but for parallelization by algorithm it may be better to call `do_any()` individually.
 
-```{r args_do_any_do_enm, eval = T}
+```{r args_do_any_do_many, eval = T}
 args(do_any)
 args(do_many)
 ```
