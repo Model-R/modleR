@@ -86,7 +86,7 @@ do_any <- function(species_name,
             #excluding the zero allows for bootstrap. only 1 partition will run
             message(paste(species_name, algo, "run number", i, "part. nb.",
                       g, "\n"))
-            occurrences <- sdmdata[ , c("lon", "lat")]#isto corrige ocorrencias
+            occurrences <- sdmdata[ 1:length(group), c("lon", "lat")]#isto corrige ocorrencias
             pres_train <- occurrences[group != g, ]
             if (nrow(occurrences) == 1)
                 pres_train <- occurrences[group == g, ]

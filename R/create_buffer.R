@@ -81,7 +81,7 @@ create_buffer <- function(species_name,
     r_buffer <- raster::crop(predictors, buffer.shape)
 
     if (is.numeric(dist_min)) {
-        if (dist_min <= dist.buf) {
+        if (dist_min >= dist.buf) {
             stop("dist_min is higher than dist.buf")
             }
         buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
