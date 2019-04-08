@@ -132,40 +132,40 @@ final_model <- function(species_name,
         if (length(sel.index) == 0) {
             cat(paste("No partition selected", species_name, algo, proj_dir, "\n"))
         } else if (length(sel.index) != 0) {
-          if (length(sel.index) == 1) {
-            warning(paste("when only one partition is selected some final models
+            message(paste(length(sel.index), "/", n.part,
+                          "partitions will be used for", species_name, algo, "\n"))
+            if (length(sel.index) == 1) {
+                warning(paste("when only one partition is selected some final models
                           are identical", "\n"))
-            cont.sel.1  <- mod.cont[[sel.index]]  #(1)
-            
-            raw_mean <- cont.sel.1
-            }
+                cont.sel.1  <- mod.cont[[c(sel.index, sel.index)]]
+                pond.stats <- c(pond.stats, pond.stats)#(1)
+                }
             if (length(sel.index) > 1) {
-            message(paste(length(sel.index), "/", n.part, "partitions will be
-                          used for", species_name, algo, "\n"))
-            cont.sel.1  <- mod.cont[[sel.index]]  #(1)
-                raw_mean <- raster::weighted.mean(cont.sel.1, w = pond.stats)
-        }
+                cont.sel.1  <- mod.cont[[sel.index]]  #(1)
+                }
             #first column of the map. takes raw means and makes them binary or cut by a single mean threshold
+            raw_mean <- raster::weighted.mean(cont.sel.1, w = pond.stats)
             if ("raw_mean" %in% which_models) {
                 names(raw_mean) <- "raw_mean"#(4)
                 final_algo <- raster::addLayer(final_algo, raw_mean)####layerz#
-
+            }
+            if (any(c("raw_mean_th", "raw_mean_cut") %in% which_models)) {
+                if (is.numeric(threshold)) {#este threshold se repite na outra coluna, verificar que seja equivalente ¬¬ [ö]
+                    th.mean <- threshold
+                    } else {
+                        th.mean <- mean(stats.algo[, threshold][sel.index])
+                        }
+                raw_mean_th <- (raw_mean > th.mean)  #(7)
                 if ("raw_mean_th" %in% which_models) {
-                    if (is.numeric(threshold)) {#este threshold se repite na outra coluna, verificar que seja equivalente ¬¬ [ö]
-                        th.mean <- threshold
-                        } else {
-                            th.mean <- mean(stats.algo[, threshold][sel.index])
-                            }
-                    raw_mean_th <- (raw_mean > th.mean)  #(7)
-                    names(raw_mean_th) <- "raw_mean_th"
-                    final_algo <- raster::addLayer(final_algo, raw_mean_th)####layerz#
-                    if ("raw_mean_cut" %in% which_models) {
-                        raw_mean_cut <- raw_mean * raw_mean_th #(9)
-                        names(raw_mean_cut) <- "raw_mean_cut"
-                        final_algo <- raster::addLayer(final_algo, raw_mean_cut)####layerz#
+                names(raw_mean_th) <- "raw_mean_th"
+                final_algo <- raster::addLayer(final_algo, raw_mean_th)
+                }
+                if ("raw_mean_cut" %in% which_models) {
+                    raw_mean_cut <- raw_mean * raw_mean_th #(9)
+                    names(raw_mean_cut) <- "raw_mean_cut"
+                    final_algo <- raster::addLayer(final_algo, raw_mean_cut)####layerz#
                     }
                 }
-            }
              #second column of the figure. creates binary selected
              if (any(c("bin_mean", "cut_mean", "bin_consensus") %in% which_models)) {
                 if (is.numeric(threshold)) {#este aqui se repete, linha 145, é equivalente cortar aqui e lá?
