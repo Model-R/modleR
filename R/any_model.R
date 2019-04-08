@@ -25,7 +25,7 @@
 #' @seealso \code{\link[dismo]{mahal}}
 #' @import raster
 #' @import grDevices
-#' @importFrom utils write.table
+#' @importFrom utils write.csv
 #' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
 #' @export
@@ -100,7 +100,8 @@ do_any <- function(species_name,
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
-            if (algo == "maxent")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
+            if (algo == "maxent")  mod <- dismo::maxent(envtrain, sdmdata_train$pa)
+            if (algo == "maxnet")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
             if (algo == "rf") {
@@ -221,7 +222,7 @@ do_any <- function(species_name,
                 p <- raster::extract(ec_cont, y = pres_test)
                 a <- raster::extract(ec_cont, y = backg_test)
                 eec <- dismo::evaluate(p = p, a = a)
-        }
+            }
 
             if (algo %in% c("mindist", "centroid")) {
                 eval_mod <- eec
@@ -237,6 +238,7 @@ do_any <- function(species_name,
                 mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
             } else if (algo %in% c("bioclim",
                                    "domain",
+                                   "maxent",
                                    "mahal")) {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
@@ -250,15 +252,14 @@ do_any <- function(species_name,
             } else if (algo %in% "glm") {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "response")
                 th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                        tr = th_mod)
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
                 mod_cont <- raster::predict(predictors, mod, type = "response")
-            }else if (algo %in% c( "maxent")) {
+            } else if (algo %in% c( "maxnet")) {
               eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "logistic")
               th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
               conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
               mod_cont <- raster::predict(predictors, mod, type = "logistic")
-              }
+            }
 
 
             message("evaluating the models...")
@@ -271,12 +272,28 @@ do_any <- function(species_name,
             th_table$algoritmo <- algo
             th_table$run <- i
             th_table$partition <- g
-            row.names(th_table) <- paste(species_name, i, g, algo)
+            th_table$presence <- eval_mod@np
+            th_table$absence <- eval_mod@na
+            th_table$correlation <- eval_mod@cor
+            th_table$pvaluecor <- eval_mod@pcor
+            row.names(th_table) <- species_name
+
+            if (!algo %in% c("mindist", "centroid")) {
+                th_table$prevalence.value <- conf@prevalence
+                th_table$PPP <- conf@PPP
+                th_table$NPP <- conf@NPP
+                th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
+                th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
+                th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
+                th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
+                th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
+                th_table$KAPPA.value <- conf@kappa
+            }
 
             #confusion matrix
                 #conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
             if (conf_mat == TRUE) {
-              if (!algo %in% c("mindist", "centroid")) {
+              if (!algo %in% c("mindist", "centroid")) { #8e17fc6
                   conf_res <-
                       data.frame(presence_record = conf@confusion[, c("tp", "fp")],
                                        absence_record = conf@confusion[, c("fn", "tn")])
@@ -288,25 +305,8 @@ do_any <- function(species_name,
                 }
               }
 
-            th_table$presence <- eval_mod@np
-            th_table$absence <- eval_mod@na
-            th_table$correlation <- eval_mod@cor
-            th_table$pvaluecor <- eval_mod@pcor
 
 
-            if (conf_mat == TRUE) {
-              if (!algo %in% c("mindist", "centroid")) {
-                th_table$prevalence.value <- conf@prevalence
-                th_table$PPP <- conf@PPP
-                th_table$NPP <- conf@NPP
-                th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-                th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
-                th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
-                th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
-                th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
-                th_table$KAPPA.value <- conf@kappa
-              }
-            }
 
             #writing evaluation tables
 

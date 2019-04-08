@@ -5,9 +5,9 @@
 #' @param domain Execute domain from the dismo implementation
 #' @param mahal Execute mahalanobis distance from the dismo implementation
 #' @param maxent Execute maxent from the dismo implementation
+#' @param maxnet Execute maxent from the maxnet implementation
 #' @param glm Execute GLM as suggested by the dismo documentation
-#' @param rf Execute random forests from randomForest() as suggested
-#' by the dismo documentation
+#' @param rf Execute random forests from randomForest() as suggested by the dismo documentation
 #' @param svmk Execute svm from kernlab package
 #' @param svme Execute svm from e1071 package
 #' @param mindist Execute minimum euclidean distance
@@ -28,6 +28,7 @@ do_many <- function(species_name,
                     glm = FALSE,
                     mahal = FALSE,
                     maxent = FALSE,
+                    maxnet = FALSE,
                     rf = FALSE,
                     svmk = FALSE,
                     svme = FALSE,
@@ -79,6 +80,15 @@ do_many <- function(species_name,
             predictors = predictors,
             models_dir = models_dir,
             algo = "maxent",
+            ...)
+    }
+    if (maxnet == T) {
+        do_any(
+            species_name,
+            occurrences = occurrences,
+            predictors = predictors,
+            models_dir = models_dir,
+            algo = "maxnet",
             ...)
     }
     if (rf == T) {

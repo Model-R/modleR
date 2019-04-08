@@ -6,8 +6,9 @@
 \usage{
 do_many(species_name, occurrences, predictors, models_dir = "./models",
   bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
-  maxent = FALSE, rf = FALSE, svmk = FALSE, svme = FALSE,
-  mindist = FALSE, centroid = FALSE, brt = FALSE, ...)
+  maxent = FALSE, maxnet = FALSE, rf = FALSE, svmk = FALSE,
+  svme = FALSE, mindist = FALSE, centroid = FALSE, brt = FALSE,
+  ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -28,8 +29,9 @@ do_many(species_name, occurrences, predictors, models_dir = "./models",
 
 \item{maxent}{Execute maxent from the dismo implementation}
 
-\item{rf}{Execute random forests from randomForest() as suggested
-by the dismo documentation}
+\item{maxnet}{Execute maxent from the maxnet implementation}
+
+\item{rf}{Execute random forests from randomForest() as suggested by the dismo documentation}
 
 \item{svmk}{Execute svm from kernlab package}
 

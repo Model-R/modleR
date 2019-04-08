@@ -88,7 +88,7 @@ occurrence data for four species, and predictor variables called
 library(ModelR)
 library(rJava) 
 library(raster)
-#devtools::load_all()
+#devtools::load_all(export_all = F)
 head(coordenadas)
 species <- sort(unique(coordenadas$sp))
 species
@@ -107,7 +107,7 @@ We will filter the `coordenadas` file to select only the data for the first spec
 ```{r occs, message = F, eval = TRUE}
 library(dplyr)
 species[1]
-occs <- filter(coordenadas, sp == species[1]) %>% select(lon, lat)
+occs <- filter(coordenadas, sp == species[1]) %>% dplyr::select(lon, lat)
 head(occs)
 ```
 
@@ -219,7 +219,7 @@ do_any(species_name = species[1],
        buffer_type = "mean",
        predictors = example_vars,
        plot_sdmdata = T,
-       models_dir = test_folder,,
+       models_dir = test_folder,
        write_png = T,
        write_bin_cut = F,
        n_back = 500,

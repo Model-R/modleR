@@ -131,18 +131,23 @@ final_model <- function(species_name,
 
         if (length(sel.index) == 0) {
             cat(paste("No partition selected", species_name, algo, proj_dir, "\n"))
-            }
         if (length(sel.index) == 1) {
+        } else if (length(sel.index) != 0) {
+          if (length(sel.index) == 1) {
             warning(paste("when only one partition is selected some final models
                           are identical", "\n"))
+            cont.sel.1  <- mod.cont[[sel.index]]  #(1)
+            
+            raw_mean <- cont.sel.1
             }
-        if (length(sel.index) >= 1) {
+            if (length(sel.index) > 1) {
             message(paste(length(sel.index), "/", n.part, "partitions will be
                           used for", species_name, algo, "\n"))
             cont.sel.1  <- mod.cont[[sel.index]]  #(1)
+                raw_mean <- raster::weighted.mean(cont.sel.1, w = pond.stats)
+        }
             #first column of the map. takes raw means and makes them binary or cut by a single mean threshold
             if ("raw_mean" %in% which_models) {
-                raw_mean <- raster::weighted.mean(cont.sel.1, w = pond.stats)
                 names(raw_mean) <- "raw_mean"#(4)
                 final_algo <- raster::addLayer(final_algo, raw_mean)####layerz#
 
@@ -208,6 +213,7 @@ final_model <- function(species_name,
             #creation ok
                 #cat(paste("selected final models for", species_name, algo, "run", run, "DONE", "\n"))
                 cat(paste("selected final models for", species_name, algo, "DONE", "\n"))
+        }
 #################
 
         if (raster::nlayers(final_algo) != 0) {
@@ -247,10 +253,10 @@ final_model <- function(species_name,
 
         }
 
-    } else {
-        warning(paste("no models were selected for", species_name, algo, "\n"))
-    }
-        }
+    } #else {
+      #  warning(paste("no models were selected for", species_name, algo, "\n"))
+    #}
+      #  }
     print(paste("DONE", algo, "\n"))
     print(date())
 }
