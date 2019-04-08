@@ -131,7 +131,6 @@ final_model <- function(species_name,
 
         if (length(sel.index) == 0) {
             cat(paste("No partition selected", species_name, algo, proj_dir, "\n"))
-        if (length(sel.index) == 1) {
         } else if (length(sel.index) != 0) {
           if (length(sel.index) == 1) {
             warning(paste("when only one partition is selected some final models
