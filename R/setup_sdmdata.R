@@ -42,7 +42,7 @@
 #' setup_sdmdata(sp, coordenadas[sp == sp,], example_vars)
 #'
 #' @seealso \code{\link[dismo]{gridSample}}
-
+#' @importFrom utils write.table
 #' @export
 #'
 #'
