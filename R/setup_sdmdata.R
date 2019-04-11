@@ -93,43 +93,46 @@ setup_sdmdata <- function(species_name,
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
     }
-    #writes some original metadata that will be modified later
+    #creates metadata for this run
     original_n <- nrow(occurrences)
     original_n_back <- n_back
     original_predictors <- paste(names(predictors), collapse = "-")
 
+    metadata_new <- data.frame(
+        species_name = as.character(species_name),
+        original_predictors = original_predictors,
+        select_variables = select_variables,
+        original.n = as.integer(original_n),
+        original.n.back = as.integer(original_n_back),
+        buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
+        dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
+        seed = ifelse(is.null(seed), NA, as.integer(seed)),
+        res.x = res(predictors)[1],
+        res.y = res(predictors)[2],
+        clean_dupl = ifelse(is.null(clean_dupl), NA, clean_dupl),
+        clean_nas = ifelse(is.null(clean_nas), NA, clean_nas),
+        clean_uni = ifelse(is.null(clean_uni), NA, clean_uni),
+        geo_filt = geo_filt,
+        geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, as.integer(geo_filt_dist)),
+        models_dir = models_dir,
+        partition = partition_type,
+        boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
+        boot_n = ifelse(is.null(boot_n), NA, as.integer(boot_n)),
+        cv_partitions = ifelse(is.null(cv_partitions), NA, as.integer(cv_partitions)),
+        cv_n = ifelse(is.null(cv_n), NA, as.integer(cv_n)),
+        equalize = ifelse(is.null(equalize), NA, equalize),
+        row.names = 1
+        )
+
         #checking metadata----
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
-        metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
-        metadata_old <- metadata_old[, setdiff(names(metadata_old), c("final.n", "final.n.back", "selected_predictors"))]
-        metadata_new <- data.frame(
-            species_name = as.character(species_name),
-            original_predictors = original_predictors,
-            select_variables = select_variables,
-            original.n = original_n,
-            original.n.back = original_n_back,
-            buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
-            dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
-            seed = ifelse(is.null(seed), NA, seed),
-            res.x = res(predictors)[1],
-            res.y = res(predictors)[2],
-            clean_dupl = ifelse(is.null(clean_dupl), NA, clean_dupl),
-            clean_nas = ifelse(is.null(clean_nas), NA, clean_nas),
-            clean_uni = ifelse(is.null(clean_uni), NA, clean_uni),
-            geo_filt = geo_filt,
-            geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
-            models_dir = models_dir,
-            partition = partition_type,
-            boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
-            boot_n = ifelse(is.null(boot_n), NA, boot_n),
-            cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
-            cv_n = ifelse(is.null(cv_n), NA, cv_n),
-            equalize = ifelse(is.null(equalize), NA, equalize),
-            row.names = 1
-            )
-
-            if (all(all.equal(metadata_old, metadata_new) == T)) {
+        metadata_old <<- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
+        # removes columns that dont exist yet for comparison
+        metadata_old <- metadata_old[,
+                                      setdiff(names(metadata_old),
+                                              c("final.n", "final.n.back", "selected_predictors"))]
+        if (all.equal(metadata_old, metadata_new) == T) {
             message("same metadata, no need to run data partition")
             sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
             #class(sdmdata) <- "sdmdata"
@@ -139,6 +142,8 @@ setup_sdmdata <- function(species_name,
     }
 
     ##cleaning occurrences with clean and geo_filt----
+    message("running data setup")
+    message("cleaning data")
     occurrences <-
         clean(occurrences,
               predictors,
@@ -157,27 +162,27 @@ setup_sdmdata <- function(species_name,
 
     #background selection:
 
-        #first option: there is a buffer
-        if (!is.null(buffer_type)) {
-            if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
-                message("creating buffer")
-                pbuffr <- create_buffer(occurrences = occurrences,
-                                        models_dir = models_dir,
-                                        species_name = species_name,
-                                        buffer_type = buffer_type,
-                                        predictors = predictors,
-                                        dist_buf = dist_buf,#tiene que estar
-                                        dist_min = dist_min,
-                                        buffer_shape = buffer_shape,
-                                        write_buffer = write_buffer,
-                                        ...)
+    #first option: there is a buffer
+    if (!is.null(buffer_type)) {
+        if (buffer_type %in% c("mean", "max", "median", "distance", "user")) {
+            message("creating buffer")
+            pbuffr <- create_buffer(occurrences = occurrences,
+                                    models_dir = models_dir,
+                                    species_name = species_name,
+                                    buffer_type = buffer_type,
+                                    predictors = predictors,
+                                    dist_buf = dist_buf, #tiene que estar
+                                    dist_min = dist_min,
+                                    buffer_shape = buffer_shape,
+                                    write_buffer = write_buffer,
+                                    ...)
 
-            # third option: there is no buffer
-            } else {
-            warning("buffer_type not recognized, returning predictors")
-                pbuffr <- predictors # second option, there is no buffer
-        }
+        } else {
+        warning("buffer_type not recognized, returning predictors")
+            pbuffr <- predictors
             }
+        }
+    # second option: there is no buffer
     else pbuffr <- predictors # second option, there is no buffer
 
     #third option: user-supplied absences
@@ -323,34 +328,12 @@ setup_sdmdata <- function(species_name,
     }
 
     #metadata
-    metadata <- data.frame(
-        species_name = as.character(species_name),
-        select_variables = select_variables,
-        selected_predictors = paste(names(predictors), collapse = "-"),
-        original.n = original_n,
-        final.n = final_n,
-        original.n.back = original_n_back,
-        final.n.back = n_back_mod,
-        buffer_type = ifelse(is.null(buffer_type), NA, buffer_type),
-        dist_buf = ifelse(is.null(dist_buf), NA, dist_buf),
-        seed = ifelse(is.null(seed), NA, seed),
-        res.x = res(predictors)[1],
-        res.y = res(predictors)[2],
-        clean_dupl = ifelse(is.null(clean_dupl), NA, clean_dupl),
-        clean_nas = ifelse(is.null(clean_nas), NA, clean_nas),
-        clean_uni = ifelse(is.null(clean_uni), NA, clean_uni),
-        geo_filt = geo_filt,
-        geo_filt_dist = ifelse(is.null(geo_filt_dist), NA, geo_filt_dist),
-        models_dir = models_dir,
-        partition = partition_type,
-        boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
-        boot_n = ifelse(is.null(boot_n), NA, boot_n),
-        cv_partitions = ifelse(is.null(cv_partitions), NA, cv_partitions),
-        cv_n = ifelse(is.null(cv_n), NA, cv_n),
-        equalize = ifelse(is.null(equalize), NA, equalize)
-    )
+    metadata_new$selected_predictors <- paste(names(predictors), collapse = "-")
+    metadata_new$final.n <- as.integer(final_n)
+    metadata_new$final.n.back <- as.integer(n_back_mod)
+
     message(paste("saving metadata"), "\n")
-    write.table(metadata, file = paste0(partition.folder, "/metadata.txt"))
+    write.table(metadata_new, file = paste0(partition.folder, "/metadata.txt"))
     #class(sdmdata) <- c("sdmdata", "data.frame")
     return(sdmdata)
 }
