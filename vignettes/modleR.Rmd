@@ -56,12 +56,16 @@ The workflow consists of mainly three functions that should be used sequentially
 
 __ModelR__ writes the outputs in the hard disk, according to the following folder structure:   
 
-    `models_dir/projection1/partitions`  
-    `models_dir/projection1/final_models`  
-    `models_dir/projection1/ensemble_models`  
-    `models_dir/projection2/partitions`  
-    `models_dir/projection2/final_models`  
-    `models_dir/projection2/ensemble_models`  
+```
+    . models_dir
+    | 
+    |- _species_name             |- /projection1/ | - /partitions`  
+       |                          | - /final_models`  
+                                  | - /ensemble`  
+                 |- /projection2/ | - /partitions`  
+                                  | - /final_models`  
+                                  | - /ensemble`  
+```
 
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them. 
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.
@@ -85,10 +89,10 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-library(ModelR)
+#library(ModelR)
 library(rJava) 
 library(raster)
-#devtools::load_all(export_all = F)
+devtools::load_all()
 head(coordenadas)
 species <- sort(unique(coordenadas$sp))
 species
@@ -325,13 +329,17 @@ args(final_model)
 
 ```{r final, echo = T, eval = T}
 final_model(species_name = species[1],
+            algorithms = NULL, #if null it will take all the in-disk algorithms 
             models_dir = test_folder,
             select_partitions = TRUE,
             select_par = "TSS",
             select_par_val = 0,
+            weight_par = NULL, #in case we want to weigh the final result
+            threshold = NULL, #for cut models (bin_mean, cut_mean)
+            scale_models = T, #logical
+            which_models = c("raw_mean", "bin_consensus"),
             consensus_level = 0.5,
-            which_models = c("raw_mean"),
-            uncertainty = F,
+            uncertainty = T,
             overwrite = T)
 ```
 
@@ -397,32 +405,56 @@ An option to do the several models is to use a `for` loop
 args(do_many)
 args(setup_sdmdata)
 especies <- unique(coordenadas$sp)
-for (especie in especies) {
+
+for (i in 1:length(especies)) {
+    especie <- especies[i]
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
-    do_many(species_name = especie,
-           occurrences = occs,
-           partition_type = "crossvalidation",
-           cv_partitions = 5,
-           cv_n = 1,
-           buffer_type = "distance",
-           dist_buf = 4,
-           predictors = example_vars,
-           models_dir = "~/modelR_test/forlooptest",
-           n_back = 1000,
-           write_png = T,
-           bioclim = T,
-           maxent = T,
-           rf = T,
-           svmk = T,
-           svme = T, 
-           brt = T,
-           glm = T,
-           equalize = T,
-           plot_sdmdata = T,
-           write_bin_cut = F,
-           clean_nas = T)
+    setup_sdmdata(
+        species_name = especie,
+        models_dir = "~/modelR_test/forlooptest",
+        occurrences = occs,
+        predictors = example_vars,
+        buffer_type = "distance",
+        dist_buf = 4,
+        write_buffer = T,
+        clean_dupl = T,
+        clean_nas = T,
+        clean_uni = T,
+        plot_sdmdata = T,
+        n_back = 1000,
+        partition_type = "bootstrap",
+        boot_n = 5,
+        boot_proportion = 0.7
+        )
 }
-for (especie in especies) {
+# recovers the list of sdmdata
+sdmdata_files <- list.files("~/modelR_test/forlooptest", recursive = T, pattern = "sdmdata.txt", full.names = T)
+sdm_list <- purrr::map(.x = sdmdata_files, ~read.table(.))
+for (i in 1:length(especies)) {
+    especie <- especies[i]
+    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
+    sdmdata <- sdm_list[[i]]
+    do_many(species_name = especie,
+            sdmdata = sdmdata,
+            predictors = example_vars,
+            models_dir = "~/modelR_test/forlooptest",
+            write_png = T,
+            bioclim = T,
+            maxent = T,
+            maxnet = F,
+            rf = T,
+            svmk = T,
+            svme = T,
+            brt = T,
+            glm = T,
+            domain = F,
+            mahal = F,
+            equalize = T,
+            plot_sdmdata = T,
+            write_bin_cut = T)
+}
+for (i in 1:length(especies)) {
+    especie <- especies[i]
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     final_model(species_name = especie,
                 select_partitions = TRUE,
@@ -430,13 +462,16 @@ for (especie in especies) {
                 select_par_val = 0.5,
                 consensus_level = 0.5,
                 models_dir = "~/modelR_test/forlooptest",
-                which_models = "raw_mean")
+                which_models = c("raw_mean", "bin_consensus"),
+                uncertainty = T, 
+                overwrite = T)
 }
-for (especie in especies) {
+for (i in 1:length(especies)) {
+    especie <- especies[i]
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     ensemble_model(species_name = especie,
                    occurrences = occs,
-                   which_models = "raw_mean",
+                   which_models = "bin_consensus",
                    write_png = T,
                    models_dir = "~/modelR_test/forlooptest")
     }

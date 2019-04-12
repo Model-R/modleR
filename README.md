@@ -1,11 +1,11 @@
-﻿# ModelR: a workflow for ecological niche models based on dismo
+# modleR: a workflow for ecological niche models based on dismo
 
-__ModelR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation, bootstrap or jacknife procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others (Elith et al 2006) they are useful in dataset with few occurrences (Kamino et al 2012) and can assist the creation of environmental filters (Varela et al 2014).
+__modleR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation, bootstrap or jacknife procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others (Elith et al 2006) they are useful in dataset with few occurrences (Kamino et al 2012) and can assist the creation of environmental filters (Varela et al 2014).
 
 
 # Installing 
 
-Currently ModelR can be installed from github (but we aim to submit to CRAN soon):
+Currently modleR can be installed from github (but we aim to submit to CRAN soon):
 
 ```
 library(devtools)
@@ -32,7 +32,7 @@ NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_
 
 ## Folder structure created by this package
 
-__ModelR__ writes the outputs in the hard disk, according to the following folder structure:   
+__modleR__ writes the outputs in the hard disk, according to the following folder structure:   
 
     `models_dir/projection1/partitions`  
     `models_dir/projection1/final_models`  
@@ -57,13 +57,13 @@ apply some data cleaning procedures, as well as some filters. This is done by
 function `setup_sdmdata()`
 
 
-__ModelR__ comes with example data, a data frame called `coordenadas`, with 
+__modleR__ comes with example data, a data frame called `coordenadas`, with 
 occurrence data for four species, and predictor variables called 
 `example_vars`
 
 
 ```{r lib, echo = T, eval = T}
-Library(ModelR)
+Library(modleR)
 library(rJava) 
 library(raster)
 head(coordenadas)
@@ -129,7 +129,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              occurrences = occs,
                              predictors = example_vars,
                              clean_nas = T,
-                             models_dir = "~/modelR_test/1species",
+                             models_dir = "~/modleR_test/1species",
                              partition_type = "crossvalidation",
                              cv_partitions = 5,
                              cv_n = 1,
@@ -381,7 +381,7 @@ for (especie in especies) {
            buffer_type = "distance",
            dist_buf = 4,
            predictors = example_vars,
-           models_dir = "~/modelR_test/forlooptest",
+           models_dir = "~/modleR_test/forlooptest",
            n_back = 1000,
            write_png = T,
            bioclim = T,
@@ -403,7 +403,7 @@ for (especie in especies) {
                 select_par = "TSS",
                 select_par_val = 0.5,
                 consensus_level = 0.5,
-                models_dir = "~/modelR_test/forlooptest",
+                models_dir = "~/modleR_test/forlooptest",
                 which_models = "raw_mean")
 }
 for (especie in especies) {
@@ -412,7 +412,7 @@ for (especie in especies) {
                    occurrences = occs,
                    which_models = "raw_mean",
                    write_png = T,
-                   models_dir = "~/modelR_test/forlooptest")
+                   models_dir = "~/modleR_test/forlooptest")
     }
 ```
 
@@ -432,7 +432,7 @@ coordenadas %>% split(.$sp) %>%
                         dist_buf = 4,
                         predictors = example_vars,
                         models_dir =
-                            "~/modelR_test/temp_purrr",
+                            "~/modleR_test/temp_purrr",
                         n_back = 500,
                         write_png = T,
                         bioclim = T,
@@ -455,7 +455,7 @@ coordenadas %>%
                              select_par = "TSS", 
                              select_par_val = 0.5,
                              consensus_level = 0.5,
-                             models_dir = "~/modelR_test/temp_purrr",
+                             models_dir = "~/modleR_test/temp_purrr",
                              which_models = "raw_mean"))
 ```
 
@@ -466,7 +466,7 @@ coordenadas %>%
                                 occurrences = .[, c("lon", "lat")],
                                 which_models = "raw_mean",
                                 write_png = T,
-                                models_dir = "~/modelR_test/temp_purrr"
+                                models_dir = "~/modleR_test/temp_purrr"
                                 ))
 
 ```
