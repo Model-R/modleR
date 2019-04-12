@@ -32,16 +32,6 @@ select_variables <- function(species_name,
                              percent = 0.8,
                              ...) {
 
-#     if (is.null(buffer)) {
-#     partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
-#     # checks if there is a buffer.tif file in partition folder
-#     if (list.files(path = partition.folder, pattern = "*.tif", full.names = TRUE) != paste0(partition.folder, "/", "buffer.tif")) {
-# stop("could not find buffer.tif in output directory, specify your own buffer")
-#             }
-#         }
-  #  else
-   #     buffer <- raster::raster(paste0(partition.folder, "/", "buffer.tif"))
-
     if (!class(predictors) %in% c("RasterBrick","RasterStack")) {
   stop("predictors must be a RasterBrick or RasterStack object")
     }
@@ -49,15 +39,17 @@ select_variables <- function(species_name,
         predictors <- crop_model(predictors, buffer)
     }
 
-  sample <- dismo::randomPoints(mask = predictors,
-                                n = floor(sum(!is.na(raster::values(predictors[[1]]))) * percent))
+  sample <- dismo::randomPoints(
+      mask = predictors,
+      n = floor(sum(!is.na(raster::values(predictors[[1]]))) * percent))
   vals <- raster::extract(x = predictors, sample)
   exclude.vars <- caret::findCorrelation(cor(vals), cutoff = cutoff)
   if (length(exclude.vars) > 0) {
       excluded <- names(predictors)[exclude.vars]
       retained <- setdiff(names(predictors), excluded)
       final_vars <- raster::subset(predictors, retained, drop = F)
-      message(paste(paste(excluded, collapse = ","), "excluded with cutoff =", cutoff))
+      message(paste(paste(excluded, collapse = ","),
+                    "excluded with cutoff =", cutoff))
       } else {
           final_vars <- predictors
           message(paste("No variables were excluded with cutoff =", cutoff))

@@ -1,6 +1,6 @@
 ---
 title: "ModelR: a workflow for ecological niche models based on dismo"
-author: "Andrea Sánchez-Tapia"
+author: "Andrea Sánchez-Tapia & Sara Mortara"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ```
 
 
-__ModelR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation, bootstrap or jacknife procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist environmental filters [@varela_environmental_2014].
+__ModelR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist environmental filters [@varela_environmental_2014].
 
 
 # Installing 
@@ -47,10 +47,10 @@ The workflow consists of mainly three functions that should be used sequentially
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
-3. Partition joining: `final_model()` selects and joins the partition models into a model per species per algorithm;  
-4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model.  
+3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm;  
+4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus).  
 
-NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_any()` or `do_many()`. Likewise, `do_many()` is just a wrapper that will call several instances of `do_any()`.
+ <!-- NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_any()` or `do_many()`. Likewise, `do_many()` is just a wrapper that will call several instances of `do_any()`. --> 
 
 ## Folder structure created by this package
 
@@ -66,8 +66,8 @@ __ModelR__ writes the outputs in the hard disk, according to the following folde
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them. 
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.
 + _Ensemble_ models join together the results obtained by different algorithms [@araujo_ensemble_2007].
-+ When projecting models into the present, the projection folder is called `present`.  <!-- [The projection unto other areas and/or climate scenarios is being implemented] --> .
-+ You can set `models_dir` wherever you want in the hard disk, but if you do not modify the default value, it will create the output under the working directory (its default value is `./models_dir`, where the period points to the working directory)
++ When projecting models into the present, the projection folder is called `present`.
++ You can set `models_dir` wherever you want in the hard disk, but if you do not modify the default value, it will create the output under the working directory (its default value is `./models`, where the period points to the working directory)
 + The _names_ of the `final` and `ensemble` folders can be modified, but __the nested subfolder structure will remain the same__. If you change `final_models` default value (`"final_model"`) you will need to include the new value when calling `ensemble_model()` (`final_dir = "[new name]"`), to indicate the function where to look for models. This partial flexibility allows for experimenting with final model and ensemble construction (by runnning final or ensemble twice in different output folders, for example). 
 
 
@@ -248,7 +248,7 @@ do_many(species_name = species[1],
        equalize = T)
 ```
 
-Both functions admit the parameters from `setupsdmdata()` and run it  <!-- [Ö acá toca saber qué tan obligatorio es usar los parámetros y qué tanto va a darle tranquilo. Si es bligatorio deberíamosdejar de hablar de la primera función] --> . In addition: 
+<!--Both functions admit the parameters from `setupsdmdata()` and run it - this is no longer true-->. In addition: 
 
 + `mask`: will crop and mask the partition models into a ShapeFile
 + `write_png` will create a png file of the output 
@@ -310,7 +310,6 @@ There are many ways to create a final model per algorithm per species. `final_mo
 
 ![__`final_model()` options__](final_model_english.png){ width=100% }
 
-+ It can weigh the partitions by setting `weigh.partitions = TRUE` and a performance metric, either TSS (`weight.par = "TSS"`) or AUC (`weight.par = "AUC"`), to give higher weights to partitions with better performance. This results in a continuous, uncut surface. 
 + It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions. 
 + The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object. 
 + Their means can be calculated (`raw_mean`, `bin_mean` or `cut_mean`, second line in Figure 2)
@@ -347,7 +346,7 @@ final.folder <- list.files(test_folder,
                            include.dirs = T,
                            full.names = T)
 final.folder
-final_mods <- list.files(final.folder, full.names = T, pattern = "tif$", recursive = T)
+final_mods <- list.files(final.folder, full.names = T, pattern = "raw_mean.+tif$", recursive = T)
 final_mods
 ```
 
