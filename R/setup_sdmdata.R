@@ -117,14 +117,13 @@ setup_sdmdata <- function(species_name,
         boot_n = ifelse(is.null(boot_n), NA, as.integer(boot_n)),
         cv_partitions = ifelse(is.null(cv_partitions), NA, as.integer(cv_partitions)),
         cv_n = ifelse(is.null(cv_n), NA, as.integer(cv_n)),
-        equalize = ifelse(is.null(equalize), NA, equalize),
         row.names = 1
         )
 
         #checking metadata----
     if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
         message("metadata file found, checking metadata \n")
-        metadata_old <<- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
+        metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
                                       setdiff(names(metadata_old),
@@ -217,7 +216,16 @@ setup_sdmdata <- function(species_name,
                                        cutoff = cutoff,
                                        percent = percent)
         }
-    # tabela de valores
+
+    # edit metadata
+    metadata_new$selected_predictors <- paste(names(predictors), collapse = "-")
+    metadata_new$final.n <- as.integer(final_n)
+    metadata_new$final.n.back <- as.integer(n_back_mod)
+
+    message(paste("saving metadata"), "\n")
+    write.table(metadata_new, file = paste0(partition.folder, "/metadata.txt"))
+
+    # cria a tabela de valores
     message("extracting environmental data")
     presvals <- raster::extract(predictors, occurrences)
     # Extraindo dados ambientais dos bckgr
@@ -320,13 +328,5 @@ setup_sdmdata <- function(species_name,
         dev.off()
     }
 
-    #metadata
-    metadata_new$selected_predictors <- paste(names(predictors), collapse = "-")
-    metadata_new$final.n <- as.integer(final_n)
-    metadata_new$final.n.back <- as.integer(n_back_mod)
-
-    message(paste("saving metadata"), "\n")
-    write.table(metadata_new, file = paste0(partition.folder, "/metadata.txt"))
-    #class(sdmdata) <- c("sdmdata", "data.frame")
     return(sdmdata)
 }
