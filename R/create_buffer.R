@@ -95,7 +95,7 @@ create_buffer <- function(species_name,
         partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
         if (file.exists(partition.folder) == FALSE)
             dir.create(partition.folder, recursive = T)
-        writeRaster(r_buffer, filename = paste0(partition.folder, "/buffer"), format = "GTiff", ...)
+        writeRaster(r_buffer, filename = paste0(partition.folder, "/buffer"), format = "GTiff", overwrite = T)
     }
     return(r_buffer)
 }
