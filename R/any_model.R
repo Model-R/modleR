@@ -174,7 +174,7 @@ do_any <- function(species_name,
 
             #threshold-independent values
             th_table$AUC <- eval_mod@auc
-            th_table$maxTSS <- mod_TSS
+            th_table$TSS <- mod_TSS
             th_table$algoritmo <- algo
             th_table$run <- i
             th_table$partition <- g
