@@ -1,15 +1,15 @@
 ---
-title: "ModelR: a workflow for ecological niche models based on dismo"
+title: "modleR: a workflow for ecological niche models based on dismo"
 author: "Andrea Sánchez-Tapia & Sara Mortara"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
         toc: true
 vignette: >
-  %\VignetteIndexEntry{ModelR: a workflow for ecological niche models based on dismo}
+  %\VignetteIndexEntry{modleR: a workflow for ecological niche models based on dismo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: ModelR.bib
+bibliography: modleR.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -22,12 +22,12 @@ knitr::opts_chunk$set(
 ```
 
 
-__ModelR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist environmental filters [@varela_environmental_2014].
+__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist environmental filters [@varela_environmental_2014].
 
 
 # Installing 
 
-Currently ModelR can be installed from github (but we aim to submit to CRAN soon):
+Currently modleR can be installed from github (but we aim to submit to CRAN soon):
 
 ```
 library(devtools)
@@ -54,7 +54,7 @@ The workflow consists of mainly three functions that should be used sequentially
 
 ## Folder structure created by this package
 
-__ModelR__ writes the outputs in the hard disk, according to the following folder structure:   
+__modleR__ writes the outputs in the hard disk, according to the following folder structure:   
 
 ```
     . models_dir
@@ -83,13 +83,13 @@ apply some data cleaning procedures, as well as some filters. This is done by
 function `setup_sdmdata()`
 
 
-__ModelR__ comes with example data, a data frame called `coordenadas`, with 
+__modleR__ comes with example data, a data frame called `coordenadas`, with 
 occurrence data for four species, and predictor variables called 
 `example_vars`
 
 
 ```{r lib, echo = T, eval = T}
-#library(ModelR)
+#library(modleR)
 library(rJava) 
 library(raster)
 devtools::load_all()
@@ -152,7 +152,7 @@ Pseudoabsence sampling has also some options:
 
 
 ```{r sdmdata1sp, eval = T}
-test_folder <- "~/modelR_test"
+test_folder <- "~/modleR_test"
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              occurrences = occs,
                              predictors = example_vars,
@@ -411,7 +411,7 @@ for (i in 1:length(especies)) {
     occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
     setup_sdmdata(
         species_name = especie,
-        models_dir = "~/modelR_test/forlooptest",
+        models_dir = "~/modleR_test/forlooptest",
         occurrences = occs,
         predictors = example_vars,
         buffer_type = "distance",
@@ -428,7 +428,7 @@ for (i in 1:length(especies)) {
         )
 }
 # recovers the list of sdmdata
-sdmdata_files <- list.files("~/modelR_test/forlooptest", recursive = T, pattern = "sdmdata.txt", full.names = T)
+sdmdata_files <- list.files("~/modleR_test/forlooptest", recursive = T, pattern = "sdmdata.txt", full.names = T)
 sdm_list <- purrr::map(.x = sdmdata_files, ~read.table(.))
 for (i in 1:length(especies)) {
     especie <- especies[i]
@@ -437,7 +437,7 @@ for (i in 1:length(especies)) {
     do_many(species_name = especie,
             sdmdata = sdmdata,
             predictors = example_vars,
-            models_dir = "~/modelR_test/forlooptest",
+            models_dir = "~/modleR_test/forlooptest",
             write_png = T,
             bioclim = T,
             maxent = T,
@@ -461,7 +461,7 @@ for (i in 1:length(especies)) {
                 select_par = "TSS",
                 select_par_val = 0.5,
                 consensus_level = 0.5,
-                models_dir = "~/modelR_test/forlooptest",
+                models_dir = "~/modleR_test/forlooptest",
                 which_models = c("raw_mean", "bin_consensus"),
                 uncertainty = T, 
                 overwrite = T)
@@ -473,7 +473,7 @@ for (i in 1:length(especies)) {
                    occurrences = occs,
                    which_models = "bin_consensus",
                    write_png = T,
-                   models_dir = "~/modelR_test/forlooptest")
+                   models_dir = "~/modleR_test/forlooptest")
     }
 ```
 
@@ -493,7 +493,7 @@ coordenadas %>% split(.$sp) %>%
                         dist_buf = 4,
                         predictors = example_vars,
                         models_dir =
-                            "~/modelR_test/temp_purrr",
+                            "~/modleR_test/temp_purrr",
                         n_back = 500,
                         write_png = T,
                         bioclim = T,
@@ -516,7 +516,7 @@ coordenadas %>%
                              select_par = "TSS", 
                              select_par_val = 0.5,
                              consensus_level = 0.5,
-                             models_dir = "~/modelR_test/temp_purrr",
+                             models_dir = "~/modleR_test/temp_purrr",
                              which_models = "raw_mean"))
 ```
 
@@ -527,7 +527,7 @@ coordenadas %>%
                                 occurrences = .[, c("lon", "lat")],
                                 which_models = "raw_mean",
                                 write_png = T,
-                                models_dir = "~/modelR_test/temp_purrr"
+                                models_dir = "~/modleR_test/temp_purrr"
                                 ))
 
 ```
