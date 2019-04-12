@@ -257,5 +257,6 @@ final_model <- function(species_name,
     #}
       #  }
     print(paste("DONE", algo, "\n"))
+    return(stats)
     print(date())
 }
