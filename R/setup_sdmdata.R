@@ -29,8 +29,6 @@
 #' @param boot_n How many bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n How many crossvalidation runs
-#' @param equalize Logical, whether the number of presences and absences should be
-#' equalized in randomForest and brt.
 #' @param ... parameters from create_buffer()
 #' @return A dataframe called sdmdata with the groups for each run
 #' (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
@@ -75,7 +73,6 @@ setup_sdmdata <- function(species_name,
                           boot_proportion = 0.7,
                           cv_n = NULL,
                           cv_partitions = NULL,
-                          equalize = NULL,
                           ...) {
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T, showWarnings = F)
@@ -135,8 +132,6 @@ setup_sdmdata <- function(species_name,
         if (all.equal(metadata_old, metadata_new) == T) {
             message("same metadata, no need to run data partition")
             sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
-            #class(sdmdata) <- "sdmdata"
-            #class(sdmdata) <- "data.frame"
             return(sdmdata)
             }
     }
@@ -242,7 +237,6 @@ setup_sdmdata <- function(species_name,
     # Data partition-----
     message("performing data partition")
     #Crossvalidation, repetated crossvalidation and jacknife
-    #if (crossvalidation == TRUE) {
     if (partition_type == "crossvalidation") {
         if (nrow(occurrences) < 11) {
             message("data set has 10 occurrences or less, forcing jacknife")
@@ -272,7 +266,6 @@ setup_sdmdata <- function(species_name,
         }
     }
     # Bootstrap
-    #if (bootstrap == TRUE) {
     if (partition_type == "bootstrap") {
         if (boot_proportion > 1 | boot_proportion <= 0)
             stop("bootstrap training set proportion must be between 0 and 1")

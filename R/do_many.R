@@ -20,9 +20,6 @@
 #' @export
 #'
 do_many <- function(species_name,
-                    occurrences,
-                    predictors,
-                    models_dir = "./models",
                     bioclim = FALSE,
                     domain = FALSE,
                     glm = FALSE,
@@ -40,108 +37,72 @@ do_many <- function(species_name,
     if (bioclim == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "bioclim",
             ...)
     }
     if (domain == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "domain",
             ...)
     }
     if (glm == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "glm",
             ...)
     }
     if (mahal == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "mahal",
             ...)
     }
     if (maxent == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "maxent",
             ...)
     }
     if (maxnet == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "maxnet",
             ...)
     }
     if (rf == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "rf",
             ...)
     }
     if (svmk == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "svmk",
             ...)
     }
     if (svme == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "svme",
             ...)
     }
     if (mindist == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "mindist",
             ...)
     }
     if (centroid == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "centroid",
             ...)
     }
     if (brt == T) {
         do_any(
             species_name,
-            occurrences = occurrences,
-            predictors = predictors,
-            models_dir = models_dir,
             algo = "brt",
             ...)
     }

@@ -1,10 +1,6 @@
 #' Fits ecological niche models using several algorithms.
 #'
-#' @inheritParams setup_sdmdata
-#' @inheritParams create_buffer
-#' @inheritParams rescale_layer
-#' @inheritParams clean
-#' @inheritParams geo_filt
+#' @param species_name A character string with the species name
 #' @param sdmdata sdmdata object resulting from \link{setup_sdmdata}
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
 #'                                        "mahal", "glm", "svmk", "svme",
@@ -16,6 +12,8 @@
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written
 #' @param write_png Logical, whether png files will be written
 #' @param conf_mat Logical, whether confusion tables should be written in the HD
+#' @param equalize Logical, whether the number of presences and absences should be
+#' equalized in randomForest and brt.
 #' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
 #' @author Andrea Sánchez-Tapia
@@ -31,13 +29,11 @@
 #' @export
 do_any <- function(species_name,
                    sdmdata,
-                   occurrences,
                    predictors,
                    models_dir = "./models",
                    algo = c("bioclim"), #um só
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
-                   #proj_cut = NULL,
                    mask = NULL,
                    write_png = FALSE,
                    write_bin_cut = FALSE,

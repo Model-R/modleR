@@ -21,6 +21,6 @@ geo_filt <- function(occurrences,
     pts <- dismo::gridSample(occurrences, r, n = 1)
     message(paste0(dim(pts)[1],
                " Points remaining after the geographic filter of ",
-               min_distance , "km", "\n"))
+               min_distance, "km", "\n"))
     return(pts)
 }

@@ -33,7 +33,7 @@ This function takes a stack of environmental variables and the calibration area.
 coord1sp <- coordenadas[coordenadas$sp == unique(coordenadas$sp)[1],]
 ## selecting only columns with longitude and latitude
 occ <- coord1sp[,c(2,3)]
-## using coord1sp to create buffer w/ mean distance between points
+# using coord1sp to create buffer w/ mean distance between points
 buf <- create_buffer("foo", occ, example_vars)
 # running select_variables w/ output from create_buffer
 select_variables("foo", predictors = example_vars, buffer = buf)

@@ -4,23 +4,16 @@
 \alias{do_any}
 \title{Fits ecological niche models using several algorithms.}
 \usage{
-do_any(species_name, sdmdata, occurrences, predictors,
-  models_dir = "./models", algo = c("bioclim"),
-  project_model = FALSE, proj_data_folder = "./data/proj",
-  mask = NULL, write_png = FALSE, write_bin_cut = FALSE,
-  buffer_type = NULL, dist_buf = NULL, conf_mat = TRUE,
+do_any(species_name, sdmdata, predictors, models_dir = "./models",
+  algo = c("bioclim"), project_model = FALSE,
+  proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
+  write_bin_cut = FALSE, threshold = "spec_sens", conf_mat = TRUE,
   equalize = TRUE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
 \item{sdmdata}{sdmdata object resulting from \link{setup_sdmdata}}
-
-\item{occurrences}{A data frame with occurrence data}
-
-\item{predictors}{A RasterStack of predictor variables}
-
-\item{models_dir}{Folder path to save the output files}
 
 \item{algo}{The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
 "mahal", "glm", "svmk", "svme",
@@ -36,13 +29,6 @@ folders with the projection datasets, ex. "./env/proj/proj1"}
 \item{write_png}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png) should be written}
-
-\item{buffer_type}{Character string indicating whether the buffer should be
-calculated using the "mean", "median", "maximum" distance between occurrence
-points, or an absolute "distance". If set to "distance", "dist_buf" needs to
-be specified. If set to "user", "buffer_shape" needs to be specified.}
-
-\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
 
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 

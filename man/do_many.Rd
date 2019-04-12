@@ -4,20 +4,13 @@
 \alias{do_many}
 \title{Fits ecological niche models for various algorithms.}
 \usage{
-do_many(species_name, occurrences, predictors, models_dir = "./models",
-  bioclim = FALSE, domain = FALSE, glm = FALSE, mahal = FALSE,
-  maxent = FALSE, maxnet = FALSE, rf = FALSE, svmk = FALSE,
-  svme = FALSE, mindist = FALSE, centroid = FALSE, brt = FALSE,
-  ...)
+do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
+  mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
+  svmk = FALSE, svme = FALSE, mindist = FALSE, centroid = FALSE,
+  brt = FALSE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
-
-\item{occurrences}{A data frame with occurrence data}
-
-\item{predictors}{A RasterStack of predictor variables}
-
-\item{models_dir}{Folder path to save the output files}
 
 \item{bioclim}{Execute bioclim from the dismo implementation}
 
