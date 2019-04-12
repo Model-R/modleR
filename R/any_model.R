@@ -37,36 +37,24 @@ do_any <- function(species_name,
                    mask = NULL,
                    write_png = FALSE,
                    write_bin_cut = FALSE,
-                   buffer_type = NULL,
-                   dist_buf = NULL,
+                   threshold = "spec_sens",
                    conf_mat = TRUE,
                    equalize = TRUE,
                    ...) {
+    partition.folder <-
+        paste0(models_dir, "/", species_name, "/present", "/partitions")
+
     message(paste(algo, "\n"))
-    # if (!"sdmdata" %in% class(sdmdata)) {
-    #     stop("sdmdata should be of class sdmdata, check setup_sdmdata()")
-    #     }
+
     retained_predictors <-
         names(sdmdata)[(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)]
 
     if (length(setdiff(names(predictors), retained_predictors)) > 0) {
-        message(paste("variable selection retained variables", retained_predictors))
+        message(paste("Remember a variable selection was performed", "\n",
+                      "retained variables:", paste(retained_predictors, collapse = "-"), "\n"))
     }
-    #sdmdatasetup
-    partition.folder <-
-        paste0(models_dir, "/", species_name, "/present", "/partitions")
+    predictors <- raster::subset(predictors, retained_predictors)
 
-    # sdmdata <- setup_sdmdata(
-    #     species_name = species_name,
-    #     occurrences = occurrences,
-    #     lon = lon,
-    #     lat = lat,
-    #     predictors = predictors,
-    #     models_dir = models_dir,
-    #     buffer_type = buffer_type,
-    #     dist_buf = dist_buf,
-    #     equalize = equalize,
-    #     ...)
 
     ##### Hace los modelos
     runs <- which(names(sdmdata) == "pa") - 1
@@ -74,55 +62,29 @@ do_any <- function(species_name,
     #para cada columna de la matriz de diseño
     for (i in seq_along(1:runs)) {
         group.all <- sdmdata[, i]
-        group <- group.all[sdmdata$pa == 1]
+        group  <- group.all[sdmdata$pa == 1]
         bg.grp <- group.all[sdmdata$pa == 0]
-        backgr <- sdmdata[sdmdata$pa == 0, c("lon", "lat")]
+        occurrences <- sdmdata[sdmdata$pa == 1, c("lon", "lat")]#isto recria ocorrencias
+        backgr      <- sdmdata[sdmdata$pa == 0, c("lon", "lat")]
         #para cada grupo
         for (g in setdiff(unique(group), 0)) {
             #excluding the zero allows for bootstrap. only 1 partition will run
             message(paste(species_name, algo, "run number", i, "part. nb.",
                       g, "\n"))
-            occurrences <- sdmdata[ 1:length(group), c("lon", "lat")]#isto corrige ocorrencias
             pres_train <- occurrences[group != g, ]
-            if (nrow(occurrences) == 1)
+            if (nrow(occurrences) == 1) #only distance algorithms can be run
                 pres_train <- occurrences[group == g, ]
             pres_test  <- occurrences[group == g, ]
             backg_test <- backgr[bg.grp == g, ]
             sdmdata_train <- sdmdata[group.all != g, ]#presences and absences
-            retained_predictors <-
-                names(sdmdata)[(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)]
-            predictors <- raster::subset(predictors, retained_predictors)
-            envtrain <-  sdmdata_train[, names(predictors)]
+            envtrain <-  sdmdata_train[, names(predictors)] #presences and absences
 
             message("fitting models...")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
-            if (algo == "maxent")  mod <- dismo::maxent(envtrain, sdmdata_train$pa)
-            if (algo == "maxnet")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
-            if (algo == "rf") {
-              if (equalize == T) {
-                #balanceando as ausencias
-                abs <- nrow(sdmdata_train[sdmdata_train$pa == 0, ])
-                pres <- nrow(sdmdata_train[sdmdata_train$pa == 1, ])
-                prop <- pres:abs
-                aus.eq <- sample(prop[-1], pres)
-                envtrain.eq <- envtrain[c(1:pres, aus.eq), ]
-                sdmdata_train.eq <- sdmdata_train[c(1:pres, aus.eq), ]
-              } else {
-                  envtrain.eq <- envtrain
-                  sdmdata_train.eq <- sdmdata_train
-              }
-                #mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
-                 #                               data = envtrain.eq,
-                  #                              importance = T)
-                mod <- randomForest::tuneRF(envtrain.eq,
-                                            sdmdata_train.eq$pa,
-                                            trace = F,
-                                            plot = F,
-                                            doBest = T,
-                                            importance = F)
-                }
+            if (algo == "maxent")  mod <- dismo::maxent(envtrain, sdmdata_train$pa)
+            if (algo == "maxnet")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
                                   family = "binomial")
@@ -139,169 +101,123 @@ do_any <- function(species_name,
                 mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
                                         data = envtrain)
             }
-            if (algo == "brt") {
-              if (equalize == T) {
-              #balanceando as ausencias
-              aus <- dim(sdmdata_train[sdmdata_train$pa == 0, ])[1]
-              pres <- dim(sdmdata_train[sdmdata_train$pa == 1, ])[1]
-              prop <- pres:aus
-              aus.eq <- sample(prop[-1], pres)
-              envtrain.eq <- envtrain[c(1:pres, aus.eq), ]
-              sdmdata_train.eq <- sdmdata_train[c(1:pres, aus.eq), ]
-              } else {
-                  envtrain.eq <- envtrain
-                  sdmdata_train.eq <- sdmdata_train
-              }
-                ind <- names(predictors)
-                mod <- dismo::gbm.step(data = sdmdata_train.eq,
-                                       gbm.x = ind,
-                                       gbm.y = "pa",
-                                       family = "bernoulli",
-                                       tree.complexity = 5,
-                                       learning.rate = 0.005,
-                                       bag.fraction = 0.5,
-                                       plot.main = FALSE)
-                n.trees <- mod$n.trees
-                }
-            if (algo %in% c("centroid", "mindist")) {
-                ec_cont <- predictors[[1]]
-                ec_cont[!is.na(ec_cont)] <- 1
-                predictors.st <- raster::scale(predictors)
-                pres.vals <- raster::extract(predictors.st, pres_train)
-                pred.vals <- raster::values(predictors.st)
-                dist.vals <- vector(length = nrow(pred.vals))
-
-                #esto es centroid
-                if (algo == "centroid") {
-                    cat(paste("Euclidean environmental distance to centroid", "\n"))
-                    #calcula la media ambiental de los puntos de train
-                    centroid.val <- apply(pres.vals, 2, mean, na.rm = TRUE)
-                    #calcula la distancia a ese centroide
-                    dist.vals <- apply(pred.vals, 1, FUN = function(x) {
-                        dist(rbind(centroid.val, x))
+            if (algo == "rf" | algo == "brt") {
+                if (equalize == T) {
+                    #balanceando as ausencias
+                    pres_train_n <- nrow(sdmdata_train[sdmdata_train$pa == 1, ])
+                    abs_train_n  <- nrow(sdmdata_train[sdmdata_train$pa == 0, ])
+                    prop <- pres_train_n:abs_train_n
+                    aus.eq <- sample(prop[-1], pres_train_n)
+                    envtrain.eq <- envtrain[c(1:pres_train_n, aus.eq), ]
+                    sdmdata_train.eq <- sdmdata_train[c(1:pres_train_n, aus.eq), ]
+                    } else {
+                        envtrain.eq <- envtrain
+                        sdmdata_train.eq <- sdmdata_train
                         }
-                        )
-                raster::values(ec_cont) <- -dist.vals
-                    }
-
-                #esto es mindist
-                #no está haciendo bien el cut
-                if (algo == "mindist") {
-                    pred.vals.cc <- pred.vals[complete.cases(pred.vals), ]
-                    min.vals <- vector(length = nrow(pred.vals.cc))
-                    for (m in 1:nrow(pred.vals.cc)) {
-                        mindata <- rbind(pred.vals.cc[m, ], pres.vals)
-                        min.vals[m] <- min(as.matrix(dist(mindata))[1, ][-1], na.rm = T)
-                    }
-                ec_cont[complete.cases(pred.vals)] <- -min.vals
-
+                if (algo == "rf") {
+                    #mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
+                    #                               data = envtrain.eq,
+                    #                              importance = T)
+                    mod <- randomForest::tuneRF(envtrain.eq,
+                                                sdmdata_train.eq$pa,
+                                                trace = F,
+                                                plot = F,
+                                                doBest = T,
+                                                importance = F)
                 }
-                #rescales the output so the output is between
-                if (raster::minValue(ec_cont) < 0) {
-                    ec_cont <-
-                        (ec_cont - raster::minValue(ec_cont)) /
-                        raster::maxValue(ec_cont - raster::minValue(ec_cont))
+                if (algo == "brt") {
+                    mod <- dismo::gbm.step(data = sdmdata_train.eq,
+                                           gbm.x = names(predictors),
+                                           gbm.y = "pa",
+                                           family = "bernoulli",
+                                           tree.complexity = 5,
+                                           learning.rate = 0.005,
+                                           bag.fraction = 0.5,
+                                           plot.main = FALSE)
+                    n.trees <- mod$n.trees
                 }
-                # evaluates the model to extract LPT
-                p <- raster::extract(ec_cont, y = pres_test)
-                a <- raster::extract(ec_cont, y = backg_test)
-                eec <- dismo::evaluate(p = p, a = a)
-                if (!nrow(occurrences) %in% c(1, 2)) {
-                    #sólo corta por LTP si hay más de dos puntos...
-                    LPTec <- dismo::threshold(eec, "no_omission")
-                    ec_cont[ec_cont < LPTec] <- LPTec
-                    ec_cont <- (ec_cont - raster::minValue(ec_cont)) /
-                        raster::maxValue(ec_cont - raster::minValue(ec_cont))
-                    #ec_cont[ec_cont < LPTec] <- 0 #éste debe ser el problema
-                }
-                #evaluates again because the values changed
-                p <- raster::extract(ec_cont, y = pres_test)
-                a <- raster::extract(ec_cont, y = backg_test)
-                eec <- dismo::evaluate(p = p, a = a)
             }
 
-            if (algo %in% c("mindist", "centroid")) {
-                eval_mod <- eec
-                mod_cont <- ec_cont
-                th_mod <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-            } else if (algo == "brt") {
+            message("projecting the models...")
+
+            if (algo == "brt") {
                 eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
                                             predictors, n.trees = n.trees)
-                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                        n.trees = n.trees, tr = th_mod)
-
                 mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
-            } else if (algo %in% c("bioclim",
-                                   "domain",
-                                   "maxent",
-                                   "mahal")) {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-                mod_cont <- raster::predict(mod, predictors)
-            } else if (algo %in% c("svmk", "svme", "rf")) {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-                mod_cont <- raster::predict(predictors, mod)
-            } else if (algo %in% "glm") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "response")
-                th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
+            }
+            if (algo == "glm") {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                                            predictors, type = "response")
                 mod_cont <- raster::predict(predictors, mod, type = "response")
-            } else if (algo %in% c( "maxnet")) {
-              eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors, type = "logistic")
-              th_mod   <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]
-              conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
-              mod_cont <- raster::predict(predictors, mod, type = "logistic")
+            }
+            if (algo %in% c("bioclim",
+                            "domain",
+                            "maxent",
+                            "mahal")) {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                mod_cont <- dismo::predict(mod, predictors)
+            }
+            if (algo %in% c("svmk", "svme", "rf")) {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                mod_cont <- raster::predict(predictors, mod)
+            }
+            if (algo == "maxnet") {
+                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                                            predictors, type = "logistic")
+                mod_cont <- raster::predict(predictors, mod, type = "logistic")
             }
 
-
             message("evaluating the models...")
-            th_table <- dismo::threshold(eval_mod)
+            th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
+            #names(th_table) <- paste0(names(th_table), "_th")
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
 
-
+            #threshold-independent values
             th_table$AUC <- eval_mod@auc
-            th_table$TSS <- mod_TSS
+            th_table$maxTSS <- mod_TSS
             th_table$algoritmo <- algo
             th_table$run <- i
             th_table$partition <- g
-            th_table$presence <- eval_mod@np
-            th_table$absence <- eval_mod@na
+            th_table$presencenb <- eval_mod@np
+            th_table$absencenb <- eval_mod@na
             th_table$correlation <- eval_mod@cor
             th_table$pvaluecor <- eval_mod@pcor
             row.names(th_table) <- species_name
 
-            if (!algo %in% c("mindist", "centroid")) {
-                th_table$prevalence.value <- conf@prevalence
-                th_table$PPP <- conf@PPP
-                th_table$NPP <- conf@NPP
-                th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-                th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
-                th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
-                th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
-                th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
-                th_table$KAPPA.value <- conf@kappa
+            # threshold dependent values
+            #which threshold? any value from function threhold() in dismo
+            #th_mod <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]#tss?
+            th_mod <- th_table[, threshold]
+            th_table$threshold <- as.character(threshold)
+            #confusion matrix
+                if (algo == "brt") {
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
+                                    n.trees = n.trees, tr = th_mod)
+            } else {
+                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
+                                        tr = th_mod)
             }
+            th_table$prevalence.value <- conf@prevalence
+            th_table$PPP <- conf@PPP
+            th_table$NPP <- conf@NPP
+            th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
+            th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
+            th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
+            th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
+            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
+            th_table$KAPPA.value <- conf@kappa
 
             #confusion matrix
-                #conf <- dismo::evaluate(pres_test, backg_test, mod, predictors, tr = th_mod)
             if (conf_mat == TRUE) {
-              if (!algo %in% c("mindist", "centroid")) { #8e17fc6
-                  conf_res <-
-                      data.frame(presence_record = conf@confusion[, c("tp", "fp")],
-                                       absence_record = conf@confusion[, c("fn", "tn")])
-                  rownames(conf_res) <- c("presence_predicted", "absence_predicted")
-                  write.csv(conf_res, file = paste0(partition.folder,
+                conf_res <-
+                    data.frame(presence_record = conf@confusion[, c("tp", "fp")],
+                               absence_record = conf@confusion[, c("fn", "tn")])
+                rownames(conf_res) <- c("presence_predicted", "absence_predicted")
+                write.csv(conf_res, file = paste0(partition.folder,
                                                   "/confusion_matrices_",
                                                   species_name, "_", i, "_", g,
                                                   "_", algo, ".csv"))
                 }
-              }
-
-
 
 
             #writing evaluation tables
@@ -311,8 +227,9 @@ do_any <- function(species_name,
                                                 species_name, "_", i, "_", g,
                                                 "_", algo, ".csv"))
 
-
-            if (class(mask) == "SpatialPolygonsDataFrame") {
+            # apply mask (optional)
+            if (class(mask) %in% c("SpatialPolygonsDataFrame",
+                                   "SpatialPolygons")) {
                 mod_cont <- crop_model(mod_cont, mask)
             }
             message("writing raster files...")
@@ -352,7 +269,7 @@ do_any <- function(species_name,
                                           round(mod_TSS, 2)))
                 dev.off()
 
-                if (write_bin_cut == T){
+                if (write_bin_cut == T) {
                   png(paste0(partition.folder, "/", algo, "_bin_", species_name,
                              "_", i, "_", g, ".png"))
                   raster::plot(mod_bin,
@@ -372,36 +289,42 @@ do_any <- function(species_name,
             }
 
             if (project_model == T) {
-                    pfiles <- list.dirs(proj_data_folder, recursive = F)
-                    for (proje in pfiles) {
-                        v <- strsplit(proje, "/")
-                        name_proj <- v[[1]][length(v[[1]])]
+                pfiles <- list.dirs(proj_data_folder, recursive = F)
+                for (proje in pfiles) {
+                    v <- strsplit(proje, "/")
+                    name_proj <- v[[1]][length(v[[1]])]
                     projection.folder <- paste0(models_dir, "/", species_name,
                                                 "/", name_proj, "/partitions")
                     if (file.exists(projection.folder) == FALSE)
                         dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
                     pred_proj <- raster::stack(list.files(proje, full.names = T))
                     pred_proj <- raster::subset(pred_proj, names(predictors))
-                    #names(pred_proj) <- names(predictors)
                     message(name_proj)
 
                     message("projecting models")
                     if (algo == "brt") {
-                        mod_proj_cont <- dismo::predict(pred_proj, mod, n.trees = n.trees, ...)
-                    } else if (algo %in% c("bioclim",
-                                           "domain",
-                                           "maxent",
-                                           "mahal")) {
-                    mod_proj_cont <- dismo::predict(pred_proj, mod, ...)
-                        } else if (algo %in% c("glm", "svmk", "svme", "rf")) {
-                            mod_proj_cont <- raster::predict(pred_proj, mod)
-                        }
-
-                    #mod_proj_bin <- ifelse(is.null(proj_cut), mod_proj_cont > th_mod, mod_proj_cont > proj_cut)
-                    mod_proj_bin <- mod_proj_cont > th_mod
-                    mod_proj_cut <- mod_proj_bin * mod_proj_cont
+                        mod_proj_cont <- dismo::predict(pred_proj, mod, n.trees = n.trees)
+                    }
+                    if (algo == "glm") {
+                        mod_proj_cont <- raster::predict(pred_proj, mod, type = "response")
+                    }
+                    if (algo %in% c("bioclim",
+                                    "domain",
+                                    "maxent",
+                                    "mahal")) {
+                    mod_proj_cont <- dismo::predict(pred_proj, mod)
+                    }
+                    if (algo %in% c("svmk",
+                                    "svme",
+                                    "rf")) {
+                        mod_proj_cont <- raster::predict(pred_proj, mod)
+                    }
+                    if (write_bin_cut == T) {
+                        mod_proj_bin <- mod_proj_cont > th_mod
+                        mod_proj_cut <- mod_proj_bin * mod_proj_cont
                     # Normaliza o modelo cut
                     #mod_proj_cut <- mod_proj_cut / maxValue(mod_proj_cut)
+                    }
                     if (class(mask) == "SpatialPolygonsDataFrame") {
                         mod_proj_cont <- crop_model(mod_proj_cont, mask)
                         mod_proj_bin  <- crop_model(mod_proj_bin, mask)
