@@ -476,33 +476,41 @@ for (i in 1:length(especies)) {
 
 Another option is to use the `purrr` package [@henry_purrr_2017]:
 
-```{r purrr example, eval = F}
+```{r purrr example, eval = F, echo = F}
 library(purrr)
+sdmdata_list <- coordenadas %>% split(.$sp) %>%
+    purrr::map(~ setup_sdmdata(species_name = unique(.$sp),
+                               occurrences = .[, c("lon", "lat")],
+                               partition_type = "bootstrap",
+                               boot_n = 5,
+                               boot_proportion = 0.7,
+                               clean_nas = T,
+                               clean_dupl = T,
+                               clean_uni = T,
+                               buffer_type = "distance",
+                               dist_buf = 4,
+                               predictors = example_vars,
+                               models_dir = "~/modleR_test/temp_purrr",
+                               n_back = 1000,
+                               write_png = T))
 coordenadas %>% split(.$sp) %>%
-    purrr::map(~ do_many(species_name = unique(.$sp),
-                        occurrences = .[, c("lon", "lat")],
-                        partition_type = "crossvalidation",
-                        clean_nas = T,
-                        clean_dupl = T,
-                        cv_partitions = 5,
-                        cv_n = 1,
-                        buffer_type = "distance",
-                        dist_buf = 4,
-                        predictors = example_vars,
-                        models_dir =
-                            "~/modleR_test/temp_purrr",
-                        n_back = 500,
-                        write_png = T,
-                        bioclim = T,
-                        maxent = T,
-                        rf = T,
-                        svme = T, 
-                        svmk = T,
-                        domain = T,
-                        glm = T,
-                        mahal = F,
-                        brt = T,
-                        equalize = T))
+    purrr::map2(.x = .,
+                .y = sdmdata_list,
+                ~ do_many(species_name = unique(.x$sp),
+                          sdmdata = .y,
+                          occurrences = .x[, c("lon", "lat")],
+                          predictors = example_vars,
+                          models_dir = "~/modleR_test/temp_purrr",
+                          bioclim = T,
+                          maxent = T,
+                          rf = T,
+                          svme = T,
+                          svmk = T,
+                          domain = F,
+                          glm = T,
+                          mahal = F,
+                          brt = T,
+                          equalize = T))
 ```
 
 ```{r purrr_final, eval = F}
