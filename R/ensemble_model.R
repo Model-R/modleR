@@ -187,8 +187,7 @@ ensemble_model <- function(species_name,
                     width = 410 * 300 / 72, height = 480 * 300 / 72)
                 par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
                 raster::plot(ensemble.consensus)
-                maps::map("world", c("", "South America"),
-                          add = T, col = "grey")
+                maps::map("world", , add = T, col = "grey")
                 points(coord, pch = 19, cex = 0.3,
                        col = scales::alpha("cyan", 0.6))
                 dev.off()

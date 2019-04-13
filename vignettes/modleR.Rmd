@@ -30,16 +30,23 @@ __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], desig
 Currently modleR can be installed from github (but we aim to submit to CRAN soon):
 
 ```
-library(devtools)
-install_github("Model-R/modelr_pkg", build_vignettes = TRUE)
+# Without vignette
+remotes::install_github("Model-R/modelr_pkg", build = TRUE)
+# With vignette
+remotes::install_github("Model-R/modelr_pkg", build = TRUE,
+                        build_opts = c("--no-resave-data", "--no-manual"))
+
 #install.packages(xxx)#soon!
 ```
 
-(`build_vignettes` will include this vignette on the installation)
+(__Note regarding vignette building__: the default parameters in `build_opts` 
+include `--no-build-vignettes`. Removing this will include this vignette on the
+installation)
 
 # Shiny app
 
-A shiny application currently available at: https://github.com/Model-R/Model-R uses a previous version of this workflow and is currently being updated to this newest version. 
+A shiny application currently available at: https://github.com/Model-R/Model-R 
+uses a previous version of this workflow and is currently being updated to this newest version. 
 
 # The workflow
 
