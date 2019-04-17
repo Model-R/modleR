@@ -92,7 +92,7 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-Library(modleR)
+library(modleR)
 library(rJava) 
 library(raster)
 head(coordenadas)
