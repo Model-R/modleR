@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ```
 
 
-__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist environmental filters [@varela_environmental_2014].
+__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist the creation of environmental filters [@varela_environmental_2014].
 
 
 # Installing 
@@ -41,7 +41,7 @@ remotes::install_github("Model-R/modelr_pkg", build = TRUE,
 
 (__Note regarding vignette building__: the default parameters in `build_opts` 
 include `--no-build-vignettes`. Removing this will include this vignette on the
-installation)
+installation. During installation, R may ask for some missing packages, which you can install by running `install.packages()`. Also, make sure that the maxent.jar file is available and in the java folder of dismo package. Please download it here: http://www.cs.princeton.edu/~schapire/maxent/)
 
 # Shiny app
 
@@ -63,16 +63,12 @@ The workflow consists of mainly three functions that should be used sequentially
 
 __modleR__ writes the outputs in the hard disk, according to the following folder structure:   
 
-```
-    . models_dir
-    | 
-    |- _species_name             |- /projection1/ | - /partitions`  
-       |                          | - /final_models`  
-                                  | - /ensemble`  
-                 |- /projection2/ | - /partitions`  
-                                  | - /final_models`  
-                                  | - /ensemble`  
-```
+    `models_dir/projection1/partitions`  
+    `models_dir/projection1/final_models`  
+    `models_dir/projection1/ensemble_models`  
+    `models_dir/projection2/partitions`  
+    `models_dir/projection2/final_models`  
+    `models_dir/projection2/ensemble_models`  
 
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them. 
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.
@@ -96,10 +92,9 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-#library(modleR)
+Library(modleR)
 library(rJava) 
 library(raster)
-devtools::load_all()
 head(coordenadas)
 species <- sort(unique(coordenadas$sp))
 species
@@ -218,7 +213,6 @@ args(do_many)
 ```
 
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
-
 
 ```{r do_any, echo = T, eval = T}
 do_any(species_name = species[1],
@@ -362,7 +356,7 @@ final_mods <- list.files(final.folder, full.names = T, pattern = "raw_mean.+tif$
 final_mods
 ```
 
-```{r plot_final, fig.width = 7, fig.height = 6, eval = F}
+```{r plot_final, fig.width = 7, fig.height = 6, eval = T}
 library(raster)
 final_models <- stack(final_mods)
 library(stringr)
@@ -390,7 +384,7 @@ At any point we can explore the outputs in the folders:
 ```{r check_ensemble, fig.width = 5, fig.height = 5, eval= T}
 ensemble_files <-  list.files(paste0(test_folder,"/", species[1],"/present/ensemble"),
                               recursive = T,
-                              pattern = "raw_mean.+tif",
+                              pattern = "raw_mean.+tif$",
                               full.names = T)
 
 ensemble_files

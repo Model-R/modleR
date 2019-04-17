@@ -39,10 +39,11 @@ select_variables <- function(species_name,
         predictors <- crop_model(predictors, buffer)
     }
 
-  sample <- dismo::randomPoints(
+  sampled <- dismo::randomPoints(
       mask = predictors,
       n = floor(sum(!is.na(raster::values(predictors[[1]]))) * percent))
-  vals <- raster::extract(x = predictors, sample)
+  vals <- raster::extract(x = predictors, sampled)
+  vals <- vals[complete.cases(vals),]
   exclude.vars <- caret::findCorrelation(cor(vals), cutoff = cutoff)
   if (length(exclude.vars) > 0) {
       excluded <- names(predictors)[exclude.vars]

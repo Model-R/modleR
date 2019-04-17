@@ -10,7 +10,6 @@
 #' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
 #' @param predictors A RasterStack of predictor variables
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
-#' @param ... Other parameters from writeRaster
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
 #' @author Andrea Sánchez-Tapia
@@ -41,8 +40,7 @@ create_buffer <- function(species_name,
                           dist_min = NULL,
                           buffer_shape = NULL,
                           models_dir = "./models",
-                          write_buffer = F,
-                          ...) {
+                          write_buffer = F) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) |
@@ -67,15 +65,19 @@ create_buffer <- function(species_name,
         }
         if (buffer_type %in% c("mean", "median", "max")) {
             dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
-            if (buffer_type == "mean")
+            if (buffer_type == "mean") {
                 dist.buf <- mean(dists)
-            if (buffer_type == "max")
+            }
+            if (buffer_type == "max") {
                 dist.buf <-  max(dists)
-            if (buffer_type == "median")
+            }
+            if (buffer_type == "median") {
                 dist.buf <- stats::median(dists)
+            }
         }
         # creates the buffer - it's a shapefile
-        buffer.shape <- rgeos::gBuffer(spgeom = occurrences, byid = F, width = dist.buf)
+        buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
+                                       byid = F, width = dist.buf)
     }
     # rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
@@ -95,7 +97,8 @@ create_buffer <- function(species_name,
         partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
         if (file.exists(partition.folder) == FALSE)
             dir.create(partition.folder, recursive = T)
-        writeRaster(r_buffer, filename = paste0(partition.folder, "/buffer"), format = "GTiff", overwrite = T)
+        writeRaster(r_buffer, filename = paste0(partition.folder, "/buffer"),
+                    format = "GTiff", overwrite = T)
     }
     return(r_buffer)
 }

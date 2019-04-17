@@ -128,7 +128,7 @@ setup_sdmdata <- function(species_name,
         metadata_old <- metadata_old[,
                                       setdiff(names(metadata_old),
                                               c("final.n", "final.n.back", "selected_predictors"))]
-        if (all.equal(metadata_old, metadata_new) == T) {
+        if (all(all.equal(metadata_old, metadata_new) == T)) {
             message("same metadata, no need to run data partition")
             sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
             return(sdmdata)
@@ -168,8 +168,7 @@ setup_sdmdata <- function(species_name,
                                     dist_buf = dist_buf, #tiene que estar
                                     dist_min = dist_min,
                                     buffer_shape = buffer_shape,
-                                    write_buffer = write_buffer,
-                                    ...)
+                                    write_buffer = write_buffer)
 
         } else {
         warning("buffer_type not recognized, returning predictors")
@@ -179,12 +178,13 @@ setup_sdmdata <- function(species_name,
     # second option: there is no buffer
     else pbuffr <- predictors # second option, there is no buffer
 
-    #third option: user-supplied absences
+    # absences
+    #first option: user-supplied absences
     if (!is.null(real_absences)) {
         backgr <- real_absences[, c(lon, lat)]
         n_back_mod <- nrow(backgr)
     } else {
-        #fourth option: sampling pseudoabsence points
+        #sampling pseudoabsence points
                 #checks if there will be enough cells to sample pseudoabsences from
                 vals <- values(pbuffr[[1]])
                 available_cells <- sum(!is.na(vals)) - nrow(occurrences)
