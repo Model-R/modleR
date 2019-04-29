@@ -70,7 +70,7 @@ do_any <- function(species_name,
         for (g in setdiff(unique(group), 0)) {
             #excluding the zero allows for bootstrap. only 1 partition will run
             message(paste(species_name, algo, "run number", i, "part. nb.",
-                      g, "\n"))
+                          g, "\n"))
             pres_train <- occurrences[group != g, ]
             if (nrow(occurrences) == 1) #only distance algorithms can be run
                 pres_train <- occurrences[group == g, ]
@@ -92,14 +92,25 @@ do_any <- function(species_name,
                                   family = "binomial")
                 mod <- step(object = null.model, scope = formula(full.model),
                             direction = "both", trace = F)
-                }
+            }
             if (algo == "svmk") {
-            mod <- kernlab::ksvm(sdmdata_train$pa ~ ., data = envtrain)
+
+                mod <- kernlab::ksvm(sdmdata_train$pa ~ ., data = envtrain)
 
             }
             if (algo == "svme") {
-                mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
-                                        data = envtrain)
+                sv <- 1
+                while(!exists("mod")) {
+
+                    mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
+                                            data = envtrain)
+                    sv <- sv + 1
+                    message(paste("Trying svme", sv," times"))
+                    if (sv == 10 & !exists("mod")) {
+                        break
+                        message("svme algorithm did not find a solution in 10 runs")
+                    }
+                }
             }
             if (algo == "rf" | algo == "brt") {
                 if (equalize == T) {
@@ -110,10 +121,10 @@ do_any <- function(species_name,
                     aus.eq <- sample(prop[-1], pres_train_n)
                     envtrain.eq <- envtrain[c(1:pres_train_n, aus.eq), ]
                     sdmdata_train.eq <- sdmdata_train[c(1:pres_train_n, aus.eq), ]
-                    } else {
-                        envtrain.eq <- envtrain
-                        sdmdata_train.eq <- sdmdata_train
-                        }
+                } else {
+                    envtrain.eq <- envtrain
+                    sdmdata_train.eq <- sdmdata_train
+                }
                 if (algo == "rf") {
                     #mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
                     #                               data = envtrain.eq,
@@ -130,43 +141,43 @@ do_any <- function(species_name,
                                            gbm.x = names(predictors),
                                            gbm.y = "pa",
                                            family = "bernoulli",
-                                           tree.complexity = 5,
-                                           learning.rate = 0.005,
-                                           bag.fraction = 0.5,
-                                           plot.main = FALSE)
+                                           tree.complexity = 1,
+                                           learning.rate = 0.01,
+                                           bag.fraction = 0.75,
+                                           plot.main = FALSE,
+                                           n.minobsinnode = 5)
                     n.trees <- mod$n.trees
                 }
             }
 
             message("projecting the models...")
-
-            if (algo == "brt") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
-                                            predictors, n.trees = n.trees)
-                mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
-            }
-            if (algo == "glm") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
-                                            predictors, type = "response")
-                mod_cont <- raster::predict(predictors, mod, type = "response")
-            }
-            if (algo %in% c("bioclim",
-                            "domain",
-                            "maxent",
-                            "mahal")) {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                mod_cont <- dismo::predict(mod, predictors)
-            }
-            if (algo %in% c("svmk", "svme", "rf")) {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
-                mod_cont <- raster::predict(predictors, mod)
-            }
-            if (algo == "maxnet") {
-                eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
-                                            predictors, type = "logistic")
-                mod_cont <- raster::predict(predictors, mod, type = "logistic")
-            }
-
+            if (exists("mod")) {
+                if (algo == "brt") {
+                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                                                predictors, n.trees = n.trees)
+                    mod_cont <- dismo::predict(predictors, mod, n.trees = n.trees)
+                }
+                if (algo == "glm") {
+                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                                                predictors, type = "response")
+                    mod_cont <- raster::predict(predictors, mod, type = "response")
+                }
+                if (algo %in% c("bioclim",
+                                "domain",
+                                "maxent",
+                                "mahal")) {
+                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                    mod_cont <- dismo::predict(mod, predictors)
+                }
+                if (algo %in% c("svmk", "svme", "rf")) {
+                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod, predictors)
+                    mod_cont <- raster::predict(predictors, mod)
+                }
+                if (algo == "maxnet") {
+                    eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
+                                                predictors, type = "logistic")
+                    mod_cont <- raster::predict(predictors, mod, type = "logistic")
+                }
             message("evaluating the models...")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #names(th_table) <- paste0(names(th_table), "_th")
@@ -190,9 +201,9 @@ do_any <- function(species_name,
             th_mod <- th_table[, threshold]
             th_table$threshold <- as.character(threshold)
             #confusion matrix
-                if (algo == "brt") {
+            if (algo == "brt") {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                    n.trees = n.trees, tr = th_mod)
+                                            n.trees = n.trees, tr = th_mod)
             } else {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                         tr = th_mod)
@@ -217,177 +228,180 @@ do_any <- function(species_name,
                                                   "/confusion_matrices_",
                                                   species_name, "_", i, "_", g,
                                                   "_", algo, ".csv"))
-                }
+            }
 
 
             #writing evaluation tables
 
             message("writing evaluation tables...")
             write.csv(th_table, file = paste0(partition.folder, "/evaluate_",
-                                                species_name, "_", i, "_", g,
-                                                "_", algo, ".csv"))
+                                              species_name, "_", i, "_", g,
+                                              "_", algo, ".csv"))
 
-            # apply mask (optional)
-            if (class(mask) %in% c("SpatialPolygonsDataFrame",
-                                   "SpatialPolygons")) {
-                mod_cont <- crop_model(mod_cont, mask)
-            }
-            message("writing raster files...")
-            raster::writeRaster(x = mod_cont,
-                                filename = paste0(partition.folder, "/", algo,
-                                                  "_cont_", species_name, "_",
-                                                  i, "_", g, ".tif"),
-                                overwrite = T)
-            if (write_bin_cut == T) {
-                message("writing binary and cut raster files...")
-                mod_bin  <- mod_cont > th_mod
-                mod_cut  <- mod_cont * mod_bin
-                if (class(mask) == "SpatialPolygonsDataFrame") {
-                    mod_bin <- crop_model(mod_bin, mask)
-                    mod_cut <- crop_model(mod_cut, mask)
+                # apply mask (optional)
+                if (class(mask) %in% c("SpatialPolygonsDataFrame",
+                                       "SpatialPolygons")) {
+                    mod_cont <- crop_model(mod_cont, mask)
                 }
-              raster::writeRaster(x = mod_bin,
-                                  filename = paste0(partition.folder,  "/", algo,
-                                                    "_bin_", species_name, "_",
-                                                    i, "_", g, ".tif"),
-                                  overwrite = T)
-              raster::writeRaster(x = mod_cut,
-                                  filename = paste0(partition.folder, "/", algo,
-                                                    "_cut_", species_name, "_",
-                                                    i, "_", g, ".tif"),
-                                  overwrite = T)
-            }
-
-
-            if (write_png == T) {
-                message("writing png files...")
-                png(paste0(partition.folder, "/", algo, "_cont_", species_name,
-                           "_", i, "_", g, ".png"))
-                raster::plot(mod_cont,
-                             main = paste(algo, "raw", "\n", "AUC =",
-                                          round(eval_mod@auc, 2), "-", "TSS =",
-                                          round(mod_TSS, 2)))
-                dev.off()
-
+                message("writing raster files...")
+                raster::writeRaster(x = mod_cont,
+                                    filename = paste0(partition.folder, "/", algo,
+                                                      "_cont_", species_name, "_",
+                                                      i, "_", g, ".tif"),
+                                    overwrite = T)
                 if (write_bin_cut == T) {
-                  png(paste0(partition.folder, "/", algo, "_bin_", species_name,
-                             "_", i, "_", g, ".png"))
-                  raster::plot(mod_bin,
-                               main = paste(algo, "bin", "\n", "AUC =",
-                                            round(eval_mod@auc, 2), "-", "TSS =",
-                                            round(mod_TSS, 2)))
-                  dev.off()
-                  png(paste0(partition.folder, "/", algo, "_cut_", species_name,
-                             "_", i, "_", g, ".png"))
-                  raster::plot(mod_cut,
-                               main = paste(algo, "cut", "\n", "AUC =",
-                                            round(eval_mod@auc, 2), "-", "TSS =",
-                                            round(mod_TSS, 2)))
-                  dev.off()
-                }
-
-            }
-
-            if (project_model == T) {
-                pfiles <- list.dirs(proj_data_folder, recursive = F)
-                for (proje in pfiles) {
-                    v <- strsplit(proje, "/")
-                    name_proj <- v[[1]][length(v[[1]])]
-                    projection.folder <- paste0(models_dir, "/", species_name,
-                                                "/", name_proj, "/partitions")
-                    if (file.exists(projection.folder) == FALSE)
-                        dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
-                    pred_proj <- raster::stack(list.files(proje, full.names = T))
-                    pred_proj <- raster::subset(pred_proj, names(predictors))
-                    message(name_proj)
-
-                    message("projecting models")
-                    if (algo == "brt") {
-                        mod_proj_cont <- dismo::predict(pred_proj, mod, n.trees = n.trees)
-                    }
-                    if (algo == "glm") {
-                        mod_proj_cont <- raster::predict(pred_proj, mod, type = "response")
-                    }
-                    if (algo %in% c("bioclim",
-                                    "domain",
-                                    "maxent",
-                                    "mahal")) {
-                    mod_proj_cont <- dismo::predict(pred_proj, mod)
-                    }
-                    if (algo %in% c("svmk",
-                                    "svme",
-                                    "rf")) {
-                        mod_proj_cont <- raster::predict(pred_proj, mod)
-                    }
-                    if (write_bin_cut == T) {
-                        mod_proj_bin <- mod_proj_cont > th_mod
-                        mod_proj_cut <- mod_proj_bin * mod_proj_cont
-                    # Normaliza o modelo cut
-                    #mod_proj_cut <- mod_proj_cut / maxValue(mod_proj_cut)
-                    }
+                    message("writing binary and cut raster files...")
+                    mod_bin  <- mod_cont > th_mod
+                    mod_cut  <- mod_cont * mod_bin
                     if (class(mask) == "SpatialPolygonsDataFrame") {
-                        mod_proj_cont <- crop_model(mod_proj_cont, mask)
-                        mod_proj_bin  <- crop_model(mod_proj_bin, mask)
-                        mod_proj_cut  <- crop_model(mod_proj_cut, mask)
+                        mod_bin <- crop_model(mod_bin, mask)
+                        mod_cut <- crop_model(mod_cut, mask)
                     }
-                    message("writing projected models raster")
-                    raster::writeRaster(x = mod_proj_cont,
-                                        filename = paste0(projection.folder,
-                                                          "/", algo, "_cont_",
-                                                          species_name, "_",
+                    raster::writeRaster(x = mod_bin,
+                                        filename = paste0(partition.folder,  "/", algo,
+                                                          "_bin_", species_name, "_",
                                                           i, "_", g, ".tif"),
                                         overwrite = T)
+                    raster::writeRaster(x = mod_cut,
+                                        filename = paste0(partition.folder, "/", algo,
+                                                          "_cut_", species_name, "_",
+                                                          i, "_", g, ".tif"),
+                                        overwrite = T)
+                }
+
+
+                if (write_png == T) {
+                    message("writing png files...")
+                    png(paste0(partition.folder, "/", algo, "_cont_", species_name,
+                               "_", i, "_", g, ".png"))
+                    raster::plot(mod_cont,
+                                 main = paste(algo, "raw", "\n", "AUC =",
+                                              round(eval_mod@auc, 2), "-", "TSS =",
+                                              round(mod_TSS, 2)))
+                    dev.off()
+
                     if (write_bin_cut == T) {
-                        raster::writeRaster(x = mod_proj_bin,
+                        png(paste0(partition.folder, "/", algo, "_bin_", species_name,
+                                   "_", i, "_", g, ".png"))
+                        raster::plot(mod_bin,
+                                     main = paste(algo, "bin", "\n", "AUC =",
+                                                  round(eval_mod@auc, 2), "-", "TSS =",
+                                                  round(mod_TSS, 2)))
+                        dev.off()
+                        png(paste0(partition.folder, "/", algo, "_cut_", species_name,
+                                   "_", i, "_", g, ".png"))
+                        raster::plot(mod_cut,
+                                     main = paste(algo, "cut", "\n", "AUC =",
+                                                  round(eval_mod@auc, 2), "-", "TSS =",
+                                                  round(mod_TSS, 2)))
+                        dev.off()
+                    }
+
+                }
+
+                if (project_model == T) {
+                    pfiles <- list.dirs(proj_data_folder, recursive = F)
+                    for (proje in pfiles) {
+                        v <- strsplit(proje, "/")
+                        name_proj <- v[[1]][length(v[[1]])]
+                        projection.folder <- paste0(models_dir, "/", species_name,
+                                                    "/", name_proj, "/partitions")
+                        if (file.exists(projection.folder) == FALSE)
+                            dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
+                        pred_proj <- raster::stack(list.files(proje, full.names = T))
+                        pred_proj <- raster::subset(pred_proj, names(predictors))
+                        message(name_proj)
+
+                        message("projecting models")
+                        if (algo == "brt") {
+                            mod_proj_cont <- dismo::predict(pred_proj, mod, n.trees = n.trees)
+                        }
+                        if (algo == "glm") {
+                            mod_proj_cont <- raster::predict(pred_proj, mod, type = "response")
+                        }
+                        if (algo %in% c("bioclim",
+                                        "domain",
+                                        "maxent",
+                                        "mahal")) {
+                            mod_proj_cont <- dismo::predict(pred_proj, mod)
+                        }
+                        if (algo %in% c("svmk",
+                                        "svme",
+                                        "rf")) {
+                            mod_proj_cont <- raster::predict(pred_proj, mod)
+                        }
+                        if (write_bin_cut == T) {
+                            mod_proj_bin <- mod_proj_cont > th_mod
+                            mod_proj_cut <- mod_proj_bin * mod_proj_cont
+                            # Normaliza o modelo cut
+                            #mod_proj_cut <- mod_proj_cut / maxValue(mod_proj_cut)
+                        }
+                        if (class(mask) == "SpatialPolygonsDataFrame") {
+                            mod_proj_cont <- crop_model(mod_proj_cont, mask)
+                            mod_proj_bin  <- crop_model(mod_proj_bin, mask)
+                            mod_proj_cut  <- crop_model(mod_proj_cut, mask)
+                        }
+                        message("writing projected models raster")
+                        raster::writeRaster(x = mod_proj_cont,
                                             filename = paste0(projection.folder,
-                                                              "/", algo, "_bin_",
+                                                              "/", algo, "_cont_",
                                                               species_name, "_",
                                                               i, "_", g, ".tif"),
                                             overwrite = T)
-                      raster::writeRaster(x = mod_proj_cut,
-                                          filename = paste0(projection.folder,
-                                                            "/", algo, "_cut_",
-                                                            species_name, "_",
-                                                            i, "_", g, ".tif"),
-                                          overwrite = T)
-                    }
-
-                    if (write_png == T) {
-                        message("writing projected models .png")
-                        png(paste0(projection.folder, "/", algo, "_cont_",
-                                   species_name, "_", i, "_", g, ".png"))
-                        raster::plot(mod_proj_cont,
-                                     main = paste(algo, "proj_raw", "\n",
-                                                  "AUC =",
-                                                  round(eval_mod@auc, 2), "-",
-                                                  "TSS =", round(mod_TSS, 2)))
-                        dev.off()
-
                         if (write_bin_cut == T) {
-                            png(paste0(projection.folder, "/", algo, "_bin_",
+                            raster::writeRaster(x = mod_proj_bin,
+                                                filename = paste0(projection.folder,
+                                                                  "/", algo, "_bin_",
+                                                                  species_name, "_",
+                                                                  i, "_", g, ".tif"),
+                                                overwrite = T)
+                            raster::writeRaster(x = mod_proj_cut,
+                                                filename = paste0(projection.folder,
+                                                                  "/", algo, "_cut_",
+                                                                  species_name, "_",
+                                                                  i, "_", g, ".tif"),
+                                                overwrite = T)
+                        }
+
+                        if (write_png == T) {
+                            message("writing projected models .png")
+                            png(paste0(projection.folder, "/", algo, "_cont_",
                                        species_name, "_", i, "_", g, ".png"))
-                            raster::plot(mod_proj_bin,
-                                         main = paste(algo, "proj_bin", "\n",
-                                                      "AUC =",
-                                                      round(eval_mod@auc, 2),
-                                                      "-", "TSS =",
-                                                      round(mod_TSS, 2)))
-                            dev.off()
-                            png(paste0(projection.folder, "/", algo, "_cut_",
-                                       species_name, "_", i, "_", g, ".png"))
-                            raster::plot(mod_proj_cut,
-                                         main = paste(algo, "proj_cut", "\n",
+                            raster::plot(mod_proj_cont,
+                                         main = paste(algo, "proj_raw", "\n",
                                                       "AUC =",
                                                       round(eval_mod@auc, 2), "-",
                                                       "TSS =", round(mod_TSS, 2)))
                             dev.off()
-                        }
 
+                            if (write_bin_cut == T) {
+                                png(paste0(projection.folder, "/", algo, "_bin_",
+                                           species_name, "_", i, "_", g, ".png"))
+                                raster::plot(mod_proj_bin,
+                                             main = paste(algo, "proj_bin", "\n",
+                                                          "AUC =",
+                                                          round(eval_mod@auc, 2),
+                                                          "-", "TSS =",
+                                                          round(mod_TSS, 2)))
+                                dev.off()
+                                png(paste0(projection.folder, "/", algo, "_cut_",
+                                           species_name, "_", i, "_", g, ".png"))
+                                raster::plot(mod_proj_cut,
+                                             main = paste(algo, "proj_cut", "\n",
+                                                          "AUC =",
+                                                          round(eval_mod@auc, 2), "-",
+                                                          "TSS =", round(mod_TSS, 2)))
+                                dev.off()
+                            }
+
+                        }
+                        rm(pred_proj)
                     }
-                    rm(pred_proj)
-                    }
-            }
+                }
+            } else message(paste(species_name, algo, "run number", i, "part. nb.",
+                                 g, "could not be fit \n"))
         }
+
     }
     return(th_table)
 }
