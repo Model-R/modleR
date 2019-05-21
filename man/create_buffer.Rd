@@ -2,21 +2,36 @@
 % Please edit documentation in R/create_buffer.R
 \name{create_buffer}
 \alias{create_buffer}
-\title{Samples pseudoabsences inside a geographic buffer}
+\title{Samples pseudoabsences inside a geographic buffer.}
 \usage{
-create_buffer(occurrences, buffer_type = NULL, predictors,
-  dist_buf = NULL)
+create_buffer(species_name, occurrences, predictors,
+  buffer_type = "median", dist_buf = NULL, dist_min = NULL,
+  buffer_shape = NULL, models_dir = "./models", write_buffer = F,
+  ...)
 }
 \arguments{
-\item{occurrences}{A data frame with occurrence data. It should contain only two columns:
-lon and lat, in that order.}
+\item{species_name}{A character string with the species name}
 
-\item{buffer_type}{Character string indicating whether the buffer should be
-calculated using the mean, median or maximum distance between occurrence points}
+\item{occurrences}{A data frame with occurrence data}
 
 \item{predictors}{A RasterStack of predictor variables}
 
-\item{dist_buf}{Optional, a distance in km for tbe buffer. If set it will override buffer_type}
+\item{buffer_type}{Character string indicating whether the buffer should be
+calculated using the "mean", "median", "maximum" distance between occurrence
+points, or an absolute "distance". If set to "distance", "dist_buf" needs to
+be specified. If set to "user", "buffer_shape" needs to be specified.}
+
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
+
+\item{dist_min}{Optional, a distance in km for the exclusion buffer.}
+
+\item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
+
+\item{models_dir}{Folder path to save the output files}
+
+\item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
+
+\item{...}{Other parameters from writeRaster}
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance
@@ -24,17 +39,17 @@ Table of pseudoabsence points sampled within the selected distance
 A buffer around the occurrence points
 }
 \description{
-Samples pseudoabsences inside a geographic buffer
+Samples pseudoabsences inside a geographic buffer.
 }
 \details{
-The sampling is performed by dismo::randomPoints() excluding the presence points (exclupep =TRUE)
+It will return a raster object with the same resolution and extent, and cropped by the predictors stack.
 }
 \examples{
 library(raster)
 library(dplyr)
 species <- sort(unique(coordenadas$sp))
 occs <- coordenadas \%>\% filter(sp == species[1]) \%>\% dplyr::select(lon, lat)
-buf <- create_buffer(occs, "mean", example_vars)
+buf <- create_buffer(species[1], occs, example_vars)
 plot(buf)
 
 }
@@ -51,5 +66,7 @@ Felipe Barros
 
 Andrea Sánchez-Tapia
 
-Fabrício Vilasboas
+Diogo S.B. Rocha
+
+Sara Mortara
 }

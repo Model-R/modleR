@@ -1,4 +1,4 @@
-Package: ModelR
+Package: modleR
 Title: Environmental Niche Modeling Workflow Based on dismo
 Version: 0.0.0.9000
 Authors@R: c(
@@ -6,10 +6,12 @@ Authors@R: c(
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3521-4338")),
     person("Guilherme", "Gall", email = "gmgall@gmail.com", 
     role = c("aut")),
+    person("Diogo", "Rocha", email = "diogosbr@gmail.com", 
+    role = c("aut")),
+    person("Sara", "Mortara", email = "saramortara@gmail.com", 
+    role = c("aut")),
     person("Felipe", "Barros", email = "felipe.b4rros@gmail.com", 
     role = c("aut")),
-    person("Diogo", "Rocha", email = "diogosbr@gmail.com", 
-    role = c("aut")),    
     person("Tiago", "Castro Silva", email = "tiago.castro.icmbio@gmail.com", 
     role = c("ctb"))
     )
@@ -19,6 +21,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports:
+    caret,
     data.table,
     dismo,
     e1071,
@@ -26,16 +29,16 @@ Imports:
     graphics,
     kernlab,
     maps,
+    maxnet,
     randomForest,
     raster,
     rgeos,
     rgdal,
     rJava,
     scales,
-    sp,
-    maxnet
+    sp
 BugReports: https://github.com/Model-R/modelr_pkg/issues
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: devtools,
     dplyr,
     knitr,

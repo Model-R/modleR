@@ -12,7 +12,8 @@
 #'                  defaults to "spec_sens" but any dismo threshold
 #'                  can be used: "kappa", "no_omission", "prevalence",
 #'                  "equal_sens_spec", "sensitivity".
-#' @param scale_models Logical. Whether input models should be scaled between 0 and 1
+#' @param scale_models Logical. Whether input models should be scaled between 0
+#' and 1
 #' @param select_par Which performance statistic should be used to select the
 #'  partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_par_val Threshold to select models from TSS values
@@ -42,9 +43,12 @@
 #'   \code{consensus_level} must be defined, 0.5 means a majority consensus}
 #'   \item{\code{cut_mean}}{the mean of the selected cut models}
 #' }
+#' @param uncertainty Whether an uncertainty map, measured as range (max-min)
+#' should be calculated
 #' @param write_png Writes png files of the final models
-#' @return A set of ecological niche models and figures (optional) written in the
-#'          \code{final_dir} subfolder
+#' @param ... Other parameters from writeRaster
+#' @return A set of ecological niche models and figures (optional) written in
+#' the \code{final_dir} subfolder
 #' @import raster
 #' @importFrom utils read.table write.csv read.csv
 #' @export
@@ -61,17 +65,19 @@ final_model <- function(species_name,
                         final_dir = "final_models",
                         proj_dir = "present",
                         which_models = c("raw_mean"),
-                        write_png = T) {
-
-    if (file.exists(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                           final_dir)) == FALSE)
-        dir.create(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                          final_dir),
-                   recursive = TRUE)
+                        uncertainty = F,
+                        write_png = T,
+                        ...) {
+    # Escribe final
+    final_path <- paste(models_dir, species_name, proj_dir,
+                        final_dir, sep = "/")
+    if (file.exists(final_path) == FALSE) {
+        dir.create(final_path)
+    }
     print(date())
-
     cat(paste(species_name, "\n"))
-    cat(paste("Reading the evaluation files for",species_name,"in", proj_dir, "\n"))
+
+    cat(paste("Reading evaluation files for", species_name, "in", proj_dir, "\n"))
     evall <- list.files(
         path = paste0(models_dir, "/", species_name, "/present/partitions"),
         pattern = "^evaluate.+.csv$", full.names = T)
@@ -79,16 +85,20 @@ final_model <- function(species_name,
     stats <- data.table::rbindlist(lista_eval)
     stats <- as.data.frame(stats)
     names(stats)[1] <- "species"
-    write.csv(stats, file = paste0(models_dir,"/", species_name, "/present/",
-                                   final_dir,"/",species_name,
+
+    write.csv(stats, file = paste0(models_dir, "/", species_name, "/present/",
+                                   final_dir, "/", species_name,
                                    "_final_statistics.csv"))
+
     # Extracts only for the selected algorithm
+    # if the user doesnt specify, it will take all of them
     if (is.null(algorithms)) {
         algorithms <- unique(stats$algoritmo)
     }
     algorithms <- as.factor(algorithms)
 
     for (algo in algorithms) {
+        final_algo <- raster::stack()
         cat(paste("Extracting data for", species_name, algo, "\n"))
         stats.algo <- stats[stats$algoritmo == algo, ]
         #stats.algo <- stats.run[stats.run$algoritmo == algo, ]
@@ -97,166 +107,156 @@ final_model <- function(species_name,
         cat(paste("Reading models from .tif files", "\n"))
         modelos.cont <-
             list.files(
-                path = paste0(models_dir, "/", species_name, "/", proj_dir, "/partitions"),
+                path = paste0(models_dir, "/", species_name, "/", proj_dir,
+                              "/partitions"),
                 full.names = T,
-                #pattern = paste0(algo, "_cont_",species_name,"_",run,"_")
-                pattern = paste0(algo, "_cont_",".*tif$")
+                #pattern = paste0(algo, "_cont_", species_name, "_", run, "_")
+                pattern = paste0(algo, "_cont_", ".*tif$")
             )
-		mod.cont <- raster::stack(modelos.cont)  #(0)
-		if (is.numeric(threshold)) {
-		  mod.cont <- rescale.layer(mod.cont)
-		  mod.bin <- mod.cont > threshold #(0)
-		} else{
-		  mod.bin <- mod.cont > stats.algo[, threshold] #(0)
-		  }
+        mod.cont <- raster::stack(modelos.cont)  #(0)
 
-        
-        mod.cut <- mod.cont * mod.bin #(0)
-
-
-		if (scale_models == T) {
-		mod.cont <- rescale.layer(mod.cont)
-		mod.cut <- rescale.layer(mod.cut)
-		}
-
-		#names(mod.cont) <- paste0(algo, "_cont_", species_name, "_Run_", run, "_Partition_", 1:n.part)
-        #names(mod.bin) <- names(mod.cont)
-#select partitions----
+        #select partitions----
+        sel.index <- 1:n.part
         if (select_partitions == T) {
             cat(paste("selecting partitions for", species_name, algo, "\n"))
             sel.index <- which(stats.algo[, select_par] >= select_par_val)
+        }
+        if (!is.null(weight_par)) {
+            pond.stats <- stats.algo[, weight_par][sel.index]
+            if ("TSS" %in% weight_par)
+                pond.stats <- (pond.stats + 1) / 2
         } else {
-            #it will use everything
-            sel.index <- 1:n.part
-            }
-            cont.sel.1  <- mod.cont[[sel.index]]  #(1)
-            bin.sel.2   <- mod.bin[[sel.index]]  #(2)
-            cut.sel.3     <- mod.cut[[sel.index]]  #(3)
-            if (is.numeric(threshold)){
-              th.mean <- threshold
-            }else{
-              th.mean <- mean(stats.algo[, threshold][sel.index])
-            }
-            
+            pond.stats <- rep(1, length(sel.index))#either selected or not
+        }
 
-            if (length(sel.index) == 0) {
-                cat(paste("No partition selected", species_name, algo,proj_dir, "\n"))
-                }
-            # if length(sel.index) == 1 the mean models are equal to the originals
-            # 1 raw and 4 rawmean = continuous
-            # 2 bin and 5 binmean = binary
-            # 3 cut and 6 cutmean = cut
-            # 7 and 2 and 5 because th.mean is TSSth
-            # 8 se parece a 7 pero está cortado por 0.5. no tiene sentido porque es cortar un modelo binario por 0.5
-
-            #I build the stack by repeating those, for homogeneity
+        if (length(sel.index) == 0) {
+            cat(paste("No partition selected", species_name, algo, proj_dir, "\n"))
+        } else if (length(sel.index) != 0) {
+            message(paste(length(sel.index), "/", n.part,
+                          "partitions will be used for", species_name, algo, "\n"))
             if (length(sel.index) == 1) {
-                #cat(paste(length(sel.index), "partition was selected for",
-                 #   species_name, algo, "run",run,"\n"))
-                message(paste(length(sel.index), "partition was selected for",
-                    species_name, algo, proj_dir,"\n"))
+                warning(paste("when only one partition is selected some final models
+                          are identical", "\n"))
+                cont.sel.1  <- mod.cont[[c(sel.index, sel.index)]]
+                pond.stats <- c(pond.stats, pond.stats)#(1)
+                }
+            if (length(sel.index) > 1) {
+                cont.sel.1  <- mod.cont[[sel.index]]  #(1)
+                }
+            #first column of the map. takes raw means and makes them binary or cut by a single mean threshold
+            raw_mean <- raster::weighted.mean(cont.sel.1, w = pond.stats)
+            if ("raw_mean" %in% which_models) {
+                names(raw_mean) <- "raw_mean"#(4)
+                final_algo <- raster::addLayer(final_algo, raw_mean)####layerz#
+            }
+            if (any(c("raw_mean_th", "raw_mean_cut") %in% which_models)) {
+                if (is.numeric(threshold)) {#este threshold se repite na outra coluna, verificar que seja equivalente ¬¬ [ö]
+                    th.mean <- threshold
+                    } else {
+                        th.mean <- mean(stats.algo[, threshold][sel.index])
+                        }
+                raw_mean_th <- (raw_mean > th.mean)  #(7)
+                if ("raw_mean_th" %in% which_models) {
+                names(raw_mean_th) <- "raw_mean_th"
+                final_algo <- raster::addLayer(final_algo, raw_mean_th)
+                }
+                if ("raw_mean_cut" %in% which_models) {
+                    raw_mean_cut <- raw_mean * raw_mean_th #(9)
+                    names(raw_mean_cut) <- "raw_mean_cut"
+                    final_algo <- raster::addLayer(final_algo, raw_mean_cut)####layerz#
+                    }
+                }
+             #second column of the figure. creates binary selected
+             if (any(c("bin_mean", "cut_mean", "bin_consensus") %in% which_models)) {
+                if (is.numeric(threshold)) {#este aqui se repete, linha 145, é equivalente cortar aqui e lá?
+                    cont.sel.1_scaled <- rescale_layer(cont.sel.1)
+                    mod.sel.bin <- cont.sel.1_scaled > threshold #(0)
+                } else {
+                    mod.sel.bin <- cont.sel.1 > (stats.algo[, threshold][sel.index]) #(0)
+                }
+                if (any(c("bin_mean", "bin_consensus") %in% which_models)) {
+                    bin_mean <- raster::weighted.mean(mod.sel.bin, w = pond.stats)  #(5)
+                    names(bin_mean) <- "bin_mean"
+                    final_algo <- raster::addLayer(final_algo, bin_mean)####layerz#
+                    if ("bin_consensus" %in% which_models) {
+                        if (is.null(consensus_level)) {
+                            stop( "consensus_level must be specified")
+                        }
+                        bin_consensus <- (bin_mean > consensus_level)  #(8)
+                        names(bin_consensus) <- "bin_consensus"
+                        final_algo <- raster::addLayer(final_algo, bin_consensus)####layerz#
+                    }
+                }
+                #third column of the figure depends on mod.sel.bin
+                 if ("cut_mean" %in% which_models) {
+                     mod.cut.sel <- mod.sel.bin * cont.sel.1
+                     cut_mean <- raster::weighted.mean(mod.cut.sel, w = pond.stats)  #(6)
+                     names(cut_mean) <- "cut_mean"
+                     final_algo <- raster::addLayer(final_algo, cut_mean)####layerz#
+                 }
+             }
 
-                final <- raster::stack(cont.sel.1,#4
-                                       bin.sel.2, #5
-                                       cut.sel.3, #6
-                                       bin.sel.2, #7
-                                       bin.sel.2 > consensus_level, #8
-                                       cut.sel.3 #9
-                                       )
-                names(final) <- c("raw_mean",
-                                  "bin_mean",
-                                  "cut_mean",
-                                  "bin_mean_th",
-                                  "bin_consensus",
-                                  "cut_mean_th")
-                warning("when only one partition is selected some final models are identical")
+            if (scale_models == T) {
+             final_algo <- rescale_layer(final_algo)
             }
 
-            # When the selected models are more than one, refer to the map in the vignette
-            if (length(sel.index) > 1) {
-                message(paste(length(sel.index), "partitions were selected for",
-                          species_name, algo, "\n"))
 
-                raw_mean_4 <- raster::mean(cont.sel.1)  #(4)
-                bin_mean_5 <- raster::mean(bin.sel.2)  #(5)
-                cut_mean_6 <- raster::mean(cut.sel.3)  #(6)
 
-                mean_TSS_7 <- (raw_mean_4 > th.mean)  #(7)
-                bin_consensus_8 <- (bin_mean_5 > consensus_level)  #(8)
-                cut_tss_9 <- mean_TSS_7 * raw_mean_4 #(9)
-
-                final <- raster::stack(raw_mean_4,
-                                       bin_mean_5,
-                                       cut_mean_6,
-                                       mean_TSS_7,
-                                       bin_consensus_8,
-                                       cut_tss_9)
-                names(final) <- c("raw_mean",
-                                  "bin_mean",
-                                  "cut_mean",
-                                  "bin_mean_th",
-                                  "bin_consensus",
-                                  "cut_mean_th")
+            #incerteza #ö está criando esta camada duplicada com cada algoritmo
+            if (uncertainty == T) {
+                raw_inctz <- raster::calc(cont.sel.1,
+                                          fun = function(x) {max(x) - min(x)})
+                names(raw_inctz) <- "raw_uncertainty"
+                final_algo <- raster::addLayer(final_algo, raw_inctz)####layerz#
+                }
+            #creation ok
                 #cat(paste("selected final models for", species_name, algo, "run", run, "DONE", "\n"))
                 cat(paste("selected final models for", species_name, algo, "DONE", "\n"))
-            }
+        }
+#################
 
-            if (!is.null(weight_par)) {
-                final.w <- stack()
-                for (wpar in unique(weight_par)) {
-                    pond.stats <- stats.algo[, wpar]
-                    if (wpar == "TSS")
-                        pond.stats <- (pond.stats + 1) / 2
-                    #pond <- mod[[1:part]] * pond.stats
-                    cat(paste("Calculating the weighted mean for", species_name, wpar, algo, "\n"))
-                    final.w.cont <- raster::weighted.mean(mod.cont, w = pond.stats)
-                    names(final.w.cont) <- paste0("final_model_weighted_",wpar)
-                    final.w <- addLayer(final.w, final.w.cont)
-
-            #names(final.w)[length(names(final))] <- paste("Weighted",par)
-                    cat(paste("weighted final models for", species_name, algo, "DONE", "\n"))
-
-                    }
-            }
-
-            if (!exists("final")) {
-                final <- stack()
+        if (raster::nlayers(final_algo) != 0) {
+            if (uncertainty == T) {
+                which_f <- c(which_models, "raw_uncertainty")
                 } else {
-                    if (exists("final.w")) {
-                        final <- addLayer(final, final.w)
-                    }
-                # Escribe final
-                    if (length(final) != 0) {
+                    which_f <- which_models
+                }
+            which_final <- final_algo[[which_f]]
 
-                        #pero solo los que sean pedidos en which_model
-                        which_final <- final[[which_models]]
-                        for (i in 1:dim(which_final)[[3]]) {
-                        raster::writeRaster(x = which_final[[i]],
-                                            filename = paste0(models_dir, "/",
-                                                species_name, "/", proj_dir, "/",
-                                                final_dir, "/", species_name,
-                                                "_", algo, "_",
-                                                names(which_final)[i], ".tif"),
-                                            overwrite = T,
-                                            format = "GTiff")
-                        }
-                        if (write_png == T) {
-                            for (i in 1:dim(which_final)[[3]]) {
-                                png(filename = paste0(models_dir, "/", species_name,
-                                                      "/", proj_dir, "/", final_dir, "/",
-                                                      species_name,"_", algo, "_",
-                                                      names(which_final)[i], ".png"))
-                                plot(which_final[[i]], main = names(which_final)[i])
-                                dev.off()
-                            }
-                        }
-                    } else {
-                        warning(paste("no models were selected for", species_name, algo))
-                    }
+           message(paste("writing models", algo, names(which_final), "\n"))
+           if (raster::nlayers(which_final) > 1 ) {
+           raster::writeRaster(which_final,
+                                filename = paste0(final_path,
+                                                  "/", species_name, "_", algo),
+                                suffix = "names",
+                                bylayer = T,
+                                format = "GTiff", ...)
+               }
+           if (raster::nlayers(which_final) == 1 ) {
+           raster::writeRaster(which_final,
+                                filename = paste0(final_path,
+                                                  "/", species_name, "_", algo,
+                                                  "_", names(which_final)),
+                                format = "GTiff", ...)
+               }
+
+            if (write_png == T) {
+                for (i in 1:raster::nlayers(which_final)) {
+                    png(filename = paste0(final_path, "/",
+                                          species_name, "_", algo, "_",
+                                          names(which_final)[i], ".png"))
+                    raster::plot(which_final[[i]], main = names(which_final)[i])
+                    dev.off()
+                }
             }
 
-    }
-    print(paste("DONE", algo, "\n"))
-    print(date())
+        }
 
+    } #else {
+      #  warning(paste("no models were selected for", species_name, algo, "\n"))
+    #}
+      #  }
+    print(paste("DONE", algo, "\n"))
+    return(stats)
+    print(date())
 }

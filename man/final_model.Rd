@@ -9,7 +9,7 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   scale_models = TRUE, select_par = "TSS", select_par_val = 0.7,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
-  which_models = c("raw_mean"), write_png = T)
+  which_models = c("raw_mean"), uncertainty = F, write_png = T, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -28,7 +28,8 @@ defaults to "spec_sens" but any dismo threshold
 can be used: "kappa", "no_omission", "prevalence",
 "equal_sens_spec", "sensitivity".}
 
-\item{scale_models}{Logical. Whether input models should be scaled between 0 and 1}
+\item{scale_models}{Logical. Whether input models should be scaled between 0
+and 1}
 
 \item{select_par}{Which performance statistic should be used to select the
 partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
@@ -66,11 +67,16 @@ to execute the function in projected models)}
   \item{\code{cut_mean}}{the mean of the selected cut models}
 }}
 
+\item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
+should be calculated}
+
 \item{write_png}{Writes png files of the final models}
+
+\item{...}{Other parameters from writeRaster}
 }
 \value{
-A set of ecological niche models and figures (optional) written in the
-         \code{final_dir} subfolder
+A set of ecological niche models and figures (optional) written in
+the \code{final_dir} subfolder
 }
 \description{
 This function reads the output from dismo.mod and creates a model per species

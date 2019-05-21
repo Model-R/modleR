@@ -1,0 +1,25 @@
+citHeader("To cite modler in publications use:")
+
+citEntry(entry = "Article",
+  title        = "Model-R: A Framework for Scalable and Reproducible Ecological Niche Modeling",
+  author       = personList(as.person("Andrea Sánchez-Tapia"),
+                   as.person("Marinez Ferreira de Siqueira"),
+                   as.person("Rafael Oliveira Lima"),
+                   as.person("Felipe Sodré M. Barros"),
+                   as.person("Guilherme M. Gall"),
+                   as.person("Luiz M.R. Gadelha"),
+                   as.person("Luís Alexandre E. da Silva"),
+                   as.person("Carla Osthoff")),
+  journal      = "Communications in Computer and Information Science",
+  year         = "2018",
+  volume       = "",
+  number       = "1",
+  pages        = "218-232",
+  url          = "https://www.springer.com/it/book/9783319733524#",
+
+  textVersion  =
+  paste("Sánchez-Tapia, Andrea; de Siqueira, Marinez Ferreira ; Lima, Rafael Oliveira ; Barros, Felipe Sodré M. ; Gall, Guilherme M. ; Gadelha, Luiz M. R. ; da Silva, Luís Alexandre E. ; Osthoff, Carla. (2018).",
+        "Model-R: A Framework for Scalable and Reproducible Ecological Niche Modeling.",
+        "Communications in Computer and Information Science, 1ed.: Springer International Publishing, 218-232.",
+        "URL https://www.springer.com/it/book/9783319733524#")
+)

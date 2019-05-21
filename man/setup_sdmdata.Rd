@@ -2,16 +2,18 @@
 % Please edit documentation in R/setup_sdmdata.R
 \name{setup_sdmdata}
 \alias{setup_sdmdata}
-\title{Prepares the dataset to perform ENM}
+\title{Prepares the dataset to perform ENM.}
 \usage{
-setup_sdmdata(species_name = species_name, occurrences = occurrences,
-  predictors = predictors, models_dir = models_dir,
-  real_absences = NULL, lon = "lon", lat = "lat",
-  buffer_type = NULL, dist_buf = NULL, seed = NULL, clean_dupl = T,
-  clean_nas = F, geo_filt = F, geo_filt_dist = NULL,
+setup_sdmdata(species_name, occurrences, predictors,
+  models_dir = "./models", real_absences = NULL, lon = "lon",
+  lat = "lat", buffer_type = NULL, dist_buf = NULL,
+  dist_min = NULL, buffer_shape = NULL, write_buffer = F,
+  seed = NULL, clean_dupl = FALSE, clean_nas = FALSE,
+  clean_uni = FALSE, geo_filt = FALSE, geo_filt_dist = NULL,
+  select_variables = F, cutoff = 0.8, percent = 0.8,
   plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
   boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
-  cv_partitions = NULL, equalize = NULL, ...)
+  cv_partitions = NULL, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -22,28 +24,43 @@ setup_sdmdata(species_name = species_name, occurrences = occurrences,
 
 \item{models_dir}{Folder path to save the output files}
 
-\item{real_absences}{User defined absence points}
+\item{real_absences}{User-defined absence points}
 
 \item{lon}{the name of the longitude column. defaults to "lon"}
 
 \item{lat}{the name of the latitude column. defaults to "lat"}
 
-\item{buffer_type}{Defines if a buffer will be used to sample pseudo-absences
-(F, "mean", "median", "max", "distance")}
+\item{buffer_type}{Character string indicating whether the buffer should be
+calculated using the "mean", "median", "maximum" distance between occurrence
+points, or an absolute "distance". If set to "distance", "dist_buf" needs to
+be specified. If set to "user", "buffer_shape" needs to be specified.}
 
-\item{dist_buf}{Defines the width of the buffer}
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
+
+\item{dist_min}{Optional, a distance in km for the exclusion buffer.}
+
+\item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
+
+\item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
 
 \item{seed}{For reproducibility purposes}
 
-\item{clean_dupl}{Logical, delete duplicate occurrence points? defaults to
-TRUE}
+\item{clean_dupl}{logical. If TURE removes points with the same longitude and latitude}
 
-\item{clean_nas}{Logical, delete occurrence points with no environmental
-information? Defaults to FALSE and can take a while for large datasets}
+\item{clean_nas}{logical. If TURE removes points that are outside the bounds of the raster}
+
+\item{clean_uni}{logical. If TURE selects only one point per pixel}
 
 \item{geo_filt}{Logical, delete occurrence that are too close?}
 
 \item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
+
+\item{select_variables}{Logical. Whether a call to \link{select_variables}
+should be performed. cutoff and percent parameters can be specified}
+
+\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.}
+
+\item{percent}{percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
@@ -60,9 +77,6 @@ for bootstrap}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{equalize}{Logical, whether the number of presences and absences should be
-equalized in randomForest and brt.}
-
 \item{...}{parameters from create_buffer()}
 }
 \value{
@@ -72,7 +86,14 @@ the geographical coordinates, of the occurrence and pseudoabsence points, and
 the associated environmental variables.
 }
 \description{
-Prepares the dataset to perform ENM
+This function takes the occurrence points files and makes the data cleaning,
+data partitioning and the pseudo-absence point sampling, and saves the
+metadata and sdmdata files into the hard disk.
+}
+\examples{
+sp <- unique(coordenadas$sp)[1]
+setup_sdmdata(sp, coordenadas[sp == sp,], example_vars)
+
 }
 \seealso{
 \code{\link[dismo]{gridSample}}
