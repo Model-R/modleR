@@ -6,13 +6,13 @@
 \usage{
 create_buffer(species_name, occurrences, predictors,
   buffer_type = "median", dist_buf = NULL, dist_min = NULL,
-  buffer_shape = NULL, models_dir = "./models", write_buffer = F,
-  ...)
+  buffer_shape = NULL, models_dir = "./models", write_buffer = F)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{occurrences}{A data frame with occurrence data}
+\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences. 
+See \code{coordenadas} as an example.}
 
 \item{predictors}{A RasterStack of predictor variables}
 
@@ -30,8 +30,6 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 \item{models_dir}{Folder path to save the output files}
 
 \item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
-
-\item{...}{Other parameters from writeRaster}
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance

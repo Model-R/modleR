@@ -14,9 +14,11 @@ select_variables(species_name, predictors, buffer = NULL, cutoff = 0.8,
 
 \item{buffer}{Raster specified by the user or output from create_buffer()}
 
-\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.}
+\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. 
+Default is to exclude environmental variables with correlation > 0.8}
 
-\item{percent}{percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters}
+\item{percent}{percentage of the raster values to be sampled to calculate the correlation. 
+Default is to 0.8 but should be useful with high resolution rasters}
 
 \item{...}{parameters from create_buffer()}
 }

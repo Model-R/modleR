@@ -4,32 +4,33 @@
 #' data partitioning and the pseudo-absence point sampling, and saves the
 #' metadata and sdmdata files into the hard disk.
 #'
-#' @inheritParams create_buffer
-#' @inheritParams rescale_layer
 #' @inheritParams clean
+#' @inheritParams create_buffer
 #' @inheritParams geo_filt
+#' @inheritParams rescale_layer
 #' @inheritParams select_variables
 #' @param species_name A character string with the species name
-#' @param occurrences A data frame with occurrence data
-#' @param lon the name of the longitude column. defaults to "lon"
-#' @param lat the name of the latitude column. defaults to "lat"
+#' @param occurrences A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences. 
+#' See \code{coordenadas} as an example.
+#' @param lon The name of the longitude column. Defaults to "lon"
+#' @param lat The name of the latitude column. Defaults to "lat"
 #' @param predictors A RasterStack of predictor variables
-#' @param seed For reproducibility purposes
+#' @param seed Random number generator for reproducibility purposes. Used for sampling pseudoabsences
 #' @param real_absences User-defined absence points
 #' @param geo_filt Logical, delete occurrence that are too close?
 #' @param geo_filt_dist The distance of the geographic filter (in kilometers)
-#' @param select_variables Logical. Whether a call to \link{select_variables}
-#' should be performed. cutoff and percent parameters can be specified
+#' @param select_variables Logical. Whether a call to \code{\link{select_variables}}
+#' should be performed. This function excludes autocorrelated environmental variables. Cutoff and percent parameters can be specified
 #' @param models_dir Folder path to save the output files
 #' @param plot_sdmdata Logical, whether png files will be written
-#' @param n_back Number of pseudoabsence points
+#' @param n_back Number of pseudoabsence points. Defauls is 1,000
 #' @param partition_type Perform bootstrap or k-fold crossvalidation?
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n How many bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n How many crossvalidation runs
-#' @param ... parameters from create_buffer()
+#' @param ... Parameters from \code{\link{create_buffer()}}
 #' @return A dataframe called sdmdata with the groups for each run
 #' (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
 #' the geographical coordinates, of the occurrence and pseudoabsence points, and
@@ -168,7 +169,7 @@ setup_sdmdata <- function(species_name,
                                     dist_buf = dist_buf, #tiene que estar
                                     dist_min = dist_min,
                                     buffer_shape = buffer_shape,
-                                    write_buffer = write_buffer)
+                                    write_buffer = write_buffer, ...)
 
         } else {
         warning("buffer_type not recognized, returning predictors")

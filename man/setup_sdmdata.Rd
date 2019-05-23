@@ -18,7 +18,8 @@ setup_sdmdata(species_name, occurrences, predictors,
 \arguments{
 \item{species_name}{A character string with the species name}
 
-\item{occurrences}{A data frame with occurrence data}
+\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences. 
+See \code{coordenadas} as an example.}
 
 \item{predictors}{A RasterStack of predictor variables}
 
@@ -26,9 +27,9 @@ setup_sdmdata(species_name, occurrences, predictors,
 
 \item{real_absences}{User-defined absence points}
 
-\item{lon}{the name of the longitude column. defaults to "lon"}
+\item{lon}{The name of the longitude column. Defaults to "lon"}
 
-\item{lat}{the name of the latitude column. defaults to "lat"}
+\item{lat}{The name of the latitude column. Defaults to "lat"}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
 calculated using the "mean", "median", "maximum" distance between occurrence
@@ -43,7 +44,7 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
 
-\item{seed}{For reproducibility purposes}
+\item{seed}{Random number generator for reproducibility purposes. Used for sampling pseudoabsences}
 
 \item{clean_dupl}{logical. If TURE removes points with the same longitude and latitude}
 
@@ -55,16 +56,18 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
 
-\item{select_variables}{Logical. Whether a call to \link{select_variables}
-should be performed. cutoff and percent parameters can be specified}
+\item{select_variables}{Logical. Whether a call to \code{\link{select_variables}}
+should be performed. This function excludes autocorrelated environmental variables. Cutoff and percent parameters can be specified}
 
-\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.}
+\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. 
+Default is to exclude environmental variables with correlation > 0.8}
 
-\item{percent}{percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters}
+\item{percent}{percentage of the raster values to be sampled to calculate the correlation. 
+Default is to 0.8 but should be useful with high resolution rasters}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
-\item{n_back}{Number of pseudoabsence points}
+\item{n_back}{Number of pseudoabsence points. Defauls is 1,000}
 
 \item{partition_type}{Perform bootstrap or k-fold crossvalidation?}
 
@@ -77,7 +80,7 @@ for bootstrap}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{...}{parameters from create_buffer()}
+\item{...}{Parameters from \code{\link{create_buffer()}}}
 }
 \value{
 A dataframe called sdmdata with the groups for each run
