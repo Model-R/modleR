@@ -182,9 +182,19 @@ do_any <- function(species_name,
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #names(th_table) <- paste0(names(th_table), "_th")
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
+            #PROC kuenm
+            proc <- kuenm::kuenm_proc(occ.test = pres_test,
+                                      model = mod_cont,
+                                      threshold = 5,
+                                      rand.percent = 50,
+                                      iterations = 500,
+                                      parallel = F)
 
             #threshold-independent values
             th_table$AUC <- eval_mod@auc
+            th_table$AUCratio <- eval_mod@auc/0.5
+            th_table$pROC <- proc$pROC_summary[1]
+            th_table$pval_pROC <- proc$pROC_summary[2]
             th_table$TSS <- mod_TSS
             th_table$algoritmo <- algo
             th_table$run <- i
