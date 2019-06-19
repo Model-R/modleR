@@ -15,6 +15,10 @@ do_any(species_name, sdmdata, predictors, models_dir = "./models",
 
 \item{sdmdata}{sdmdata object resulting from \link{setup_sdmdata}}
 
+\item{predictors}{A RasterStack of predictor variables}
+
+\item{models_dir}{Folder path to save the output files}
+
 \item{algo}{The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
 "mahal", "glm", "svmk", "svme",
  "rf", "brt", "mindist", "centroid")}}
@@ -29,6 +33,9 @@ folders with the projection datasets, ex. "./env/proj/proj1"}
 \item{write_png}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png) should be written}
+
+\item{threshold}{Character string indicating threshold (cut-off) to transform model predictions to a binary score
+as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence", "equal_sens_spec", "sensitivity". Default value is "spec_sens"}
 
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 

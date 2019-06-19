@@ -36,7 +36,8 @@ Imports:
     rgdal,
     rJava,
     scales,
-    sp
+    sp, 
+    textclean
 BugReports: https://github.com/Model-R/modelr_pkg/issues
 RoxygenNote: 6.1.1
 Suggests: devtools,

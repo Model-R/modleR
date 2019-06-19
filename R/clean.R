@@ -8,7 +8,7 @@
 #' @param clean_nas logical. If TURE removes points that are outside the bounds of the raster
 #' @param clean_uni logical. If TURE selects only one point per pixel
 #'
-#' @details Used internally in function \code{\link[modelr]{setup_sdmdata}}.
+#' @details Used internally in function \code{\link[modleR]{setup_sdmdata}}.
 #'
 #' @return data.frame containing longitude and latitude.
 #'

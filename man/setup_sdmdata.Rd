@@ -56,7 +56,7 @@ be specified. If set to "user", "buffer_shape" needs to be specified.}
 
 \item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
 
-\item{select_variables}{Logical. Whether a call to \code{\link{select_variables}}
+\item{select_variables}{Logical. Whether a call to \code{\link[modleR]{select_variables}}
 should be performed. This function excludes autocorrelated environmental variables. Cutoff and percent parameters can be specified}
 
 \item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. 
@@ -80,7 +80,7 @@ for bootstrap}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{...}{Parameters from \code{\link{create_buffer()}}}
+\item{...}{Parameters from \code{\link{create_buffer}}}
 }
 \value{
 A dataframe called sdmdata with the groups for each run

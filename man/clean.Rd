@@ -25,7 +25,7 @@ data.frame containing longitude and latitude.
 A function to remove the points that are outside the extension of the raster and to maintain, at most one register per pixel.
 }
 \details{
-Used internally in function \code{\link[modelr]{setup_sdmdata}}.
+Used internally in function \code{\link[modleR]{setup_sdmdata}}.
 }
 \examples{
 sp <- unique(coordenadas$sp)[1]

@@ -19,7 +19,7 @@
 #' @param real_absences User-defined absence points
 #' @param geo_filt Logical, delete occurrence that are too close?
 #' @param geo_filt_dist The distance of the geographic filter (in kilometers)
-#' @param select_variables Logical. Whether a call to \code{\link{select_variables}}
+#' @param select_variables Logical. Whether a call to \code{\link[modleR]{select_variables}}
 #' should be performed. This function excludes autocorrelated environmental variables. Cutoff and percent parameters can be specified
 #' @param models_dir Folder path to save the output files
 #' @param plot_sdmdata Logical, whether png files will be written
@@ -30,7 +30,7 @@
 #' @param boot_n How many bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n How many crossvalidation runs
-#' @param ... Parameters from \code{\link{create_buffer()}}
+#' @param ... Parameters from \code{\link{create_buffer}}
 #' @return A dataframe called sdmdata with the groups for each run
 #' (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
 #' the geographical coordinates, of the occurrence and pseudoabsence points, and
@@ -42,6 +42,7 @@
 #'
 #' @seealso \code{\link[dismo]{gridSample}}
 #' @importFrom utils write.table
+#' @importFrom textclean replace_non_ascii
 #' @export
 #'
 #'
@@ -75,6 +76,12 @@ setup_sdmdata <- function(species_name,
                           cv_n = NULL,
                           cv_partitions = NULL,
                           ...) {
+    # replacing characters not welcome in species name
+    species_name <- textclean::replace_non_ascii(species_name)
+    # characters to avoid in file and dir names
+    avoid.chars <- "[>!´<#?&/\\.]"
+    if(grepl(avoid.chars, species_name)==TRUE)
+        species_name <- gsub("[>!´<#?&/\\.]", "", species_name)
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T, showWarnings = F)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)

@@ -1,5 +1,7 @@
 #' Fits ecological niche models using several algorithms.
 #'
+#' @inheritParams setup_sdmdata
+#' @inheritParams crop_model
 #' @param species_name A character string with the species name
 #' @param sdmdata sdmdata object resulting from \link{setup_sdmdata}
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
@@ -9,8 +11,10 @@
 #' @param proj_data_folder the path to projections -containing one or more
 #'  folders with the projection datasets, ex. "./env/proj/proj1"
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
-#' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written
 #' @param write_png Logical, whether png files will be written
+#' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written
+#' @param threshold Character string indicating threshold (cut-off) to transform model predictions to a binary score
+#' as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence", "equal_sens_spec", "sensitivity". Default value is "spec_sens"
 #' @param conf_mat Logical, whether confusion tables should be written in the HD
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt.
@@ -26,6 +30,7 @@
 #' @importFrom utils write.csv
 #' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
+#' @importFrom textclean replace_non_ascii
 #' @export
 do_any <- function(species_name,
                    sdmdata,
@@ -41,6 +46,13 @@ do_any <- function(species_name,
                    conf_mat = TRUE,
                    equalize = TRUE,
                    ...) {
+  # replacing characters not welcome in species name
+  species_name <- textclean::replace_non_ascii(species_name)
+  # characters to avoid in file and dir names
+  avoid.chars <- "[>!´<#?&/\\.]"
+  if(grepl(avoid.chars, species_name)==TRUE)
+    species_name <- gsub("[>!´<#?&/\\.]", "", species_name)  
+  
     partition.folder <-
         paste0(models_dir, "/", species_name, "/present", "/partitions")
 
