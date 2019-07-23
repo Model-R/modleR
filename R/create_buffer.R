@@ -3,11 +3,16 @@
 #' @inheritParams setup_sdmdata
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the "mean", "median", "maximum" distance between occurrence
-#' points, or an absolute "distance". If set to "distance", "dist_buf" needs to
-#' be specified. If set to "user", "buffer_shape" needs to be specified.
-#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
-#' @param dist_min Optional, a distance in km for the exclusion buffer.
-#' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
+#' points, or an absolute "distance". If NULL pseudoabsences are randomly generated in the entire area 
+#' of the RasterStack of predictor variables.
+#' filled with predictors. If set to "distance", "dist_buf" needs to
+#' be specified. If set to "user", "buffer_shape" needs to be specified
+#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance".
+#' Distance unit is in the same unit of the RasterStack of predictor variables
+#' @param dist_min Optional, a distance for the exclusion buffer. 
+#' Distance unit is in the same unit of the RasterStack of predictor variables
+#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated. 
+#' Needs to be specified if buffer_type = "user"
 #' @param predictors A RasterStack of predictor variables
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance

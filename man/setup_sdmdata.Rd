@@ -33,24 +33,29 @@ See \code{coordenadas} as an example.}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
 calculated using the "mean", "median", "maximum" distance between occurrence
-points, or an absolute "distance". If set to "distance", "dist_buf" needs to
-be specified. If set to "user", "buffer_shape" needs to be specified.}
+points, or an absolute "distance". If NULL pseudoabsences are randomly generated in the entire area 
+of the RasterStack of predictor variables.
+filled with predictors. If set to "distance", "dist_buf" needs to
+be specified. If set to "user", "buffer_shape" needs to be specified}
 
-\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance".
+Distance unit is in the same unit of the RasterStack of predictor variables}
 
-\item{dist_min}{Optional, a distance in km for the exclusion buffer.}
+\item{dist_min}{Optional, a distance for the exclusion buffer. 
+Distance unit is in the same unit of the RasterStack of predictor variables}
 
-\item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
+\item{buffer_shape}{User-defined buffer shapefile in which pseudoabsences will be generated. 
+Needs to be specified if buffer_type = "user"}
 
 \item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
 
 \item{seed}{Random number generator for reproducibility purposes. Used for sampling pseudoabsences}
 
-\item{clean_dupl}{logical. If TURE removes points with the same longitude and latitude}
+\item{clean_dupl}{logical. If TRUE removes points with the same longitude and latitude}
 
-\item{clean_nas}{logical. If TURE removes points that are outside the bounds of the raster}
+\item{clean_nas}{logical. If TRUE removes points that are outside the bounds of the raster}
 
-\item{clean_uni}{logical. If TURE selects only one point per pixel}
+\item{clean_uni}{logical. If TRUE selects only one point per pixel}
 
 \item{geo_filt}{Logical, delete occurrence that are too close?}
 

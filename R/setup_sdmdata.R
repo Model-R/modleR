@@ -42,7 +42,6 @@
 #'
 #' @seealso \code{\link[dismo]{gridSample}}
 #' @importFrom utils write.table
-#' @importFrom textclean replace_non_ascii
 #' @export
 #'
 #'
@@ -76,12 +75,16 @@ setup_sdmdata <- function(species_name,
                           cv_n = NULL,
                           cv_partitions = NULL,
                           ...) {
-    # replacing characters not welcome in species name
-    species_name <- textclean::replace_non_ascii(species_name)
-    # characters to avoid in file and dir names
-    avoid.chars <- "[>!´<#?&/\\.]"
-    if(grepl(avoid.chars, species_name)==TRUE)
-        species_name <- gsub("[>!´<#?&/\\.]", "", species_name)
+  # replacing characters not welcome in species name
+  # characters to avoid in file and dir names 
+  avoid_chars <- intToUtf8(c(91, 62, 33, 180, 60, 35, 63, 38, 47, 92, 46, 93))
+  print_avoid <- intToUtf8(c(62, 33, 180, 60, 35, 63, 38, 47, 92, 46))
+  if(grepl(avoid_chars, species_name)==TRUE){
+    species_name <- gsub(avoid_chars, "", species_name) 
+    warning(cat(paste0('You entered a bad character (any in "', 
+                       print_avoid, 
+                       '") in the species name and we removed it for you')))
+  }
     if (file.exists(paste0(models_dir)) == FALSE)
         dir.create(paste0(models_dir), recursive = T, showWarnings = F)
     if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)

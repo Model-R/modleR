@@ -36,7 +36,7 @@ do_any <- function(species_name,
                    sdmdata,
                    predictors,
                    models_dir = "./models",
-                   algo = c("bioclim"), #um só
+                   algo = c("bioclim"), #um so
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
                    mask = NULL,
@@ -47,12 +47,15 @@ do_any <- function(species_name,
                    equalize = TRUE,
                    ...) {
   # replacing characters not welcome in species name
-  species_name <- textclean::replace_non_ascii(species_name)
-  # characters to avoid in file and dir names
-  avoid.chars <- "[>!´<#?&/\\.]"
-  if(grepl(avoid.chars, species_name)==TRUE)
-    species_name <- gsub("[>!´<#?&/\\.]", "", species_name)  
-  
+  # characters to avoid in file and dir names 
+  avoid_chars <- intToUtf8(c(91, 62, 33, 180, 60, 35, 63, 38, 47, 92, 46, 93))
+  print_avoid <- intToUtf8(c(62, 33, 180, 60, 35, 63, 38, 47, 92, 46))
+  if(grepl(avoid_chars, species_name)==TRUE){
+    species_name <- gsub(avoid_chars, "", species_name) 
+    warning(cat(paste0('You entered a bad character (any in "', 
+                        print_avoid, 
+                        '") in the species name and we removed it for you')))
+  }
     partition.folder <-
         paste0(models_dir, "/", species_name, "/present", "/partitions")
 
@@ -71,7 +74,7 @@ do_any <- function(species_name,
     ##### Hace los modelos
     runs <- which(names(sdmdata) == "pa") - 1
 
-    #para cada columna de la matriz de diseño
+    #para cada columna de la matriz de diseno
     for (i in seq_along(1:runs)) {
         group.all <- sdmdata[, i]
         group  <- group.all[sdmdata$pa == 1]
