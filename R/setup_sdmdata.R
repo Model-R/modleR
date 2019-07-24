@@ -73,8 +73,7 @@ setup_sdmdata <- function(species_name,
                           boot_n = 1,
                           boot_proportion = 0.7,
                           cv_n = NULL,
-                          cv_partitions = NULL,
-                          ...) {
+                          cv_partitions = NULL) {
   # replacing characters not welcome in species name
   # characters to avoid in file and dir names 
   avoid_chars <- intToUtf8(c(91, 62, 33, 180, 60, 35, 63, 38, 47, 92, 46, 93))
@@ -179,7 +178,7 @@ setup_sdmdata <- function(species_name,
                                     dist_buf = dist_buf, #tiene que estar
                                     dist_min = dist_min,
                                     buffer_shape = buffer_shape,
-                                    write_buffer = write_buffer, ...)
+                                    write_buffer = write_buffer)
 
         } else {
         warning("buffer_type not recognized, returning predictors")

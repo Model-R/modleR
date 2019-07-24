@@ -13,7 +13,7 @@ setup_sdmdata(species_name, occurrences, predictors,
   select_variables = F, cutoff = 0.8, percent = 0.8,
   plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
   boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
-  cv_partitions = NULL, ...)
+  cv_partitions = NULL)
 }
 \arguments{
 \item{species_name}{A character string with the species name}

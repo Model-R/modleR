@@ -40,10 +40,12 @@ Imports:
     textclean
 BugReports: https://github.com/Model-R/modelr_pkg/issues
 RoxygenNote: 6.1.1
-Suggests: devtools,
+Suggests: 
+    devtools,
     dplyr,
     knitr,
     purrr,
     rmarkdown,
-    stringr
+    stringr,
+    testthat (>= 2.1.0)
 VignetteBuilder: knitr
