@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 bibliography: modleR.bib
 ---
-
+%
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -93,29 +93,29 @@ occurrence data for four species, and predictor variables called
 
 ```{r lib, echo = T, eval = T}
 #library(modleR)
-devtools::load_all()
+devtools::load_all() # for development
 library(rJava) 
 library(raster)
-head(coordenadas)
-species <- sort(unique(coordenadas$sp))
+str(coordenadas)
+species <- names(coordenadas)
 species
 ```
 
 
 
 ```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = T}
-raster::plot(!is.na(example_vars[[1]]), legend = F)
-points(sp::SpatialPoints(coordenadas[,c(2,3)]),
-       bg = as.numeric(unclass(coordenadas$sp)), pch = 21)
+par(mfrow=c(2,2))
+for(i in 1:length(coordenadas)){
+plot(!is.na(example_vars[[1]]), legend = F, main=species[i])
+points(lat ~ lon, data=coordenadas[[i]])
+}
+par(mfrow=c(1,1))
 ```
 
 We will filter the `coordenadas` file to select only the data for the first species: 
 
 ```{r occs, message = F, eval = TRUE}
-library(dplyr)
-species[1]
-occs <- filter(coordenadas, sp == species[1]) %>% dplyr::select(lon, lat)
-head(occs)
+occs <- coordenadas[[1]]
 ```
 
 
@@ -278,25 +278,25 @@ list.files(partitions.folder, recursive = T)
 should return something like this:
 
 ```
-[1] "bioclim_bin_Eugenia florida DC._1_1.png"     
-[2] "bioclim_bin_Eugenia florida DC._1_1.tif"     
-[3] "bioclim_bin_Eugenia florida DC._1_2.png"     
-[4] "bioclim_bin_Eugenia florida DC._1_2.tif"     
+[1] "bioclim_bin_Abarema_langsdorffii_1_1.png"     
+[2] "bioclim_bin_Abarema_langsdorffii_1_1.tif"     
+[3] "bioclim_bin_Abarema_langsdorffii_1_2.png"     
+[4] "bioclim_bin_Abarema_langsdorffii_1_2.tif"     
  ...
-[11] "bioclim_cont_Eugenia florida DC._1_1.png"    
-[12] "bioclim_cont_Eugenia florida DC._1_1.tif"    
-[13] "bioclim_cont_Eugenia florida DC._1_2.png"    
-[14] "bioclim_cont_Eugenia florida DC._1_2.tif"  
+[11] "bioclim_cont_Abarema_langsdorffii_1_1.png"    
+[12] "bioclim_cont_Abarema_langsdorffii_1_1.tif"    
+[13] "bioclim_cont_Abarema_langsdorffii_1_2.png"    
+[14] "bioclim_cont_Abarema_langsdorffii_1_2.tif"  
 ... 
-[31] "evaluate_Eugenia florida DC._1_1_bioclim.txt"
-[32] "evaluate_Eugenia florida DC._1_1_glm.txt"    
-[33] "evaluate_Eugenia florida DC._1_1_maxent.txt" 
+[31] "evaluate_Abarema_langsdorffii_1_1_bioclim.txt"
+[32] "evaluate_Abarema_langsdorffii_1_1_glm.txt"    
+[33] "evaluate_Abarema_langsdorffii_1_1_maxent.txt" 
 ...
 [116] "metadata.txt"     
 ...
-[145] "rf_cut_Eugenia florida DC._1_5.png"          
-[146] "rf_cut_Eugenia florida DC._1_5.tif"          
-[147] "sdmdata_Eugenia florida DC..png"             
+[145] "rf_cut_Abarema_langsdorffii_1_5.png"          
+[146] "rf_cut_Abarema_langsdorffii_1_5.tif"          
+[147] "sdmdata_Abarema_langsdorffii.png"             
 [148] "sdmdata.txt"       
 ```
 
@@ -358,11 +358,10 @@ final_mods
 ```
 
 ```{r plot_final, fig.width = 7, fig.height = 6, eval = T}
-library(raster)
 final_models <- stack(final_mods)
-library(stringr)
-names(final_models) <- str_split(names(final_models), "_", simplify = T) %>%
-    data.frame() %>% dplyr::select(7) %>% dplyr::pull()
+
+names(final_models) <- sapply(strsplit(names(final_models), paste0(species[1], '_')),
+                             function(x) x[2])
 plot(final_models)
 ```
 
@@ -389,9 +388,9 @@ ensemble_files <-  list.files(paste0(test_folder,"/", species[1],"/present/ensem
                               full.names = T)
 
 ensemble_files
-ens_mod <- raster::stack(ensemble_files)
+ens_mod <- stack(ensemble_files)
 names(ens_mod) <- c("mean", "median", "range", "st.dev")
-raster::plot(ens_mod)
+plot(ens_mod)
 ```
 
 
@@ -403,13 +402,12 @@ An option to do the several models is to use a `for` loop
 ```{r forloop, eval = F}
 args(do_many)
 args(setup_sdmdata)
-especies <- unique(coordenadas$sp)
 
-for (i in 1:length(especies)) {
-    especie <- especies[i]
-    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
+for (i in 1:length(coordenadas)) {
+    sp <- species[i]
+    occs <- coordenadas[[i]]
     setup_sdmdata(
-        species_name = especie,
+        species_name = sp,
         models_dir = "~/modleR_test/forlooptest",
         occurrences = occs,
         predictors = example_vars,
@@ -426,14 +424,15 @@ for (i in 1:length(especies)) {
         boot_proportion = 0.7
         )
 }
+
 # recovers the list of sdmdata
 sdmdata_files <- list.files("~/modleR_test/forlooptest", recursive = T, pattern = "sdmdata.txt", full.names = T)
-sdm_list <- purrr::map(.x = sdmdata_files, ~read.table(.))
-for (i in 1:length(especies)) {
-    especie <- especies[i]
-    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
+sdm_list <- lapply(sdmdata_files, read.table, header=TRUE)
+for (i in 1:length(coordenadas)) {
+    sp <- species[i]
+    occs <- coordenadas[[i]]
     sdmdata <- sdm_list[[i]]
-    do_many(species_name = especie,
+    do_many(species_name = sp,
             sdmdata = sdmdata,
             predictors = example_vars,
             models_dir = "~/modleR_test/forlooptest",
@@ -452,10 +451,11 @@ for (i in 1:length(especies)) {
             plot_sdmdata = T,
             write_bin_cut = T)
 }
-for (i in 1:length(especies)) {
-    especie <- especies[i]
-    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
-    final_model(species_name = especie,
+
+for (i in 1:length(coordenadas)) {
+    sp <- species[i]
+    occs <- coordenadas[[i]]
+    final_model(species_name = sp,
                 select_partitions = TRUE,
                 select_par = "TSS",
                 select_par_val = 0.5,
@@ -465,10 +465,11 @@ for (i in 1:length(especies)) {
                 uncertainty = T, 
                 overwrite = T)
 }
-for (i in 1:length(especies)) {
-    especie <- especies[i]
-    occs <- coordenadas[coordenadas$sp == especie, c("lon", "lat")]
-    ensemble_model(species_name = especie,
+
+for (i in 1:length(coordenadas)) {
+    sp <- species[i]
+    occs <- coordenadas[[i]]
+    ensemble_model(species_name = sp,
                    occurrences = occs,
                    which_models = "bin_consensus",
                    write_png = T,
@@ -476,25 +477,25 @@ for (i in 1:length(especies)) {
     }
 ```
 
-Another option is to use the `purrr` package [@henry_purrr_2017]:
+Another option is to use the `purrr` package [@henry_purrr_2017]. Here we also use `dplyr` package for data manipulation.
 
 ```{r purrr example, eval = F, echo = F}
 library(purrr)
-sdmdata_list <- coordenadas %>% split(.$sp) %>%
-    purrr::map(~ setup_sdmdata(species_name = unique(.$sp),
-                               occurrences = .[, c("lon", "lat")],
-                               partition_type = "bootstrap",
-                               boot_n = 5,
-                               boot_proportion = 0.7,
-                               clean_nas = T,
-                               clean_dupl = T,
-                               clean_uni = T,
-                               buffer_type = "distance",
-                               dist_buf = 4,
-                               predictors = example_vars,
-                               models_dir = "~/modleR_test/temp_purrr",
-                               n_back = 1000,
-                               write_png = T))
+library(dplyr)
+sdmdata_list <- coordenadas %>% purrr::map(~ setup_sdmdata(species_name = names(.),
+                                                           occurrences = .,
+                                                           partition_type = "bootstrap",
+                                                           boot_n = 5,
+                                                           boot_proportion = 0.7,
+                                                           clean_nas = T,
+                                                           clean_dupl = T,
+                                                           clean_uni = T,
+                                                           buffer_type = "distance",
+                                                           dist_buf = 4,
+                                                           predictors = example_vars,
+                                                           models_dir = "~/modleR_test/temp_purrr",
+                                                           n_back = 1000))
+
 coordenadas %>% split(.$sp) %>%
     purrr::map2(.x = .,
                 .y = sdmdata_list,
