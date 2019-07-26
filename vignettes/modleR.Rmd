@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 bibliography: modleR.bib
 ---
-%
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 
 
 __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist the creation of environmental filters [@varela_environmental_2014].
-
 
 # Installing 
 
@@ -94,8 +93,7 @@ occurrence data for four species, and predictor variables called
 ```{r lib, echo = T, eval = T}
 #library(modleR)
 devtools::load_all() # for development
-library(rJava) 
-library(raster)
+#library(raster)
 str(coordenadas)
 species <- names(coordenadas)
 species
@@ -135,14 +133,13 @@ There are a couple options for data cleaning:
 + `clean_dupl` will delete exact duplicates in the occurrence data
 + `clean_nas` will delete any occurrence with no environmental data in the predictor set.
 
-
 The function also sets up different experimental designs:
 
 + `partition_type` can be either bootstrap or k-fold crossvalidation
 + `boot_n` and `cv_n` perform repeated bootstraps and repeated k-fold crossvalidation, respectively
 + `boot_proportion` sets the proportion of data to be sampled as training set (defaults to 0.8)
 + `cv_partitions` sets the number of partitions in the k-fold crossvalidations (defaults to 3)
-+ but overwrites part when n < 10, setting part to the number of occurrence records (a jacknife partition).  
++ but overwrites part when n < 10, setting part to the number of occurrence records (a jacknife partition). 
 
 Pseudoabsence sampling has also some options:
 
@@ -428,6 +425,7 @@ for (i in 1:length(coordenadas)) {
 # recovers the list of sdmdata
 sdmdata_files <- list.files("~/modleR_test/forlooptest", recursive = T, pattern = "sdmdata.txt", full.names = T)
 sdm_list <- lapply(sdmdata_files, read.table, header=TRUE)
+
 for (i in 1:length(coordenadas)) {
     sp <- species[i]
     occs <- coordenadas[[i]]
@@ -477,13 +475,15 @@ for (i in 1:length(coordenadas)) {
     }
 ```
 
-Another option is to use the `purrr` package [@henry_purrr_2017]. Here we also use `dplyr` package for data manipulation.
+Another option is to use the `purrr` package [@henry_purrr_2017]. 
 
 ```{r purrr example, eval = F, echo = F}
 library(purrr)
 library(dplyr)
-sdmdata_list <- coordenadas %>% purrr::map(~ setup_sdmdata(species_name = names(.),
-                                                           occurrences = .,
+sdmdata_list <- coordenadas %>% purrr::map2(.x= ., 
+                                            .y= as.list(names(.)), 
+                                            ~ setup_sdmdata(species_name = .y,
+                                                           occurrences = .x,
                                                            partition_type = "bootstrap",
                                                            boot_n = 5,
                                                            boot_proportion = 0.7,
@@ -495,13 +495,12 @@ sdmdata_list <- coordenadas %>% purrr::map(~ setup_sdmdata(species_name = names(
                                                            predictors = example_vars,
                                                            models_dir = "~/modleR_test/temp_purrr",
                                                            n_back = 1000))
-
-coordenadas %>% split(.$sp) %>%
-    purrr::map2(.x = .,
-                .y = sdmdata_list,
-                ~ do_many(species_name = unique(.x$sp),
-                          sdmdata = .y,
-                          occurrences = .x[, c("lon", "lat")],
+#aqui nao funfa!!
+coordenadas %>% purrr::pmap(.x = .,
+                            .y = sdmdata_list,
+                            ~ do_many(species_name = as.list(names(.)),
+                                      sdmdata = .y,
+                          occurrences = .x,
                           predictors = example_vars,
                           models_dir = "~/modleR_test/temp_purrr",
                           bioclim = T,

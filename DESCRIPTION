@@ -16,7 +16,8 @@ Authors@R: c(
     role = c("ctb"))
     )
 Description: This package implements a workflow to perform ecological niche modeling (ENM), including some procedures of data preparation and cleaning, the setup of several experimental designs (crossvalidation, repeated crossvalidation and bootstrap), the application of inclusion and exclusion buffers to background selection, fitting algorithms that are already implemented in dismo, randomForest, e1071, kernlab packages, namely: Bioclim, Domain, GLM, Mahalanobis Distance, Maxent, Random Forest, and two versions of Support Vector Machines (here svm.k and svm.e). It implements a version of euclidean distance to the environmental centroid and of euclidean minimum distance. It uses the structure provided by package dismo to return evaluation tables. A function to join partitions in several ways is provided in final_model(). Finally, ensemble_model() assembles models from distinct algorithms and provides summary rasters.
-Depends: R (>= 3.0.0)
+Depends: 
+    R (>= 3.0.0)
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -36,8 +37,7 @@ Imports:
     rgdal,
     rJava,
     scales,
-    sp, 
-    textclean
+    sp
 BugReports: https://github.com/Model-R/modelr_pkg/issues
 RoxygenNote: 6.1.1
 Suggests: 
