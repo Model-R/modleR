@@ -27,10 +27,9 @@
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
 #' library(raster)
-#' library(dplyr)
-#' species <- sort(unique(coordenadas$sp))
-#' occs <- coordenadas %>% filter(sp == species[1]) %>% dplyr::select(lon, lat)
-#' buf <- create_buffer(species[1], occs, example_vars)
+#' sp <- names(coordenadas)[1]
+#' occs <- coordenadas[[1]]
+#' buf <- create_buffer(species_name=sp, occurrences=occs, predictors=example_vars)
 #' plot(buf)
 #'
 #' @import raster
@@ -39,6 +38,8 @@
 #' @export
 create_buffer <- function(species_name,
                           occurrences,
+                          lon = "lon",
+                          lat = "lat",
                           predictors,
                           buffer_type = "median",
                           dist_buf = NULL,

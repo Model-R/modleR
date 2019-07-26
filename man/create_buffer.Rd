@@ -4,15 +4,20 @@
 \alias{create_buffer}
 \title{Samples pseudoabsences inside a geographic buffer.}
 \usage{
-create_buffer(species_name, occurrences, predictors,
-  buffer_type = "median", dist_buf = NULL, dist_min = NULL,
-  buffer_shape = NULL, models_dir = "./models", write_buffer = F)
+create_buffer(species_name, occurrences, lon = "lon", lat = "lat",
+  predictors, buffer_type = "median", dist_buf = NULL,
+  dist_min = NULL, buffer_shape = NULL, models_dir = "./models",
+  write_buffer = F)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
 
 \item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences. 
 See \code{coordenadas} as an example.}
+
+\item{lon}{The name of the longitude column. Defaults to "lon"}
+
+\item{lat}{The name of the latitude column. Defaults to "lat"}
 
 \item{predictors}{A RasterStack of predictor variables}
 
@@ -49,10 +54,9 @@ It will return a raster object with the same resolution and extent, and cropped 
 }
 \examples{
 library(raster)
-library(dplyr)
-species <- sort(unique(coordenadas$sp))
-occs <- coordenadas \%>\% filter(sp == species[1]) \%>\% dplyr::select(lon, lat)
-buf <- create_buffer(species[1], occs, example_vars)
+sp <- names(coordenadas)[1]
+occs <- coordenadas[[1]]
+buf <- create_buffer(species_name=sp, occurrences=occs, predictors=example_vars)
 plot(buf)
 
 }
