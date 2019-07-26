@@ -20,6 +20,7 @@
 #' equalized in randomForest and brt.
 #' @param ... Any parameter from \link{setup_sdmdata}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
+#' @details blablabla
 #' @author Andrea Sánchez-Tapia
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{maxent}}
@@ -30,7 +31,6 @@
 #' @importFrom utils write.csv
 #' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
-#' @importFrom textclean replace_non_ascii
 #' @export
 do_any <- function(species_name,
                    sdmdata,
