@@ -1,12 +1,16 @@
 #' Ocurrence points for four species in the Brazilian Atlantic Forest.
 #'
-#' A dataframe with 618 occurrence points from four species
+#' A list with four elements containing ccurrence points from four species: Abarema langsdorfii, 
+#' Eugenia florida, Leandra carassana and Ouratea semiserrata. 
+#' Each element contains three variables: sp species name separated by _, lat contains Latitude information and lon contains
+#' Longitude information.
 #'
-#' @format A dataframe with 618 rows and 3 columns:
+#' @format A list of 4: 
 #' \describe{
-#'   \item{sp}{Species name}
-#'   \item{lat}{Latitude}
-#'   \item{lon}{Longitude}
+#'   \item{Abarema_langsdorffii}{104 observations of 3 variables}
+#'   \item{Eugenia_florida}{341 observations of  3 variables}
+#'   \item{Leandra_carassana}{82 observations of 3 variables}
+#'   \item{Ouratea_semiserrata}{90 observations of 3 variables}
 #' }
 "coordenadas"
 
