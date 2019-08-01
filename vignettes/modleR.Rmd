@@ -1,6 +1,6 @@
 ---
 title: "modleR: a workflow for ecological niche models based on dismo"
-author: "Andrea Sánchez-Tapia & Sara Mortara"
+author: "Andrea Sánchez-Tapia, Diogo S. B. Rocha & Sara Mortara"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
@@ -215,11 +215,8 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call
 ```{r do_any, echo = T, eval = T}
 do_any(species_name = species[1],
        sdmdata = sdmdata_1sp,
-       occurrences = occs,
        algo = "maxent",
-       seed = 512,
        predictors = example_vars,
-       plot_sdmdata = T,
        models_dir = test_folder,
        write_png = T,
        write_bin_cut = F,
@@ -232,14 +229,12 @@ The following lines call for bioclim, GLM, maxent, random forests and smv.k (fro
 ```{r do_many, echo = T, eval = T}
 do_many(species_name = species[1],
        sdmdata = sdmdata_1sp,
-       occurrences = occs,
        predictors = example_vars,
-       plot_sdmdata = T,
        models_dir = test_folder,
        write_png = T,
        write_bin_cut = F,
        bioclim = T,
-       domain = T, 
+       domain = F, 
        glm = T,
        svmk = T,
        svme = T, 
@@ -372,8 +367,9 @@ The third step of the workflow is joining the models for each algorithm into a f
 args(ensemble_model)
 ens <- ensemble_model(species[1],
                occurrences = occs,
-               which_models = "raw_mean",
-               models_dir = test_folder)
+               which_final = "raw_mean",
+               models_dir = test_folder, 
+               overwrite=TRUE) #argument from writeRaster
 ```
 
 At any point we can explore the outputs in the folders: 

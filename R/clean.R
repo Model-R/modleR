@@ -17,7 +17,10 @@
 #'
 #' @examples
 #' occs <- coordenadas[[1]]
-#' clean(occurrences = occs, predictors = example_vars, clean_dupl=TRUE, clean_nas=TRUE, clean_uni=TRUE)
+#' clean(occurrences = occs, predictors = example_vars, 
+#'       clean_dupl=TRUE, 
+#'       clean_nas=TRUE, 
+#'       clean_uni=TRUE)
 #'
 #' @import raster
 #'

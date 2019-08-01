@@ -13,7 +13,6 @@
 #' Distance unit is in the same unit of the RasterStack of predictor variables
 #' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated. 
 #' Needs to be specified if buffer_type = "user"
-#' @param predictors A RasterStack of predictor variables
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros

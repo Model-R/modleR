@@ -1,7 +1,7 @@
 #' Excludes occurrence points within a geographic distance.
 #'
 #' @inheritParams setup_sdmdata
-#' @param min_distance numeric. Minimum distance (in Km) between points.
+#' @param min_distance numeric. Minimum distance between points in the unit of the predictor raster.
 #' @return Table of occurrence points with minimum distance indicated in min.distance
 #' @author Diogo S. B. Rocha
 #' @references Varela, S., Anderson, R. P., García-Valdés, R., &
@@ -16,7 +16,7 @@ geo_filt <- function(occurrences,
                      lon = "lon",
                      lat = "lat",
                      min_distance = 10) {
-    res <- min_distance * 0.008333333
+    res <- min_distance
     r <- raster::raster(extent(range(occurrences[, lon]),
                                range(occurrences[, lat])) + res)
     res(r) <- res

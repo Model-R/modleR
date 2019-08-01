@@ -5,13 +5,11 @@
 #' returns a new stack with uncorrelated variables based on a cutoff.
 #'
 #' @inheritParams setup_sdmdata
-#' @inheritParams create_buffer
 #' @param buffer Raster specified by the user or output from create_buffer()
 #' @param cutoff Cutoff value of correlation between variables to exclude environmental layer. 
 #' Default is to exclude environmental variables with correlation > 0.8
 #' @param percent percentage of the raster values to be sampled to calculate the correlation. 
 #' Default is to 0.8 but should be useful with high resolution rasters
-#' @param ... parameters from create_buffer()
 #' @return A raster stack of independent environmental variables based on a
 #'  specific cutoff
 #' @author Andrea Sánchez-Tapia and Sara Mortara
@@ -35,8 +33,7 @@
 select_variables <- function(predictors,
                              buffer = NULL,
                              cutoff = 0.8,
-                             percent = 0.8,
-                             ...) {
+                             percent = 0.8) {
 
     if (!class(predictors) %in% c("RasterBrick","RasterStack")) {
   stop("predictors must be a RasterBrick or RasterStack object")

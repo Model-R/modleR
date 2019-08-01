@@ -1,7 +1,7 @@
-#' Crop environmental raster based on specific buffer.
+#' Crop environmental raster based on specific buffer
 #'
-#' @param modelo raster with the ecological niche model
-#' @param mask shapefile object to be used as mask for cropping the model
+#' @param modelo Raster with the ecological niche model.
+#' @param mask A SpatialPolygonsDataFrame to be used to mask the final models.
 #' @author Andrea Sánchez-Tapia
 #' @return Croppped environmental raster based on specific buffer
 #' @seealso \code{\link[raster]{crop}}
