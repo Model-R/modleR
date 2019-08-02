@@ -1,20 +1,26 @@
-#' Fits ecological niche models using several algorithms.
+#' Fits ecological niche models using several algorithms
 #'
-#' @param species_name A character string with the species name
+
+#' @inheritParams setup_sdmdata
+#' @inheritParams crop_model
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
 #'                                        "mahal", "glm", "svmk", "svme",
-#'                                         "rf", "brt", "mindist", "centroid")}
-#' @param project_model Logical, whether to perform a projection
-#' @param proj_data_folder the path to projections -containing one or more
-#'  folders with the projection datasets, ex. "./env/proj/proj1"
-#' @param mask A SpatialPolygonsDataFrame to be used to mask the final models
-#' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written
-#' @param write_png Logical, whether png files will be written
-#' @param conf_mat Logical, whether confusion tables should be written in the HD
+#'                                         "rf", "brt", "mindist", "centroid")}.
+#' @param project_model Logical, whether to perform a projection.
+#' @param proj_data_folder Path to projections -containing one or more
+#'  folders with the projection datasets, ex. "./env/proj/proj1".
+#' @param write_png Logical, whether png files will be written.
+#' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written.
+#' @param threshold Character string indicating threshold (cut-off) to transform model predictions 
+#' to a binary score.
+#' as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence", 
+#' "equal_sens_spec", "sensitivity". Default value is "spec_sens".
+#' @param conf_mat Logical, whether confusion tables should be written in the HD.
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt.
-#' @param ... Any parameter from \link{setup_sdmdata}
-#' @return A data frame with the evaluation statistics (TSS, AUC, etc.)
+#' @return A data frame with the evaluation statistics (TSS, AUC, etc).
+#' @details Biolclim algorithm (\code{algo="bioclim"}) uses \code{\link[dismo]{bioclim}} function in  dismo
+#' package.
 #' @author Andrea Sánchez-Tapia
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{maxent}}
@@ -29,7 +35,7 @@
 do_any <- function(species_name,
                    predictors,
                    models_dir = "./models",
-                   algo = c("bioclim"), #um só
+                   algo = c("bioclim"), #um so
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
                    mask = NULL,
@@ -37,8 +43,17 @@ do_any <- function(species_name,
                    write_bin_cut = FALSE,
                    threshold = "spec_sens",
                    conf_mat = TRUE,
-                   equalize = TRUE,
-                   ...) {
+                   equalize = TRUE) {
+  # replacing characters not welcome in species name
+  # characters to avoid in file and dir names 
+  avoid_chars <- intToUtf8(c(91, 62, 33, 180, 60, 35, 63, 38, 47, 92, 46, 93))
+  print_avoid <- intToUtf8(c(62, 33, 180, 60, 35, 63, 38, 47, 92, 46))
+  if(grepl(avoid_chars, species_name)==TRUE){
+    species_name <- gsub(avoid_chars, "", species_name) 
+    warning(cat(paste0('You entered a bad character (any in "', 
+                        print_avoid, 
+                        '") in the species name and we removed it for you')))
+  }
     partition.folder <-
         paste(models_dir, species_name, "present", "partitions", sep = "/")
     if (file.exists(partition.folder) == FALSE)
@@ -68,7 +83,7 @@ do_any <- function(species_name,
     ##### Hace los modelos
     runs <- which(names(sdmdata) == "pa") - 1
 
-    #para cada columna de la matriz de diseño
+    #para cada columna de la matriz de diseno
     for (i in seq_along(1:runs)) {
         group.all <- sdmdata[, i]
         group  <- group.all[sdmdata$pa == 1]
@@ -412,5 +427,6 @@ do_any <- function(species_name,
         }
 
     }
-    return(th_table)
+#    return(th_table)
+    message(paste0("DONE!", "\n"))
 }

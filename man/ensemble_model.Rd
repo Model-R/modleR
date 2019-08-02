@@ -7,8 +7,9 @@
 ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   models_dir = "./models", final_dir = "final_models",
   ensemble_dir = "ensemble", proj_dir = "present",
-  which_models = c("raw_mean"), consensus = FALSE,
-  consensus_level = 0.5, write_png = T, scale_models = TRUE)
+  which_final = c("raw_mean"), consensus = FALSE,
+  consensus_level = 0.5, write_ensemble = T, scale_models = TRUE,
+  ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name}
@@ -32,7 +33,7 @@ files. A subfolder will be created.}
 Defaults to "present" but can be set according to the other projections (i.e.
 to execute the function in projected models)}
 
-\item{which_models}{Which final_model() will be used? Currently it can be:
+\item{which_final}{Which final_model() will be used? Currently it can be:
 \describe{
   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
   by TSS or AUC}
@@ -48,12 +49,15 @@ to execute the function in projected models)}
 
 \item{consensus}{Logical. Will a consensus between the algorithms be applied?}
 
-\item{consensus_level}{Threshold for the consensus rule, betwen 0 and 1
-(0.5 means a majority rule).}
+\item{consensus_level}{Which proportion of models will be kept when creating
+\code{bin_consensus} (binary).}
 
-\item{write_png}{Write png? Defaults to TRUE}
+\item{write_ensemble}{Logical. If \code{TRUE} writes png files of the ensemble models.}
 
-\item{scale_models}{Logical. If TRUE (default), sets the values of the input models between 0 and 1.}
+\item{scale_models}{Logical. Whether input models should be scaled between 0.
+and 1}
+
+\item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
 \value{
 A rasterStack with the minimun, maximum, median, mean and standard
