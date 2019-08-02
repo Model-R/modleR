@@ -1,8 +1,8 @@
 #' Fits ecological niche models using several algorithms
 #'
+
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
-#' @param sdmdata Resulting object generated from \link{setup_sdmdata}.
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
 #'                                        "mahal", "glm", "svmk", "svme",
 #'                                         "rf", "brt", "mindist", "centroid")}.
@@ -33,7 +33,6 @@
 #' @importFrom stats complete.cases formula glm step dist
 #' @export
 do_any <- function(species_name,
-                   sdmdata,
                    predictors,
                    models_dir = "./models",
                    algo = c("bioclim"), #um so
@@ -56,7 +55,18 @@ do_any <- function(species_name,
                         '") in the species name and we removed it for you')))
   }
     partition.folder <-
-        paste0(models_dir, "/", species_name, "/present", "/partitions")
+        paste(models_dir, species_name, "present", "partitions", sep = "/")
+    if (file.exists(partition.folder) == FALSE)
+        dir.create(partition.folder, recursive = T)
+    setup.folder <-
+        paste(models_dir, species_name, "present", "data_setup", sep = "/")
+
+    # reads sdmdata from HD
+    if (file.exists(paste(setup.folder, "sdmdata.txt", sep = "/"))) {
+        sdmdata <- read.table(paste(setup.folder, "sdmdata.txt", sep = "/"))
+    } else {
+        stop("sdmdata.txt file not found, run setup_sdmdata() or check your folder settings")
+        }
 
     message(paste(algo, "\n"))
 
@@ -272,7 +282,7 @@ do_any <- function(species_name,
                         mod_cut <- crop_model(mod_cut, mask)
                     }
                     raster::writeRaster(x = mod_bin,
-                                        filename = paste0(partition.folder,  "/", algo,
+                                        filename = paste0(partition.folder, "/", algo,
                                                           "_bin_", species_name, "_",
                                                           i, "_", g, ".tif"),
                                         overwrite = T)
