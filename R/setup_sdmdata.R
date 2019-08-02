@@ -74,19 +74,21 @@ setup_sdmdata <- function(species_name,
                           cv_n = NULL,
                           cv_partitions = NULL,
                           ...) {
-    if (file.exists(paste0(models_dir)) == FALSE)
-        dir.create(paste0(models_dir), recursive = T, showWarnings = F)
-    if (file.exists(paste0(models_dir, "/", species_name)) == FALSE)
-        dir.create(paste0(models_dir, "/", species_name))
-    partition.folder <-
-        paste0(models_dir, "/", species_name, "/present", "/partitions")
-    if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder, recursive = T)
+    if (file.exists(models_dir) == FALSE)
+        dir.create(models_dir, recursive = T, showWarnings = F)
+    if (file.exists(paste(models_dir, species_name, sep = "/")) == FALSE)
+        dir.create(paste(models_dir, species_name, sep = "/"))
+
+    #creates a separate folder for sdmdata and metadata
+    setup.folder <-
+        paste(models_dir, species_name, "present", "data_setup", sep = "/")
+    if (file.exists(setup.folder) == FALSE)
+        dir.create(setup.folder, recursive = T)
 
     ## checking latitude and longitude columns
     if (all(c(lon, lat) %in% names(occurrences))) {
-    occurrences <- occurrences[, c(lon, lat)]
-    names(occurrences) <- c("lon", "lat")
+        occurrences <- occurrences[, c(lon, lat)]
+        names(occurrences) <- c("lon", "lat")
     } else {
         stop("Coordinate column names do not match. Either rename to `lon` and `lat` or specify")
     }
@@ -121,16 +123,17 @@ setup_sdmdata <- function(species_name,
         )
 
         #checking metadata----
-    if (file.exists(paste0(partition.folder, "/metadata.txt"))) {
+    if (file.exists(paste(setup.folder, "metadata.txt", sep = "/"))) {
         message("metadata file found, checking metadata \n")
-        metadata_old <- read.table(paste0(partition.folder, "/metadata.txt"), as.is = F, row.names = 1)
+        metadata_old <- read.table(paste(setup.folder, "metadata.txt", sep = "/"),
+                                   as.is = F, row.names = 1)
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
-                                      setdiff(names(metadata_old),
-                                              c("final.n", "final.n.back", "selected_predictors"))]
+                                     setdiff(names(metadata_old),
+                                               c("final.n", "final.n.back", "selected_predictors"))]
         if (all(all.equal(metadata_old, metadata_new) == T)) {
             message("same metadata, no need to run data partition")
-            sdmdata <- read.table(paste0(partition.folder, "/sdmdata.txt"))
+            sdmdata <- read.table(paste(setup.folder, "sdmdata.txt", sep = "/"))
             return(sdmdata)
             }
     }
@@ -191,7 +194,7 @@ setup_sdmdata <- function(species_name,
                 # and corrects accordingly
                 if (available_cells < n_back) {
                     n_back_mod <- available_cells
-                    message(paste0(available_cells, "available cells"))
+                    message(paste(available_cells, "available cells"))
                     message(paste("Using", n_back_mod, "pseudoabsences", "\n"))
                 } else {
                     n_back_mod <- n_back
@@ -223,7 +226,7 @@ setup_sdmdata <- function(species_name,
     metadata_new$final.n.back <- as.integer(n_back_mod)
 
     message(paste("saving metadata"), "\n")
-    write.table(metadata_new, file = paste0(partition.folder, "/metadata.txt"))
+    write.table(metadata_new, file = paste(setup.folder, "metadata.txt", sep = "/"))
 
     # cria a tabela de valores
     message("extracting environmental data")
@@ -312,13 +315,12 @@ setup_sdmdata <- function(species_name,
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
     message(paste("saving sdmdata", "\n"))
-    write.table(sdmdata, file = paste0(partition.folder, "/sdmdata.txt"))
-
+    write.table(sdmdata, file = paste(setup.folder, "sdmdata.txt", sep = "/"))
 
 
     if (plot_sdmdata) {
         message(paste("Plotting the dataset...", "\n"))
-        png(filename = paste0(partition.folder, "/sdmdata_", species_name, ".png"))
+        png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
         points(back, pch = ".", col = "black")
