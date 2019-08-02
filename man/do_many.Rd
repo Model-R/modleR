@@ -10,7 +10,9 @@ do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   brt = FALSE, ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name}
+\item{species_name}{A character string with the species name. Because species name will be used as 
+a directory name, avoid non-ASCII characters, spaces and ponctuation marks. 
+Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
 
 \item{bioclim}{Execute bioclim from the dismo implementation}
 
@@ -36,7 +38,7 @@ do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
 
 \item{brt}{Execute boosted regression trees}
 
-\item{...}{Any parameter from \link{setup_sdmdata}}
+\item{...}{Any parameter from \link{do_any}}
 }
 \value{
 A set of ecological niche models for each partition and algorithm,

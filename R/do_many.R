@@ -13,7 +13,7 @@
 #' @param mindist Execute minimum euclidean distance
 #' @param centroid Execute euclidean distance to the environmental centroid
 #' @param brt Execute boosted regression trees
-#' @param ... Any parameter from \link{setup_sdmdata}
+#' @param ... Any parameter from \link{do_any}
 #' @return A set of ecological niche models for each partition and algorithm,
 #'         written in the \code{models_dir} subfolder
 #' @author Andrea Sánchez-Tapia

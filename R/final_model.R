@@ -1,30 +1,31 @@
-#' Joins ENM from several partitions, creating a model per algorithm.
+#' Joins ENM from several partitions, creating a model per algorithm
 #'
-#' This function reads the output from dismo.mod and creates a model per species
-#' @param species_name A character string with the species name
+#'#' This function reads the output from dismo.mod and creates a model per species.
+#'
+#' @inheritParams setup_sdmdata
 #' @param algorithms Which algorithms will be processed. If no name is given it
-#' will process all algorithms present in the evaluation files
+#' will process all algorithms present in the evaluation files.
 #' @param weight_par Which performance statistic should be used to weight the
 #'  partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_partitions TRUE ou FALSE
-#' @param threshold Which selecting threshold will be used to cut the mean
+#' @param cut_level Which selecting threshold will be used to cut the mean
 #'                  models in final_model_3 approach (see vignettes), it
 #'                  defaults to "spec_sens" but any dismo threshold
 #'                  can be used: "kappa", "no_omission", "prevalence",
 #'                  "equal_sens_spec", "sensitivity".
-#' @param scale_models Logical. Whether input models should be scaled between 0
+#' @param scale_models Logical. Whether input models should be scaled between 0.
 #' and 1
 #' @param select_par Which performance statistic should be used to select the
 #'  partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_par_val Threshold to select models from TSS values
 #' @param consensus_level Which proportion of models will be kept when creating
-#'                   \code{bin_consensus} (binary)
+#'                   \code{bin_consensus} (binary).
 #' @param models_dir Character. Folder path where the input files are located
 #' @param final_dir Character. Name of the folder to save the output files.
 #'                  A subfolder will be created.
 #' @param proj_dir Character. The name of the subfolder with the projection.
 #' Defaults to "present" but can be set according to the other projections (i.e.
-#' to execute the function in projected models)
+#' to execute the function in projected models).
 #' @param which_models Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
@@ -44,19 +45,20 @@
 #'   \item{\code{cut_mean}}{the mean of the selected cut models}
 #' }
 #' @param uncertainty Whether an uncertainty map, measured as range (max-min)
-#' should be calculated
-#' @param write_png Writes png files of the final models
-#' @param ... Other parameters from writeRaster
+#' should be calculated.
+#' @param write_final Logical. If \code{TRUE} writes png files of the final models.
+#' @param ... Other parameters from \code{\link[raster]{writeRaster}}
 #' @return A set of ecological niche models and figures (optional) written in
 #' the \code{final_dir} subfolder
 #' @import raster
 #' @importFrom utils read.table write.csv read.csv
 #' @export
+#' 
 final_model <- function(species_name,
                         algorithms = NULL,
                         weight_par = NULL,
                         select_partitions = TRUE,
-                        threshold = c("spec_sens"),
+                        cut_level = c("spec_sens"),
                         scale_models = TRUE,
                         select_par = "TSS",
                         select_par_val = 0.7,
@@ -66,7 +68,7 @@ final_model <- function(species_name,
                         proj_dir = "present",
                         which_models = c("raw_mean"),
                         uncertainty = F,
-                        write_png = T,
+                        write_final = T,
                         ...) {
     # Escribe final
     final_path <- paste(models_dir, species_name, proj_dir,
@@ -150,10 +152,10 @@ final_model <- function(species_name,
                 final_algo <- raster::addLayer(final_algo, raw_mean)####layerz#
             }
             if (any(c("raw_mean_th", "raw_mean_cut") %in% which_models)) {
-                if (is.numeric(threshold)) {#este threshold se repite na outra coluna, verificar que seja equivalente ¬¬ [ö]
-                    th.mean <- threshold
+                if (is.numeric(cut_level)) {#este threshold se repite na outra coluna, verificar que seja equivalente ¬¬ [ö]
+                    th.mean <- cut_level
                     } else {
-                        th.mean <- mean(stats.algo[, threshold][sel.index])
+                        th.mean <- mean(stats.algo[, cut_level][sel.index])
                         }
                 raw_mean_th <- (raw_mean > th.mean)  #(7)
                 if ("raw_mean_th" %in% which_models) {
@@ -168,11 +170,11 @@ final_model <- function(species_name,
                 }
              #second column of the figure. creates binary selected
              if (any(c("bin_mean", "cut_mean", "bin_consensus") %in% which_models)) {
-                if (is.numeric(threshold)) {#este aqui se repete, linha 145, é equivalente cortar aqui e lá?
+                if (is.numeric(cut_level)) {#este aqui se repete, linha 145, é equivalente cortar aqui e lá?
                     cont.sel.1_scaled <- rescale_layer(cont.sel.1)
-                    mod.sel.bin <- cont.sel.1_scaled > threshold #(0)
+                    mod.sel.bin <- cont.sel.1_scaled > cut_level #(0)
                 } else {
-                    mod.sel.bin <- cont.sel.1 > (stats.algo[, threshold][sel.index]) #(0)
+                    mod.sel.bin <- cont.sel.1 > (stats.algo[, cut_level][sel.index]) #(0)
                 }
                 if (any(c("bin_mean", "bin_consensus") %in% which_models)) {
                     bin_mean <- raster::weighted.mean(mod.sel.bin, w = pond.stats)  #(5)
@@ -240,7 +242,7 @@ final_model <- function(species_name,
                                 format = "GTiff", ...)
                }
 
-            if (write_png == T) {
+            if (write_final == T) {
                 for (i in 1:raster::nlayers(which_final)) {
                     png(filename = paste0(final_path, "/",
                                           species_name, "_", algo, "_",
@@ -256,7 +258,7 @@ final_model <- function(species_name,
       #  warning(paste("no models were selected for", species_name, algo, "\n"))
     #}
       #  }
-    print(paste("DONE", algo, "\n"))
-    return(stats)
+    print(paste("DONE", algo, "!"))
+    #return(stats)
     print(date())
 }
