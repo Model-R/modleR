@@ -32,10 +32,10 @@
 #' @param cv_partitions Number of partitions in the crossvalidation.
 #' @param cv_n How many crossvalidation runs.
 #' @param ... Parameters from \code{\link{create_buffer}}.
-#' @return A dataframe called sdmdata with the groups for each run.
-#' (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
-#' the geographical coordinates, of the occurrence and pseudoabsence points, and
-#' the associated environmental variables.
+#' @return Writes on disk (inside subfolder at \code{models_dir} directory) a text file named sdmdata 
+#' with the groups for each run. (in columns called cv.1, cv.2 or boot.1, boot.2), 
+#' a presence/absence vector, the geographical coordinates, of the occurrence and pseudoabsence points, 
+#' and the associated environmental variables.
 #' @author Andrea Sánchez-Tapia
 #' @examples
 #' sp <- names(coordenadas)[1]
@@ -225,9 +225,7 @@ setup_sdmdata <- function(species_name,
     # Seleccionando variables if sel_vars ==T
     if (select_variables == T) {
     message(paste("selecting variables...", "\n"))
-        predictors <- select_variables(species_name = species_name,
-                                       predictors = predictors,
-                                       models_dir = models_dir,
+        predictors <- select_variables(predictors = predictors,
                                        buffer = pbuffr,
                                        cutoff = cutoff,
                                        percent = percent)

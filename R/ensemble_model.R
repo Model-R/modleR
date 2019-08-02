@@ -196,7 +196,7 @@ ensemble_model <- function(species_name,
             }
         }
     }
-    print(paste0("DONE", "\n"))
+    print("DONE!")
     print(date())
     #return(ensemble.mods)
 }

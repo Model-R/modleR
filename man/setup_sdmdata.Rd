@@ -91,10 +91,10 @@ for bootstrap.}
 \item{...}{Parameters from \code{\link{create_buffer}}.}
 }
 \value{
-A dataframe called sdmdata with the groups for each run.
-(in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
-the geographical coordinates, of the occurrence and pseudoabsence points, and
-the associated environmental variables.
+Writes on disk (inside subfolder at \code{models_dir} directory) a text file named sdmdata 
+with the groups for each run. (in columns called cv.1, cv.2 or boot.1, boot.2), 
+a presence/absence vector, the geographical coordinates, of the occurrence and pseudoabsence points, 
+and the associated environmental variables.
 }
 \description{
 This function takes the occurrence points files and makes the data cleaning,

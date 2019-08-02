@@ -258,7 +258,7 @@ final_model <- function(species_name,
       #  warning(paste("no models were selected for", species_name, algo, "\n"))
     #}
       #  }
-    print(paste("DONE", algo, "\n"))
+    print(paste("DONE", algo, "!"))
     #return(stats)
     print(date())
 }

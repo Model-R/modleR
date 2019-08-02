@@ -428,5 +428,6 @@ do_any <- function(species_name,
 
     }
 #    return(th_table)
-    message(paste0("DONE!", "\n"))
+    message("DONE!")
+    print(date())
 }

@@ -214,7 +214,6 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call
 
 ```{r do_any, echo = T, eval = T}
 do_any(species_name = species[1],
-       sdmdata = sdmdata_1sp,
        algo = "maxent",
        predictors = example_vars,
        models_dir = test_folder,
@@ -228,7 +227,6 @@ The following lines call for bioclim, GLM, maxent, random forests and smv.k (fro
 
 ```{r do_many, echo = T, eval = T}
 do_many(species_name = species[1],
-       sdmdata = sdmdata_1sp,
        predictors = example_vars,
        models_dir = test_folder,
        write_png = T,
@@ -418,16 +416,9 @@ for (i in 1:length(coordenadas)) {
         )
 }
 
-# recovers the list of sdmdata
-sdmdata_files <- list.files("~/modleR_test/forlooptest", recursive = T, pattern = "sdmdata.txt", full.names = T)
-sdm_list <- lapply(sdmdata_files, read.table, header=TRUE)
-
 for (i in 1:length(coordenadas)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
-    sdmdata <- sdm_list[[i]]
     do_many(species_name = sp,
-            sdmdata = sdmdata,
             predictors = example_vars,
             models_dir = "~/modleR_test/forlooptest",
             write_png = T,
@@ -442,13 +433,11 @@ for (i in 1:length(coordenadas)) {
             domain = F,
             mahal = F,
             equalize = T,
-            plot_sdmdata = T,
             write_bin_cut = T)
 }
 
 for (i in 1:length(coordenadas)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
     final_model(species_name = sp,
                 select_partitions = TRUE,
                 select_par = "TSS",
@@ -465,83 +454,76 @@ for (i in 1:length(coordenadas)) {
     occs <- coordenadas[[i]]
     ensemble_model(species_name = sp,
                    occurrences = occs,
-                   which_models = "bin_consensus",
-                   write_png = T,
+                   which_final = "bin_consensus",
+                   write_ensemble = T,
                    models_dir = "~/modleR_test/forlooptest")
     }
 ```
 
 Another option is to use the `purrr` package [@henry_purrr_2017]. 
 
-```{r purrr example, eval = F, echo = F}
+```{r purrr example, eval = F}
 library(purrr)
-library(dplyr)
-sdmdata_list <- coordenadas %>% purrr::map2(.x= ., 
-                                            .y= as.list(names(.)), 
-                                            ~ setup_sdmdata(species_name = .y,
-                                                           occurrences = .x,
-                                                           partition_type = "bootstrap",
-                                                           boot_n = 5,
-                                                           boot_proportion = 0.7,
-                                                           clean_nas = T,
-                                                           clean_dupl = T,
-                                                           clean_uni = T,
-                                                           buffer_type = "distance",
-                                                           dist_buf = 4,
-                                                           predictors = example_vars,
-                                                           models_dir = "~/modleR_test/temp_purrr",
-                                                           n_back = 1000))
-#aqui nao funfa!!
-coordenadas %>% purrr::pmap(.x = .,
-                            .y = sdmdata_list,
-                            ~ do_many(species_name = as.list(names(.)),
-                                      sdmdata = .y,
-                          occurrences = .x,
-                          predictors = example_vars,
-                          models_dir = "~/modleR_test/temp_purrr",
-                          bioclim = T,
-                          maxent = T,
-                          rf = T,
-                          svme = T,
-                          svmk = T,
-                          domain = F,
-                          glm = T,
-                          mahal = F,
-                          brt = T,
-                          equalize = T))
+
+coordenadas %>% purrr::map2(.x= ., 
+                            .y= as.list(names(.)), 
+                            ~ setup_sdmdata(species_name = .y,
+                                            occurrences = .x,
+                                            partition_type = "bootstrap",
+                                            boot_n = 5,
+                                            boot_proportion = 0.7,
+                                            clean_nas = T,
+                                            clean_dupl = T,
+                                            clean_uni = T,
+                                            buffer_type = "distance",
+                                            dist_buf = 4,
+                                            predictors = example_vars,
+                                            models_dir = "~/modleR_test/temp_purrr",
+                                            n_back = 1000))
+
+species %>% as.list(.) %>% purrr::map(~ do_many(species_name = .,
+                                                predictors = example_vars,
+                                                models_dir = "~/modleR_test/temp_purrr",
+                                                bioclim = T,
+                                                maxent = T,
+                                                rf = T,
+                                                svme = T,
+                                                svmk = T,
+                                                domain = F,
+                                                glm = T,
+                                                mahal = F,
+                                                brt = T,
+                                                equalize = T))
 ```
 
 ```{r purrr_final, eval = F}
-coordenadas %>%
-    split(.$sp) %>%
-    purrr::map(~ final_model(species_name = unique(.$sp),
-                             select_partitions = TRUE,
-                             select_par = "TSS", 
-                             select_par_val = 0.5,
-                             consensus_level = 0.5,
-                             models_dir = "~/modleR_test/temp_purrr",
-                             which_models = "raw_mean"))
+species %>% as.list(.) %>% 
+  purrr::map(~ final_model(species_name = .,
+                           select_partitions = TRUE,
+                           select_par = "TSS", 
+                           select_par_val = 0.5,
+                           consensus_level = 0.5,
+                           models_dir = "~/modleR_test/temp_purrr",
+                           which_models = "raw_mean", 
+                           overwrite = TRUE))
 ```
 
 ```{r purrr_ensemble, eval = F}
-coordenadas %>% 
-    split(.$sp) %>%
-    purrr::map(~ ensemble_model(species_name = unique(.$sp),
-                                occurrences = .[, c("lon", "lat")],
-                                which_models = "raw_mean",
-                                write_png = T,
-                                models_dir = "~/modleR_test/temp_purrr"
-                                ))
+coordenadas %>% purrr::map2(.x= ., 
+                            .y= as.list(names(.)), 
+                            ~ ensemble_model(species_name = .y,
+                                             occurrences = .x,
+                                             which_final = "raw_mean",
+                                             write_ensemble = T,
+                                             models_dir = "~/modleR_test/temp_purrr", 
+                                             overwrite = TRUE))
 
 ```
 
 ## Parallel computing
 
-```{r remedy001}
-
+```{r remedy001, eval=F}
 library(parallel)
-
-
 ```
 
 
