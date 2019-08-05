@@ -8,7 +8,7 @@ do_any(species_name, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
   write_bin_cut = FALSE, threshold = "spec_sens", conf_mat = TRUE,
-  equalize = TRUE)
+  equalize = TRUE, proc_threshold = 0.5, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as 
@@ -35,15 +35,20 @@ folders with the projection datasets, ex. "./env/proj/proj1".}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png) should be written.}
 
-\item{threshold}{Character string indicating threshold (cut-off) to transform model predictions 
+\item{threshold}{Character string indicating threshold (cut-off) to transform model predictions
 to a binary score.
-as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence", 
+as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence",
 "equal_sens_spec", "sensitivity". Default value is "spec_sens".}
 
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD.}
 
 \item{equalize}{Logical, whether the number of presences and absences should be
 equalized in randomForest and brt.}
+
+\item{proc_threshold}{Numeric, value from 0 to 100 that will be used as (E) for
+partialROC calculations in \code{\link[kuenm]{kuenm_proc}} default = 5.}
+
+\item{...}{Other arguments from \code{\link[kuenm]{kuenm_proc}}}
 }
 \value{
 A data frame with the evaluation statistics (TSS, AUC, etc).

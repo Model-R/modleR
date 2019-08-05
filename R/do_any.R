@@ -14,13 +14,16 @@
 #'  folders with the projection datasets, ex. "./env/proj/proj1".
 #' @param write_png Logical, whether png files will be written.
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written.
-#' @param threshold Character string indicating threshold (cut-off) to transform model predictions 
+#' @param threshold Character string indicating threshold (cut-off) to transform model predictions
 #' to a binary score.
-#' as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence", 
+#' as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence",
 #' "equal_sens_spec", "sensitivity". Default value is "spec_sens".
 #' @param conf_mat Logical, whether confusion tables should be written in the HD.
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt.
+#' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E) for
+#' partialROC calculations in \code{\link[kuenm]{kuenm_proc}} default = 5.
+#' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc).
 #' @details See bellow for a description on the implementation of the algorithms supported in this package.
 #' \describe{
@@ -100,15 +103,17 @@ do_any <- function(species_name,
                    write_bin_cut = FALSE,
                    threshold = "spec_sens",
                    conf_mat = TRUE,
-                   equalize = TRUE) {
+                   equalize = TRUE,
+                   proc_threshold = 0.5,
+                   ...) {
   # replacing characters not welcome in species name
-  # characters to avoid in file and dir names 
+  # characters to avoid in file and dir names
   avoid_chars <- intToUtf8(c(91, 62, 33, 180, 60, 35, 63, 38, 47, 92, 46, 93))
   print_avoid <- intToUtf8(c(62, 33, 180, 60, 35, 63, 38, 47, 92, 46))
   if(grepl(avoid_chars, species_name)==TRUE){
-    species_name <- gsub(avoid_chars, "", species_name) 
-    warning(cat(paste0('You entered a bad character (any in "', 
-                        print_avoid, 
+    species_name <- gsub(avoid_chars, "", species_name)
+    warning(cat(paste0('You entered a bad character (any in "',
+                        print_avoid,
                         '") in the species name and we removed it for you')))
   }
     partition.folder <-
@@ -263,9 +268,17 @@ do_any <- function(species_name,
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #names(th_table) <- paste0(names(th_table), "_th")
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
+            #PROC kuenm
+            proc <- kuenm::kuenm_proc(occ.test = pres_test,
+                                      model = mod_cont,
+                                      threshold = proc_threshold,
+                                      ...)
 
             #threshold-independent values
             th_table$AUC <- eval_mod@auc
+            th_table$AUCratio <- eval_mod@auc/0.5
+            th_table$pROC <- proc$pROC_summary[1]
+            th_table$pval_pROC <- proc$pROC_summary[2]
             th_table$TSS <- mod_TSS
             th_table$algoritmo <- algo
             th_table$run <- i
