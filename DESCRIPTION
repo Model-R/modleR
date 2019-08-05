@@ -33,6 +33,7 @@ Imports:
     maxnet,
     randomForest,
     raster,
+    Rdpack,
     rgeos,
     rgdal,
     rJava,
@@ -40,6 +41,7 @@ Imports:
     sp
 BugReports: https://github.com/Model-R/modelr_pkg/issues
 RoxygenNote: 6.1.1
+RdMacros: Rdpack
 Suggests: 
     devtools,
     dplyr,
