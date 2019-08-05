@@ -48,7 +48,7 @@ equalized in randomForest and brt.}
 \item{proc_threshold}{Numeric, value from 0 to 100 that will be used as (E) for
 partialROC calculations in \code{\link[kuenm]{kuenm_proc}} default = 5.}
 
-\item{...}{Parameters from \code{\link{create_buffer}}.}
+\item{...}{Other arguments from \code{\link[kuenm]{kuenm_proc}}}
 }
 \value{
 A data frame with the evaluation statistics (TSS, AUC, etc).

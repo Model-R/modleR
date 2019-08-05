@@ -20,6 +20,7 @@
 #' equalized in randomForest and brt.
 #' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E) for
 #' partialROC calculations in \code{\link[kuenm]{kuenm_proc}} default = 5.
+#' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc).
 #' @details Bioclim algorithm (\code{algo="bioclim"}) uses \code{\link[dismo]{bioclim}} function in  dismo
 #' package.
