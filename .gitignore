@@ -21,3 +21,4 @@ modelos_teste
 modelos_teste.log
 *.Rproj
 teste.R
+tests/

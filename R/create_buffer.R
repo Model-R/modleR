@@ -3,12 +3,16 @@
 #' @inheritParams setup_sdmdata
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the "mean", "median", "maximum" distance between occurrence
-#' points, or an absolute "distance". If set to "distance", "dist_buf" needs to
-#' be specified. If set to "user", "buffer_shape" needs to be specified.
-#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance"
-#' @param dist_min Optional, a distance in km for the exclusion buffer.
-#' @param buffer_shape User-defined buffer shapefile. Needs to be specified if buffer_type = "user"
-#' @param predictors A RasterStack of predictor variables
+#' points, or an absolute "distance". If NULL pseudoabsences are randomly generated in the entire area 
+#' of the RasterStack of predictor variables.
+#' filled with predictors. If set to "distance", "dist_buf" needs to
+#' be specified. If set to "user", "buffer_shape" needs to be specified
+#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance".
+#' Distance unit is in the same unit of the RasterStack of predictor variables
+#' @param dist_min Optional, a distance for the exclusion buffer. 
+#' Distance unit is in the same unit of the RasterStack of predictor variables
+#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated. 
+#' Needs to be specified if buffer_type = "user"
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
@@ -22,10 +26,9 @@
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
 #' library(raster)
-#' library(dplyr)
-#' species <- sort(unique(coordenadas$sp))
-#' occs <- coordenadas %>% filter(sp == species[1]) %>% dplyr::select(lon, lat)
-#' buf <- create_buffer(species[1], occs, example_vars)
+#' sp <- names(coordenadas)[1]
+#' occs <- coordenadas[[1]]
+#' buf <- create_buffer(species_name=sp, occurrences=occs, predictors=example_vars)
 #' plot(buf)
 #'
 #' @import raster
@@ -34,6 +37,8 @@
 #' @export
 create_buffer <- function(species_name,
                           occurrences,
+                          lon = "lon",
+                          lat = "lat",
                           predictors,
                           buffer_type = "median",
                           dist_buf = NULL,

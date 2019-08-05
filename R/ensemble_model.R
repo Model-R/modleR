@@ -3,6 +3,7 @@
 #' \code{ensemble} takes the input of \code{final_model} and builds an ensemble
 #'  model by calculating the mean of each final model per algorithm.
 #'
+#' @inheritParams final_model
 #' @param species_name A character string with the species name
 #' @param occurrences A two-column data frame with the occurrence points
 #' @param models_dir Character string. Folder path where the input files
@@ -15,7 +16,7 @@
 #' Defaults to "present" but can be set according to the other projections (i.e.
 #' to execute the function in projected models)
 #'
-#' @param which_models Which final_model() will be used? Currently it can be:
+#' @param which_final Which final_model() will be used? Currently it can be:
 #' \describe{
 #'   \item{\code{weighted_AUC} or \code{weighted_TSS}}{the models weighted
 #'   by TSS or AUC}
@@ -29,12 +30,10 @@
 #'   \item{\code{cut_mean}}{the mean of the selected cut models}
 #' }
 #' @param consensus Logical. Will a consensus between the algorithms be applied?
-#' @param consensus_level Threshold for the consensus rule, betwen 0 and 1
-#'                        (0.5 means a majority rule).
-#' @param write_png Write png? Defaults to TRUE
-#' @param scale_models Logical. If TRUE (default), sets the values of the input models between 0 and 1.
+#' @param write_ensemble Logical. If \code{TRUE} writes png files of the ensemble models.
 #' @param lon the name of the longitude column. defaults to "lon"
 #' @param lat the name of the latitude column. defaults to "lat"
+#' @param ... Other parameters from \code{\link[raster]{writeRaster}}
 #'
 #' @import raster
 #' @importFrom scales alpha
@@ -53,11 +52,12 @@ ensemble_model <- function(species_name,
                            final_dir = "final_models",
                            ensemble_dir = "ensemble",
                            proj_dir = "present",
-                           which_models = c("raw_mean"),
+                           which_final = c("raw_mean"),
                            consensus = FALSE,
                            consensus_level = 0.5,
-                           write_png = T,
-                           scale_models = TRUE) {
+                           write_ensemble = T,
+                           scale_models = TRUE, 
+                           ...) {
 
 
     ## output folder
@@ -67,7 +67,7 @@ ensemble_model <- function(species_name,
     }
 
     ## for each model specified in final_models
-    for (whi in which_models) {
+    for (whi in which_final) {
         cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
         tif.files <- list.files(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                        final_dir), recursive = T,
@@ -137,7 +137,7 @@ ensemble_model <- function(species_name,
 
             coord <- occurrences[, c(lon, lat)]
 
-            if (write_png) {
+            if (write_ensemble) {
             message("Writing pngs")
                 for (i in 1:dim(ensemble.mods)[3]) {
                 png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
@@ -163,8 +163,8 @@ ensemble_model <- function(species_name,
                                                   whi),
                                 bylayer = T,
                                 suffix = "names",
-                                format = "GTiff",
-                                overwrite = T)
+                                format = "GTiff", 
+                                ...)
 
             #### Consensus models
             if (consensus == TRUE) {
@@ -176,9 +176,10 @@ ensemble_model <- function(species_name,
                                                       "_", whi,
                                                       "_ensemble", "_meanconsensus",
                                                       consensus_level * 100,
-                                                      ".tif"), overwrite = T)
+                                                      ".tif"), 
+                                    ...)
 
-                if (write_png) {
+                if (write_ensemble) {
                 png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                                       ensemble_dir, "/",
                                       species_name, "_", whi,
@@ -195,6 +196,7 @@ ensemble_model <- function(species_name,
             }
         }
     }
+    print("DONE!")
     print(date())
-    return(ensemble.mods)
+    #return(ensemble.mods)
 }

@@ -2,33 +2,36 @@
 % Please edit documentation in R/final_model.R
 \name{final_model}
 \alias{final_model}
-\title{Joins ENM from several partitions, creating a model per algorithm.}
+\title{Joins ENM from several partitions, creating a model per algorithm}
 \usage{
 final_model(species_name, algorithms = NULL, weight_par = NULL,
-  select_partitions = TRUE, threshold = c("spec_sens"),
+  select_partitions = TRUE, cut_level = c("spec_sens"),
   scale_models = TRUE, select_par = "TSS", select_par_val = 0.7,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
-  which_models = c("raw_mean"), uncertainty = F, write_png = T, ...)
+  which_models = c("raw_mean"), uncertainty = F, write_final = T,
+  ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name}
+\item{species_name}{A character string with the species name. Because species name will be used as 
+a directory name, avoid non-ASCII characters, spaces and ponctuation marks. 
+Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
 
 \item{algorithms}{Which algorithms will be processed. If no name is given it
-will process all algorithms present in the evaluation files}
+will process all algorithms present in the evaluation files.}
 
 \item{weight_par}{Which performance statistic should be used to weight the
 partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 
 \item{select_partitions}{TRUE ou FALSE}
 
-\item{threshold}{Which selecting threshold will be used to cut the mean
+\item{cut_level}{Which selecting threshold will be used to cut the mean
 models in final_model_3 approach (see vignettes), it
 defaults to "spec_sens" but any dismo threshold
 can be used: "kappa", "no_omission", "prevalence",
 "equal_sens_spec", "sensitivity".}
 
-\item{scale_models}{Logical. Whether input models should be scaled between 0
+\item{scale_models}{Logical. Whether input models should be scaled between 0.
 and 1}
 
 \item{select_par}{Which performance statistic should be used to select the
@@ -37,7 +40,7 @@ partitions- Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 \item{select_par_val}{Threshold to select models from TSS values}
 
 \item{consensus_level}{Which proportion of models will be kept when creating
-\code{bin_consensus} (binary)}
+\code{bin_consensus} (binary).}
 
 \item{models_dir}{Character. Folder path where the input files are located}
 
@@ -46,7 +49,7 @@ A subfolder will be created.}
 
 \item{proj_dir}{Character. The name of the subfolder with the projection.
 Defaults to "present" but can be set according to the other projections (i.e.
-to execute the function in projected models)}
+to execute the function in projected models).}
 
 \item{which_models}{Which final_model() will be used? Currently it can be:
 \describe{
@@ -68,16 +71,16 @@ to execute the function in projected models)}
 }}
 
 \item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
-should be calculated}
+should be calculated.}
 
-\item{write_png}{Writes png files of the final models}
+\item{write_final}{Logical. If \code{TRUE} writes png files of the final models.}
 
-\item{...}{Other parameters from writeRaster}
+\item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
 \value{
 A set of ecological niche models and figures (optional) written in
 the \code{final_dir} subfolder
 }
 \description{
-This function reads the output from dismo.mod and creates a model per species
+#' This function reads the output from dismo.mod and creates a model per species.
 }

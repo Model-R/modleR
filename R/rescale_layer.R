@@ -19,14 +19,14 @@ rescale_layer <- function(layers) {
                 (max(layers[[i]][], na.rm = T) - min(layers[[i]][],
                                                      na.rm = T))
       }
-        bb <- calc(layers[[i]], stand)
+        bb <- raster::calc(layers[[i]], stand)
         bb
     if (i == 1) {
-      cc <- stack(bb)
+      cc <- raster::stack(bb)
       names(cc)[i] <- names(layers)[i]
     }
     else{
-      cc <- stack(cc, bb)
+      cc <- raster::stack(cc, bb)
       names(cc)[i] <- names(layers)[i]
     }
     if (i == dim(layers)[3]) {
