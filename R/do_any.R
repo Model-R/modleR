@@ -1,6 +1,9 @@
-#' Fits ecological niche models using several algorithms
-#'
-
+#' Model fitting and predicting of ecological niche models using several algorithms
+#' 
+#' This function reads the output from \code{\link{setup_sdmdata}} and 
+#' computes ecological niche models for a species based on algorithm specified by the user. See details for
+#' a description of all algorithms supported in this package.
+#' 
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
@@ -19,16 +22,66 @@
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt.
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc).
-#' @details Biolclim algorithm (\code{algo="bioclim"}) uses \code{\link[dismo]{bioclim}} function in  dismo
-#' package. Bioclim is climate-envelope-model implemented by Henry Nix 
-#' \insertCite{nix1986biogeographic}{modleR}. 
-#' @author Andrea Sánchez-Tapia
+#' @details See bellow for a description on the implementation of the algorithms supported in this package.
+#' \describe{
+#' \item{Bioclim}{Specified by \code{algo="bioclim"} uses \code{\link[dismo]{bioclim}} function in dismo
+#' package \insertCite{hijmans_dismo:_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix 
+#' \insertCite{nix1986biogeographic}{modleR}, the first species 
+#' distribuition modelling package. It is based on climate interpolation methods and despite its limiations 
+#' it is still used in ecological niche modeling, specially for exploration and teaching purposes
+#' \insertCite{@see also @booth_bioclim:_2014}{modleR}. 
+#' In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted 
+#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.  
+#' }
+#' \item{Maximum Entropy (Maxent)}{Specified either by \code{algo="maxent"} or \code{algo="maxnet"} 
+#' corresponding to implementation by dismo \insertCite{hijmans_dismo:_2017}{modleR} and maxnet
+#' \insertCite{maxnet}{modleR} packages respectivelly. Maxent is a machine learning method for modeling
+#' species distributions based in incomplete data allowing ENM with presence-only data 
+#' \insertCite{phillips_maximum_2006}{modleR}. If \code{algo="maxent"} model is fitted by the function
+#' \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and 
+#' \code{\link[dismo]{predict}} also in dismo package. If \code{algo="maxnet"} model is fitted by the 
+#' function \code{\link[maxnet]{maxnet}} from maxnet package, evaluated using \code{\link[dismo]{evaluate}}
+#' from dismo package with argument \code{type="logistic"} and predicted using \code{\link[raster]{predict}}
+#' function from raster package. 
+#' }
+#' \item{Mahalanobis}{Specified by \code{algo="mahal"} uses \code{\link[dismo]{mahal}} function from dismo 
+#' package. Corresponds to a distribution model based on Mahalanobis distance, a measure of the distance 
+#' between a point P and a distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this package 
+#' it is implemented by the function \code{\link[dismo]{mahal}}, evaluated and predicted 
+#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package. 
+#' }
+#' \item{Domain}{Specified by \code{algo="domain"} uses \code{\link[dismo]{domain}} function from dismo
+#' package. Computes  point-to-point similarity based on Gower distance between environmental variables 
+#' \insertCite{carpenter_domain:_1993}{modleR}. \insertCite{hijmans_dismo:_2017}{modleR} state that 
+#' one should use it with caution because it does not perform well compared to other algorithms
+#' \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}. 
+#' We add that it is a slow algorithm.
+#' In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted 
+#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
+#' }
+#' \item{Support Vector Machines (SVM)}{
+#' }
+#' \item{GLM}{
+#' }
+#' \item{Random Forest}{
+#' }
+#' \item{Euclidian algorithms}{
+#' to do or not to do
+#' }
+#' \item{Boosted Refression Trees (BRT)}{
+#' }
+#' }
 #' @references
 #' \insertAllCited{}
+#' @author Andrea Sánchez-Tapia
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{maxent}}
+#' @seealso \code{\link[maxnet]{maxnet}}
 #' @seealso \code{\link[dismo]{domain}}
 #' @seealso \code{\link[dismo]{mahal}}
+#' @seealso \code{\link[dismo]{evaluate}}
+#' @seealso \code{\link[dismo]{predict}}
+#' @seealso \code{\link[raster]{predict}}
 #' @import raster
 #' @import grDevices
 #' @importFrom utils write.csv

@@ -56,7 +56,7 @@ ensemble_model <- function(species_name,
                            consensus = FALSE,
                            consensus_level = 0.5,
                            write_ensemble = T,
-                           scale_models = TRUE, 
+                           scale_models = TRUE,
                            ...) {
 
 
