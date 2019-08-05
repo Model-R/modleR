@@ -53,7 +53,11 @@ Fits ecological niche models using several algorithms
 }
 \details{
 Biolclim algorithm (\code{algo="bioclim"}) uses \code{\link[dismo]{bioclim}} function in  dismo
-package.
+package. Bioclim is climate-envelope-model implemented by Henry Nix 
+\insertCite{nix1986biogeographic}{modleR}.
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[dismo]{bioclim}}

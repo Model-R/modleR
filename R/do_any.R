@@ -20,8 +20,11 @@
 #' equalized in randomForest and brt.
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc).
 #' @details Biolclim algorithm (\code{algo="bioclim"}) uses \code{\link[dismo]{bioclim}} function in  dismo
-#' package.
+#' package. Bioclim is climate-envelope-model implemented by Henry Nix 
+#' \insertCite{nix1986biogeographic}{modleR}. 
 #' @author Andrea Sánchez-Tapia
+#' @references
+#' \insertAllCited{}
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{maxent}}
 #' @seealso \code{\link[dismo]{domain}}
@@ -31,6 +34,7 @@
 #' @importFrom utils write.csv
 #' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
+#' @importFrom Rdpack reprompt
 #' @export
 do_any <- function(species_name,
                    predictors,
