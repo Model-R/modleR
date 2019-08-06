@@ -32,10 +32,7 @@
 #' @param cv_partitions Number of partitions in the crossvalidation.
 #' @param cv_n How many crossvalidation runs.
 #' @param ... Parameters from \code{\link{create_buffer}}.
-#' @return Writes on disk (inside subfolder at \code{models_dir} directory) a text file named sdmdata 
-#' with the groups for each run. (in columns called cv.1, cv.2 or boot.1, boot.2), 
-#' a presence/absence vector, the geographical coordinates, of the occurrence and pseudoabsence points, 
-#' and the associated environmental variables.
+#' @return Returns a data.frame with the groups for each run. (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector, the geographical coordinates, of the occurrence and pseudoabsence points, and the associated environmental variables. Function writes on disk (inside subfolder at \code{models_dir} directory) a text file named sdmdata that will be used in \code{\link{do_any}} or \code{\link{do_many}}.
 #' @author Andrea Sánchez-Tapia
 #' @examples
 #' sp <- names(coordenadas)[1]

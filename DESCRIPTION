@@ -29,6 +29,7 @@ Imports:
     gbm,
     graphics,
     kernlab,
+    kuenm,
     maps,
     maxnet,
     randomForest,
@@ -48,6 +49,5 @@ Suggests:
     knitr,
     purrr,
     rmarkdown,
-    stringr,
-    testthat (>= 2.1.0)
+    stringr
 VignetteBuilder: knitr
