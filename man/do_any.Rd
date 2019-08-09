@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_any.R
 \name{do_any}
 \alias{do_any}
-\title{Model fitting and predicting of ecological niche models using several algorithms}
+\title{Model fitting, predicting and evaluating of ecological niche models using several algorithms}
 \usage{
 do_any(species_name, predictors, models_dir = "./models",
   algo = c("bioclim"), project_model = FALSE,
@@ -53,7 +53,7 @@ Writes on disk model for each partition, a .csv file with evaluation statistics 
 }
 \description{
 This function reads the output from \code{\link{setup_sdmdata}} and 
-computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculate the predicted values and basic statistics for model evaluation. Besides from more commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{@for detais on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}. Performs one algoritm at time, for runs with multiple algorithms see \code{\link{do_many}}. Given that there is "no silver bullets in correlative ecological niche modeling" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
+computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculate the predicted values and basic statistics for model evaluation. Besides from more commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{@for detais on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}. Performs one algoritm at time, for runs with multiple algorithms see \code{\link{do_many}}. Given that there is "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
 }
 \details{
 See bellow for a description on the implementation of the algorithms supported in this package.
