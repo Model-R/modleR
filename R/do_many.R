@@ -6,9 +6,9 @@
 #' @param bioclim Execute bioclim algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{bioclim}} function.
 #' @param brt Execute Boosted Regression Trees with \code{\link[dismo]{gbm.step}} from \pkg{dismo}.
 #' @param domain Execute domain from the \pkg{dismo} implementation with \code{\link[dismo]{domain}} function.
-#' @param glm Execute GLM as suggested by the \pkg{dismo} documentation with \code{\link[base]{glm}} and \code{\link[base]{step}}.
+#' @param glm Execute GLM as suggested by the \pkg{dismo} documentation with \code{\link{glm}} and \code{\link{step}}.
 #' @param mahal Execute Mahalanobis distance from the \pkg{dismo} implementation with \code{\link[dismo]{mahal}}.
-#' @param maxent Execute Maxent algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{function}}.
+#' @param maxent Execute Maxent algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{maxent}} function.
 #' @param maxnet Execute Maxent algorithm from the \pkg{maxnet} implementation with \code{\link[maxnet]{maxnet}} function.
 #' @param rf Execute Random forests algorithm from \pkg{randomForest} package with function\code{\link[randomForest]{tuneRF}} as suggested by the \pkg{dismo} documentation.
 #' @param svme Execute Support Vector Machines (SVM) algorithm from \pkg{e1071} package with \code{\link[e1071]{best.tune}} function.
@@ -17,6 +17,17 @@
 #' @return A set of ecological niche models for each partition and algorithm,
 #'         written in the \code{models_dir} subfolder.
 #' @author Andrea Sánchez-Tapia
+#' @examples 
+#' # run setup_sdmdata 
+#' sp <- names(coordenadas)[1]
+#' sp_coord <- coordenadas[[1]]
+#' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+#' 
+#' # run do_many
+#' sp_many <- do_many(species_name=sp,
+#'                      predictors=example_vars,
+#'                      bioclim=TRUE, 
+#'                      brt=TRUE)
 #' @export
 #'
 do_many <- function(species_name,
@@ -29,81 +40,81 @@ do_many <- function(species_name,
                     rf = FALSE,
                     svmk = FALSE,
                     svme = FALSE,
-                    mindist = FALSE,
-                    centroid = FALSE,
+#                    mindist = FALSE,
+#                    centroid = FALSE,
                     brt = FALSE,
                     ...) {
-
-    if (bioclim == T) {
-        do_any(
-            species_name,
-            algo = "bioclim",
-            ...)
-    }
-    if (domain == T) {
-        do_any(
-            species_name,
-            algo = "domain",
-            ...)
-    }
-    if (glm == T) {
-        do_any(
-            species_name,
-            algo = "glm",
-            ...)
-    }
-    if (mahal == T) {
-        do_any(
-            species_name,
-            algo = "mahal",
-            ...)
-    }
-    if (maxent == T) {
-        do_any(
-            species_name,
-            algo = "maxent",
-            ...)
-    }
-    if (maxnet == T) {
-        do_any(
-            species_name,
-            algo = "maxnet",
-            ...)
-    }
-    if (rf == T) {
-        do_any(
-            species_name,
-            algo = "rf",
-            ...)
-    }
-    if (svmk == T) {
-        do_any(
-            species_name,
-            algo = "svmk",
-            ...)
-    }
-    if (svme == T) {
-        do_any(
-            species_name,
-            algo = "svme",
-            ...)
-    }
-    if (mindist == T) {
-        do_any(
-            species_name,
-            algo = "mindist",
-            ...)
-    }
-    if (centroid == T) {
-        do_any(
-            species_name,
-            algo = "centroid",
-            ...)
-    }
-    if (brt == T) {
-        do_any(
-            species_name,
-            algo = "brt",
-            ...)
-    }
+  
+  if (bioclim == T) {
+    do_any(
+      species_name,
+      algo = "bioclim",
+      ...)
+  }
+  if (domain == T) {
+    do_any(
+      species_name,
+      algo = "domain",
+      ...)
+  }
+  if (glm == T) {
+    do_any(
+      species_name,
+      algo = "glm",
+      ...)
+  }
+  if (mahal == T) {
+    do_any(
+      species_name,
+      algo = "mahal",
+      ...)
+  }
+  if (maxent == T) {
+    do_any(
+      species_name,
+      algo = "maxent",
+      ...)
+  }
+  if (maxnet == T) {
+    do_any(
+      species_name,
+      algo = "maxnet",
+      ...)
+  }
+  if (rf == T) {
+    do_any(
+      species_name,
+      algo = "rf",
+      ...)
+  }
+  if (svmk == T) {
+    do_any(
+      species_name,
+      algo = "svmk",
+      ...)
+  }
+  if (svme == T) {
+    do_any(
+      species_name,
+      algo = "svme",
+      ...)
+  }
+  # if (mindist == T) {
+  #   do_any(
+  #     species_name,
+  #     algo = "mindist",
+  #     ...)
+  # }
+  # if (centroid == T) {
+  #   do_any(
+  #     species_name,
+  #     algo = "centroid",
+  #     ...)
+  # }
+  if (brt == T) {
+    do_any(
+      species_name,
+      algo = "brt",
+      ...)
+  }
 }

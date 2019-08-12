@@ -6,8 +6,7 @@
 \usage{
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
-  svmk = FALSE, svme = FALSE, mindist = FALSE, centroid = FALSE,
-  brt = FALSE, ...)
+  svmk = FALSE, svme = FALSE, brt = FALSE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as 
@@ -18,11 +17,11 @@ Recommendation is to adopt "Genus_species" format. See names in \code{\link{coor
 
 \item{domain}{Execute domain from the \pkg{dismo} implementation with \code{\link[dismo]{domain}} function.}
 
-\item{glm}{Execute GLM as suggested by the \pkg{dismo} documentation with \code{\link[base]{glm}} and \code{\link[base]{step}}.}
+\item{glm}{Execute GLM as suggested by the \pkg{dismo} documentation with \code{\link{glm}} and \code{\link{step}}.}
 
 \item{mahal}{Execute Mahalanobis distance from the \pkg{dismo} implementation with \code{\link[dismo]{mahal}}.}
 
-\item{maxent}{Execute Maxent algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{function}}.}
+\item{maxent}{Execute Maxent algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{maxent}} function.}
 
 \item{maxnet}{Execute Maxent algorithm from the \pkg{maxnet} implementation with \code{\link[maxnet]{maxnet}} function.}
 
@@ -42,6 +41,18 @@ A set of ecological niche models for each partition and algorithm,
 }
 \description{
 Runs internally \code{\link{do_any}}. Can be used to run multiple algorithms at time. See \strong{Details} in \code{\link{do_any}} for a description of how each algorithm is implemented.
+}
+\examples{
+# run setup_sdmdata 
+sp <- names(coordenadas)[1]
+sp_coord <- coordenadas[[1]]
+sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+
+# run do_many
+sp_many <- do_many(species_name=sp,
+                     predictors=example_vars,
+                     bioclim=TRUE, 
+                     brt=TRUE)
 }
 \author{
 Andrea Sánchez-Tapia
