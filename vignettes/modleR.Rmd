@@ -213,17 +213,19 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
 
 ```{r do_any, echo = T, eval = T}
-do_any(species_name = species[1],
-       algo = "maxent",
-       predictors = example_vars,
-       models_dir = test_folder,
-       write_png = T,
-       write_bin_cut = F,
-       equalize = T)
+sp_maxent <- do_any(species_name = species[1],
+                    algo = "maxent",
+                    predictors = example_vars,
+                    models_dir = test_folder,
+                    write_png = T,
+                    write_bin_cut = F,
+                    equalize = T)
+
+sp_maxent
 ```
 
 
-The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
+The following lines call for bioclim, GLM, maxent, random forests and smvk (from package __kernlab__)
 
 ```{r do_many, echo = T, eval = T}
 do_many(species_name = species[1],
