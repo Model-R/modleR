@@ -1,9 +1,9 @@
 #' Model fitting and predicting of ecological niche models using several algorithms
-#' 
-#' This function reads the output from \code{\link{setup_sdmdata}} and 
+#'
+#' This function reads the output from \code{\link{setup_sdmdata}} and
 #' computes ecological niche models for a species based on algorithm specified by the user. See details for
 #' a description of all algorithms supported in this package.
-#' 
+#'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
 #' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
@@ -25,41 +25,41 @@
 #' partialROC calculations in \code{\link[kuenm]{kuenm_proc}} default = 5.
 #' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}
 #' @return A data frame with the evaluation statistics (TSS, AUC, etc).
-#' @details See bellow for a description on the implementation of the algorithms supported in this package.
+#' @details See below for a description on the implementation of the algorithms supported in this package.
 #' \describe{
 #' \item{Bioclim}{Specified by \code{algo="bioclim"} uses \code{\link[dismo]{bioclim}} function in dismo
-#' package \insertCite{hijmans_dismo:_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix 
-#' \insertCite{nix1986biogeographic}{modleR}, the first species 
-#' distribuition modelling package. It is based on climate interpolation methods and despite its limiations 
+#' package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the climate-envelope-model implemented by Henry Nix
+#' \insertCite{nix_biogeographic_1986}{modleR}, the first species
+#' distribution modelling package. It is based on climate interpolation methods and despite its limitations
 #' it is still used in ecological niche modeling, specially for exploration and teaching purposes
-#' \insertCite{@see also @booth_bioclim:_2014}{modleR}. 
-#' In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted 
-#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.  
+#' \insertCite{@see also @booth_bioclim_2014}{modleR}.
+#' In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted
+#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
 #' }
-#' \item{Maximum Entropy (Maxent)}{Specified either by \code{algo="maxent"} or \code{algo="maxnet"} 
-#' corresponding to implementation by dismo \insertCite{hijmans_dismo:_2017}{modleR} and maxnet
-#' \insertCite{maxnet}{modleR} packages respectivelly. Maxent is a machine learning method for modeling
-#' species distributions based in incomplete data allowing ENM with presence-only data 
+#' \item{Maximum Entropy (Maxent)}{Specified either by \code{algo="maxent"} or \code{algo="maxnet"}
+#' corresponding to implementation by dismo \insertCite{hijmans_dismo_2017}{modleR} and maxnet
+#' \insertCite{maxnet}{modleR} packages respectively. Maxent is a machine learning method for modeling
+#' species distributions based on incomplete data allowing ENM with presence-only data
 #' \insertCite{phillips_maximum_2006}{modleR}. If \code{algo="maxent"} model is fitted by the function
-#' \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and 
-#' \code{\link[dismo]{predict}} also in dismo package. If \code{algo="maxnet"} model is fitted by the 
+#' \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and
+#' \code{\link[dismo]{predict}} also in dismo package. If \code{algo="maxnet"} model is fitted by the
 #' function \code{\link[maxnet]{maxnet}} from maxnet package, evaluated using \code{\link[dismo]{evaluate}}
 #' from dismo package with argument \code{type="logistic"} and predicted using \code{\link[raster]{predict}}
-#' function from raster package. 
+#' function from raster package.
 #' }
-#' \item{Mahalanobis}{Specified by \code{algo="mahal"} uses \code{\link[dismo]{mahal}} function from dismo 
-#' package. Corresponds to a distribution model based on Mahalanobis distance, a measure of the distance 
-#' between a point P and a distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this package 
-#' it is implemented by the function \code{\link[dismo]{mahal}}, evaluated and predicted 
-#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package. 
+#' \item{Mahalanobis}{Specified by \code{algo="mahal"} uses \code{\link[dismo]{mahal}} function from dismo
+#' package. Corresponds to a distribution model based on Mahalanobis distance, a measure of the distance
+#' between a point P and a distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this package
+#' it is implemented by the function \code{\link[dismo]{mahal}}, evaluated and predicted
+#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
 #' }
 #' \item{Domain}{Specified by \code{algo="domain"} uses \code{\link[dismo]{domain}} function from dismo
-#' package. Computes  point-to-point similarity based on Gower distance between environmental variables 
-#' \insertCite{carpenter_domain:_1993}{modleR}. \insertCite{hijmans_dismo:_2017}{modleR} state that 
+#' package. Computes  point-to-point similarity based on Gower distance between environmental variables
+#' \insertCite{carpenter_domain_1993}{modleR}. \insertCite{hijmans_dismo_2017}{modleR} state that
 #' one should use it with caution because it does not perform well compared to other algorithms
-#' \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}. 
+#' \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}.
 #' We add that it is a slow algorithm.
-#' In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted 
+#' In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted
 #' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
 #' }
 #' \item{Support Vector Machines (SVM)}{
@@ -68,15 +68,15 @@
 #' }
 #' \item{Random Forest}{
 #' }
-#' \item{Euclidian algorithms}{
-#' to do or not to do
+#' \item{Euclidean environmental distance}{
+#' to do or not to do that is the question
 #' }
-#' \item{Boosted Refression Trees (BRT)}{
+#' \item{Boosted Regression Trees (BRT)}{
 #' }
 #' }
 #' @references
 #' \insertAllCited{}
-#' @author Andrea Sánchez-Tapia
+#' @author Andrea Sánchez-Tapia & Sara Mortara
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{maxent}}
 #' @seealso \code{\link[maxnet]{maxnet}}
@@ -95,7 +95,7 @@
 do_any <- function(species_name,
                    predictors,
                    models_dir = "./models",
-                   algo = c("bioclim"), #um so
+                   algo = c("bioclim"),
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
                    mask = NULL,
@@ -110,7 +110,7 @@ do_any <- function(species_name,
   # characters to avoid in file and dir names
   avoid_chars <- intToUtf8(c(91, 62, 33, 180, 60, 35, 63, 38, 47, 92, 46, 93))
   print_avoid <- intToUtf8(c(62, 33, 180, 60, 35, 63, 38, 47, 92, 46))
-  if(grepl(avoid_chars, species_name)==TRUE){
+  if (grepl(avoid_chars, species_name) == TRUE) {
     species_name <- gsub(avoid_chars, "", species_name)
     warning(cat(paste0('You entered a bad character (any in "',
                         print_avoid,
@@ -145,7 +145,7 @@ do_any <- function(species_name,
     ##### Hace los modelos
     runs <- which(names(sdmdata) == "pa") - 1
 
-    #para cada columna de la matriz de diseno
+    #para cada coluna da matriz de desenho experimental
     for (i in seq_along(1:runs)) {
         group.all <- sdmdata[, i]
         group  <- group.all[sdmdata$pa == 1]
@@ -235,7 +235,19 @@ do_any <- function(species_name,
                     n.trees <- mod$n.trees
                 }
             }
-
+            if (algo %in% c("centroid", "mindist")) {
+                #esto es centroid
+                if (algo == "centroid") {
+                    cat(paste("Euclidean environmental distance to centroid",'\n'))
+                    #calcula la media ambiental de los puntos de train
+                    mod <- euclidean(x = predictors, occs = pres_train, algo = "centroid")
+                    }
+                if (algo == "mindist") {
+                    cat(paste("Minimum Euclidean environmental distance",'\n'))
+                    #calcula la media ambiental de los puntos de train
+                    mod <- euclidean(x = predictors, occs = pres_train, algo = "mindist")
+                    }
+}
             message("projecting the models...")
             if (exists("mod")) {
                 if (algo == "brt") {
@@ -264,6 +276,26 @@ do_any <- function(species_name,
                                                 predictors, type = "logistic")
                     mod_cont <- raster::predict(predictors, mod, type = "logistic")
                 }
+                if (algo %in% c("centroid", "mindist")) {
+                mod_cont <- mod #não dá para projetar mas mod eh continuo
+                if (!nrow(occurrences) %in% c(1, 2)) {
+                    #soh corta por LTP se tem mais de dos pontos...
+                  p <- raster::extract(mod_cont, y = pres_test)
+                  a <- raster::extract(mod_cont, y = backg_test)
+                  eval_mod <- dismo::evaluate(p = p, a = a)
+                  LPTec <- dismo::threshold(eval_mod, 'no_omission')
+                  #[ö] este corte pelo LPT original poderia ser por uma porcentagem da distância ou por um valor - no caso nãõ seria necessário rodar o eval_mod e o lpt mas pegar o intervalo de distâncias e calcular a porcentagem desejada
+                  mod_cont[mod_cont < LPTec] <- 0
+                  mod_cont <-
+                      (mod_cont - raster::minValue(mod_cont)) /
+                      raster::maxValue(mod_cont - raster::minValue(mod_cont))
+                    #ö is this the same as rescale?
+                    }
+                p <- raster::extract(mod_cont, y = pres_test)
+                a <- raster::extract(mod_cont, y = backg_test)
+                eval_mod <- dismo::evaluate(p = p, a = a)
+                }
+
             message("evaluating the models...")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #names(th_table) <- paste0(names(th_table), "_th")
@@ -290,7 +322,7 @@ do_any <- function(species_name,
             row.names(th_table) <- species_name
 
             # threshold dependent values
-            #which threshold? any value from function threhold() in dismo
+            #which threshold? any value from function threshold() in dismo
             #th_mod <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]#tss?
             th_mod <- th_table[, threshold]
             th_table$threshold <- as.character(threshold)
@@ -298,6 +330,9 @@ do_any <- function(species_name,
             if (algo == "brt") {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                             n.trees = n.trees, tr = th_mod)
+            } else if (algo %in% c("centroid", "mindist")) {
+                conf <- dismo::evaluate(p = p, a = a, predictors,
+                                        tr = th_mod)
             } else {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                         tr = th_mod)
@@ -424,6 +459,7 @@ do_any <- function(species_name,
                                         "rf")) {
                             mod_proj_cont <- raster::predict(pred_proj, mod)
                         }
+
                         if (write_bin_cut == T) {
                             mod_proj_bin <- mod_proj_cont > th_mod
                             mod_proj_cut <- mod_proj_bin * mod_proj_cont
@@ -497,7 +533,7 @@ do_any <- function(species_name,
         }
 
     }
-#    return(th_table)
+    return(th_table)
     message("DONE!")
     print(date())
 }

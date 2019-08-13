@@ -1,6 +1,6 @@
 ---
 title: "modleR: a workflow for ecological niche models based on dismo"
-author: "Andrea Sánchez-Tapia, Diogo S. B. Rocha & Sara Mortara"
+author: "Andrea Sánchez-Tapia, Sara Mortara & Diogo S. B. Rocha"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
@@ -102,12 +102,12 @@ species
 
 
 ```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = T}
-par(mfrow=c(2,2))
-for(i in 1:length(coordenadas)){
-plot(!is.na(example_vars[[1]]), legend = F, main=species[i])
-points(lat ~ lon, data=coordenadas[[i]])
-}
-par(mfrow=c(1,1))
+par(mfrow = c(2, 2))
+for (i in 1:length(coordenadas)) {
+  plot(!is.na(example_vars[[1]]), legend = F, main = species[i])
+  points(lat ~ lon, data = coordenadas[[i]])
+  }
+par(mfrow = c(1, 1))
 ```
 
 We will filter the `coordenadas` file to select only the data for the first species: 
@@ -240,11 +240,13 @@ do_many(species_name = species[1],
        maxnet = T,
        rf = T,
        mahal = F, 
-       brt = T, 
+       brt = T,
+       mindist = F, 
+       centroid = F, 
        equalize = T)
 ```
 
-<!--Both functions admit the parameters from `setupsdmdata()` and run it - this is no longer true-->. In addition: 
+In addition: 
 
 + `mask`: will crop and mask the partition models into a ShapeFile
 + `write_png` will create a png file of the output 
@@ -367,7 +369,7 @@ ens <- ensemble_model(species[1],
                occurrences = occs,
                which_final = "raw_mean",
                models_dir = test_folder, 
-               overwrite=TRUE) #argument from writeRaster
+               overwrite = TRUE) #argument from writeRaster
 ```
 
 At any point we can explore the outputs in the folders: 
