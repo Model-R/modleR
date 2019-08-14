@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ```
 
 
-__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist the creation of environmental filters [@varela_environmental_2014].
+__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist the creation of environmental filters [@varela_environmental_2014].
 
 # Installing 
 
@@ -213,17 +213,19 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
 
 ```{r do_any, echo = T, eval = T}
-do_any(species_name = species[1],
-       algo = "maxent",
-       predictors = example_vars,
-       models_dir = test_folder,
-       write_png = T,
-       write_bin_cut = F,
-       equalize = T)
+sp_maxent <- do_any(species_name = species[1],
+                    algo = "maxent",
+                    predictors = example_vars,
+                    models_dir = test_folder,
+                    write_png = T,
+                    write_bin_cut = F,
+                    equalize = T)
+
+sp_maxent
 ```
 
 
-The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
+The following lines call for bioclim, GLM, maxent, random forests and smvk (from package __kernlab__)
 
 ```{r do_many, echo = T, eval = T}
 do_many(species_name = species[1],

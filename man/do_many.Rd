@@ -2,50 +2,57 @@
 % Please edit documentation in R/do_many.R
 \name{do_many}
 \alias{do_many}
-\title{Fits ecological niche models for various algorithms.}
+\title{Fits, predicts and evaluates ecological niche models for various algorithms}
 \usage{
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
-  svmk = FALSE, svme = FALSE, mindist = FALSE, centroid = FALSE,
-  brt = FALSE, ...)
+  svmk = FALSE, svme = FALSE, brt = FALSE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as 
 a directory name, avoid non-ASCII characters, spaces and ponctuation marks. 
 Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
 
-\item{bioclim}{Execute bioclim from the dismo implementation}
+\item{bioclim}{Execute bioclim algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{bioclim}} function.}
 
-\item{domain}{Execute domain from the dismo implementation}
+\item{domain}{Execute domain from the \pkg{dismo} implementation with \code{\link[dismo]{domain}} function.}
 
-\item{glm}{Execute GLM as suggested by the dismo documentation}
+\item{glm}{Execute GLM as suggested by the \pkg{dismo} documentation with \code{\link{glm}} and \code{\link{step}}.}
 
-\item{mahal}{Execute mahalanobis distance from the dismo implementation}
+\item{mahal}{Execute Mahalanobis distance from the \pkg{dismo} implementation with \code{\link[dismo]{mahal}}.}
 
-\item{maxent}{Execute maxent from the dismo implementation}
+\item{maxent}{Execute Maxent algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{maxent}} function.}
 
-\item{maxnet}{Execute maxent from the maxnet implementation}
+\item{maxnet}{Execute Maxent algorithm from the \pkg{maxnet} implementation with \code{\link[maxnet]{maxnet}} function.}
 
-\item{rf}{Execute random forests from randomForest() as suggested by the dismo documentation}
+\item{rf}{Execute Random forests algorithm from \pkg{randomForest} package with function\code{\link[randomForest]{tuneRF}} as suggested by the \pkg{dismo} documentation.}
 
-\item{svmk}{Execute svm from kernlab package}
+\item{svmk}{Execute Support Vector Machines (SVM) algorithm from \pkg{kernlab} package with \code{\link[kernlab]{ksvm}} function.}
 
-\item{svme}{Execute svm from e1071 package}
+\item{svme}{Execute Support Vector Machines (SVM) algorithm from \pkg{e1071} package with \code{\link[e1071]{best.tune}} function.}
 
-\item{mindist}{Execute minimum euclidean distance}
-
-\item{centroid}{Execute euclidean distance to the environmental centroid}
-
-\item{brt}{Execute boosted regression trees}
+\item{brt}{Execute Boosted Regression Trees with \code{\link[dismo]{gbm.step}} from \pkg{dismo}.}
 
 \item{...}{Any parameter from \link{do_any}}
 }
 \value{
 A set of ecological niche models for each partition and algorithm,
-        written in the \code{models_dir} subfolder
+        written in the \code{models_dir} subfolder.
 }
 \description{
-Fits ecological niche models for various algorithms.
+Runs internally \code{\link{do_any}}. Can be used to run multiple algorithms at time. See \strong{Details} in \code{\link{do_any}} for a description of how each algorithm is implemented.
+}
+\examples{
+# run setup_sdmdata 
+sp <- names(coordenadas)[1]
+sp_coord <- coordenadas[[1]]
+sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+
+# run do_many
+sp_many <- do_many(species_name=sp,
+                     predictors=example_vars,
+                     bioclim=TRUE, 
+                     brt=TRUE)
 }
 \author{
 Andrea Sánchez-Tapia

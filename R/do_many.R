@@ -1,22 +1,33 @@
-#' Fits ecological niche models for various algorithms.
+#' Fits, predicts and evaluates ecological niche models for various algorithms
+#' 
+#' Runs internally \code{\link{do_any}}. Can be used to run multiple algorithms at time. See \strong{Details} in \code{\link{do_any}} for a description of how each algorithm is implemented.
 #'
 #' @inheritParams do_any
-#' @param bioclim Execute bioclim from the dismo implementation
-#' @param domain Execute domain from the dismo implementation
-#' @param mahal Execute mahalanobis distance from the dismo implementation
-#' @param maxent Execute maxent from the dismo implementation
-#' @param maxnet Execute maxent from the maxnet implementation
-#' @param glm Execute GLM as suggested by the dismo documentation
-#' @param rf Execute random forests from randomForest() as suggested by the dismo documentation
-#' @param svmk Execute svm from kernlab package
-#' @param svme Execute svm from e1071 package
-#' @param mindist Execute minimum euclidean distance
-#' @param centroid Execute euclidean distance to the environmental centroid
-#' @param brt Execute boosted regression trees
+#' @param bioclim Execute bioclim algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{bioclim}} function.
+#' @param brt Execute Boosted Regression Trees with \code{\link[dismo]{gbm.step}} from \pkg{dismo}.
+#' @param domain Execute domain from the \pkg{dismo} implementation with \code{\link[dismo]{domain}} function.
+#' @param glm Execute GLM as suggested by the \pkg{dismo} documentation with \code{\link{glm}} and \code{\link{step}}.
+#' @param mahal Execute Mahalanobis distance from the \pkg{dismo} implementation with \code{\link[dismo]{mahal}}.
+#' @param maxent Execute Maxent algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{maxent}} function.
+#' @param maxnet Execute Maxent algorithm from the \pkg{maxnet} implementation with \code{\link[maxnet]{maxnet}} function.
+#' @param rf Execute Random forests algorithm from \pkg{randomForest} package with function\code{\link[randomForest]{tuneRF}} as suggested by the \pkg{dismo} documentation.
+#' @param svme Execute Support Vector Machines (SVM) algorithm from \pkg{e1071} package with \code{\link[e1071]{best.tune}} function.
+#' @param svmk Execute Support Vector Machines (SVM) algorithm from \pkg{kernlab} package with \code{\link[kernlab]{ksvm}} function.
 #' @param ... Any parameter from \link{do_any}
 #' @return A set of ecological niche models for each partition and algorithm,
-#'         written in the \code{models_dir} subfolder
+#'         written in the \code{models_dir} subfolder.
 #' @author Andrea Sánchez-Tapia
+#' @examples 
+#' # run setup_sdmdata 
+#' sp <- names(coordenadas)[1]
+#' sp_coord <- coordenadas[[1]]
+#' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+#' 
+#' # run do_many
+#' sp_many <- do_many(species_name=sp,
+#'                      predictors=example_vars,
+#'                      bioclim=TRUE, 
+#'                      brt=TRUE)
 #' @export
 #'
 do_many <- function(species_name,
@@ -29,81 +40,81 @@ do_many <- function(species_name,
                     rf = FALSE,
                     svmk = FALSE,
                     svme = FALSE,
-                    mindist = FALSE,
-                    centroid = FALSE,
+#                    mindist = FALSE,
+#                    centroid = FALSE,
                     brt = FALSE,
                     ...) {
-
-    if (bioclim == T) {
-        do_any(
-            species_name,
-            algo = "bioclim",
-            ...)
-    }
-    if (domain == T) {
-        do_any(
-            species_name,
-            algo = "domain",
-            ...)
-    }
-    if (glm == T) {
-        do_any(
-            species_name,
-            algo = "glm",
-            ...)
-    }
-    if (mahal == T) {
-        do_any(
-            species_name,
-            algo = "mahal",
-            ...)
-    }
-    if (maxent == T) {
-        do_any(
-            species_name,
-            algo = "maxent",
-            ...)
-    }
-    if (maxnet == T) {
-        do_any(
-            species_name,
-            algo = "maxnet",
-            ...)
-    }
-    if (rf == T) {
-        do_any(
-            species_name,
-            algo = "rf",
-            ...)
-    }
-    if (svmk == T) {
-        do_any(
-            species_name,
-            algo = "svmk",
-            ...)
-    }
-    if (svme == T) {
-        do_any(
-            species_name,
-            algo = "svme",
-            ...)
-    }
-    if (mindist == T) {
-        do_any(
-            species_name,
-            algo = "mindist",
-            ...)
-    }
-    if (centroid == T) {
-        do_any(
-            species_name,
-            algo = "centroid",
-            ...)
-    }
-    if (brt == T) {
-        do_any(
-            species_name,
-            algo = "brt",
-            ...)
-    }
+  
+  if (bioclim == T) {
+    do_any(
+      species_name,
+      algo = "bioclim",
+      ...)
+  }
+  if (domain == T) {
+    do_any(
+      species_name,
+      algo = "domain",
+      ...)
+  }
+  if (glm == T) {
+    do_any(
+      species_name,
+      algo = "glm",
+      ...)
+  }
+  if (mahal == T) {
+    do_any(
+      species_name,
+      algo = "mahal",
+      ...)
+  }
+  if (maxent == T) {
+    do_any(
+      species_name,
+      algo = "maxent",
+      ...)
+  }
+  if (maxnet == T) {
+    do_any(
+      species_name,
+      algo = "maxnet",
+      ...)
+  }
+  if (rf == T) {
+    do_any(
+      species_name,
+      algo = "rf",
+      ...)
+  }
+  if (svmk == T) {
+    do_any(
+      species_name,
+      algo = "svmk",
+      ...)
+  }
+  if (svme == T) {
+    do_any(
+      species_name,
+      algo = "svme",
+      ...)
+  }
+  # if (mindist == T) {
+  #   do_any(
+  #     species_name,
+  #     algo = "mindist",
+  #     ...)
+  # }
+  # if (centroid == T) {
+  #   do_any(
+  #     species_name,
+  #     algo = "centroid",
+  #     ...)
+  # }
+  if (brt == T) {
+    do_any(
+      species_name,
+      algo = "brt",
+      ...)
+  }
 }
