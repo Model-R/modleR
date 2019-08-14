@@ -29,7 +29,7 @@ A shiny application currently available at: https://github.com/Model-R/Model-R u
 
 The workflow consists of mainly three functions that should be used sequentially.
 
-![__`modleR` workflow__](vignettes/workflow.png){ width=80% }
+![__`modleR` workflow__](vignettes/workflow.png)
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
