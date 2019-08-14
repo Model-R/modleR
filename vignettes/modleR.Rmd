@@ -52,6 +52,8 @@ uses a previous version of this workflow and is currently being updated to this 
 
 The workflow consists of mainly three functions that should be used sequentially.
 
+![__`modleR` workflow__](workflow.png){ width=80% }
+
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
 3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm;  
