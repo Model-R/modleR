@@ -240,12 +240,16 @@ do_any <- function(species_name,
                 if (algo == "centroid") {
                     cat(paste("Euclidean environmental distance to centroid",'\n'))
                     #calcula la media ambiental de los puntos de train
-                    mod <- euclidean(x = predictors, occs = pres_train, algo = "centroid")
+                    mod <- euclidean(predictors = predictors,
+                                     occurrences = pres_train,
+                                     algo = "centroid")
                     }
                 if (algo == "mindist") {
                     cat(paste("Minimum Euclidean environmental distance",'\n'))
                     #calcula la media ambiental de los puntos de train
-                    mod <- euclidean(x = predictors, occs = pres_train, algo = "mindist")
+                    mod <- euclidean(predictors = predictors,
+                                     occurrences = pres_train,
+                                     algo = "mindist")
                     }
 }
             message("projecting the models...")
