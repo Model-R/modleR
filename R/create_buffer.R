@@ -1,18 +1,21 @@
 #' Samples pseudoabsences inside a geographic buffer.
 #'
 #' @inheritParams setup_sdmdata
+#' @inheritParams euclidean
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the "mean", "median", "maximum" distance between occurrence
-#' points, or an absolute "distance". If NULL pseudoabsences are randomly generated in the entire area 
+#' points, or an absolute geographic "distance" or an euclidean environmental distance. If NULL pseudoabsences are randomly generated in the entire area
 #' of the RasterStack of predictor variables.
 #' filled with predictors. If set to "distance", "dist_buf" needs to
 #' be specified. If set to "user", "buffer_shape" needs to be specified
 #' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance".
 #' Distance unit is in the same unit of the RasterStack of predictor variables
-#' @param dist_min Optional, a distance for the exclusion buffer. 
+#' @param dist_min Optional, a distance for the exclusion buffer.
 #' Distance unit is in the same unit of the RasterStack of predictor variables
-#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated. 
+#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated.
 #' Needs to be specified if buffer_type = "user"
+#' @param env_distance Character. Type of environmental distance \code{"centroid", "mindist"}
+#' @param max_env_dist Maximum environmental distance. Needs to be specified if buffer_type = "env_distance"
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @author Felipe Barros
@@ -43,17 +46,21 @@ create_buffer <- function(species_name,
                           buffer_type = "median",
                           dist_buf = NULL,
                           dist_min = NULL,
+                          distance = "centroid",
+                          max_env_dist = 0.8,#aqui precisamos saber se fazemos por porcentagem, valor, quantil...
                           buffer_shape = NULL,
                           models_dir = "./models",
                           write_buffer = F) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) |
-        !buffer_type %in% c("distance", "mean", "median", "max", "user")) {
+        !buffer_type %in% c("distance", "mean", "median", "max", "user", "environmental_distance")) {
         warning("buffer_type NULL or not recognized, returning predictors")
         r_buffer <- predictors
         return(r_buffer)
     }
+    if (buffer_type %in% c("distance", "mean", "median", "max", "user")) {
+
     if (buffer_type == "user") {
         if (is.null(buffer_shape) | !class(buffer_shape) %in% c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
             stop("if buffer_type == 'user', buffer_shape needs to be specified and to be a shapefile")
@@ -86,18 +93,37 @@ create_buffer <- function(species_name,
     }
     # rasterizes to sample the random points
     r_buffer <- raster::crop(predictors, buffer.shape)
+}
+    if (buffer_type == "env_distance") {
+        if (is.na(env_distance))
+            stop(paste("Which environmental distance (centroid, mindist) must be specified"))
+        if (is.na(max_env_dist))
+            stop(paste("A maximum environmental distance must be specified"))
 
+        r_buffer <- euclidean(predictors = predictors,
+                                        occurrences = occurrences,
+                                        algo = env_distance)
+        r_buffer[r_buffer < max_dist] <- NA #this is a raster already
+        # maybe we should make it a shapefile so it is not different from the other types
+
+    }
+
+#aqui en las distancias hay algo porque no tenemos dist.buf
     if (is.numeric(dist_min)) {
+        if (exists(dist.buf)) { #isto tem de ser corrigido porque só vai servir para os buffers de distancia geografica nem para user nem para env.
         if (dist_min >= dist.buf) {
             stop("dist_min is higher than dist.buf")
-            }
+        }
+        }
+
         buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
                                            byid = F, width = dist_min)
 
         r_buffer <- raster::mask(r_buffer, buffer.shape.min, inverse = TRUE)
     }
+
     # masks the buffer to avoid sampling outside the predictors
-    r_buffer <- raster::mask(r_buffer, buffer.shape)
+    r_buffer <- raster::mask(r_buffer, buffer.shape)#aqui não temos para env pero tal vez hacer el mask para los predictores...? :thinking:
     if (write_buffer) {
         partition.folder <- paste0(models_dir, "/", species_name, "/present", "/partitions")
         if (file.exists(partition.folder) == FALSE)

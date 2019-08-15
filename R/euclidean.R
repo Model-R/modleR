@@ -1,14 +1,17 @@
 #this function calculates the mean distance to the centroid of a distribution
-#x is a stack
-# occs are the occurrence points
+#predictors is an environmental variables stack
+# occurrences are the occurrence points
 # centroid.val are the values at the centroid of the distribution
 
-euclidean <- function(x, occs, algo, filename = '', ...) {
-    x.st <- raster::scale(x)
-    pres.vals <- raster::extract(x.st, occs)
+euclidean <- function(predictors,
+                      occurrences,
+                      algo,
+                      filename = '', ...) {
+    x.st <- raster::scale(predictors)
+    pres.vals <- raster::extract(x.st, occurrences)
     centroid.val <- apply(pres.vals, 2, mean, na.rm = TRUE)
 
-    out <- raster(x)
+    out <- raster(predictors)
     big <- !canProcessInMemory(out, 3)
     filename <- trim(filename)
     if (big & filename ==  '') {
@@ -22,7 +25,7 @@ euclidean <- function(x, occs, algo, filename = '', ...) {
         todisk <- FALSE
     }
 
-    bs <- blockSize(x)
+    bs <- blockSize(predictors)
     pb <- pbCreate(bs$n, ...)
 
     if (todisk) {
