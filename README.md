@@ -5,13 +5,13 @@ __modleR__ is a workflow based on package __dismo__ (Hijmans et al 2017), design
 
 # Installing 
 
-Currently modleR can be installed from github (but we aim to submit to CRAN soon):
+Currently __modleR__ can be installed from github (but we aim to submit to CRAN soon):
 
 ```
 # Without vignette
-remotes::install_github("Model-R/modelr_pkg", build = TRUE)
+remotes::install_github("Model-R/modleR", build = TRUE)
 # With vignette
-remotes::install_github("Model-R/modelr_pkg", build = TRUE,
+remotes::install_github("Model-R/modleR", build = TRUE,
                         build_opts = c("--no-resave-data", "--no-manual"))
 
 #install.packages(xxx)#soon!
@@ -23,7 +23,7 @@ installation. During installation, R may ask for some missing packages, which yo
 
 # Shiny app
 
-A shiny application currently available at: https://github.com/Model-R/Model-R uses a previous version of this workflow and is currently being updated to this newest version. 
+A shiny application currently available at: https://github.com/Model-R/modleR_shiny_app uses a previous version of this workflow and is currently being updated to this newest version. 
 
 # The workflow
 
@@ -346,7 +346,7 @@ plot(final_models)
 
 ## ensemble_model()
 
-The third step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
+The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
 `ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
