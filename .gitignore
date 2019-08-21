@@ -7,6 +7,7 @@ inst/doc
 *.html
 *.pdf
 vignettes/modelR_cache
+vignettes/modelR_files
 *.odg
 1sdmtest_boot
 1sdmtest_cv
