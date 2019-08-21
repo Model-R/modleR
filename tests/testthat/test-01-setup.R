@@ -24,8 +24,8 @@ test_that("all outputs were generated", {
   expect_length(list.files(path = setup_dir, 
                                  pattern="sdmdata.txt"), 1)
   # does it have sdmdata png file?
-  expect_equal(length(list.files(path = setup_dir, 
-                                 pattern="sdmdata_.*png")), 1)
+  expect_length(list.files(path = setup_dir, 
+                                 pattern="sdmdata_.*png"), 1)
   
 })
 

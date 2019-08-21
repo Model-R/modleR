@@ -1,8 +1,6 @@
-# test file for do_any function
+context("basic do_any test")
 
-## goal: test output of function
-
-test_that("do_many produces model and stats file", {
+test_that("do_any produces model and stats file", {
   my_dir <- "../01_test/"
   my_mod <- do_any(species_name=sp,
                    predictors=example_vars,

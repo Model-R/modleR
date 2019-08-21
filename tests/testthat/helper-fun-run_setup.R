@@ -5,8 +5,8 @@ run_setup <- function(my_seed, ...){
                 seed=my_seed, 
                 boot_n = 4,
                 models_dir = my_dir, 
-                partition_type = "crossvalidation",
-                cv_partitions = 5,
-                cv_n = 1,
+                # partition_type = "crossvalidation",
+                # cv_partitions = 5,
+                # cv_n = 1,
                 ...)
 }
