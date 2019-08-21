@@ -22,4 +22,4 @@ modelos_teste
 modelos_teste.log
 *.Rproj
 teste.R
-tests/
+tests/01_test
