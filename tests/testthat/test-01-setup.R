@@ -4,12 +4,25 @@
 
 context("basic setup test")
 
+# creating objects to be used on tests
+my_seed <- 42
+my_dir <- "../01_test/"
+sp <- names(coordenadas)[1]
+sp_coord <- coordenadas[[1]]
+# helper function
+run_setup <- function(my_seed, ...){
+  setup_sdmdata(species_name=sp,
+                occurrences=sp_coord,
+                example_vars,
+                seed=my_seed,
+                boot_n = 4,
+                models_dir = my_dir,
+                ...)
+}
+my_setup <- run_setup(my_seed)
+
+# the test itself
 test_that("testing that seed works", {
-  sp <- names(coordenadas)[1]
-  sp_coord <- coordenadas[[1]]
-  my_seed <- 42
-  my_dir <- "../01_test/"
-  my_setup <- run_setup(my_seed)
   expect_message(run_setup(my_seed), 
                  "same metadata, no need to run data partition")
   expect_message(run_setup(123), 
