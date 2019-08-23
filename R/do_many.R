@@ -27,7 +27,7 @@
 #' sp_many <- do_many(species_name=sp,
 #'                      predictors=example_vars,
 #'                      bioclim=TRUE, 
-#'                      brt=TRUE)
+#'                      maxent=TRUE)
 #' @export
 #'
 do_many <- function(species_name,
@@ -45,73 +45,73 @@ do_many <- function(species_name,
                     brt = FALSE,
                     ...) {
   
-  if (bioclim == T) {
+  if (bioclim == TRUE) {
     do_any(
       species_name,
       algo = "bioclim",
       ...)
   }
-  if (domain == T) {
+  if (domain == TRUE) {
     do_any(
       species_name,
       algo = "domain",
       ...)
   }
-  if (glm == T) {
+  if (glm == TRUE) {
     do_any(
       species_name,
       algo = "glm",
       ...)
   }
-  if (mahal == T) {
+  if (mahal == TRUE) {
     do_any(
       species_name,
       algo = "mahal",
       ...)
   }
-  if (maxent == T) {
+  if (maxent == TRUE) {
     do_any(
       species_name,
       algo = "maxent",
       ...)
   }
-  if (maxnet == T) {
+  if (maxnet == TRUE) {
     do_any(
       species_name,
       algo = "maxnet",
       ...)
   }
-  if (rf == T) {
+  if (rf == TRUE) {
     do_any(
       species_name,
       algo = "rf",
       ...)
   }
-  if (svmk == T) {
+  if (svmk == TRUE) {
     do_any(
       species_name,
       algo = "svmk",
       ...)
   }
-  if (svme == T) {
+  if (svme == TRUE) {
     do_any(
       species_name,
       algo = "svme",
       ...)
   }
-  # if (mindist == T) {
+  # if (mindist == TRUE) {
   #   do_any(
   #     species_name,
   #     algo = "mindist",
   #     ...)
   # }
-  # if (centroid == T) {
+  # if (centroid == TRUE) {
   #   do_any(
   #     species_name,
   #     algo = "centroid",
   #     ...)
   # }
-  if (brt == T) {
+  if (brt == TRUE) {
     do_any(
       species_name,
       algo = "brt",

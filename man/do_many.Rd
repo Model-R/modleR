@@ -52,7 +52,7 @@ sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
 sp_many <- do_many(species_name=sp,
                      predictors=example_vars,
                      bioclim=TRUE, 
-                     brt=TRUE)
+                     maxent=TRUE)
 }
 \author{
 Andrea Sánchez-Tapia

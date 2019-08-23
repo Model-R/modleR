@@ -65,7 +65,7 @@
 #'                         select_par_val = 0,
 #'                         which_models = c("bin_consensus"),
 #'                         consensus_level = 0.5,
-#'                         overwrite = T)
+#'                         overwrite = TRUE)
 #' 
 #' @import raster
 #' @importFrom utils read.table write.csv read.csv

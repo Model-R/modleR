@@ -41,21 +41,22 @@
 #' sp_many <- do_many(species_name=sp,
 #'                      predictors=example_vars,
 #'                      bioclim=TRUE, 
-#'                      brt=TRUE)
+#'                      maxent=TRUE)
 #'        
 #' # run final_model
 #' sp_final <- final_model(species_name=sp,
-#'                         algorithms = c("bioclim", "brt"),
+#'                         algorithms = c("bioclim", "maxent"),
 #'                         select_partitions = TRUE,
 #'                         select_par = "TSS",
 #'                         select_par_val = 0,
 #'                         which_models = c("raw_mean"),
 #'                         consensus_level = 0.5,
-#'                         overwrite = T)
+#'                         overwrite = TRUE)
 #'                         
 #' # run ensemble model
 #' sp_ensemble <- ensemble_model(species_name=sp,
-#'                               occurrences=sp_coord)
+#'                               occurrences=sp_coord, 
+#'                               overwrite=TRUE)
 ensemble_model <- function(species_name,
                            occurrences,
                            lon = "lon",

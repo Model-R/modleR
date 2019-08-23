@@ -110,7 +110,7 @@ do_any <- function(species_name,
     partition.folder <-
         paste(models_dir, species_name, "present", "partitions", sep = "/")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder, recursive = T)
+        dir.create(partition.folder, recursive = TRUE)
     setup.folder <-
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
 
@@ -208,10 +208,10 @@ do_any <- function(species_name,
                     #                              importance = T)
                     mod <- randomForest::tuneRF(envtrain.eq,
                                                 sdmdata_train.eq$pa,
-                                                trace = F,
-                                                plot = F,
-                                                doBest = T,
-                                                importance = F)
+                                                trace = FALSE,
+                                                plot = FALSE,
+                                                doBest = TRUE,
+                                                importance = FALSE)
                 }
                 if (algo == "brt") {
                     mod <- dismo::gbm.step(data = sdmdata_train.eq,
@@ -333,7 +333,7 @@ do_any <- function(species_name,
                                     filename = paste0(partition.folder, "/", algo,
                                                       "_cont_", species_name, "_",
                                                       i, "_", g, ".tif"),
-                                    overwrite = T)
+                                    overwrite = TRUE)
                 if (write_bin_cut == T) {
                     message("writing binary and cut raster files...")
                     mod_bin  <- mod_cont > th_mod
@@ -346,16 +346,16 @@ do_any <- function(species_name,
                                         filename = paste0(partition.folder, "/", algo,
                                                           "_bin_", species_name, "_",
                                                           i, "_", g, ".tif"),
-                                        overwrite = T)
+                                        overwrite = TRUE)
                     raster::writeRaster(x = mod_cut,
                                         filename = paste0(partition.folder, "/", algo,
                                                           "_cut_", species_name, "_",
                                                           i, "_", g, ".tif"),
-                                        overwrite = T)
+                                        overwrite = TRUE)
                 }
 
 
-                if (write_png == T) {
+                if (write_png == TRUE) {
                     message("writing png files...")
                     png(paste0(partition.folder, "/", algo, "_cont_", species_name,
                                "_", i, "_", g, ".png"))
@@ -365,7 +365,7 @@ do_any <- function(species_name,
                                               round(mod_TSS, 2)))
                     dev.off()
 
-                    if (write_bin_cut == T) {
+                    if (write_bin_cut == TRUE) {
                         png(paste0(partition.folder, "/", algo, "_bin_", species_name,
                                    "_", i, "_", g, ".png"))
                         raster::plot(mod_bin,
@@ -384,7 +384,7 @@ do_any <- function(species_name,
 
                 }
 
-                if (project_model == T) {
+                if (project_model == TRUE) {
                     pfiles <- list.dirs(proj_data_folder, recursive = F)
                     for (proje in pfiles) {
                         v <- strsplit(proje, "/")
@@ -392,8 +392,8 @@ do_any <- function(species_name,
                         projection.folder <- paste0(models_dir, "/", species_name,
                                                     "/", name_proj, "/partitions")
                         if (file.exists(projection.folder) == FALSE)
-                            dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
-                        pred_proj <- raster::stack(list.files(proje, full.names = T))
+                            dir.create(paste0(projection.folder), recursive = TRUE, showWarnings = FALSE)
+                        pred_proj <- raster::stack(list.files(proje, full.names = TRUE))
                         pred_proj <- raster::subset(pred_proj, names(predictors))
                         message(name_proj)
 
@@ -432,23 +432,23 @@ do_any <- function(species_name,
                                                               "/", algo, "_cont_",
                                                               species_name, "_",
                                                               i, "_", g, ".tif"),
-                                            overwrite = T)
+                                            overwrite = TRUE)
                         if (write_bin_cut == T) {
                             raster::writeRaster(x = mod_proj_bin,
                                                 filename = paste0(projection.folder,
                                                                   "/", algo, "_bin_",
                                                                   species_name, "_",
                                                                   i, "_", g, ".tif"),
-                                                overwrite = T)
+                                                overwrite = TRUE)
                             raster::writeRaster(x = mod_proj_cut,
                                                 filename = paste0(projection.folder,
                                                                   "/", algo, "_cut_",
                                                                   species_name, "_",
                                                                   i, "_", g, ".tif"),
-                                                overwrite = T)
+                                                overwrite = TRUE)
                         }
 
-                        if (write_png == T) {
+                        if (write_png == TRUE) {
                             message("writing projected models .png")
                             png(paste0(projection.folder, "/", algo, "_cont_",
                                        species_name, "_", i, "_", g, ".png"))
@@ -459,7 +459,7 @@ do_any <- function(species_name,
                                                       "TSS =", round(mod_TSS, 2)))
                             dev.off()
 
-                            if (write_bin_cut == T) {
+                            if (write_bin_cut == TRUE) {
                                 png(paste0(projection.folder, "/", algo, "_bin_",
                                            species_name, "_", i, "_", g, ".png"))
                                 raster::plot(mod_proj_bin,

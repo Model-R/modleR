@@ -97,7 +97,7 @@ sp_final <- final_model(species_name=sp,
                         select_par_val = 0,
                         which_models = c("bin_consensus"),
                         consensus_level = 0.5,
-                        overwrite = T)
+                        overwrite = TRUE)
 
 }
 \seealso{

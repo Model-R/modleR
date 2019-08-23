@@ -38,7 +38,7 @@
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
 #' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
-#' sp_setup
+#' head(sp_setup)
 #'
 #' @seealso \code{\link[dismo]{gridSample}}
 #' @importFrom utils write.table
