@@ -54,12 +54,12 @@ create_buffer <- function(species_name,
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) |
-        !buffer_type %in% c("distance", "mean", "median", "max", "user", "environmental_distance")) {
+        !buffer_type %in% c("distance", "mean", "median", "maximum", "user", "environmental_distance")) {
         warning("buffer_type NULL or not recognized, returning predictors")
         r_buffer <- predictors
         return(r_buffer)
     }
-    if (buffer_type %in% c("distance", "mean", "median", "max", "user")) {
+    if (buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
 
     if (buffer_type == "user") {
         if (is.null(buffer_shape) | !class(buffer_shape) %in% c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
@@ -70,17 +70,17 @@ create_buffer <- function(species_name,
         }
     }
 
-    if (buffer_type %in% c("distance", "mean", "median", "max")) {
+    if (buffer_type %in% c("distance", "mean", "median", "maximum")) {
         if (buffer_type %in% c("distance")) {
             if (is.null(dist_buf)) stop("dist_buf must be set when using a distance buffer")
             else dist.buf <- dist_buf
         }
-        if (buffer_type %in% c("mean", "median", "max")) {
+        if (buffer_type %in% c("mean", "median", "maximum")) {
             dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
             if (buffer_type == "mean") {
                 dist.buf <- mean(dists)
             }
-            if (buffer_type == "max") {
+            if (buffer_type == "maximum") {
                 dist.buf <-  max(dists)
             }
             if (buffer_type == "median") {
@@ -101,8 +101,8 @@ create_buffer <- function(species_name,
             stop(paste("A maximum environmental distance must be specified"))
 
         r_buffer <- euclidean(predictors = predictors,
-                                        occurrences = occurrences,
-                                        algo = env_distance)
+                              occurrences = occurrences,
+                              algo = env_distance)
         r_buffer[r_buffer < max_dist] <- NA #this is a raster already
         # maybe we should make it a shapefile so it is not different from the other types
 
@@ -110,9 +110,9 @@ create_buffer <- function(species_name,
 
 #aqui en las distancias hay algo porque no tenemos dist.buf
     if (is.numeric(dist_min)) {
-        if (exists(dist.buf)) { #isto tem de ser corrigido porque só vai servir para os buffers de distancia geografica nem para user nem para env.
+        if (exists("dist.buf")) { #isto tem de ser corrigido porque só vai servir para os buffers de distancia geografica nem para user nem para env.
         if (dist_min >= dist.buf) {
-            stop("dist_min is higher than dist.buf")
+            stop("dist_min is higher than dist_buf")
         }
         }
 
