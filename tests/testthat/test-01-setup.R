@@ -6,7 +6,7 @@ context("basic setup test")
 
 # creating objects to be used on tests
 my_seed <- 42
-my_dir <- "../01_test/"
+my_dir <- "../tmp_test/"
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
 # helper function
@@ -42,6 +42,7 @@ test_that("all outputs were generated", {
   
 })
 
-test_that("setup has numeric values", {
+test_that("setup is a data frame and has numeric values", {
+  #expect_type(my_setup, "data.frame")
   lapply(apply(my_setup, 2, is.numeric), expect_true)
 })

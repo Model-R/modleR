@@ -1,7 +1,7 @@
 context("basic do_many test")
 
 # objects to be used on tests
-my_dir <- "../01_test/"
+my_dir <- "../tmp_test/"
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
 part <- 4
