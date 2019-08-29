@@ -1,15 +1,29 @@
-#this function calculates the mean distance to the centroid of a distribution
-#predictors is an environmental variables stack
-# occurrences are the occurrence points
-# centroid.val are the values at the centroid of the distribution
+#' This function calculates the mean distance to the centroid of a distribution
+#' @param predictors is an environmental variables stack
+#' @param occurrences are the occurrence points
+#' @param algo is "minimum" or "centroid"
+#' @param ... other parameters in raster::writeRaster()
+#' @param filename Optional. The raster that will be created in disk
+#'@examples
+#' centr <- euclidean(example_vars, occurrences = coordenadas[[1]][,c(2,3)])
+#' raster::plot(centr)
+#' @export
 
 euclidean <- function(predictors,
                       occurrences,
-                      algo,
-                      filename = '', ...) {
+                      algo = "centroid",
+                      #probs,
+                      filename = '',
+                      ...) {
     x.st <- raster::scale(predictors)
     pres.vals <- raster::extract(x.st, occurrences)
+    if (!is.null(dim(pres.vals))) {
     centroid.val <- apply(pres.vals, 2, mean, na.rm = TRUE)
+} else if (is.vector(pres.vals))
+    #centroid.val <- median(pres.vals, na.rm = T)
+    #ou mensagem de erro?
+    stop("only one raster provided")
+
 
     out <- raster(predictors)
     big <- !canProcessInMemory(out, 3)
@@ -34,16 +48,22 @@ euclidean <- function(predictors,
             if (algo == "centroid") {
             dist.vals <- apply(v, 1, FUN = function(x) {
                 d <- dist(rbind(centroid.val, x))
-                vals <- -d
-            return(vals)
+                vals <- (-d) + 1
+            #cortar
+                #q <- quantile(vals, probs = probs, na.rm = T, names = F)
+                #vals[vals < q] <- q
+                return(vals)
             })
             }
             if (algo == "mindist") {
             dist.vals <- apply(v, 1, FUN = function(x) {
                 mindata <- rbind(x, pres.vals)
                 d <- min(as.matrix(dist(mindata))[1,][-1], na.rm = T)
-                vals <- -d
-            return(vals)
+                vals <- (-d) + 1
+                # cortar
+                #q <- quantile(vals, probs = probs, na.rm = T, names = F)
+                #vals[vals < q] <- q
+                return(vals)
             })
             }
             out <- writeValues(out, dist.vals, bs$row[i])
@@ -56,7 +76,10 @@ euclidean <- function(predictors,
             if (algo == "centroid") {
                 dist.vals <- apply(v, 1, FUN = function(x) {
                     d <- dist(rbind(centroid.val, x))
-                    vals <- -d
+                    vals <- (-d) + 1
+                    #cortar
+                    #q <- quantile(vals, probs = probs, na.rm = T, names = F)
+                    #vals[vals < q] <- q
                     return(vals)
                 })
             }
@@ -68,7 +91,10 @@ euclidean <- function(predictors,
                         } else {
                         d <- NA
                     }
-                    vals <- -d
+                    vals <- (-d) + 1
+                    #cortar
+                    #q <- quantile(vals, probs = probs, na.rm = T, names = F)
+                    #vals[vals < q] <- q
                     return(vals)
                 })
             }

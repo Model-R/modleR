@@ -105,6 +105,7 @@ do_any <- function(species_name,
                    conf_mat = TRUE,
                    equalize = TRUE,
                    proc_threshold = 0.5,
+                   #probs,
                    ...) {
   # replacing characters not welcome in species name
   # characters to avoid in file and dir names
@@ -165,7 +166,7 @@ do_any <- function(species_name,
             sdmdata_train <- sdmdata[group.all != g, ]#presences and absences
             envtrain <-  sdmdata_train[, names(predictors)] #presences and absences
 
-            message("fitting models...")
+            message("fitting models")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
@@ -242,17 +243,21 @@ do_any <- function(species_name,
                     #calcula la media ambiental de los puntos de train
                     mod <- euclidean(predictors = predictors,
                                      occurrences = pres_train,
-                                     algo = "centroid")
+                                     #probs = probs,
+                                     algo = "centroid",
+                                     )
                     }
                 if (algo == "mindist") {
                     cat(paste("Minimum Euclidean environmental distance",'\n'))
                     #calcula la media ambiental de los puntos de train
                     mod <- euclidean(predictors = predictors,
                                      occurrences = pres_train,
-                                     algo = "mindist")
+                                     #probs = probs,
+                                     algo = "mindist"
+                                     )
                     }
 }
-            message("projecting the models...")
+            message("projecting the models")
             if (exists("mod")) {
                 if (algo == "brt") {
                     eval_mod <- dismo::evaluate(pres_test, backg_test, mod,
@@ -281,26 +286,29 @@ do_any <- function(species_name,
                     mod_cont <- raster::predict(predictors, mod, type = "logistic")
                 }
                 if (algo %in% c("centroid", "mindist")) {
-                mod_cont <- mod #não dá para projetar mas mod eh continuo
-                if (!nrow(occurrences) %in% c(1, 2)) {
-                    #soh corta por LTP se tem mais de dos pontos...
-                  p <- raster::extract(mod_cont, y = pres_test)
-                  a <- raster::extract(mod_cont, y = backg_test)
-                  eval_mod <- dismo::evaluate(p = p, a = a)
-                  LPTec <- dismo::threshold(eval_mod, 'no_omission')
+                mod_cont <- mod #não dá para projetar mas mod já é um raster continuo - a ideia é separar e que mod seja um objecto DistMod como aqueles gerados pelo dismo e que aqui dê para executar predict e evaluate.
+
+                #este trecho de corte pelo LPT é velho
+                #if (!nrow(occurrences) %in% c(1, 2)) {
+                    #soh pode cortar se tiver mais de dos pontos
+                 # p <- raster::extract(mod_cont, y = pres_test)
+                  #a <- raster::extract(mod_cont, y = backg_test)
+                  #eval_mod <- dismo::evaluate(p = p, a = a)
+                  #cut pelo plt - opcional
+                  #LPTec <- dismo::threshold(eval_mod, 'no_omission')
                   #[ö] este corte pelo LPT original poderia ser por uma porcentagem da distância ou por um valor - no caso nãõ seria necessário rodar o eval_mod e o lpt mas pegar o intervalo de distâncias e calcular a porcentagem desejada
-                  mod_cont[mod_cont < LPTec] <- 0
-                  mod_cont <-
-                      (mod_cont - raster::minValue(mod_cont)) /
-                      raster::maxValue(mod_cont - raster::minValue(mod_cont))
+                  #mod_cont[mod_cont < LPTec] <- 0
+                  #mod_cont <-
+                   #   (mod_cont - raster::minValue(mod_cont)) /
+                    #  raster::maxValue(mod_cont - raster::minValue(mod_cont))
                     #ö is this the same as rescale?
-                    }
+                    #}
                 p <- raster::extract(mod_cont, y = pres_test)
                 a <- raster::extract(mod_cont, y = backg_test)
-                eval_mod <- dismo::evaluate(p = p, a = a)
+                eval_mod <- dismo::evaluate(p = p, a = a)#por enquanto só pode assim
                 }
 
-            message("evaluating the models...")
+            message("evaluating the models")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #names(th_table) <- paste0(names(th_table), "_th")
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
@@ -366,7 +374,7 @@ do_any <- function(species_name,
 
             #writing evaluation tables
 
-            message("writing evaluation tables...")
+            message("writing evaluation tables")
             write.csv(th_table, file = paste0(partition.folder, "/evaluate_",
                                               species_name, "_", i, "_", g,
                                               "_", algo, ".csv"))
@@ -376,14 +384,14 @@ do_any <- function(species_name,
                                        "SpatialPolygons")) {
                     mod_cont <- crop_model(mod_cont, mask)
                 }
-                message("writing raster files...")
+                message("writing raster files")
                 raster::writeRaster(x = mod_cont,
                                     filename = paste0(partition.folder, "/", algo,
                                                       "_cont_", species_name, "_",
                                                       i, "_", g, ".tif"),
                                     overwrite = T)
                 if (write_bin_cut == T) {
-                    message("writing binary and cut raster files...")
+                    message("writing binary and cut raster files")
                     mod_bin  <- mod_cont > th_mod
                     mod_cut  <- mod_cont * mod_bin
                     if (class(mask) == "SpatialPolygonsDataFrame") {
@@ -404,7 +412,7 @@ do_any <- function(species_name,
 
 
                 if (write_png == T) {
-                    message("writing png files...")
+                    message("writing png files")
                     png(paste0(partition.folder, "/", algo, "_cont_", species_name,
                                "_", i, "_", g, ".png"))
                     raster::plot(mod_cont,
