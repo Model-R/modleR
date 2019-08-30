@@ -128,22 +128,22 @@ setup_sdmdata <- function(species_name,
         boot_proportion = ifelse(is.null(boot_proportion), NA, boot_proportion),
         boot_n = ifelse(is.null(boot_n), NA, as.integer(boot_n)),
         cv_partitions = ifelse(is.null(cv_partitions), NA, as.integer(cv_partitions)),
-        cv_n = ifelse(is.null(cv_n), NA, as.integer(cv_n)),
-        row.names = 1
+        cv_n = ifelse(is.null(cv_n), NA, as.integer(cv_n))#,
+        #row.names = 1
         )
 
         #checking metadata----
-    if (file.exists(paste(setup.folder, "metadata.txt", sep = "/"))) {
+    if (file.exists(paste(setup.folder, "metadata.csv", sep = "/"))) {
         message("metadata file found, checking metadata \n")
-        metadata_old <- read.table(paste(setup.folder, "metadata.txt", sep = "/"),
-                                   as.is = F, row.names = 1)
+        metadata_old <- read.csv(paste(setup.folder, "metadata.csv", sep = "/"),
+                                   as.is = F) #row.names = 1)
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
                                      setdiff(names(metadata_old),
                                                c("final.n", "final.n.back", "selected_predictors"))]
         if (all(all.equal(metadata_old, metadata_new) == T)) {
             message("same metadata, no need to run data partition")
-            sdmdata <- read.table(paste(setup.folder, "sdmdata.txt", sep = "/"))
+            sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"), as.is = F)
             return(sdmdata)
             }
     }
@@ -234,7 +234,8 @@ setup_sdmdata <- function(species_name,
     metadata_new$final.n.back <- as.integer(n_back_mod)
 
     message(paste("saving metadata"), "\n")
-    write.table(metadata_new, file = paste(setup.folder, "metadata.txt", sep = "/"))
+    write.table(metadata_new, file = paste(setup.folder, "metadata.csv", sep = "/"),
+                sep=',', col.names=TRUE, row.names=FALSE)
 
     # cria a tabela de valores
     message("extracting environmental data")
@@ -323,7 +324,8 @@ setup_sdmdata <- function(species_name,
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
     message(paste("saving sdmdata", "\n"))
-    write.table(sdmdata, file = paste(setup.folder, "sdmdata.txt", sep = "/"))
+    write.table(sdmdata, file = paste(setup.folder, "sdmdata.csv", sep = "/"), 
+                sep=',', row.names = FALSE, col.names = TRUE)
 
 
     if (plot_sdmdata) {
