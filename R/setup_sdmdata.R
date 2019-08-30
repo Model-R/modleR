@@ -140,7 +140,7 @@ setup_sdmdata <- function(species_name,
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
                                      setdiff(names(metadata_old),
-                                               c("final.n", "final.n.back", "selected_predictors"))]
+                                             c("final.n", "final.n.back", "selected_predictors"))]
         if (all(all.equal(metadata_old, metadata_new) == T)) {
             message("same metadata, no need to run data partition")
             sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"), as.is = F)

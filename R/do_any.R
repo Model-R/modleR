@@ -115,10 +115,10 @@ do_any <- function(species_name,
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
 
     # reads sdmdata from HD
-    if (file.exists(paste(setup.folder, "sdmdata.txt", sep = "/"))) {
-        sdmdata <- read.table(paste(setup.folder, "sdmdata.txt", sep = "/"))
+    if (file.exists(paste(setup.folder, "sdmdata.csv", sep = "/"))) {
+        sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"))
     } else {
-        stop("sdmdata.txt file not found, run setup_sdmdata() or check your folder settings")
+        stop("sdmdata.csv file not found, run setup_sdmdata() or check your folder settings")
         }
 
     message(paste(algo, "\n"))

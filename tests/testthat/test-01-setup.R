@@ -31,11 +31,11 @@ test_that("testing that seed works", {
 
 test_that("all outputs were generated", {
   setup_dir <- paste0(my_dir, sp, "/present/data_setup/")
-  # does it have two metadata and sdmdata txt files?
+  # does it have two metadata and sdmdata csv files?
   expect_length(list.files(path = setup_dir, 
-                                 pattern="metadata.txt"), 1)
+                                 pattern="metadata.csv"), 1)
   expect_length(list.files(path = setup_dir, 
-                                 pattern="sdmdata.txt"), 1)
+                                 pattern="sdmdata.csv"), 1)
   # does it have sdmdata png file?
   expect_length(list.files(path = setup_dir, 
                                  pattern="sdmdata_.*png"), 1)
