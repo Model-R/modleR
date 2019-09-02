@@ -5,10 +5,12 @@ date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
         toc: true
+    md_document:
+      variant: gfm
 vignette: >
+  %\VignetteEncoding{UTF-8}
   %\VignetteIndexEntry{modleR: a workflow for ecological niche models based on dismo}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 bibliography: ../inst/REFERENCES.bib
 ---
 
@@ -49,7 +51,7 @@ uses a previous version of this workflow and is currently being updated to this 
 
 # The workflow
 
-The workflow consists of mainly three functions that should be used sequentially.
+The workflow consists of mainly four functions that should be used sequentially.
 
 ![__`modleR` workflow__](workflow.png){ width=80% }
 
@@ -64,12 +66,14 @@ The workflow consists of mainly three functions that should be used sequentially
 
 __modleR__ writes the outputs in the hard disk, according to the following folder structure:   
 
+    `models_dir/projection1/data_setup`  
     `models_dir/projection1/partitions`  
     `models_dir/projection1/final_models`  
-    `models_dir/projection1/ensemble_models`  
+    `models_dir/projection1/ensemble_models`
+    `models_dir/projection2/data_setup`  
     `models_dir/projection2/partitions`  
     `models_dir/projection2/final_models`  
-    `models_dir/projection2/ensemble_models`  
+    `models_dir/projection2/ensemble_models` 
 
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them. 
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.

@@ -29,7 +29,7 @@ uses a previous version of this workflow and is currently being updated to this 
 
 The workflow consists of mainly four functions that should be used sequentially.
 
-![__`modleR` workflow__](workflow.png){ width=80% }
+![__`modleR` workflow__](vignettes/workflow.png){ width=80% }
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
@@ -134,7 +134,7 @@ Pseudoabsence sampling has also some options:
 
 
 ```{r sdmdata1sp, eval = T}
-test_folder <- "~/modleR_test00"
+test_folder <- "~/modleR_test"
 sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              occurrences = occs,
                              predictors = example_vars,
@@ -288,7 +288,7 @@ At the end of a modeling round, the partition folder containts:
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![__`final_model()` options__](final_model_english.png){ width=75% }
+![__`final_model()` options__](vignettes/final_model_english.png){ width=75% }
 
 + It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions. 
 + The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object. 
