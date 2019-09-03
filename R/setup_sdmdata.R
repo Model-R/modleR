@@ -58,9 +58,10 @@ setup_sdmdata <- function(species_name,
                           lat = "lat",
                           buffer_type = NULL,
                           dist_buf = NULL,
+                          env_buffer = FALSE,
+                          env_distance = "centroid",
                           dist_min = NULL,
                           buffer_shape = NULL,
-                          env_distance = "centroid",
                           max_env_dist = 0.5,
                           write_buffer = F,
                           seed = NULL,
@@ -176,7 +177,7 @@ setup_sdmdata <- function(species_name,
 
     #first option: there is a buffer
     if (!is.null(buffer_type)) {
-        if (buffer_type %in% c("mean", "max", "median", "distance", "user", "environmental_distance")) {
+        if (buffer_type %in% c("mean", "maximum", "median", "distance", "user", "environmental_distance")) {
             message("creating buffer")
             pbuffr <- create_buffer(occurrences = occurrences,
                                     models_dir = models_dir,

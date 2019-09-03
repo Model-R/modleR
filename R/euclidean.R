@@ -4,7 +4,8 @@
 #' @param algo is "minimum" or "centroid"
 #' @param ... other parameters in raster::writeRaster()
 #' @param filename Optional. The raster that will be created in disk
-#'@examples
+#' @importFrom stats median
+#' @examples
 #' centr <- euclidean(example_vars, occurrences = coordenadas[[1]][,c(2,3)])
 #' raster::plot(centr)
 #' @export
@@ -20,13 +21,13 @@ euclidean <- function(predictors,
     if (!is.null(dim(pres.vals))) {
     centroid.val <- apply(pres.vals, 2, mean, na.rm = TRUE)
 } else if (is.vector(pres.vals))
-    #centroid.val <- median(pres.vals, na.rm = T)
+    centroid.val <- median(pres.vals, na.rm = T)
     #ou mensagem de erro?
-    stop("only one raster provided")
+    #stop("only one raster provided")
 
 
     out <- raster(predictors)
-    big <- !canProcessInMemory(out, 3)
+    big <- !canProcessInMemory(out, 2)
     filename <- trim(filename)
     if (big & filename ==  '') {
         filename <- rasterTmpFile()
