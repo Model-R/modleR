@@ -5,12 +5,11 @@
 #'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
-#' @param algo The algorithm to be fitted \code{c("bioclim", "maxent", "domain",
-#'                                        "mahal", "glm", "svmk", "svme",
-#'                                         "rf", "brt", "mindist", "centroid")}.
+#' @param algo The algorithm to be fitted \code{c("bioclim", "brt", "domain",
+#'                                                 "glm", "maxent", "mahal", 
+#'                                                 "svme", "svmk", "rf")}.
 #' @param project_model Logical, whether to perform a projection.
-#' @param proj_data_folder Path to projections -containing one or more
-#'  folders with the projection datasets, ex. "./env/proj/proj1".
+#' @param proj_data_folder Path to directory with projections containing one or more folders with the projection datasets (e.g. "./env/proj/proj1"). Projection diretctory should only contain raster files corresponding to the environmental variables. If more than one projection, each projection should be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and equivalent raster files at diferent subdirectories must have the same names (e.g. "./env/proj/proj1/layer1.asc" and "./env/proj/proj2/layer1.asc"). 
 #' @param write_png Logical, whether png files will be written.
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written.
 #' @param threshold Character string indicating threshold (cut-off) to transform model predictions
@@ -39,7 +38,7 @@
 #' \item{Bioclim}{
 #' Specified by \code{algo="bioclim"} uses \code{\link[dismo]{bioclim}} function in \pkg{dismo} package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix \insertCite{nix_biogeographic_1986}{modleR}, the first species distribution modelling package. It is based on climate interpolation methods and despite its limitations it is still used in ecological niche modeling, specially for exploration and teaching purposes \insertCite{@see also @booth_bioclim_2014}{modleR}. In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
 #' }
-#' \item{Boosted Refression Trees (BRT)}{
+#' \item{Boosted Regression Trees (BRT)}{
 #' Specified by \code{algo="brt"} uses \code{\link[dismo]{gbm.step}} function from \pkg{dismo} package. Runs the cross-validation procedure of \insertCite{hastie_elements_2001;textual}{modleR} \insertCite{@see also @elith_working_2009}{modleR}. It consists in a regression modeling technique combined with the boosting method, a method for combining many simple models. It is implemented by the function \code{\link[dismo]{gbm.step}} as a regression with the response variable set to bernoulli distribution, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} from \pkg{dismo} package.
 #' }
 #' \item{Domain}{
@@ -65,19 +64,21 @@
 #'     \insertAllCited{}
 #' @author Andrea Sánchez-Tapia & Sara Mortara
 #' @seealso \code{\link[dismo]{bioclim}}
+#' @seealso \code{\link[dismo]{domain}}
+#' @seealso \code{\link{do_any}}
+#' @seealso \code{\link[dismo]{evaluate}}
 #' @seealso \code{\link[dismo]{maxent}}
 #' @seealso \code{\link[maxnet]{maxnet}}
-#' @seealso \code{\link[dismo]{domain}}
 #' @seealso \code{\link[dismo]{mahal}}
-#' @seealso \code{\link[dismo]{evaluate}}
-#' @seealso \code{\link[dismo]{predict}}
-#' @seealso \code{\link[raster]{predict}}
+#' @seealso \code{\link[dismo]{predict}} in \pkg{dismo} package
+#' @seealso \code{\link[raster]{predict}} in \pkg{raster} package
 #' @import raster
 #' @import grDevices
 #' @importFrom utils write.csv
 #' @importFrom maxnet maxnet
 #' @importFrom stats complete.cases formula glm step dist
 #' @importFrom Rdpack reprompt
+#' @importFrom kuenm kuenm_proc
 #' @export
 do_any <- function(species_name,
                    predictors,
@@ -111,10 +112,10 @@ do_any <- function(species_name,
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
 
     # reads sdmdata from HD
-    if (file.exists(paste(setup.folder, "sdmdata.txt", sep = "/"))) {
-        sdmdata <- read.table(paste(setup.folder, "sdmdata.txt", sep = "/"))
+    if (file.exists(paste(setup.folder, "sdmdata.csv", sep = "/"))) {
+        sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"))
     } else {
-        stop("sdmdata.txt file not found, run setup_sdmdata() or check your folder settings")
+        stop("sdmdata.csv file not found, run setup_sdmdata() or check your folder settings")
         }
 
     message(paste(algo, "\n"))
@@ -204,10 +205,10 @@ do_any <- function(species_name,
                     #                              importance = TRUE)
                     mod <- randomForest::tuneRF(envtrain.eq,
                                                 sdmdata_train.eq$pa,
-                                                trace = F,
-                                                plot = F,
+                                                trace = FALSE,
+                                                plot = FALSE,
                                                 doBest = TRUE,
-                                                importance = F)
+                                                importance = FALSE)
                 }
                 if (algo == "brt") {
                     mod <- dismo::gbm.step(data = sdmdata_train.eq,
@@ -432,6 +433,7 @@ do_any <- function(species_name,
                                                               species_name, "_",
                                                               i, "_", g, ".tif"),
                                             overwrite = TRUE)
+
                         if (write_bin_cut == TRUE) {
                             raster::writeRaster(x = mod_proj_bin,
                                                 filename = paste0(projection.folder,
