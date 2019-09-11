@@ -45,9 +45,6 @@
 #' \item{Domain}{
 #' Specified by \code{algo="domain"} uses \code{\link[dismo]{domain}} function from \pkg{dismo} package. Computes point-to-point similarity based on Gower distance between environmental variables \insertCite{carpenter_domain_1993}{modleR}. \insertCite{hijmans_dismo_2017}{modleR} state that one should use it with caution because it does not perform well compared to other algorithms \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}. We add that it is a slow algorithm. In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
 #' }
-#' \item{Euclidean algorithms}{
-#' To do or not to do.
-#' }
 #' \item{Generalized Linear Model (GLM)}{
 #' Specified by \code{algo="glm"} runs a GLM with modeling presence and absences as a response variable following a binomial error distribution. It runs runs a step-wise model selection based on AIC both backward and forward considering all possible combinations of predictor variables in the rasterStack. In this package it is implemented using functions \code{glm} and \code{step} to fit a model and choose a model by AIC in a stepwise procedure. Model is evaluated and predicted using \code{\link[dismo]{evaluate}} function from \pkg{dismo} and \code{\link[raster]{predict}} function from \pkg{raster} package both with argument \code{type="response"} to return values in the scale of the response variable.
 #' }
@@ -95,7 +92,6 @@ do_any <- function(species_name,
                    conf_mat = TRUE,
                    equalize = TRUE,
                    proc_threshold = 0.5,
-                   #probs,
                    ...) {
   # replacing characters not welcome in species name
   # characters to avoid in file and dir names
@@ -226,27 +222,7 @@ do_any <- function(species_name,
                     n.trees <- mod$n.trees
                 }
             }
-            if (algo %in% c("centroid", "mindist")) {
-                #esto es centroid
-                if (algo == "centroid") {
-                    cat(paste("Euclidean environmental distance to centroid",'\n'))
-                    #calcula la media ambiental de los puntos de train
-                    mod <- euclidean(predictors = predictors,
-                                     occurrences = pres_train,
-                                     #probs = probs,
-                                     algo = "centroid",
-                                     )
-                    }
-                if (algo == "mindist") {
-                    cat(paste("Minimum Euclidean environmental distance",'\n'))
-                    #calcula la media ambiental de los puntos de train
-                    mod <- euclidean(predictors = predictors,
-                                     occurrences = pres_train,
-                                     #probs = probs,
-                                     algo = "mindist"
-                                     )
-                    }
-}
+
             message("projecting the models")
             if (exists("mod")) {
                 if (algo == "brt") {
@@ -275,28 +251,7 @@ do_any <- function(species_name,
                                                 predictors, type = "logistic")
                     mod_cont <- raster::predict(predictors, mod, type = "logistic")
                 }
-                if (algo %in% c("centroid", "mindist")) {
-                mod_cont <- mod #não dá para projetar mas mod já é um raster continuo - a ideia é separar e que mod seja um objecto DistMod como aqueles gerados pelo dismo e que aqui dê para executar predict e evaluate.
 
-                #este trecho de corte pelo LPT é velho
-                #if (!nrow(occurrences) %in% c(1, 2)) {
-                    #soh pode cortar se tiver mais de dos pontos
-                 # p <- raster::extract(mod_cont, y = pres_test)
-                  #a <- raster::extract(mod_cont, y = backg_test)
-                  #eval_mod <- dismo::evaluate(p = p, a = a)
-                  #cut pelo plt - opcional
-                  #LPTec <- dismo::threshold(eval_mod, 'no_omission')
-                  #[ö] este corte pelo LPT original poderia ser por uma porcentagem da distância ou por um valor - no caso nãõ seria necessário rodar o eval_mod e o lpt mas pegar o intervalo de distâncias e calcular a porcentagem desejada
-                  #mod_cont[mod_cont < LPTec] <- 0
-                  #mod_cont <-
-                   #   (mod_cont - raster::minValue(mod_cont)) /
-                    #  raster::maxValue(mod_cont - raster::minValue(mod_cont))
-                    #ö is this the same as rescale?
-                    #}
-                p <- raster::extract(mod_cont, y = pres_test)
-                a <- raster::extract(mod_cont, y = backg_test)
-                eval_mod <- dismo::evaluate(p = p, a = a)#por enquanto só pode assim
-                }
 
             message("evaluating the models")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
@@ -332,9 +287,6 @@ do_any <- function(species_name,
             if (algo == "brt") {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                             n.trees = n.trees, tr = th_mod)
-            } else if (algo %in% c("centroid", "mindist")) {
-                conf <- dismo::evaluate(p = p, a = a, predictors,
-                                        tr = th_mod)
             } else {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
                                         tr = th_mod)
