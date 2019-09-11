@@ -1,8 +1,7 @@
-#' Model fitting and predicting of ecological niche models using several algorithms
+#' Model fitting, predicting and evaluating of ecological niche models using several algorithms
 #'
 #' This function reads the output from \code{\link{setup_sdmdata}} and
-#' computes ecological niche models for a species based on algorithm specified by the user. See details for
-#' a description of all algorithms supported in this package.
+#' computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculate the predicted values and basic statistics for model evaluation. Besides from more commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{@for detais on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}. Performs one algoritm at time, for runs with multiple algorithms see \code{\link{do_many}}. Given that there are "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
 #'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
@@ -21,61 +20,52 @@
 #' @param conf_mat Logical, whether confusion tables should be written in the HD.
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt.
-#' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E) for
-#' partialROC calculations in \code{\link[kuenm]{kuenm_proc}} default = 5.
-#' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}
-#' @return A data frame with the evaluation statistics (TSS, AUC, etc).
+#' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E) for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is \code{proc_threshold = 5}.
+#' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}.
+#' @return Writes on disk model for each partition, a .csv file with evaluation statistics (TSS, AUC, etc).
+#' @examples
+#' # run setup_sdmdata first from one species in coordenadas data
+#' sp <- names(coordenadas)[1]
+#' sp_coord <- coordenadas[[1]]
+#' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+#'
+#' # run bioclim algorithm for one species
+#' do_any(species_name=sp,
+#'        predictors=example_vars,
+#'        algo = "bioclim")
+#'
 #' @details See below for a description on the implementation of the algorithms supported in this package.
 #' \describe{
-#' \item{Bioclim}{Specified by \code{algo="bioclim"} uses \code{\link[dismo]{bioclim}} function in dismo
-#' package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the climate-envelope-model implemented by Henry Nix
-#' \insertCite{nix_biogeographic_1986}{modleR}, the first species
-#' distribution modelling package. It is based on climate interpolation methods and despite its limitations
-#' it is still used in ecological niche modeling, specially for exploration and teaching purposes
-#' \insertCite{@see also @booth_bioclim_2014}{modleR}.
-#' In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted
-#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
+#' \item{Bioclim}{
+#' Specified by \code{algo="bioclim"} uses \code{\link[dismo]{bioclim}} function in \pkg{dismo} package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix \insertCite{nix_biogeographic_1986}{modleR}, the first species distribution modelling package. It is based on climate interpolation methods and despite its limitations it is still used in ecological niche modeling, specially for exploration and teaching purposes \insertCite{@see also @booth_bioclim_2014}{modleR}. In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
 #' }
-#' \item{Maximum Entropy (Maxent)}{Specified either by \code{algo="maxent"} or \code{algo="maxnet"}
-#' corresponding to implementation by dismo \insertCite{hijmans_dismo_2017}{modleR} and maxnet
-#' \insertCite{maxnet}{modleR} packages respectively. Maxent is a machine learning method for modeling
-#' species distributions based on incomplete data allowing ENM with presence-only data
-#' \insertCite{phillips_maximum_2006}{modleR}. If \code{algo="maxent"} model is fitted by the function
-#' \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and
-#' \code{\link[dismo]{predict}} also in dismo package. If \code{algo="maxnet"} model is fitted by the
-#' function \code{\link[maxnet]{maxnet}} from maxnet package, evaluated using \code{\link[dismo]{evaluate}}
-#' from dismo package with argument \code{type="logistic"} and predicted using \code{\link[raster]{predict}}
-#' function from raster package.
+#' \item{Boosted Refression Trees (BRT)}{
+#' Specified by \code{algo="brt"} uses \code{\link[dismo]{gbm.step}} function from \pkg{dismo} package. Runs the cross-validation procedure of \insertCite{hastie_elements_2001;textual}{modleR} \insertCite{@see also @elith_working_2009}{modleR}. It consists in a regression modeling technique combined with the boosting method, a method for combining many simple models. It is implemented by the function \code{\link[dismo]{gbm.step}} as a regression with the response variable set to bernoulli distribution, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} from \pkg{dismo} package.
 #' }
-#' \item{Mahalanobis}{Specified by \code{algo="mahal"} uses \code{\link[dismo]{mahal}} function from dismo
-#' package. Corresponds to a distribution model based on Mahalanobis distance, a measure of the distance
-#' between a point P and a distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this package
-#' it is implemented by the function \code{\link[dismo]{mahal}}, evaluated and predicted
-#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
+#' \item{Domain}{
+#' Specified by \code{algo="domain"} uses \code{\link[dismo]{domain}} function from \pkg{dismo} package. Computes point-to-point similarity based on Gower distance between environmental variables \insertCite{carpenter_domain_1993}{modleR}. \insertCite{hijmans_dismo_2017}{modleR} state that one should use it with caution because it does not perform well compared to other algorithms \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}. We add that it is a slow algorithm. In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
 #' }
-#' \item{Domain}{Specified by \code{algo="domain"} uses \code{\link[dismo]{domain}} function from dismo
-#' package. Computes  point-to-point similarity based on Gower distance between environmental variables
-#' \insertCite{carpenter_domain_1993}{modleR}. \insertCite{hijmans_dismo_2017}{modleR} state that
-#' one should use it with caution because it does not perform well compared to other algorithms
-#' \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}.
-#' We add that it is a slow algorithm.
-#' In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted
-#' using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from dismo package.
+#' \item{Euclidean algorithms}{
+#' To do or not to do.
 #' }
-#' \item{Support Vector Machines (SVM)}{
+#' \item{Generalized Linear Model (GLM)}{
+#' Specified by \code{algo="glm"} runs a GLM with modeling presence and absences as a response variable following a binomial error distribution. It runs runs a step-wise model selection based on AIC both backward and forward considering all possible combinations of predictor variables in the rasterStack. In this package it is implemented using functions \code{glm} and \code{step} to fit a model and choose a model by AIC in a stepwise procedure. Model is evaluated and predicted using \code{\link[dismo]{evaluate}} function from \pkg{dismo} and \code{\link[raster]{predict}} function from \pkg{raster} package both with argument \code{type="response"} to return values in the scale of the response variable.
 #' }
-#' \item{GLM}{
+#' \item{Mahalanobis}{
+#' Specified by \code{algo="mahal"} uses \code{\link[dismo]{mahal}} function from \pkg{dismo} package. Corresponds to a distribution model based on Mahalanobis distance, a measure of the distance between a point P and a distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this package it is implemented by the function \code{\link[dismo]{mahal}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
+#' }
+#' \item{Maximum Entropy (Maxent)}{
+#' Specified either by \code{algo="maxent"} or \code{algo="maxnet"} corresponding to implementation by \pkg{dismo} \insertCite{hijmans_dismo_2017}{modleR} and \pkg{maxnet} \insertCite{phillips_maxnet_2017}{modleR} packages respectivelly. Maxent is a machine learning method for modeling species distributions based in incomplete data allowing ENM with presence-only data \insertCite{phillips_maximum_2006}{modleR}. If \code{algo="maxent"} model is fitted by the function \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also in \pkg{dismo} package. If \code{algo="maxnet"} model is fitted by the function \code{\link[maxnet]{maxnet}} from \pkg{maxnet} package, evaluated using \code{\link[dismo]{evaluate}} from \pkg{dismo} package with argument \code{type="logistic"} and predicted using \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' \item{Random Forest}{
+#' Specified by \code{algo="rf"} uses \code{\link[randomForest]{tuneRF}} function from \pkg{ramdomForest} package \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine learning regression based on decision trees. In this package uses \code{\link[randomForest]{tuneRF}} function with the optimal number of variables available for splitting at each tree node (i.e. mtry) found as set by parameter \code{doBest=TRUE}. Random Forest model is evaluated with \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
-#' \item{Euclidean environmental distance}{
-#' to do or not to do that is the question
-#' }
-#' \item{Boosted Regression Trees (BRT)}{
+#' \item{Support Vector Machines (SVM)}{
+#' Specified either by \code{algo="svme"} or \code{algo="svmk"} corresponding to implementation on \pkg{e1071} \insertCite{meyer_e1071_2017}{modleR} and \pkg{kernlab} \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectivelly. SVM are supervised learning models that use learning algorithms for classification and regression analysis. In \pkg{e1071} package SVM is implemented through function \code{\link[e1071]{best.tune}} with method set to \code{"svm"} which uses RBF-kernel (radial basis function kernel) for classification. In \pkg{kernlab} package SVM is implemented through function \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the default method \code{"kbfdot"}). We expect both implementations to differ only in performance. Both \code{svme} and \code{svmk} are evaluated with \code{\link[dismo]{evaluate}} function from dismo and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' }
 #' @references
-#' \insertAllCited{}
+#'     \insertAllCited{}
 #' @author Andrea Sánchez-Tapia & Sara Mortara
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{maxent}}
@@ -120,7 +110,7 @@ do_any <- function(species_name,
     partition.folder <-
         paste(models_dir, species_name, "present", "partitions", sep = "/")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder, recursive = T)
+        dir.create(partition.folder, recursive = TRUE)
     setup.folder <-
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
 
@@ -200,7 +190,7 @@ do_any <- function(species_name,
                 }
             }
             if (algo == "rf" | algo == "brt") {
-                if (equalize == T) {
+                if (equalize == TRUE) {
                     #balanceando as ausencias
                     pres_train_n <- nrow(sdmdata_train[sdmdata_train$pa == 1, ])
                     abs_train_n  <- nrow(sdmdata_train[sdmdata_train$pa == 0, ])
@@ -215,12 +205,12 @@ do_any <- function(species_name,
                 if (algo == "rf") {
                     #mod <- randomForest::randomForest(sdmdata_train.eq$pa ~ .,
                     #                               data = envtrain.eq,
-                    #                              importance = T)
+                    #                              importance = TRUE)
                     mod <- randomForest::tuneRF(envtrain.eq,
                                                 sdmdata_train.eq$pa,
                                                 trace = F,
                                                 plot = F,
-                                                doBest = T,
+                                                doBest = TRUE,
                                                 importance = F)
                 }
                 if (algo == "brt") {
@@ -389,8 +379,8 @@ do_any <- function(species_name,
                                     filename = paste0(partition.folder, "/", algo,
                                                       "_cont_", species_name, "_",
                                                       i, "_", g, ".tif"),
-                                    overwrite = T)
-                if (write_bin_cut == T) {
+                                    overwrite = TRUE)
+                if (write_bin_cut == TRUE) {
                     message("writing binary and cut raster files")
                     mod_bin  <- mod_cont > th_mod
                     mod_cut  <- mod_cont * mod_bin
@@ -402,16 +392,16 @@ do_any <- function(species_name,
                                         filename = paste0(partition.folder, "/", algo,
                                                           "_bin_", species_name, "_",
                                                           i, "_", g, ".tif"),
-                                        overwrite = T)
+                                        overwrite = TRUE)
                     raster::writeRaster(x = mod_cut,
                                         filename = paste0(partition.folder, "/", algo,
                                                           "_cut_", species_name, "_",
                                                           i, "_", g, ".tif"),
-                                        overwrite = T)
+                                        overwrite = TRUE)
                 }
 
 
-                if (write_png == T) {
+                if (write_png == TRUE) {
                     message("writing png files")
                     png(paste0(partition.folder, "/", algo, "_cont_", species_name,
                                "_", i, "_", g, ".png"))
@@ -421,7 +411,7 @@ do_any <- function(species_name,
                                               round(mod_TSS, 2)))
                     dev.off()
 
-                    if (write_bin_cut == T) {
+                    if (write_bin_cut == TRUE) {
                         png(paste0(partition.folder, "/", algo, "_bin_", species_name,
                                    "_", i, "_", g, ".png"))
                         raster::plot(mod_bin,
@@ -440,7 +430,7 @@ do_any <- function(species_name,
 
                 }
 
-                if (project_model == T) {
+                if (project_model == TRUE) {
                     pfiles <- list.dirs(proj_data_folder, recursive = F)
                     for (proje in pfiles) {
                         v <- strsplit(proje, "/")
@@ -448,8 +438,8 @@ do_any <- function(species_name,
                         projection.folder <- paste0(models_dir, "/", species_name,
                                                     "/", name_proj, "/partitions")
                         if (file.exists(projection.folder) == FALSE)
-                            dir.create(paste0(projection.folder), recursive = T, showWarnings = FALSE)
-                        pred_proj <- raster::stack(list.files(proje, full.names = T))
+                            dir.create(paste0(projection.folder), recursive = TRUE, showWarnings = FALSE)
+                        pred_proj <- raster::stack(list.files(proje, full.names = TRUE))
                         pred_proj <- raster::subset(pred_proj, names(predictors))
                         message(name_proj)
 
@@ -472,7 +462,7 @@ do_any <- function(species_name,
                             mod_proj_cont <- raster::predict(pred_proj, mod)
                         }
 
-                        if (write_bin_cut == T) {
+                        if (write_bin_cut == TRUE) {
                             mod_proj_bin <- mod_proj_cont > th_mod
                             mod_proj_cut <- mod_proj_bin * mod_proj_cont
                             # Normaliza o modelo cut
@@ -489,23 +479,23 @@ do_any <- function(species_name,
                                                               "/", algo, "_cont_",
                                                               species_name, "_",
                                                               i, "_", g, ".tif"),
-                                            overwrite = T)
-                        if (write_bin_cut == T) {
+                                            overwrite = TRUE)
+                        if (write_bin_cut == TRUE) {
                             raster::writeRaster(x = mod_proj_bin,
                                                 filename = paste0(projection.folder,
                                                                   "/", algo, "_bin_",
                                                                   species_name, "_",
                                                                   i, "_", g, ".tif"),
-                                                overwrite = T)
+                                                overwrite = TRUE)
                             raster::writeRaster(x = mod_proj_cut,
                                                 filename = paste0(projection.folder,
                                                                   "/", algo, "_cut_",
                                                                   species_name, "_",
                                                                   i, "_", g, ".tif"),
-                                                overwrite = T)
+                                                overwrite = TRUE)
                         }
 
-                        if (write_png == T) {
+                        if (write_png == TRUE) {
                             message("writing projected models .png")
                             png(paste0(projection.folder, "/", algo, "_cont_",
                                        species_name, "_", i, "_", g, ".png"))
@@ -516,7 +506,7 @@ do_any <- function(species_name,
                                                       "TSS =", round(mod_TSS, 2)))
                             dev.off()
 
-                            if (write_bin_cut == T) {
+                            if (write_bin_cut == TRUE) {
                                 png(paste0(projection.folder, "/", algo, "_bin_",
                                            species_name, "_", i, "_", g, ".png"))
                                 raster::plot(mod_proj_bin,
