@@ -53,7 +53,7 @@
 #' @import raster
 #' @importFrom utils read.table write.csv read.csv
 #' @export
-#' 
+#'
 final_model <- function(species_name,
                         algorithms = NULL,
                         weight_par = NULL,
@@ -126,7 +126,7 @@ final_model <- function(species_name,
         if (!is.null(weight_par)) {
             pond.stats <- stats.algo[, weight_par][sel.index]
             if ("TSS" %in% weight_par)
-                pond.stats <- (pond.stats + 1) / 2
+                pond.stats$TSS <- (pond.stats$TSS + 1) / 2
         } else {
             pond.stats <- rep(1, length(sel.index))#either selected or not
         }

@@ -44,7 +44,7 @@ installation. During installation, R may ask for some missing packages, which yo
 
 # Shiny app
 
-A shiny application currently available at: https://github.com/Model-R/Model-R 
+A shiny application currently available at: https://github.com/Model-R/modleR_shiny_app 
 uses a previous version of this workflow and is currently being updated to this newest version. 
 
 # The workflow
