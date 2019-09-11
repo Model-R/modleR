@@ -1,7 +1,7 @@
 #' Model fitting, predicting and evaluating of ecological niche models using several algorithms
 #'
 #' This function reads the output from \code{\link{setup_sdmdata}} and
-#' computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculate the predicted values and basic statistics for model evaluation. Besides from more commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{@for detais on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}. Performs one algoritm at time, for runs with multiple algorithms see \code{\link{do_many}}. Given that there are "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
+#' computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculates the predicted values and basic statistics for model evaluation. Besides from more commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{@for detais on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}. Performs one algorithm at time, for runs with multiple algorithms see \code{\link{do_many}}. Given that there are "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
 #'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model

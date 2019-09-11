@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 ```
 
 
-__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. We included two versions of environmental distances, distance to the centroid and mininum distance to the occurrence data. Although these algorithms do not perform as well as others [@elith_novel_2006?] they are useful in dataset with few occurrences [@kamino_reassessment_2012] and can assist the creation of environmental filters [@varela_environmental_2014].
+__modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic <!--and environmental--> filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
 
 # Installing 
 
@@ -30,9 +30,9 @@ Currently modleR can be installed from github (but we aim to submit to CRAN soon
 
 ```
 # Without vignette
-remotes::install_github("Model-R/modelr_pkg", build = TRUE)
+remotes::install_github("Model-R/modleR", build = TRUE)
 # With vignette
-remotes::install_github("Model-R/modelr_pkg", build = TRUE,
+remotes::install_github("Model-R/modleR", build = TRUE,
                         build_opts = c("--no-resave-data", "--no-manual"))
 
 #install.packages(xxx)#soon!
@@ -51,7 +51,7 @@ uses a previous version of this workflow and is currently being updated to this 
 
 The workflow consists of mainly three functions that should be used sequentially.
 
-1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;  
+1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;   
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
 3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm;  
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus).  
@@ -196,7 +196,6 @@ The available algorithms are:
 + Support Vector Machines (SVM), as implemented by packages __kernlab__ [`svmk` @karatzoglou_kernlab_2004] and __e1071__ [`svme` @meyer_e1071_2017],
 + GLM from base R, here implemented with a stepwise selection approach
 + Random Forests (from package __randomForest__ @liaw_classification_2002) 
-+ Two euclidean algorithms are also implemented, a minimum distance algorithm (`"minimum"`), and a distance to the environmental centroid (`"centroid"`). 
 + Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package [@hastie_elements_2001; @elith_working_2009].
 
 Details for the implementation of each model can be accessed in the documentation of the function.
@@ -213,37 +212,35 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
 
 ```{r do_any, echo = T, eval = T}
-do_any(species_name = species[1],
-       algo = "maxent",
-       predictors = example_vars,
-       models_dir = test_folder,
-       write_png = T,
-       write_bin_cut = F,
-       equalize = T)
+any <- do_any(species_name = species[1],
+              algo = "maxent",
+              predictors = example_vars,
+              models_dir = test_folder,
+              write_png = T,
+              write_bin_cut = F,
+              equalize = T)
 ```
 
 
 The following lines call for bioclim, GLM, maxent, random forests and smv.k (from package __kernlab__)
 
 ```{r do_many, echo = T, eval = T}
-do_many(species_name = species[1],
-       predictors = example_vars,
-       models_dir = test_folder,
-       write_png = T,
-       write_bin_cut = F,
-       bioclim = T,
-       domain = F, 
-       glm = T,
-       svmk = T,
-       svme = T, 
-       maxent = T,
-       maxnet = T,
-       rf = T,
-       mahal = F, 
-       brt = T,
-       mindist = F, 
-       centroid = F, 
-       equalize = T)
+many <- do_many(species_name = species[1],
+                predictors = example_vars,
+                models_dir = test_folder,
+                write_png = T,
+                write_bin_cut = F,
+                bioclim = T,
+                domain = F,
+                glm = T,
+                svmk = T,
+                svme = T,
+                maxent = T,
+                maxnet = T,
+                rf = T,
+                mahal = F,
+                brt = T,
+                equalize = T)
 ```
 
 In addition: 
