@@ -1,7 +1,7 @@
-#' This function calculates the mean distance to the centroid of a distribution
-#' @param predictors is an environmental variables RasterStack
-#' @param occurrences are the occurrence points
-#' @param algo is "minimum" or "centroid"
+#' Mean distance to the centroid of a distribution
+#' This function calculates the mean distance to the centroid of a distribution based either on mean values or using a minimmum distance algorithm
+#' @inheritParams setup_sdmdata
+#' @param algo Character. Any in centroid" or "mindist"
 #' @param ... other parameters in raster::writeRaster()
 #' @param filename Optional. The raster that will be created in disk
 #' @importFrom stats median
@@ -16,6 +16,9 @@ euclidean <- function(predictors,
                       #probs,
                       filename = '',
                       ...) {
+  if(!algo%in%c("centroid", "mindist")) {
+    stop('Algorithm must be either "centroid" or "mindist"')
+  }
     x.st <- raster::scale(predictors)
     pres.vals <- raster::extract(x.st, occurrences)
     if (!is.null(dim(pres.vals))) {
@@ -105,6 +108,6 @@ euclidean <- function(predictors,
         }
         out <- setValues(out, as.vector(vv))
     }
-    pbClose(pb)
+    raster::pbClose(pb)
     return(out)
 }

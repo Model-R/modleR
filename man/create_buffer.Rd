@@ -39,7 +39,7 @@ Distance unit is in the same unit of the RasterStack of predictor variables}
 
 \item{env_distance}{Character. Type of environmental distance \code{"centroid", "mindist"}. The default is \code{"centroid"}.}
 
-\item{dist_min}{Optional, a distance for the exclusion buffer.
+\item{dist_min}{Optional, a distance for the exclusion buffer
 Distance unit is in the same unit of the RasterStack of predictor variables}
 
 \item{max_env_dist}{Numeric. Quantile set as maximum environmental distance. Needs to be specified if env_buffer = TRUE}

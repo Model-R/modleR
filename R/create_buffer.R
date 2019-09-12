@@ -13,7 +13,7 @@
 #' @param env_buffer Logical. Should an euclidean environmental filter be executed? If TRUE, \code{"env_distance"} and \code{"max_env_dist"} need to be specified.
 #' @param env_distance Character. Type of environmental distance \code{"centroid", "mindist"}. The default is \code{"centroid"}.
 #' @param max_env_dist Numeric. Quantile set as maximum environmental distance. Needs to be specified if env_buffer = TRUE
-#' @param dist_min Optional, a distance for the exclusion buffer.
+#' @param dist_min Optional, a distance for the exclusion buffer
 #' Distance unit is in the same unit of the RasterStack of predictor variables
 #' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated.
 #' Needs to be specified if buffer_type = "user"
