@@ -1,8 +1,8 @@
 #' Rescaling rasters to values between 0 and 1.
 #'
 #' This function rescales rasters to values between 0 and 1.
-#' @param layers A RasterStack or Rasterlayer of predictor variables to scale
-#' @return A RasterStack or Rasterlayer with values between 0 and 1.
+#' @param layers A RasterStack or RasterLayer of predictor variables to scale
+#' @return A RasterStack or RasterLayer with values between 0 and 1.
 #' @author Diogo S. B. Rocha
 #' @examples
 #' rescale_layer(example_vars)

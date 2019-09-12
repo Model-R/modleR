@@ -9,8 +9,8 @@ do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   svmk = FALSE, svme = FALSE, brt = FALSE, ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name. Because species name will be used as 
-a directory name, avoid non-ASCII characters, spaces and ponctuation marks. 
+\item{species_name}{A character string with the species name. Because species name will be used as
+a directory name, avoid non-ASCII characters, spaces and punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
 
 \item{bioclim}{Execute bioclim algorithm from the \pkg{dismo} implementation with \code{\link[dismo]{bioclim}} function.}

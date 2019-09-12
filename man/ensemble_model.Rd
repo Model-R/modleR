@@ -8,15 +8,15 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   models_dir = "./models", final_dir = "final_models",
   ensemble_dir = "ensemble", proj_dir = "present",
   which_final = c("raw_mean"), consensus = FALSE,
-  consensus_level = 0.5, write_ensemble = T, scale_models = TRUE,
+  consensus_level = 0.5, write_ensemble = TRUE, scale_models = TRUE,
   ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name. Because species name will be used as 
-a directory name, avoid non-ASCII characters, spaces and ponctuation marks. 
+\item{species_name}{A character string with the species name. Because species name will be used as
+a directory name, avoid non-ASCII characters, spaces and punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
 
-\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences. 
+\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
 See \code{coordenadas} as an example.}
 
 \item{lon}{The name of the longitude column. Defaults to "lon".}
@@ -63,26 +63,26 @@ and 1.}
 }
 \value{
 Writes on disk raster files with the median, mean and standard
-deviation and range of the assembled models. Also retuns a rasterStack with all generated statistics. 
+deviation and range of the assembled models. Also retuns a RasterStack with all generated statistics.
 (optional) written in the \code{ensemble_dir} subfolder.
 }
 \description{
 This function reads the output of \code{final_model} for multiple algorithms and builds an ensemble model by calculating the mean of each final model per algorithm. It also calculates median and deviation statistics such as standard deviation and range (maximum - minimum).
 }
 \examples{
-# run setup_sdmdata 
+# run setup_sdmdata
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
 sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
 
 # run do_many
-sp_many <- do_many(species_name=sp,
-                     predictors=example_vars,
-                     bioclim=TRUE, 
-                     maxent=TRUE)
-       
+sp_many <- do_many(species_name = sp,
+                     predictors = example_vars,
+                     bioclim = TRUE,
+                     maxent = TRUE)
+
 # run final_model
-sp_final <- final_model(species_name=sp,
+sp_final <- final_model(species_name = sp,
                         algorithms = c("bioclim", "maxent"),
                         select_partitions = TRUE,
                         select_par = "TSS",
@@ -90,11 +90,11 @@ sp_final <- final_model(species_name=sp,
                         which_models = c("raw_mean"),
                         consensus_level = 0.5,
                         overwrite = TRUE)
-                        
+
 # run ensemble model
-sp_ensemble <- ensemble_model(species_name=sp,
-                              occurrences=sp_coord, 
-                              overwrite=TRUE)
+sp_ensemble <- ensemble_model(species_name = sp,
+                              occurrences = sp_coord,
+                              overwrite = TRUE)
 }
 \seealso{
 \code{\link{final_model}}

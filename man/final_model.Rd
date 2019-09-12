@@ -13,8 +13,8 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name. Because species name will be used as 
-a directory name, avoid non-ASCII characters, spaces and ponctuation marks. 
+\item{species_name}{A character string with the species name. Because species name will be used as
+a directory name, avoid non-ASCII characters, spaces and punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
 
 \item{algorithms}{Which algorithms will be processed. If no name is given it
@@ -76,10 +76,10 @@ A set of ecological niche models (.tif files) and figures (optional) written in
 the \code{final_dir} subfolder.
 }
 \description{
-#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}}per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular threshold value. In addition, mean of the models (selected or not) can be calculated as arimethic mean or weighted mean by a performance statistic (AUC or TSS).
+#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}} per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular value. In addition, mean of the models (selected or not) can be calculated as aritmethic mean or weighted mean by a performance statistic (AUC or TSS).
 }
 \examples{
-# run setup_sdmdata 
+# run setup_sdmdata
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
 sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
@@ -88,7 +88,7 @@ sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
 sp_bioclim <- do_any(species_name=sp,
                      predictors=example_vars,
                      algo = "bioclim")
-       
+
 # run final_model
 sp_final <- final_model(species_name=sp,
                         algorithms = "bioclim",

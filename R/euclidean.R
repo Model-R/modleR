@@ -1,5 +1,5 @@
 #' This function calculates the mean distance to the centroid of a distribution
-#' @param predictors is an environmental variables stack
+#' @param predictors is an environmental variables RasterStack
 #' @param occurrences are the occurrence points
 #' @param algo is "minimum" or "centroid"
 #' @param ... other parameters in raster::writeRaster()

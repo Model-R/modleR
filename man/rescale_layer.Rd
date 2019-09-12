@@ -7,10 +7,10 @@
 rescale_layer(layers)
 }
 \arguments{
-\item{layers}{A RasterStack or Rasterlayer of predictor variables to scale}
+\item{layers}{A RasterStack or RasterLayer of predictor variables to scale}
 }
 \value{
-A RasterStack or Rasterlayer with values between 0 and 1.
+A RasterStack or RasterLayer with values between 0 and 1.
 }
 \description{
 This function rescales rasters to values between 0 and 1.

@@ -7,7 +7,7 @@
 geo_filt(occurrences, lon = "lon", lat = "lat", min_distance = 10)
 }
 \arguments{
-\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences. 
+\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
 See \code{coordenadas} as an example.}
 
 \item{lon}{The name of the longitude column. Defaults to "lon".}

@@ -1,13 +1,13 @@
 #' Joins ENM from several partitions, creating a model per algorithm
 #'
-#'#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}}per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular threshold value. In addition, mean of the models (selected or not) can be calculated as arimethic mean or weighted mean by a performance statistic (AUC or TSS).
+#'#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}} per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular value. In addition, mean of the models (selected or not) can be calculated as aritmethic mean or weighted mean by a performance statistic (AUC or TSS).
 #'
 #' @inheritParams setup_sdmdata
 #' @param algorithms Which algorithms will be processed. If no name is given it
 #' will process all algorithms present in the evaluation files.
 #' @param weight_par Which performance statistic should be used to weight the
 #'  partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
-#' @param select_partitions Logical. If TRUE only partitions above a particular threshold value are selected. 
+#' @param select_partitions Logical. If TRUE only partitions above a particular threshold value are selected.
 #' @param cut_level Which selecting threshold will be used to cut the mean
 #'                  models in. Default is set to "spec_sens" but any \pkg{dismo} threshold (see function \code{\link[dismo]{threshold}})
 #'                  can be used: "kappa", "no_omission", "prevalence",
@@ -46,17 +46,17 @@
 #' the \code{final_dir} subfolder.
 #' @seealso \code{\link[dismo]{threshold}}
 #' @seealso \code{\link[raster]{writeRaster}}
-#' @examples 
-#' # run setup_sdmdata 
+#' @examples
+#' # run setup_sdmdata
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
 #' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
-#' 
+#'
 #' # run do_any
 #' sp_bioclim <- do_any(species_name=sp,
 #'                      predictors=example_vars,
 #'                      algo = "bioclim")
-#'        
+#'
 #' # run final_model
 #' sp_final <- final_model(species_name=sp,
 #'                         algorithms = "bioclim",
@@ -66,7 +66,7 @@
 #'                         which_models = c("bin_consensus"),
 #'                         consensus_level = 0.5,
 #'                         overwrite = TRUE)
-#' 
+#'
 #' @import raster
 #' @importFrom utils read.table write.csv read.csv
 #' @export

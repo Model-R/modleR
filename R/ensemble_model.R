@@ -29,22 +29,22 @@
 #' @export
 #' @seealso \code{\link{final_model}}
 #' @return Writes on disk raster files with the median, mean and standard
-#' deviation and range of the assembled models. Also retuns a rasterStack with all generated statistics. 
+#' deviation and range of the assembled models. Also retuns a RasterStack with all generated statistics.
 #' (optional) written in the \code{ensemble_dir} subfolder.
-#' @examples 
-#' # run setup_sdmdata 
+#' @examples
+#' # run setup_sdmdata
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
 #' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
-#' 
+#'
 #' # run do_many
-#' sp_many <- do_many(species_name=sp,
-#'                      predictors=example_vars,
-#'                      bioclim=TRUE, 
-#'                      maxent=TRUE)
-#'        
+#' sp_many <- do_many(species_name = sp,
+#'                      predictors = example_vars,
+#'                      bioclim = TRUE,
+#'                      maxent = TRUE)
+#'
 #' # run final_model
-#' sp_final <- final_model(species_name=sp,
+#' sp_final <- final_model(species_name = sp,
 #'                         algorithms = c("bioclim", "maxent"),
 #'                         select_partitions = TRUE,
 #'                         select_par = "TSS",
@@ -52,11 +52,11 @@
 #'                         which_models = c("raw_mean"),
 #'                         consensus_level = 0.5,
 #'                         overwrite = TRUE)
-#'                         
+#'
 #' # run ensemble model
-#' sp_ensemble <- ensemble_model(species_name=sp,
-#'                               occurrences=sp_coord, 
-#'                               overwrite=TRUE)
+#' sp_ensemble <- ensemble_model(species_name = sp,
+#'                               occurrences = sp_coord,
+#'                               overwrite = TRUE)
 ensemble_model <- function(species_name,
                            occurrences,
                            lon = "lon",
@@ -68,7 +68,7 @@ ensemble_model <- function(species_name,
                            which_final = c("raw_mean"),
                            consensus = FALSE,
                            consensus_level = 0.5,
-                           write_ensemble = T,
+                           write_ensemble = TRUE,
                            scale_models = TRUE,
                            ...) {
 
@@ -176,7 +176,7 @@ ensemble_model <- function(species_name,
                                                   whi),
                                 bylayer = T,
                                 suffix = "names",
-                                format = "GTiff", 
+                                format = "GTiff",
                                 ...)
 
             #### Consensus models
@@ -189,7 +189,7 @@ ensemble_model <- function(species_name,
                                                       "_", whi,
                                                       "_ensemble", "_meanconsensus",
                                                       consensus_level * 100,
-                                                      ".tif"), 
+                                                      ".tif"),
                                     ...)
 
                 if (write_ensemble) {
