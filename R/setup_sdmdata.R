@@ -344,6 +344,6 @@ setup_sdmdata <- function(species_name,
                col = c("grey50", "black"), legend = c("Occs", "Back"))
         dev.off()
     }
-
+    message("DONE!")
     return(sdmdata)
 }
