@@ -4,7 +4,7 @@
 \name{modleR}
 \alias{modleR}
 \alias{modleR-package}
-\title{modleR: A workflow to perform Ecological Niche Modeling based on dismo.}
+\title{modleR: A workflow to perform Ecological Niche Modeling based on dismo}
 \description{
 The modleR package wraps commonly used enm functions into a four-step
 workflow: setup_sdmdata, do_(m)any, final_model and ensemble_model.

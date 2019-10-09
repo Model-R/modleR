@@ -1,11 +1,11 @@
 #' Joins ENM from several partitions, creating a model per algorithm
 #'
-#'#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}} per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular value. In addition, mean of the models (selected or not) can be calculated as aritmethic mean or weighted mean by a performance statistic (AUC or TSS).
+#'#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}} per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular value. In addition, mean of the models (selected or not) can be calculated as arithmetic mean or weighted mean by a performance statistic (AUC or TSS).
 #'
 #' @inheritParams setup_sdmdata
 #' @param algorithms Which algorithms will be processed. If no name is given it
 #' will process all algorithms present in the evaluation files.
-#' @param weight_par Which performance statistic should be used to weight the
+#' @param weight_par Which performance statistic should be used to weigh the
 #'  partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.
 #' @param select_partitions Logical. If TRUE only partitions above a particular threshold value are selected.
 #' @param cut_level Which selecting threshold will be used to cut the mean
@@ -40,7 +40,7 @@
 #' }
 #' @param uncertainty Whether an uncertainty map, measured as range (max-min)
 #' should be calculated.
-#' @param write_final Logical. If \code{TRUE} writes png files of the final models.
+#' @param write_final Logical. If \code{TRUE}, writes png files of the final models.
 #' @param ... Other parameters from \code{\link[raster]{writeRaster}}
 #' @return A set of ecological niche models (.tif files) and figures (optional) written in
 #' the \code{final_dir} subfolder.
@@ -50,15 +50,15 @@
 #' # run setup_sdmdata
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
-#' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+#' sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
 #'
 #' # run do_any
-#' sp_bioclim <- do_any(species_name=sp,
-#'                      predictors=example_vars,
+#' sp_bioclim <- do_any(species_name = sp,
+#'                      predictors = example_vars,
 #'                      algo = "bioclim")
 #'
 #' # run final_model
-#' sp_final <- final_model(species_name=sp,
+#' sp_final <- final_model(species_name = sp,
 #'                         algorithms = "bioclim",
 #'                         select_partitions = TRUE,
 #'                         select_par = "TSS",
@@ -84,8 +84,8 @@ final_model <- function(species_name,
                         final_dir = "final_models",
                         proj_dir = "present",
                         which_models = c("raw_mean"),
-                        uncertainty = F,
-                        write_final = T,
+                        uncertainty = FALSE,
+                        write_final = TRUE,
                         ...) {
     # Escribe final
     final_path <- paste(models_dir, species_name, proj_dir,
@@ -99,8 +99,8 @@ final_model <- function(species_name,
     cat(paste("Reading evaluation files for", species_name, "in", proj_dir, "\n"))
     evall <- list.files(
         path = paste0(models_dir, "/", species_name, "/present/partitions"),
-        pattern = "^evaluate.+.csv$", full.names = T)
-    lista_eval <- lapply(evall, read.csv, header = T)
+        pattern = "^evaluate.+.csv$", full.names = TRUE)
+    lista_eval <- lapply(evall, read.csv, header = TRUE)
     stats <- data.table::rbindlist(lista_eval)
     stats <- as.data.frame(stats)
     names(stats)[1] <- "species"
@@ -128,7 +128,7 @@ final_model <- function(species_name,
             list.files(
                 path = paste0(models_dir, "/", species_name, "/", proj_dir,
                               "/partitions"),
-                full.names = T,
+                full.names = TRUE,
                 #pattern = paste0(algo, "_cont_", species_name, "_", run, "_")
                 pattern = paste0(algo, "_cont_", ".*tif$")
             )
@@ -136,7 +136,7 @@ final_model <- function(species_name,
 
         #select partitions----
         sel.index <- 1:n.part
-        if (select_partitions == T) {
+        if (select_partitions == TRUE) {
             cat(paste("selecting partitions for", species_name, algo, "\n"))
             sel.index <- which(stats.algo[, select_par] >= select_par_val)
         }
@@ -215,14 +215,14 @@ final_model <- function(species_name,
                  }
              }
 
-            if (scale_models == T) {
+            if (scale_models == TRUE) {
              final_algo <- rescale_layer(final_algo)
             }
 
 
 
             #incerteza #ö está criando esta camada duplicada com cada algoritmo
-            if (uncertainty == T) {
+            if (uncertainty == TRUE) {
                 raw_inctz <- raster::calc(cont.sel.1,
                                           fun = function(x) {max(x) - min(x)})
                 names(raw_inctz) <- "raw_uncertainty"
@@ -235,7 +235,7 @@ final_model <- function(species_name,
 #################
 
         if (raster::nlayers(final_algo) != 0) {
-            if (uncertainty == T) {
+            if (uncertainty == TRUE) {
                 which_f <- c(which_models, "raw_uncertainty")
                 } else {
                     which_f <- which_models
@@ -248,7 +248,7 @@ final_model <- function(species_name,
                                 filename = paste0(final_path,
                                                   "/", species_name, "_", algo),
                                 suffix = "names",
-                                bylayer = T,
+                                bylayer = TRUE,
                                 format = "GTiff", ...)
                }
            if (raster::nlayers(which_final) == 1 ) {
@@ -259,7 +259,7 @@ final_model <- function(species_name,
                                 format = "GTiff", ...)
                }
 
-            if (write_final == T) {
+            if (write_final == TRUE) {
                 for (i in 1:raster::nlayers(which_final)) {
                     png(filename = paste0(final_path, "/",
                                           species_name, "_", algo, "_",

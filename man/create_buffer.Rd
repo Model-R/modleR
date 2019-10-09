@@ -2,13 +2,13 @@
 % Please edit documentation in R/create_buffer.R
 \name{create_buffer}
 \alias{create_buffer}
-\title{Samples pseudoabsences inside a geographic buffer.}
+\title{Samples pseudoabsences inside a geographic or environmental buffer}
 \usage{
 create_buffer(species_name, occurrences, lon = "lon", lat = "lat",
   predictors, buffer_type = "median", dist_buf = NULL,
   env_buffer = FALSE, env_distance = "centroid", dist_min = NULL,
   max_env_dist = 0.5, buffer_shape, models_dir = "./models",
-  write_buffer = F)
+  write_buffer = FALSE)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as
@@ -57,7 +57,7 @@ Table of pseudoabsence points sampled within the selected distance
 A buffer around the occurrence points
 }
 \description{
-Samples pseudoabsences inside a geographic buffer.
+Samples pseudoabsences inside a geographic or environmental buffer
 }
 \details{
 It will return a raster object with the same resolution and extent, and cropped by the predictors stack.
@@ -77,13 +77,4 @@ VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseu
 \code{\link[raster]{buffer}}
 
 \code{\link[dismo]{randomPoints}}
-}
-\author{
-Felipe Barros
-
-Andrea Sánchez-Tapia
-
-Diogo S.B. Rocha
-
-Sara Mortara
 }

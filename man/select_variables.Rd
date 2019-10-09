@@ -2,7 +2,7 @@
 % Please edit documentation in R/select_variables.R
 \name{select_variables}
 \alias{select_variables}
-\title{Helper function to select environmental variables from a stack.}
+\title{Automatically selects environmental variables from a stack}
 \usage{
 select_variables(predictors, buffer = NULL, cutoff = 0.8,
   percent = 0.8)
@@ -35,12 +35,12 @@ coord1sp <- coordenadas[[1]]
 ## selecting only columns with longitude and latitude
 occ <- coord1sp[,c(2,3)]
 ## using coord1sp to create buffer w/ mean distance between points
-buf <- create_buffer("foo", occ, predictors=example_vars)
+buf <- create_buffer("foo", occ, predictors = example_vars)
 ## running select_variables w/ output from create_buffer
 select_variables(predictors = example_vars, buffer = buf)
 
 ## selecting variables for the entire area with a different cutoff
-select_variables(example_vars, cutoff=0.5)
+select_variables(example_vars, cutoff = 0.5)
 }
 \seealso{
 \code{\link[modleR]{create_buffer}}

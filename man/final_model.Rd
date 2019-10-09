@@ -9,8 +9,8 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   scale_models = TRUE, select_par = "TSS", select_par_val = 0.7,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
-  which_models = c("raw_mean"), uncertainty = F, write_final = T,
-  ...)
+  which_models = c("raw_mean"), uncertainty = FALSE,
+  write_final = TRUE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as
@@ -20,7 +20,7 @@ Recommendation is to adopt "Genus_species" format. See names in \code{\link{coor
 \item{algorithms}{Which algorithms will be processed. If no name is given it
 will process all algorithms present in the evaluation files.}
 
-\item{weight_par}{Which performance statistic should be used to weight the
+\item{weight_par}{Which performance statistic should be used to weigh the
 partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
 
 \item{select_partitions}{Logical. If TRUE only partitions above a particular threshold value are selected.}
@@ -67,7 +67,7 @@ to execute the function in projected models).}
 \item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
 should be calculated.}
 
-\item{write_final}{Logical. If \code{TRUE} writes png files of the final models.}
+\item{write_final}{Logical. If \code{TRUE}, writes png files of the final models.}
 
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
@@ -76,21 +76,21 @@ A set of ecological niche models (.tif files) and figures (optional) written in
 the \code{final_dir} subfolder.
 }
 \description{
-#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}} per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular value. In addition, mean of the models (selected or not) can be calculated as aritmethic mean or weighted mean by a performance statistic (AUC or TSS).
+#' This function reads the models generated either by \code{\link{do_any}} or \code{\link{do_many}} per algorithm and creates a mean or a binary model for the species. All partitions can be joined or only partitions above a particular value. In addition, mean of the models (selected or not) can be calculated as arithmetic mean or weighted mean by a performance statistic (AUC or TSS).
 }
 \examples{
 # run setup_sdmdata
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
 
 # run do_any
-sp_bioclim <- do_any(species_name=sp,
-                     predictors=example_vars,
+sp_bioclim <- do_any(species_name = sp,
+                     predictors = example_vars,
                      algo = "bioclim")
 
 # run final_model
-sp_final <- final_model(species_name=sp,
+sp_final <- final_model(species_name = sp,
                         algorithms = "bioclim",
                         select_partitions = TRUE,
                         select_par = "TSS",

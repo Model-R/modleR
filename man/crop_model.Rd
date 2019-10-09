@@ -2,7 +2,7 @@
 % Please edit documentation in R/crop_model.R
 \name{crop_model}
 \alias{crop_model}
-\title{Crop environmental raster based on specific buffer}
+\title{Crops environmental raster based on specific buffer}
 \usage{
 crop_model(modelo, mask)
 }
@@ -15,13 +15,10 @@ crop_model(modelo, mask)
 Croppped environmental raster based on specific buffer
 }
 \description{
-Crop environmental raster based on specific buffer
+Crops environmental raster based on specific buffer
 }
 \seealso{
 \code{\link[raster]{crop}}
 
 \code{\link[raster]{mask}}
-}
-\author{
-Andrea Sánchez-Tapia
 }

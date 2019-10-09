@@ -1,8 +1,9 @@
-#' @title Clean the occurrence records.
+#' Cleans the occurrence records
+#'
 #' @name clean
 #'
 #' @inheritParams setup_sdmdata
-#' @description A function to remove the points that are outside the extension of the raster and to maintain, at most one register per pixel.
+#' @description A function to remove the points that are outside the extension of the raster and to maintain at most one register per pixel.
 #' @param clean_dupl logical. If TRUE removes points with the same longitude and latitude
 #' @param clean_nas logical. If TRUE removes points that are outside the bounds of the raster
 #' @param clean_uni logical. If TRUE selects only one point per pixel
@@ -11,22 +12,21 @@
 #'
 #' @return data.frame containing longitude and latitude.
 #'
-#' @author Diogo S. B. Rocha
 #'
 #' @seealso \code{\link[raster]{cellFromXY}}, \code{\link[raster]{mask}}, \code{\link[raster]{extract}}
 #'
 #' @examples
 #' occs <- coordenadas[[1]]
-#' clean(occurrences = occs, predictors = example_vars, 
-#'       clean_dupl=TRUE, 
-#'       clean_nas=TRUE, 
-#'       clean_uni=TRUE)
+#' clean(occurrences = occs, predictors = example_vars,
+#'       clean_dupl = TRUE,
+#'       clean_nas = TRUE,
+#'       clean_uni = TRUE)
 #'
 #' @import raster
 #'
 #' @export
 clean <- function(occurrences,
-                  lon = "lon", 
+                  lon = "lon",
                   lat = "lat",
                   predictors,
                   clean_dupl = FALSE,
@@ -34,7 +34,7 @@ clean <- function(occurrences,
                   clean_uni = FALSE) {
 # define occurrences to be lon and lat
   occurrences <- occurrences[,c(lon, lat)]
-    if (exists("predictors")) { 
+    if (exists("predictors")) {
         ori <- nrow(occurrences)
         if (clean_dupl == TRUE) {
             message("cleaning duplicates")

@@ -1,9 +1,8 @@
-#' Rescaling rasters to values between 0 and 1.
+#' Rescales rasters to values between 0 and 1
 #'
 #' This function rescales rasters to values between 0 and 1.
 #' @param layers A RasterStack or RasterLayer of predictor variables to scale
 #' @return A RasterStack or RasterLayer with values between 0 and 1.
-#' @author Diogo S. B. Rocha
 #' @examples
 #' rescale_layer(example_vars)
 #' @import raster
@@ -15,9 +14,9 @@ rescale_layer <- function(layers) {
         }
     for (i in 1:dim(layers)[3]) {
         stand <- function(x) {
-            (x - min(layers[[i]][], na.rm = T)) /
-                (max(layers[[i]][], na.rm = T) - min(layers[[i]][],
-                                                     na.rm = T))
+            (x - min(layers[[i]][], na.rm = TRUE)) /
+                (max(layers[[i]][], na.rm = TRUE) - min(layers[[i]][],
+                                                     na.rm = TRUE))
       }
         bb <- raster::calc(layers[[i]], stand)
         bb

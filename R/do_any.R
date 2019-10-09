@@ -1,42 +1,23 @@
 #' Model fitting, predicting and evaluating of ecological niche models using several algorithms
-#'
-#' This function reads the output from \code{\link{setup_sdmdata}} and
-#' computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculates the predicted values and basic statistics for model evaluation. Besides from more commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{@for detais on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}. Performs one algorithm at time, for runs with multiple algorithms see \code{\link{do_many}}. Given that there are "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
-#'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
-#' @param algo The algorithm to be fitted \code{c("bioclim", "brt", "domain",
-#'                                                 "glm", "maxent", "mahal", 
-#'                                                 "svme", "svmk", "rf")}.
-#' @param project_model Logical, whether to perform a projection.
-#' @param proj_data_folder Path to directory with projections containing one or more folders with the projection datasets (e.g. "./env/proj/proj1"). Projection diretctory should only contain raster files corresponding to the environmental variables. If more than one projection, each projection should be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and equivalent raster files at diferent subdirectories must have the same names (e.g. "./env/proj/proj1/layer1.asc" and "./env/proj/proj2/layer1.asc"). 
-#' @param write_png Logical, whether png files will be written.
-#' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png) should be written.
-#' @param threshold Character string indicating threshold (cut-off) to transform model predictions
-#' to a binary score.
-#' as in \code{\link[dismo]{threshold}}: "kappa", "spec_sens", "no_omission", "prevalence",
-#' "equal_sens_spec", "sensitivity". Default value is "spec_sens".
-#' @param conf_mat Logical, whether confusion tables should be written in the HD.
-#' @param equalize Logical, whether the number of presences and absences should be
-#' equalized in randomForest and brt.
-#' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E) for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is \code{proc_threshold = 5}.
-#' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}.
+#' @rdname fit
 #' @return Writes on disk model for each partition, a .csv file with evaluation statistics (TSS, AUC, etc).
 #' @examples
 #' # run setup_sdmdata first from one species in coordenadas data
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
-#' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+#' sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
 #'
 #' # run bioclim algorithm for one species
-#' do_any(species_name=sp,
-#'        predictors=example_vars,
+#' do_any(species_name = sp,
+#'        predictors = example_vars,
 #'        algo = "bioclim")
 #'
 #' @details See below for a description on the implementation of the algorithms supported in this package.
 #' \describe{
 #' \item{Bioclim}{
-#' Specified by \code{algo="bioclim"} uses \code{\link[dismo]{bioclim}} function in \pkg{dismo} package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix \insertCite{nix_biogeographic_1986}{modleR}, the first species distribution modelling package. It is based on climate interpolation methods and despite its limitations it is still used in ecological niche modeling, specially for exploration and teaching purposes \insertCite{@see also @booth_bioclim_2014}{modleR}. In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
+#' Specified by \code{algo = "bioclim"} uses \code{\link[dismo]{bioclim}} function in \pkg{dismo} package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix \insertCite{nix_biogeographic_1986}{modleR}, the first species distribution modelling package. It is based on climate interpolation methods and despite its limitations it is still used in ecological niche modeling, specially for exploration and teaching purposes \insertCite{@see also @booth_bioclim_2014}{modleR}. In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
 #' }
 #' \item{Boosted Regression Trees (BRT)}{
 #' Specified by \code{algo="brt"} uses \code{\link[dismo]{gbm.step}} function from \pkg{dismo} package. Runs the cross-validation procedure of \insertCite{hastie_elements_2001;textual}{modleR} \insertCite{@see also @elith_working_2009}{modleR}. It consists in a regression modeling technique combined with the boosting method, a method for combining many simple models. It is implemented by the function \code{\link[dismo]{gbm.step}} as a regression with the response variable set to bernoulli distribution, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} from \pkg{dismo} package.
@@ -54,15 +35,14 @@
 #' Specified either by \code{algo="maxent"} or \code{algo="maxnet"} corresponding to implementation by \pkg{dismo} \insertCite{hijmans_dismo_2017}{modleR} and \pkg{maxnet} \insertCite{phillips_maxnet_2017}{modleR} packages respectivelly. Maxent is a machine learning method for modeling species distributions based in incomplete data allowing ENM with presence-only data \insertCite{phillips_maximum_2006}{modleR}. If \code{algo="maxent"} model is fitted by the function \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also in \pkg{dismo} package. If \code{algo="maxnet"} model is fitted by the function \code{\link[maxnet]{maxnet}} from \pkg{maxnet} package, evaluated using \code{\link[dismo]{evaluate}} from \pkg{dismo} package with argument \code{type="logistic"} and predicted using \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' \item{Random Forest}{
-#' Specified by \code{algo="rf"} uses \code{\link[randomForest]{tuneRF}} function from \pkg{ramdomForest} package \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine learning regression based on decision trees. In this package uses \code{\link[randomForest]{tuneRF}} function with the optimal number of variables available for splitting at each tree node (i.e. mtry) found as set by parameter \code{doBest=TRUE}. Random Forest model is evaluated with \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
+#' Specified by \code{algo="rf"} uses \code{\link[randomForest]{tuneRF}} function from \pkg{ramdomForest} package \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine learning regression based on decision trees. In this package uses \code{\link[randomForest]{tuneRF}} function with the optimal number of variables available for splitting at each tree node (i.e. mtry) found as set by parameter \code{doBest = TRUE}. Random Forest model is evaluated with \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' \item{Support Vector Machines (SVM)}{
-#' Specified either by \code{algo="svme"} or \code{algo="svmk"} corresponding to implementation on \pkg{e1071} \insertCite{meyer_e1071_2017}{modleR} and \pkg{kernlab} \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectivelly. SVM are supervised learning models that use learning algorithms for classification and regression analysis. In \pkg{e1071} package SVM is implemented through function \code{\link[e1071]{best.tune}} with method set to \code{"svm"} which uses RBF-kernel (radial basis function kernel) for classification. In \pkg{kernlab} package SVM is implemented through function \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the default method \code{"kbfdot"}). We expect both implementations to differ only in performance. Both \code{svme} and \code{svmk} are evaluated with \code{\link[dismo]{evaluate}} function from dismo and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
+#' Specified either by \code{algo = "svme"} or \code{algo = "svmk"} corresponding to implementation on \pkg{e1071} \insertCite{meyer_e1071_2017}{modleR} and \pkg{kernlab} \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectivelly. SVM are supervised learning models that use learning algorithms for classification and regression analysis. In \pkg{e1071} package SVM is implemented through function \code{\link[e1071]{best.tune}} with method set to \code{"svm"} which uses RBF-kernel (radial basis function kernel) for classification. In \pkg{kernlab} package SVM is implemented through function \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the default method \code{"kbfdot"}). We expect both implementations to differ only in performance. Both \code{svme} and \code{svmk} are evaluated with \code{\link[dismo]{evaluate}} function from dismo and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' }
 #' @references
 #'     \insertAllCited{}
-#' @author Andrea Sánchez-Tapia & Sara Mortara
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{domain}}
 #' @seealso \code{\link{do_any}}
@@ -165,7 +145,7 @@ do_any <- function(species_name,
                 full.model <- glm(sdmdata_train$pa ~ ., data = envtrain,
                                   family = "binomial")
                 mod <- step(object = null.model, scope = formula(full.model),
-                            direction = "both", trace = F)
+                            direction = "both", trace = FALSE)
             }
             if (algo == "svmk") {
 
@@ -384,7 +364,7 @@ do_any <- function(species_name,
                 }
 
                 if (project_model == TRUE) {
-                    pfiles <- list.dirs(proj_data_folder, recursive = F)
+                    pfiles <- list.dirs(proj_data_folder, recursive = FALSE)
                     for (proje in pfiles) {
                         v <- strsplit(proje, "/")
                         name_proj <- v[[1]][length(v[[1]])]

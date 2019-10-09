@@ -2,7 +2,7 @@
 % Please edit documentation in R/rescale_layer.R
 \name{rescale_layer}
 \alias{rescale_layer}
-\title{Rescaling rasters to values between 0 and 1.}
+\title{Rescales rasters to values between 0 and 1}
 \usage{
 rescale_layer(layers)
 }
@@ -17,7 +17,4 @@ This function rescales rasters to values between 0 and 1.
 }
 \examples{
 rescale_layer(example_vars)
-}
-\author{
-Diogo S. B. Rocha
 }

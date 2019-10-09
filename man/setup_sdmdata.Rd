@@ -8,13 +8,13 @@ setup_sdmdata(species_name, occurrences, predictors,
   models_dir = "./models", real_absences = NULL, lon = "lon",
   lat = "lat", buffer_type = NULL, dist_buf = NULL,
   env_buffer = FALSE, env_distance = "centroid", dist_min = NULL,
-  buffer_shape = NULL, max_env_dist = 0.5, write_buffer = F,
+  buffer_shape = NULL, max_env_dist = 0.5, write_buffer = FALSE,
   seed = NULL, clean_dupl = FALSE, clean_nas = FALSE,
   clean_uni = FALSE, geo_filt = FALSE, geo_filt_dist = NULL,
-  select_variables = F, cutoff = 0.8, percent = 0.8,
-  plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
-  boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
-  cv_partitions = NULL)
+  select_variables = FALSE, cutoff = 0.8, percent = 0.8,
+  plot_sdmdata = TRUE, n_back = 1000,
+  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
+  cv_n = NULL, cv_partitions = NULL)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as
@@ -108,13 +108,10 @@ metadata and sdmdata files into the hard disk.
 \examples{
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
 head(sp_setup)
 
 }
 \seealso{
 \code{\link[dismo]{gridSample}}
-}
-\author{
-Andrea Sánchez-Tapia
 }

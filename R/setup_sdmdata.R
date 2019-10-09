@@ -33,11 +33,10 @@
 #' @param cv_n How many crossvalidation runs.
 #' @param ... Parameters from \code{\link{create_buffer}}.
 #' @return Returns a data.frame with the groups for each run. (in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector, the geographical coordinates, of the occurrence and pseudoabsence points, and the associated environmental variables. Function writes on disk (inside subfolder at \code{models_dir} directory) a text file named sdmdata that will be used in \code{\link{do_any}} or \code{\link{do_many}}.
-#' @author Andrea Sánchez-Tapia
 #' @examples
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
-#' sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+#' sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
 #' head(sp_setup)
 #'
 #' @seealso \code{\link[dismo]{gridSample}}
@@ -60,17 +59,17 @@ setup_sdmdata <- function(species_name,
                           dist_min = NULL,
                           buffer_shape = NULL,
                           max_env_dist = 0.5,
-                          write_buffer = F,
+                          write_buffer = FALSE,
                           seed = NULL,
                           clean_dupl = FALSE,
                           clean_nas = FALSE,
                           clean_uni = FALSE,
                           geo_filt = FALSE,
                           geo_filt_dist = NULL,
-                          select_variables = F,
+                          select_variables = FALSE,
                           cutoff = 0.8,
                           percent = 0.8,
-                          plot_sdmdata = T,
+                          plot_sdmdata = TRUE,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
                           boot_n = 1,
@@ -88,7 +87,7 @@ setup_sdmdata <- function(species_name,
                            '") in the species name and we removed it for you')))
         }
     if (file.exists(models_dir) == FALSE)
-        dir.create(models_dir, recursive = T, showWarnings = F)
+        dir.create(models_dir, recursive = TRUE, showWarnings = FALSE)
     if (file.exists(paste(models_dir, species_name, sep = "/")) == FALSE)
         dir.create(paste(models_dir, species_name, sep = "/"))
 
@@ -96,7 +95,7 @@ setup_sdmdata <- function(species_name,
     setup.folder <-
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
     if (file.exists(setup.folder) == FALSE)
-        dir.create(setup.folder, recursive = T)
+        dir.create(setup.folder, recursive = TRUE)
 
     ## checking latitude and longitude columns
     if (all(c(lon, lat) %in% names(occurrences))) {
@@ -139,14 +138,14 @@ setup_sdmdata <- function(species_name,
     if (file.exists(paste(setup.folder, "metadata.csv", sep = "/"))) {
         message("metadata file found, checking metadata \n")
         metadata_old <- read.csv(paste(setup.folder, "metadata.csv", sep = "/"),
-                                   as.is = F) #row.names = 1)
+                                   as.is = FALSE) #row.names = 1)
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
                                      setdiff(names(metadata_old),
                                              c("final.n", "final.n.back", "selected_predictors"))]
-        if (all(all.equal(metadata_old, metadata_new) == T)) {
+        if (all(all.equal(metadata_old, metadata_new) == TRUE)) {
             message("same metadata, no need to run data partition")
-            sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"), as.is = F)
+            sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"), as.is = FALSE)
             return(sdmdata)
             }
     }
@@ -220,12 +219,12 @@ setup_sdmdata <- function(species_name,
                 backgr <- dismo::randomPoints(mask = pbuffr,
                                               n = n_back_mod,
                                               p = occurrences,
-                                              excludep = T)
+                                              excludep = TRUE)
     }
     colnames(backgr) <- c("lon", "lat")
 
-    # Seleccionando variables if sel_vars ==T
-    if (select_variables == T) {
+    # Seleccionando variables if sel_vars ==TRUE
+    if (select_variables == TRUE) {
     message(paste("selecting variables...", "\n"))
         predictors <- select_variables(predictors = predictors,
                                        buffer = pbuffr,
@@ -248,7 +247,7 @@ setup_sdmdata <- function(species_name,
     # Extraindo dados ambientais dos bckgr
     message("extracting background data")
     backvals <- raster::extract(predictors, backgr)
-    if (any(complete.cases(backvals) == F)) {
+    if (any(complete.cases(backvals) == FALSE)) {
         backgr   <- backgr[complete.cases(backvals), ]
         backvals <- raster::extract(predictors, backgr)
         warning(paste("Your background data had NA values, ", nrow(backvals),
@@ -337,7 +336,7 @@ setup_sdmdata <- function(species_name,
         message(paste("Plotting the dataset...", "\n"))
         png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
-        raster::plot(predictors[[1]], legend = F, col = "grey90", colNA = NA)
+        raster::plot(predictors[[1]], legend = FALSE, col = "grey90", colNA = NA)
         points(back, pch = ".", col = "black")
         points(pres, pch = 3, col = "grey50")
         legend("topleft", pch = c("+", "."),

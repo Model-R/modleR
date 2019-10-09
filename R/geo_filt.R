@@ -1,4 +1,4 @@
-#' Excludes occurrence points within a geographic distance.
+#' Excludes occurrence points within a geographic distance
 #'
 #' @inheritParams setup_sdmdata
 #' @param min_distance numeric. Minimum distance between points in the unit of the predictor raster.

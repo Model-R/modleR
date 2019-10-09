@@ -3,8 +3,8 @@
 \docType{data}
 \name{coordenadas}
 \alias{coordenadas}
-\title{Ocurrence points for four species in the Brazilian Atlantic Forest.}
-\format{A list of 4: 
+\title{Ocurrence points for four species in the Brazilian Atlantic Forest}
+\format{A list of 4:
 \describe{
   \item{Abarema_langsdorffii}{104 observations of 3 variables}
   \item{Eugenia_florida}{341 observations of  3 variables}
@@ -15,8 +15,8 @@
 coordenadas
 }
 \description{
-A list with four elements containing ccurrence points from four species: Abarema langsdorfii, 
-Eugenia florida, Leandra carassana and Ouratea semiserrata. 
+A list with four elements containing occurrence points from four species: \emph{Abarema langsdorfii},
+\emph{Eugenia florida}, \emph{Leandra carassana} and \emph{Ouratea semiserrata}.
 Each element contains three variables: sp species name separated by _, lat contains Latitude information and lon contains
 Longitude information.
 }

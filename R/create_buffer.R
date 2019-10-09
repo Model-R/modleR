@@ -1,4 +1,4 @@
-#' Samples pseudoabsences inside a geographic buffer.
+#' Samples pseudoabsences inside a geographic or environmental buffer
 #'
 #' @inheritParams setup_sdmdata
 #' @inheritParams euclidean
@@ -19,10 +19,6 @@
 #' Needs to be specified if buffer_type = "user"
 #' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
-#' @author Felipe Barros
-#' @author Andrea Sánchez-Tapia
-#' @author Diogo S.B. Rocha
-#' @author Sara Mortara
 #' @return A buffer around the occurrence points
 #' @details It will return a raster object with the same resolution and extent, and cropped by the predictors stack.
 #' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseudo-absence data for presence-only distribution modeling: How far should you stray from what you know? Ecological Modelling, 220(4), 589-594. doi:10.1016/j.ecolmodel.2008.11.010
@@ -50,10 +46,10 @@ create_buffer <- function(species_name,
                           env_buffer = FALSE,
                           env_distance = "centroid",
                           dist_min = NULL,
-                          max_env_dist = 0.5,#quantil
+                          max_env_dist = 0.5,
                           buffer_shape,
                           models_dir = "./models",
-                          write_buffer = F) {
+                          write_buffer = FALSE) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (is.null(buffer_type) |
@@ -76,7 +72,7 @@ create_buffer <- function(species_name,
                 else dist.buf <- dist_buf
             }
         if (buffer_type %in% c("mean", "median", "maximum")) {
-            dists <- rgeos::gDistance(spgeom1 = occurrences, byid = T)
+            dists <- rgeos::gDistance(spgeom1 = occurrences, byid = TRUE)
             if (buffer_type == "mean") {
                 dist.buf <- mean(dists)
             }
@@ -89,7 +85,7 @@ create_buffer <- function(species_name,
         }
         # creates the buffer - it's a shapefile
         buffer.shape <- rgeos::gBuffer(spgeom = occurrences,
-                                       byid = F, width = dist.buf)
+                                       byid = FALSE, width = dist.buf)
         }
     # crops the predictors to that shape to rasterize
     r_buffer <- raster::crop(predictors[[1]], buffer.shape)
@@ -107,10 +103,10 @@ create_buffer <- function(species_name,
                                 occurrences = occurrences,
                                 algo = env_distance)
         q <- quantile(raster::getValues(env.buffer),
-                      max_env_dist, names = F, na.rm = T)
+                      max_env_dist, names = FALSE, na.rm = TRUE)
         env.buffer[env.buffer <= q] <- NA #era diferente y el sample no funcionaba
         # we create a shapefile so it can be masked like the other types
-        env.shape <- raster::rasterToPolygons(env.buffer, dissolve = T)
+        env.shape <- raster::rasterToPolygons(env.buffer, dissolve = TRUE)
         #env.shape <- env.shape[env.shape@data$layer == 1,]#no need anymore
         r_buffer <- raster::crop(r_buffer, env.shape)
         r_buffer <- raster::mask(r_buffer, env.shape)
@@ -123,7 +119,7 @@ create_buffer <- function(species_name,
         }
 
         buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
-                                           byid = F,
+                                           byid = FALSE,
                                            width = dist_min)
 
         r_buffer <- raster::mask(r_buffer, buffer.shape.min, inverse = TRUE)
@@ -132,9 +128,9 @@ create_buffer <- function(species_name,
     if (write_buffer) {
         setup.folder <- paste0(models_dir, "/", species_name, "/present", "/data_setup")
         if (file.exists(setup.folder) == FALSE)
-            dir.create(setup.folder, recursive = T)
+            dir.create(setup.folder, recursive = TRUE)
         writeRaster(r_buffer, filename = paste0(setup.folder, "/buffer"),
-                    format = "GTiff", overwrite = T)
+                    format = "GTiff", overwrite = TRUE)
     }
     return(r_buffer)
 }

@@ -1,4 +1,4 @@
-#' Helper function to select environmental variables from a stack.
+#' Automatically selects environmental variables from a stack
 #'
 #' This function takes a stack of environmental variables and the calibration area.
 #' The function calculates Pearson correlations between all environmental variables and
@@ -24,12 +24,12 @@
 #' ## selecting only columns with longitude and latitude
 #' occ <- coord1sp[,c(2,3)]
 #' ## using coord1sp to create buffer w/ mean distance between points
-#' buf <- create_buffer("foo", occ, predictors=example_vars)
+#' buf <- create_buffer("foo", occ, predictors = example_vars)
 #' ## running select_variables w/ output from create_buffer
 #' select_variables(predictors = example_vars, buffer = buf)
 #'
 #' ## selecting variables for the entire area with a different cutoff
-#' select_variables(example_vars, cutoff=0.5)
+#' select_variables(example_vars, cutoff = 0.5)
 select_variables <- function(predictors,
                              buffer = NULL,
                              cutoff = 0.8,
@@ -51,7 +51,7 @@ select_variables <- function(predictors,
   if (length(exclude_vars) > 0) {
       excluded <- names(predictors)[exclude_vars]
       retained <- setdiff(names(predictors), excluded)
-      final_vars <- raster::subset(predictors, retained, drop = F)
+      final_vars <- raster::subset(predictors, retained, drop = FALSE)
       message(paste(paste(excluded, collapse = ","),
                     "excluded with cutoff =", cutoff))
       } else {

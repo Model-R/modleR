@@ -2,7 +2,7 @@
 % Please edit documentation in R/ensemble_model.R
 \name{ensemble_model}
 \alias{ensemble_model}
-\title{Create ensemble models from several algorithms}
+\title{Creates ensemble models from several algorithms}
 \usage{
 ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   models_dir = "./models", final_dir = "final_models",
@@ -29,7 +29,7 @@ See \code{coordenadas} as an example.}
 A subfolder will be created.}
 
 \item{ensemble_dir}{Character string, name of the folder to save the output
-files. A subfolder will be created.}
+files. A subfolder will be created. Defaults to "ensemble".}
 
 \item{proj_dir}{Character. The name of the subfolder with the projection.
 Defaults to "present" but can be set according to the other projections (i.e.
@@ -73,7 +73,7 @@ This function reads the output of \code{final_model} for multiple algorithms and
 # run setup_sdmdata
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name=sp, occurrences=sp_coord, example_vars)
+sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
 
 # run do_many
 sp_many <- do_many(species_name = sp,

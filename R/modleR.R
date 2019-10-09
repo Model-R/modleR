@@ -1,4 +1,4 @@
-#' modleR: A workflow to perform Ecological Niche Modeling based on dismo.
+#' modleR: A workflow to perform Ecological Niche Modeling based on dismo
 #'
 #' The modleR package wraps commonly used enm functions into a four-step
 #' workflow: setup_sdmdata, do_(m)any, final_model and ensemble_model.
