@@ -31,6 +31,3 @@ Ecography, 37(11), 1084-1091. doi:10.1111/j.1600-0587.2013.00441.x
 \seealso{
 \code{\link[dismo]{gridSample}}
 }
-\author{
-Diogo S. B. Rocha
-}

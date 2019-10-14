@@ -12,7 +12,6 @@
 #' Default is to 0.8 but should be useful with high resolution rasters
 #' @return A RasterStack of independent environmental variables based on a
 #'  specific cutoff
-#' @author Andrea Sánchez-Tapia and Sara Mortara
 #' @seealso \code{\link[modleR]{create_buffer}}
 #' @import raster
 #' @importFrom stats cor

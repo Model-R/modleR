@@ -11,6 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteIndexEntry{modleR: a workflow for ecological niche models based on dismo}
   %\VignetteEngine{knitr::rmarkdown}
+    \usepackage[utf8]{inputenc}
 bibliography: ../inst/REFERENCES.bib
 ---
 
@@ -38,7 +39,6 @@ remotes::install_github("Model-R/modleR", build = TRUE)
 remotes::install_github("Model-R/modleR", build = TRUE,
                         build_opts = c("--no-resave-data", "--no-manual"))
 
-#install.packages(xxx)#soon!
 ```
 
 (__Note regarding vignette building__: the default parameters in `build_opts`
@@ -54,7 +54,10 @@ uses a previous version of this workflow and is currently being updated to this 
 
 The workflow consists of mainly four functions that should be used sequentially.
 
-![__`modleR` workflow__](workflow.png){ width=80% }
+
+```{r, echo = FALSE}
+knitr::include_graphics("workflow.png", dpi = 150)
+```
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
@@ -313,7 +316,10 @@ At the end of a modeling round, the partition folder containts:
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![__`final_model()` options__](final_model_english.png){ width=75% }
+
+```{r, echo = FALSE}
+knitr::include_graphics("final_model_english.png", dpi = 150)
+```
 
 + It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.
 + The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
@@ -364,11 +370,11 @@ names(final_models) <- sapply(strsplit(names(final_models), paste0(species[1], '
 plot(final_models)
 ```
 
-## ensemble_model()
+## Algorithm consensus with `ensemble_model()`
 
 The third step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
-`ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
+`ensemble_model()` uses a `which.final` parameter -analog to `which_model` in `final_model()` to specify which final(s) model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
 ```{r ensemble_model, eval = TRUE}
 args(ensemble_model)

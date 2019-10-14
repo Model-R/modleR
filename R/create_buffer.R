@@ -28,7 +28,7 @@
 #' library(raster)
 #' sp <- names(coordenadas)[1]
 #' occs <- coordenadas[[1]]
-#' buf <- create_buffer(species_name=sp, occurrences=occs, predictors=example_vars)
+#' buf <- create_buffer(species_name = sp, occurrences = occs, predictors = example_vars)
 #' plot(buf)
 #'
 #' @import raster

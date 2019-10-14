@@ -1,7 +1,7 @@
 #' Model fitting, predicting and evaluating of ecological niche models using several algorithms
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
-#' @rdname fit
+#' @rdname model_fit
 #' @return Writes on disk model for each partition, a .csv file with evaluation statistics (TSS, AUC, etc).
 #' @examples
 #' # run setup_sdmdata first from one species in coordenadas data
@@ -154,12 +154,12 @@ do_any <- function(species_name,
             }
             if (algo == "svme") {
                 sv <- 1
-                while(!exists("mod")) {
+                while (!exists("mod")) {
 
                     mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
                                             data = envtrain)
                     sv <- sv + 1
-                    message(paste("Trying svme", sv," times"))
+                    message(paste("Trying svme", sv, "times"))
                     if (sv == 10 & !exists("mod")) {
                         break
                         message("svme algorithm did not find a solution in 10 runs")
@@ -246,7 +246,7 @@ do_any <- function(species_name,
 
             #threshold-independent values
             th_table$AUC <- eval_mod@auc
-            th_table$AUCratio <- eval_mod@auc/0.5
+            th_table$AUCratio <- eval_mod@auc / 0.5
             th_table$pROC <- proc$pROC_summary[1]
             th_table$pval_pROC <- proc$pROC_summary[2]
             th_table$TSS <- mod_TSS

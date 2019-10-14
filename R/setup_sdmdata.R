@@ -24,7 +24,7 @@
 #' should be performed. This function excludes autocorrelated environmental variables. Cutoff and percent parameters can be specified
 #' @param models_dir Folder path to save the output files.
 #' @param plot_sdmdata Logical, whether png files will be written.
-#' @param n_back Number of pseudoabsence points. Defauls is 1,000.
+#' @param n_back Number of pseudoabsence points. Default is 1,000.
 #' @param partition_type Perform bootstrap or k-fold crossvalidation?
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled.
 #' for bootstrap.
@@ -239,7 +239,7 @@ setup_sdmdata <- function(species_name,
 
     message(paste("saving metadata"), "\n")
     write.table(metadata_new, file = paste(setup.folder, "metadata.csv", sep = "/"),
-                sep=',', col.names=TRUE, row.names=FALSE)
+                sep = ",", col.names = TRUE, row.names = FALSE)
 
     # cria a tabela de valores
     message("extracting environmental data")
@@ -329,7 +329,7 @@ setup_sdmdata <- function(species_name,
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
     message(paste("saving sdmdata", "\n"))
     write.table(sdmdata, file = paste(setup.folder, "sdmdata.csv", sep = "/"),
-                sep=',', row.names = FALSE, col.names = TRUE)
+                sep = ",", row.names = FALSE, col.names = TRUE)
 
 
     if (plot_sdmdata) {

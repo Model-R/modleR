@@ -3,7 +3,6 @@
 #' @inheritParams setup_sdmdata
 #' @param min_distance numeric. Minimum distance between points in the unit of the predictor raster.
 #' @return Table of occurrence points with minimum distance indicated in min.distance
-#' @author Diogo S. B. Rocha
 #' @references Varela, S., Anderson, R. P., García-Valdés, R., &
 #' Fernández-González, F. (2014). Environmental filters reduce the effects of
 #' sampling bias and improve predictions of ecological niche models.

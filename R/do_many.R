@@ -1,4 +1,4 @@
-#' @rdname fit
+#' @rdname model_fit
 
 #' @examples
 #' # run setup_sdmdata
@@ -23,8 +23,6 @@ do_many <- function(species_name,
                     rf = FALSE,
                     svmk = FALSE,
                     svme = FALSE,
-#                    mindist = FALSE,
-#                    centroid = FALSE,
                     brt = FALSE,
                     ...) {
 
@@ -82,18 +80,6 @@ do_many <- function(species_name,
       algo = "svme",
       ...)
   }
-  # if (mindist == TRUE) {
-  #   do_any(
-  #     species_name,
-  #     algo = "mindist",
-  #     ...)
-  # }
-  # if (centroid == TRUE) {
-  #   do_any(
-  #     species_name,
-  #     algo = "centroid",
-  #     ...)
-  # }
   if (brt == TRUE) {
     do_any(
       species_name,

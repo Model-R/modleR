@@ -1,7 +1,7 @@
 #' Model fitting, predicting and evaluating of ecological niche models using one or several algorithms
 #'
-#' \code{do_any} reads the output from \code{\link{setup_sdmdata}} and computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculates the predicted values and basic statistics for model evaluation. in addition to commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) \insertCite{for details on model evaluation see @phillips_maximum_2006, @peterson_ecological_2011}{modleR}.
-#' \code{do_any} performs one algorithm at a time. \code{do_many} runs internally \code{\link{do_any}} and can be used to run multiple algorithms at a time. See \strong{Details} in \code{\link{do_any}} for a description of how each algorithm is implemented. Given that there are "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
+#' \code{\link{do_any}} reads the output from \code{\link{setup_sdmdata}} and computes ecological niche models for a species based on an algorithm specified by the user. It fits the model, calculates the predicted values and basic statistics for model evaluation. in addition to commonly adopted metrics such as AUC and TSS, this package also calculates partial ROC (pROC) (for details on model evaluation see \insertCite{phillips_maximum_2006;textual}{modleR} and \insertCite{peterson_ecological_2011;textual}{modleR}.
+#' \code{\link{do_any}} performs one algorithm at a time. \code{do_many} runs internally \code{\link{do_any}} and can be used to run multiple algorithms at a time. See \strong{Details} in \code{\link{do_any}} for a description of how each algorithm is implemented. Given that there are "\emph{no silver bullets in correlative ecological niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which algorithm to run is on the user. See details for a description of all algorithms supported in this package.
 #'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
@@ -43,6 +43,6 @@
 #' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E) for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is \code{proc_threshold = 5}.
 #' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}.
 #'
-#' @name fit
+#' @name model_fit
 #'
 NULL

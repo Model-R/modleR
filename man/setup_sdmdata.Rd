@@ -82,7 +82,7 @@ Default is to 0.8 but should be useful with high resolution rasters}
 
 \item{plot_sdmdata}{Logical, whether png files will be written.}
 
-\item{n_back}{Number of pseudoabsence points. Defauls is 1,000.}
+\item{n_back}{Number of pseudoabsence points. Default is 1,000.}
 
 \item{partition_type}{Perform bootstrap or k-fold crossvalidation?}
 

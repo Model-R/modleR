@@ -45,6 +45,3 @@ select_variables(example_vars, cutoff = 0.5)
 \seealso{
 \code{\link[modleR]{create_buffer}}
 }
-\author{
-Andrea Sánchez-Tapia and Sara Mortara
-}
