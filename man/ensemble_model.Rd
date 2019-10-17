@@ -14,16 +14,16 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
 \arguments{
 \item{species_name}{A character string with the species name. Because species name will be used as
 a directory name, avoid non-ASCII characters, spaces and punctuation marks.
-Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example.}
+Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example}
 
 \item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
 See \code{coordenadas} as an example.}
 
-\item{lon}{The name of the longitude column. Defaults to "lon".}
+\item{lon}{The name of the longitude column. Defaults to "lon"}
 
-\item{lat}{The name of the latitude column. Defaults to "lat".}
+\item{lat}{The name of the latitude column. Defaults to "lat"}
 
-\item{models_dir}{Folder path to save the output files.}
+\item{models_dir}{Folder path to save the output files}
 
 \item{final_dir}{Character. Name of the folder to save the output files.
 A subfolder will be created.}

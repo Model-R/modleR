@@ -1,19 +1,16 @@
 #' Cleans the occurrence records
 #'
-#' @name clean
-#'
+#' This function performs data cleaning of occurrence records by removing records outside the extension of the raster of predictor variables. It also allows data cleaning of; (1) NAs; (2) duplicated records; (3) duplicated records in the same pixel.
 #' @inheritParams setup_sdmdata
-#' @description A function to remove the points that are outside the extension
-#' of the raster and to maintain at most one register per pixel.
-#' @param clean_dupl logical. If TRUE removes points with the same longitude and
+#' @param clean_dupl Logical. If TRUE removes points with the same longitude and
 #'  latitude
-#' @param clean_nas logical. If TRUE removes points that are outside the bounds
+#' @param clean_nas Logical. If TRUE removes points that are outside the bounds
 #' of the raster
-#' @param clean_uni logical. If TRUE selects only one point per pixel
+#' @param clean_uni Logical. If TRUE selects only one point per pixel
 #'
 #' @details Used internally in function \code{\link[modleR]{setup_sdmdata}}.
 #'
-#' @return data.frame containing longitude and latitude.
+#' @return A data.frame containing longitude and latitude.
 #'
 #'
 #' @seealso \code{\link[raster]{cellFromXY}}, \code{\link[raster]{mask}},
@@ -21,7 +18,8 @@
 #'
 #' @examples
 #' occs <- coordenadas[[1]]
-#' clean(occurrences = occs, predictors = example_vars,
+#' clean(occurrences = occs, 
+#'       predictors = example_vars,
 #'       clean_dupl = TRUE,
 #'       clean_nas = TRUE,
 #'       clean_uni = TRUE)
