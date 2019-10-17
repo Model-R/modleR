@@ -1,51 +1,135 @@
-#' Model fitting, predicting and evaluating of ecological niche models using several algorithms
+#' Ecological niche model fit, prediction and evaluation using several
+#' algorithms
+#'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
 #' @rdname model_fit
-#' @return Writes on disk model for each partition, a .csv file with evaluation statistics (TSS, AUC, etc).
+#' @return Writes on disk a .tif model for each partition and a .csv file with
+#' evaluation statistics (TSS, AUC, etc).
 #' @examples
 #' # run setup_sdmdata first from one species in coordenadas data
 #' sp <- names(coordenadas)[1]
 #' sp_coord <- coordenadas[[1]]
-#' sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord, example_vars)
+#' sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord,
+#' example_vars)
 #'
-#' # run bioclim algorithm for one species
+#' # run bioclim for one species
 #' do_any(species_name = sp,
 #'        predictors = example_vars,
 #'        algo = "bioclim")
 #'
-#' @details See below for a description on the implementation of the algorithms supported in this package.
+#' @details See below for a description on the implementation of the algorithms
+#' supported in this package.
 #' \describe{
 #' \item{Bioclim}{
-#' Specified by \code{algo = "bioclim"} uses \code{\link[dismo]{bioclim}} function in \pkg{dismo} package \insertCite{hijmans_dismo_2017}{modleR}. Bioclim is the  climate-envelope-model implemented by Henry Nix \insertCite{nix_biogeographic_1986}{modleR}, the first species distribution modelling package. It is based on climate interpolation methods and despite its limitations it is still used in ecological niche modeling, specially for exploration and teaching purposes \insertCite{@see also @booth_bioclim_2014}{modleR}. In this package it is implemented by the function \code{\link[dismo]{bioclim}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
+#' Specified by \code{algo = "bioclim"} uses \code{\link[dismo]{bioclim}}
+#' function in \pkg{dismo} package \insertCite{hijmans_dismo_2017}{modleR}.
+#' Bioclim is the climate-envelope-model implemented by Henry Nix
+#' \insertCite{nix_biogeographic_1986}{modleR}, the first species distribution
+#' modelling package. It is based on climate interpolation methods and despite
+#' its limitations it is still used in ecological niche modeling, specially for
+#' exploration and teaching purposes
+#' \insertCite{@see also @booth_bioclim_2014}{modleR}. In this package it is
+#' implemented by the
+#' function \code{\link[dismo]{bioclim}}, evaluated and predicted using
+#' \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from
+#' \pkg{dismo} package.
 #' }
 #' \item{Boosted Regression Trees (BRT)}{
-#' Specified by \code{algo="brt"} uses \code{\link[dismo]{gbm.step}} function from \pkg{dismo} package. Runs the cross-validation procedure of \insertCite{hastie_elements_2001;textual}{modleR} \insertCite{@see also @elith_working_2009}{modleR}. It consists in a regression modeling technique combined with the boosting method, a method for combining many simple models. It is implemented by the function \code{\link[dismo]{gbm.step}} as a regression with the response variable set to bernoulli distribution, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} from \pkg{dismo} package.
+#' Specified by \code{algo = "brt"}, it uses \code{\link[dismo]{gbm.step}}
+#' function from \pkg{dismo} package. Runs the cross-validation procedure of
+#' \insertCite{hastie_elements_2001;textual}{modleR}
+#' \insertCite{@see also @elith_working_2009}{modleR}. It consists in a
+#' regression modeling technique combined with the boosting method, a method for
+#' combining many simple models. It is implemented by the function
+#' \code{\link[dismo]{gbm.step}} as a regression with the response variable set
+#' to Bernoulli distribution, evaluated and predicted using
+#' \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} from
+#' \pkg{dismo} package.
 #' }
 #' \item{Domain}{
-#' Specified by \code{algo="domain"} uses \code{\link[dismo]{domain}} function from \pkg{dismo} package. Computes point-to-point similarity based on Gower distance between environmental variables \insertCite{carpenter_domain_1993}{modleR}. \insertCite{hijmans_dismo_2017}{modleR} state that one should use it with caution because it does not perform well compared to other algorithms \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}. We add that it is a slow algorithm. In this package it is implemented by the function \code{\link[dismo]{domain}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
+#' Specified by \code{algo = "domain"} uses \code{\link[dismo]{domain}} function
+#' from \pkg{dismo} package. Computes point-to-point similarity based on Gower
+#' distance between environmental variables
+#' \insertCite{carpenter_domain_1993}{modleR}.
+#' \insertCite{hijmans_dismo_2017}{modleR} state that one should use it with
+#' caution because it does not perform well compared to other algorithms
+#' \insertCite{elith_novel_2006,hijmans_ability_2006}{modleR}. We add that it is
+#'  a slow algorithm. In this package it is implemented by the function
+#'  \code{\link[dismo]{domain}}, evaluated and predicted using
+#'  \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from
+#'  \pkg{dismo} package.
 #' }
 #' \item{Generalized Linear Model (GLM)}{
-#' Specified by \code{algo="glm"} runs a GLM with modeling presence and absences as a response variable following a binomial error distribution. It runs runs a step-wise model selection based on AIC both backward and forward considering all possible combinations of predictor variables in the rasterStack. In this package it is implemented using functions \code{glm} and \code{step} to fit a model and choose a model by AIC in a stepwise procedure. Model is evaluated and predicted using \code{\link[dismo]{evaluate}} function from \pkg{dismo} and \code{\link[raster]{predict}} function from \pkg{raster} package both with argument \code{type="response"} to return values in the scale of the response variable.
+#' Specified by \code{algo = "glm"} runs a GLM with modeling presences and
+#' absences as a response variable following a binomial error distribution. It
+#' runs a step-wise model selection based on AIC both backward and forward
+#' considering all possible combinations of predictor variables in the
+#' RasterStack. In this package it is implemented using functions \code{glm} and
+#'  \code{step} to fit a model and choose a model by AIC in a stepwise procedure.
+#'  Model is evaluated and predicted using \code{\link[dismo]{evaluate}}
+#'  function from \pkg{dismo} and \code{\link[raster]{predict}} function from
+#'  \pkg{raster} package both with argument \code{type = "response"} to return
+#'  values in the scale of the response variable.
 #' }
 #' \item{Mahalanobis}{
-#' Specified by \code{algo="mahal"} uses \code{\link[dismo]{mahal}} function from \pkg{dismo} package. Corresponds to a distribution model based on Mahalanobis distance, a measure of the distance between a point P and a distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this package it is implemented by the function \code{\link[dismo]{mahal}}, evaluated and predicted using \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also from \pkg{dismo} package.
+#' Specified by \code{algo = "mahal"} uses \code{\link[dismo]{mahal}} function
+#' from \pkg{dismo} package. Corresponds to a distribution model based on
+#' Mahalanobis distance, a measure of the distance between a point P and a
+#' distribution D \insertCite{mahalanobis_generalized_1936}{modleR}. In this
+#' package it is implemented by the function \code{\link[dismo]{mahal}},
+#' evaluated and predicted using \code{\link[dismo]{evaluate}} and
+#' \code{\link[dismo]{predict}} also from \pkg{dismo} package.
 #' }
 #' \item{Maximum Entropy (Maxent)}{
-#' Specified either by \code{algo="maxent"} or \code{algo="maxnet"} corresponding to implementation by \pkg{dismo} \insertCite{hijmans_dismo_2017}{modleR} and \pkg{maxnet} \insertCite{phillips_maxnet_2017}{modleR} packages respectivelly. Maxent is a machine learning method for modeling species distributions based in incomplete data allowing ENM with presence-only data \insertCite{phillips_maximum_2006}{modleR}. If \code{algo="maxent"} model is fitted by the function \code{\link[dismo]{maxent}}, evaluated and predicted using  \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also in \pkg{dismo} package. If \code{algo="maxnet"} model is fitted by the function \code{\link[maxnet]{maxnet}} from \pkg{maxnet} package, evaluated using \code{\link[dismo]{evaluate}} from \pkg{dismo} package with argument \code{type="logistic"} and predicted using \code{\link[raster]{predict}} function from \pkg{raster} package.
+#' Specified either by \code{algo = "maxent"} or \code{algo = "maxnet"}
+#' corresponding to implementation by \pkg{dismo}
+#' \insertCite{hijmans_dismo_2017}{modleR} and \pkg{maxnet}
+#' \insertCite{phillips_maxnet_2017}{modleR} packages respectively. Maxent is a
+#' machine learning method for modeling species distributions based in
+#' incomplete data allowing ENM with presence-only data
+#' \insertCite{phillips_maximum_2006}{modleR}. If \code{algo = "maxent"} model
+#' is fit by the function \code{\link[dismo]{maxent}}, evaluated and predicted
+#' using  \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also in
+#'  \pkg{dismo} package. If \code{algo = "maxnet"} model is fit by the function
+#'  \code{\link[maxnet]{maxnet}} from \pkg{maxnet} package, evaluated using
+#'  \code{\link[dismo]{evaluate}} from \pkg{dismo} package with argument
+#'  \code{type = "logistic"} and predicted using \code{\link[raster]{predict}}
+#'  function from \pkg{raster} package.
 #' }
 #' \item{Random Forest}{
-#' Specified by \code{algo="rf"} uses \code{\link[randomForest]{tuneRF}} function from \pkg{ramdomForest} package \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine learning regression based on decision trees. In this package uses \code{\link[randomForest]{tuneRF}} function with the optimal number of variables available for splitting at each tree node (i.e. mtry) found as set by parameter \code{doBest = TRUE}. Random Forest model is evaluated with \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
+#' Specified by \code{algo = "rf"} uses \code{\link[randomForest]{tuneRF}}
+#' function from \pkg{ramdomForest} package
+#' \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine
+#' learning regression based on decision trees. In this package uses
+#' \code{\link[randomForest]{tuneRF}} function with the optimal number of
+#' variables available for splitting at each tree node (i.e. mtry) found as set
+#' by parameter \code{doBest = TRUE}. Random Forest model is evaluated with
+#' \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with
+#' \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' \item{Support Vector Machines (SVM)}{
-#' Specified either by \code{algo = "svme"} or \code{algo = "svmk"} corresponding to implementation on \pkg{e1071} \insertCite{meyer_e1071_2017}{modleR} and \pkg{kernlab} \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectivelly. SVM are supervised learning models that use learning algorithms for classification and regression analysis. In \pkg{e1071} package SVM is implemented through function \code{\link[e1071]{best.tune}} with method set to \code{"svm"} which uses RBF-kernel (radial basis function kernel) for classification. In \pkg{kernlab} package SVM is implemented through function \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the default method \code{"kbfdot"}). We expect both implementations to differ only in performance. Both \code{svme} and \code{svmk} are evaluated with \code{\link[dismo]{evaluate}} function from dismo and predicted with \code{\link[raster]{predict}} function from \pkg{raster} package.
+#' Specified either by \code{algo = "svme"} or \code{algo = "svmk"}
+#' corresponding to implementation on \pkg{e1071}
+#' \insertCite{meyer_e1071_2017}{modleR} and \pkg{kernlab}
+#' \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectively. SVM are
+#'  supervised learning models that use learning algorithms for classification
+#'  and regression analysis. In \pkg{e1071} package SVM is implemented through
+#'  function \code{\link[e1071]{best.tune}} with method set to \code{"svm"}
+#'  which uses RBF-kernel (radial basis function kernel) for classification. In
+#'  \pkg{kernlab} package SVM is implemented through function
+#'  \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the
+#'  default method \code{"kbfdot"}). We expect both implementations to differ
+#'  only in performance. Both \code{svme} and \code{svmk} are evaluated with
+#'  \code{\link[dismo]{evaluate}} function from dismo and predicted with
+#'  \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' }
 #' @references
 #'     \insertAllCited{}
 #' @seealso \code{\link[dismo]{bioclim}}
 #' @seealso \code{\link[dismo]{domain}}
-#' @seealso \code{\link{do_any}}
+#' @seealso \code{\link{do_many}}
 #' @seealso \code{\link[dismo]{evaluate}}
 #' @seealso \code{\link[dismo]{maxent}}
 #' @seealso \code{\link[maxnet]{maxnet}}
@@ -80,22 +164,22 @@ do_any <- function(species_name,
   print_avoid <- intToUtf8(c(62, 33, 180, 60, 35, 63, 38, 47, 92, 46))
   if (grepl(avoid_chars, species_name) == TRUE) {
     species_name <- gsub(avoid_chars, "", species_name)
-    warning(cat(paste0('You entered a bad character (any in "',
-                        print_avoid,
-                        '") in the species name and we removed it for you')))
+    warning(cat(paste0('You entered a bad character (any in "', print_avoid, '")
+                       in the species name and we removed it for you')))
   }
-    partition.folder <-
-        paste(models_dir, species_name, "present", "partitions", sep = "/")
+  partition.folder <-
+    paste(models_dir, species_name, "present", "partitions", sep = "/")
     if (file.exists(partition.folder) == FALSE)
-        dir.create(partition.folder, recursive = TRUE)
-    setup.folder <-
-        paste(models_dir, species_name, "present", "data_setup", sep = "/")
+      dir.create(partition.folder, recursive = TRUE)
+  setup.folder <-
+    paste(models_dir, species_name, "present", "data_setup", sep = "/")
 
     # reads sdmdata from HD
     if (file.exists(paste(setup.folder, "sdmdata.csv", sep = "/"))) {
         sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"))
     } else {
-        stop("sdmdata.csv file not found, run setup_sdmdata() or check your folder settings")
+        stop("sdmdata.csv file not found, run setup_sdmdata() or check your
+             folder settings")
         }
 
     message(paste(algo, "\n"))
@@ -105,7 +189,8 @@ do_any <- function(species_name,
 
     if (length(setdiff(names(predictors), retained_predictors)) > 0) {
         message(paste("Remember a variable selection was performed", "\n",
-                      "retained variables:", paste(retained_predictors, collapse = "-"), "\n"))
+                      "retained variables:", paste(retained_predictors,
+                                                   collapse = "-"), "\n"))
     }
     predictors <- raster::subset(predictors, retained_predictors)
 
@@ -118,7 +203,7 @@ do_any <- function(species_name,
         group.all <- sdmdata[, i]
         group  <- group.all[sdmdata$pa == 1]
         bg.grp <- group.all[sdmdata$pa == 0]
-        occurrences <- sdmdata[sdmdata$pa == 1, c("lon", "lat")]#isto recria ocorrencias
+        occurrences <- sdmdata[sdmdata$pa == 1, c("lon", "lat")]#recria occs
         backgr      <- sdmdata[sdmdata$pa == 0, c("lon", "lat")]
         #para cada grupo
         for (g in setdiff(unique(group), 0)) {
@@ -130,15 +215,17 @@ do_any <- function(species_name,
                 pres_train <- occurrences[group == g, ]
             pres_test  <- occurrences[group == g, ]
             backg_test <- backgr[bg.grp == g, ]
-            sdmdata_train <- sdmdata[group.all != g, ]#presences and absences
-            envtrain <-  sdmdata_train[, names(predictors)] #presences and absences
+            sdmdata_train <- sdmdata[group.all != g, ]
+            envtrain <-  sdmdata_train[, names(predictors)]
 
             message("fitting models")
             if (algo == "bioclim") mod <- dismo::bioclim(predictors, pres_train)
             if (algo == "mahal")   mod <- dismo::mahal(predictors, pres_train)
             if (algo == "domain")  mod <- dismo::domain(predictors, pres_train)
-            if (algo == "maxent")  mod <- dismo::maxent(envtrain, sdmdata_train$pa)
-            if (algo == "maxnet")  mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
+            if (algo == "maxent")
+                mod <- dismo::maxent(envtrain, sdmdata_train$pa)
+            if (algo == "maxnet")
+                mod <- maxnet::maxnet(sdmdata_train$pa, envtrain)
             if (algo == "glm") {
                 null.model <- glm(sdmdata_train$pa ~ 1, data = envtrain,
                                   family = "binomial")
@@ -148,14 +235,11 @@ do_any <- function(species_name,
                             direction = "both", trace = FALSE)
             }
             if (algo == "svmk") {
-
                 mod <- kernlab::ksvm(sdmdata_train$pa ~ ., data = envtrain)
-
             }
             if (algo == "svme") {
                 sv <- 1
                 while (!exists("mod")) {
-
                     mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
                                             data = envtrain)
                     sv <- sv + 1
@@ -174,7 +258,7 @@ do_any <- function(species_name,
                     prop <- pres_train_n:abs_train_n
                     aus.eq <- sample(prop[-1], pres_train_n)
                     envtrain.eq <- envtrain[c(1:pres_train_n, aus.eq), ]
-                    sdmdata_train.eq <- sdmdata_train[c(1:pres_train_n, aus.eq), ]
+                    sdmdata_train.eq <- sdmdata_train[c(1:pres_train_n, aus.eq),]
                 } else {
                     envtrain.eq <- envtrain
                     sdmdata_train.eq <- sdmdata_train
@@ -236,7 +320,6 @@ do_any <- function(species_name,
 
             message("evaluating the models")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
-            #names(th_table) <- paste0(names(th_table), "_th")
             mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
             #PROC kuenm
             proc <- kuenm::kuenm_proc(occ.test = pres_test,
@@ -261,7 +344,6 @@ do_any <- function(species_name,
 
             # threshold dependent values
             #which threshold? any value from function threshold() in dismo
-            #th_mod <- eval_mod@t[which.max(eval_mod@TPR + eval_mod@TNR)]#tss?
             th_mod <- th_table[, threshold]
             th_table$threshold <- as.character(threshold)
             #confusion matrix
@@ -279,7 +361,8 @@ do_any <- function(species_name,
             th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
             th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
             th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
-            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR + conf@FNR + conf@FPR)
+            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR +
+                                                            conf@FNR + conf@FPR)
             th_table$KAPPA.value <- conf@kappa
 
             #confusion matrix
@@ -371,17 +454,22 @@ do_any <- function(species_name,
                         projection.folder <- paste0(models_dir, "/", species_name,
                                                     "/", name_proj, "/partitions")
                         if (file.exists(projection.folder) == FALSE)
-                            dir.create(paste0(projection.folder), recursive = TRUE, showWarnings = FALSE)
-                        pred_proj <- raster::stack(list.files(proje, full.names = TRUE))
+                            dir.create(paste0(projection.folder),
+                                       recursive = TRUE, showWarnings = FALSE)
+                        pred_proj <- raster::stack(list.files(proje,
+                                                              full.names = TRUE))
                         pred_proj <- raster::subset(pred_proj, names(predictors))
                         message(name_proj)
 
                         message("projecting models")
                         if (algo == "brt") {
-                            mod_proj_cont <- dismo::predict(pred_proj, mod, n.trees = n.trees)
+                            mod_proj_cont <- dismo::predict(pred_proj,
+                                                            mod,
+                                                            n.trees = n.trees)
                         }
                         if (algo == "glm") {
-                            mod_proj_cont <- raster::predict(pred_proj, mod, type = "response")
+                            mod_proj_cont <- raster::predict(pred_proj, mod,
+                                                             type = "response")
                         }
                         if (algo %in% c("bioclim",
                                         "domain",

@@ -2,9 +2,10 @@
 #'
 #' This function calculates the euclidean distance from each pixel in a
 #' RasterStack of predictor variables to the environmental centroid of a
-#' distribution or the minimum distance from each pixel to any occurrence point
+#' distribution (\code{centroid}) or the minimum distance from each pixel to
+#' any of the occurrence points (\code{mindist})
 #' @inheritParams setup_sdmdata
-#' @param algo Character. Either "centroid" or "mindist"
+#' @param env_dist Character. Either \code{"centroid"} or \code{"mindist"}
 #' @param ... other parameters in raster::writeRaster()
 #' @param filename Optional. The raster that will be created in disk
 #' @importFrom stats median
@@ -15,11 +16,11 @@
 
 euclidean <- function(predictors,
                       occurrences,
-                      algo = "centroid",
+                      env_dist = "centroid",
                       #probs,
                       filename = "",
                       ...) {
-  if (!algo %in% c("centroid", "mindist")) {
+  if (!env_dist %in% c("centroid", "mindist")) {
     stop('Algorithm must be either "centroid" or "mindist"')
   }
     x.st <- raster::scale(predictors)
@@ -51,7 +52,7 @@ euclidean <- function(predictors,
     if (todisk) {
         for (i in 1:bs$n) {
             v <- getValues(x.st, row = bs$row[i], nrows = bs$nrows[i])
-            if (algo == "centroid") {
+            if (env_dist == "centroid") {
             dist.vals <- apply(v, 1, FUN = function(x) {
                 d <- dist(rbind(centroid.val, x))
                 vals <- (-d) + 1
@@ -61,7 +62,7 @@ euclidean <- function(predictors,
                 return(vals)
             })
             }
-            if (algo == "mindist") {
+            if (env_dist == "mindist") {
             dist.vals <- apply(v, 1, FUN = function(x) {
                 mindata <- rbind(x, pres.vals)
                 d <- min(as.matrix(dist(mindata))[1,][-1], na.rm = TRUE)
@@ -79,7 +80,7 @@ euclidean <- function(predictors,
     } else {
         for (i in 1:bs$n) {
             v <- getValues(x.st, row = bs$row[i], nrows = bs$nrows[i])
-            if (algo == "centroid") {
+            if (env_dist == "centroid") {
                 dist.vals <- apply(v, 1, FUN = function(x) {
                     d <- dist(rbind(centroid.val, x))
                     vals <- (-d) + 1
@@ -89,9 +90,10 @@ euclidean <- function(predictors,
                     return(vals)
                 })
             }
-            if (algo == "mindist") {
+            if (env_dist == "mindist") {
                 dist.vals <- apply(v, 1, FUN = function(x) {
-                    if (complete.cases(x) == TRUE) { #aqui dá um warning porque só está vendo se o primeiro raster do stack
+                  #aqui dá um warning porque só está vendo se o primeiro raster
+                    if (complete.cases(x) == TRUE) {
                         mindata <- rbind(x, pres.vals)
                         d <- min(as.matrix(dist(mindata))[1,][-1], na.rm = TRUE)
                         } else {

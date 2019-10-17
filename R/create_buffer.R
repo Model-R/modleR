@@ -126,7 +126,7 @@ create_buffer <- function(species_name,
 
         env.buffer <- euclidean(predictors = predictors,
                                 occurrences = occurrences,
-                                algo = env_distance)
+                                env_dist = env_distance)
         q <- quantile(raster::getValues(env.buffer),
                       max_env_dist, names = FALSE, na.rm = TRUE)
         env.buffer[env.buffer <= q] <- NA
