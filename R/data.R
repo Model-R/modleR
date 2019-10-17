@@ -1,9 +1,10 @@
 #' Ocurrence points for four species in the Brazilian Atlantic Forest
 #'
-#' A list with four elements containing occurrence points from four species: \emph{Abarema langsdorfii},
-#' \emph{Eugenia florida}, \emph{Leandra carassana} and \emph{Ouratea semiserrata}.
-#' Each element contains three variables: sp species name separated by _, lat contains Latitude information and lon contains
-#' Longitude information.
+#' A list with four elements containing occurrence points for four species:
+#' \emph{Abarema langsdorfii}, \emph{Eugenia florida}, \emph{Leandra carassana}
+#' and \emph{Ouratea semiserrata}.
+#' Each element contains three variables: \code{sp} species name separated by _,
+#' \code{lat} and \code{lon} contain Latitude and Longitude information.
 #'
 #' @format A list of 4:
 #' \describe{
@@ -21,5 +22,6 @@
 
 #' Predictor variables
 #'
-#' @format A RasterStack with 6 predictor variables issued from a PCA, at 10min resolution
+#' @format A RasterStack with 6 predictor variables issued from a PCA of the 19
+#' Worldclim 1.0 variables cut for South America, at 10min resolution
 "example_vars"

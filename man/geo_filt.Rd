@@ -2,7 +2,7 @@
 % Please edit documentation in R/geo_filt.R
 \name{geo_filt}
 \alias{geo_filt}
-\title{Excludes occurrence points within a geographic distance}
+\title{Excludes occurrence points within a given geographic distance}
 \usage{
 geo_filt(occurrences, lon = "lon", lat = "lat", min_distance = 10)
 }
@@ -14,13 +14,17 @@ See \code{coordenadas} as an example.}
 
 \item{lat}{The name of the latitude column. Defaults to "lat".}
 
-\item{min_distance}{numeric. Minimum distance between points in the unit of the predictor raster.}
+\item{min_distance}{numeric. Minimum distance between points in the unit of
+the predictor raster. This value will be used to create a RaserStack object
+with a \code{min_distance} resolution, from which the redundant occurences
+will be excluded}
 }
 \value{
-Table of occurrence points with minimum distance indicated in min.distance
+Dataframe of the occurrence points thinned to have the minimum
+distance indicated in \code{min_distance} between them
 }
 \description{
-Excludes occurrence points within a geographic distance
+Excludes occurrence points within a given geographic distance
 }
 \references{
 Varela, S., Anderson, R. P., García-Valdés, R., &
@@ -30,4 +34,6 @@ Ecography, 37(11), 1084-1091. doi:10.1111/j.1600-0587.2013.00441.x
 }
 \seealso{
 \code{\link[dismo]{gridSample}}
+
+\code{\pkg[spThin]}
 }

@@ -15,9 +15,10 @@
 coordenadas
 }
 \description{
-A list with four elements containing occurrence points from four species: \emph{Abarema langsdorfii},
-\emph{Eugenia florida}, \emph{Leandra carassana} and \emph{Ouratea semiserrata}.
-Each element contains three variables: sp species name separated by _, lat contains Latitude information and lon contains
-Longitude information.
+A list with four elements containing occurrence points for four species:
+\emph{Abarema langsdorfii}, \emph{Eugenia florida}, \emph{Leandra carassana}
+and \emph{Ouratea semiserrata}.
+Each element contains three variables: \code{sp} species name separated by _,
+\code{lat} and \code{lon} contain Latitude and Longitude information.
 }
 \keyword{datasets}

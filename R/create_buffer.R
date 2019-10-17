@@ -3,32 +3,51 @@
 #' @inheritParams setup_sdmdata
 #' @inheritParams euclidean
 #' @param buffer_type Character string indicating whether the buffer should be
-#' calculated using the "mean", "median", "maximum" distance between occurrence
-#' points, or an absolute geographic "distance". If NULL pseudoabsences are randomly generated in the entire area
-#' of the RasterStack of predictor variables.
-#' filled with predictors. If set to "distance", "dist_buf" needs to
-#' be specified. If set to "user", "buffer_shape" needs to be specified.
-#' @param dist_buf Defines the width of the buffer. Needs to be specified if buffer_type = "distance".
-#' Distance unit is in the same unit of the RasterStack of predictor variables
-#' @param env_buffer Logical. Should an euclidean environmental filter be executed? If TRUE, \code{"env_distance"} and \code{"max_env_dist"} need to be specified.
-#' @param env_distance Character. Type of environmental distance \code{"centroid", "mindist"}. The default is \code{"centroid"}.
-#' @param max_env_dist Numeric. Quantile set as maximum environmental distance. Needs to be specified if env_buffer = TRUE
-#' @param dist_min Optional, a distance for the exclusion buffer
-#' Distance unit is in the same unit of the RasterStack of predictor variables
-#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences will be generated.
-#' Needs to be specified if buffer_type = "user"
-#' @param write_buffer Logical. Should the resulting raster file be written? defaults to FALSE
+#' calculated using the \code{"mean"}, \code{"median"}, \code{"maximum"}
+#' distance between occurrence points, or an absolute geographic
+#' \code{"distance"}. If set to \code{"user"}, \code{"buffer_shape"} needs to be
+#' specified. If NULL no distance buffer is applied. If set to \code{"distance"},
+#' \code{"dist_buf"} needs to be specified.
+#' @param dist_buf Defines the width of the buffer. Needs to be specified if
+#' \code{buffer_type = "distance"}. Distance unit is in the same unit of the
+#' RasterStack of predictor variables.
+#' @param env_buffer Logical. Should an euclidean environmental filter be
+#' applied? If TRUE, \code{"env_distance"} and \code{"max_env_dist"} need to be
+#' specified.
+#' @param env_distance Character. Type of environmental distance, any in
+#' \code{"centroid", "mindist"}. Defaults to \code{"centroid"}, the distance of
+#' each raster pixel to the environmental centroid of the distribution. When set
+#'  to \code{"mindist"}, the minimum distance of each raster pixel to any of the
+#'  occurrence points is calculated. Needs to be specified if \code{env_buffer =
+#'   T}. A maximum value needs to be specified (\code{max_env_dist}).
+#' @param max_env_dist Numeric. Since large negative values can arise
+#'  during the calculation of the euclidean environmental distance, this
+#'  parameter sets a maximum value to cut the environmental distance buffer.
+#'  Expressed in quantiles, from 0: all values to 1: no values, defaults to 0.5
+#'  the median value.Needs to be specified if \code{env_buffer = TRUE}
+#' @param dist_min Optional, numeric. A distance for the exclusion of areas too
+#' close from the occurrence points. Distance unit is in the same unit of the
+#' RasterStack of predictor variables.
+#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences
+#' will be generated. Needs to be specified if \code{buffer_type = "user"}.
+#' @param write_buffer Logical. Should the resulting RasterStack be written?
+#' Defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @return A buffer around the occurrence points
-#' @details It will return a raster object with the same resolution and extent, and cropped by the predictors stack.
-#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009). Selecting pseudo-absence data for presence-only distribution modeling: How far should you stray from what you know? Ecological Modelling, 220(4), 589-594. doi:10.1016/j.ecolmodel.2008.11.010
+#' @details It will return a RasterStack with the same resolution and extent,
+#' and cropped by the predictors stack.
+#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
+#' Selecting pseudo-absence data for presence-only distribution modeling: How
+#' far should you stray from what you know? Ecological Modelling, 220(4),
+#' 589-594. doi:10.1016/j.ecolmodel.2008.11.010
 #' @seealso \code{\link[raster]{buffer}}
 #' @seealso \code{\link[dismo]{randomPoints}}
 #' @examples
 #' library(raster)
 #' sp <- names(coordenadas)[1]
 #' occs <- coordenadas[[1]]
-#' buf <- create_buffer(species_name = sp, occurrences = occs, predictors = example_vars)
+#' buf <- create_buffer(species_name = sp, occurrences = occs,
+#' predictors = example_vars)
 #' plot(buf)
 #'
 #' @import raster
@@ -59,16 +78,20 @@ create_buffer <- function(species_name,
     }
     if (buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
             if (buffer_type == "user") {
-                if (missing(buffer_shape) | !class(buffer_shape) %in% c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
-                    stop("if buffer_type == 'user', buffer_shape needs to be specified and to be a shapefile")
+                if (missing(buffer_shape) | !class(buffer_shape) %in%
+                    c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
+                    stop("if buffer_type == 'user', buffer_shape needs to be
+                         specified and to be a shapefile")
                 }
-                if (class(buffer_shape) %in% c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
+                if (class(buffer_shape) %in%
+                    c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
                     buffer.shape <- buffer_shape
                 }
             }
         if (buffer_type %in% c("distance", "mean", "median", "maximum")) {
             if (buffer_type %in% c("distance")) {
-                if (missing(dist_buf)) stop("dist_buf must be set when using a distance buffer")
+                if (missing(dist_buf)) stop("dist_buf must be set when using a
+                                            distance buffer")
                 else dist.buf <- dist_buf
             }
         if (buffer_type %in% c("mean", "median", "maximum")) {
@@ -94,9 +117,11 @@ create_buffer <- function(species_name,
     }
     if (env_buffer == TRUE) {
         if (missing(env_distance))
-            stop(paste("The type of environmental distance ('centroid', 'mindist') must be specified"))
+            stop(paste("The type of environmental distance ('centroid',
+                       'mindist') must be specified"))
         if (missing(max_env_dist))
-            stop(paste("A quantile for maximum environmental distance must be specified"))
+            stop(paste("A quantile for maximum environmental distance must be
+                       specified"))
         message("Applying environmental filter")
 
         env.buffer <- euclidean(predictors = predictors,
@@ -104,10 +129,9 @@ create_buffer <- function(species_name,
                                 algo = env_distance)
         q <- quantile(raster::getValues(env.buffer),
                       max_env_dist, names = FALSE, na.rm = TRUE)
-        env.buffer[env.buffer <= q] <- NA #era diferente y el sample no funcionaba
+        env.buffer[env.buffer <= q] <- NA
         # we create a shapefile so it can be masked like the other types
         env.shape <- raster::rasterToPolygons(env.buffer, dissolve = TRUE)
-        #env.shape <- env.shape[env.shape@data$layer == 1,]#no need anymore
         r_buffer <- raster::crop(r_buffer, env.shape)
         r_buffer <- raster::mask(r_buffer, env.shape)
     }
@@ -126,7 +150,8 @@ create_buffer <- function(species_name,
     }
 
     if (write_buffer) {
-        setup.folder <- paste0(models_dir, "/", species_name, "/present", "/data_setup")
+        setup.folder <- paste0(models_dir, "/", species_name, "/present",
+                               "/data_setup")
         if (file.exists(setup.folder) == FALSE)
             dir.create(setup.folder, recursive = TRUE)
         writeRaster(r_buffer, filename = paste0(setup.folder, "/buffer"),
@@ -134,4 +159,3 @@ create_buffer <- function(species_name,
     }
     return(r_buffer)
 }
-

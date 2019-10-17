@@ -21,7 +21,9 @@ See \code{coordenadas} as an example.}
 \item{...}{other parameters in raster::writeRaster()}
 }
 \description{
-This function calculates the euclidean distance from each pixel in a RasterStack of predictor variables to the environmental centroid of a distribution or the minimum distance from each pixel to any occurrence point
+This function calculates the euclidean distance from each pixel in a
+RasterStack of predictor variables to the environmental centroid of a
+distribution or the minimum distance from each pixel to any occurrence point
 }
 \examples{
 centr <- euclidean(example_vars, occurrences = coordenadas[[1]][, c(2,3)])

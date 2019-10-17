@@ -1,6 +1,8 @@
 #' Calculates environmental euclidean distances to the occurrences of a species
 #'
-#' This function calculates the euclidean distance from each pixel in a RasterStack of predictor variables to the environmental centroid of a distribution or the minimum distance from each pixel to any occurrence point
+#' This function calculates the euclidean distance from each pixel in a
+#' RasterStack of predictor variables to the environmental centroid of a
+#' distribution or the minimum distance from each pixel to any occurrence point
 #' @inheritParams setup_sdmdata
 #' @param algo Character. Either "centroid" or "mindist"
 #' @param ... other parameters in raster::writeRaster()
@@ -15,7 +17,7 @@ euclidean <- function(predictors,
                       occurrences,
                       algo = "centroid",
                       #probs,
-                      filename = '',
+                      filename = "",
                       ...) {
   if (!algo %in% c("centroid", "mindist")) {
     stop('Algorithm must be either "centroid" or "mindist"')

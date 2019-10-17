@@ -4,7 +4,8 @@
 \name{example_vars}
 \alias{example_vars}
 \title{Predictor variables}
-\format{A RasterStack with 6 predictor variables issued from a PCA, at 10min resolution}
+\format{A RasterStack with 6 predictor variables issued from a PCA of the 19
+Worldclim 1.0 variables cut for South America, at 10min resolution}
 \usage{
 example_vars
 }
