@@ -12,28 +12,32 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   write_map = F, scale_models = TRUE, ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name. Because species name will be used as
-a directory name, avoid non-ASCII characters, spaces and punctuation marks.
-Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example}
+\item{species_name}{A character string with the species name. Because species
+name will be used as a directory name, avoid non-ASCII characters, spaces and
+punctuation marks.
+Recommendation is to adopt "Genus_species" format. See names in
+\code{\link{coordenadas}} as an example}
 
-\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
-See \code{coordenadas} as an example.}
+\item{occurrences}{A data frame with occurrence data. Data must have at least
+ columns with latitude and longitude values of species occurrences.
+See \code{\link{coordenadas}} as an example}
 
 \item{lon}{The name of the longitude column. Defaults to "lon"}
 
 \item{lat}{The name of the latitude column. Defaults to "lat"}
 
-\item{models_dir}{Folder path to save the output files}
+\item{models_dir}{Folder path to save the output files. Defaults to
+"\code{./models}"}
 
 \item{final_dir}{Character. Name of the folder to save the output files.
 A subfolder will be created.}
 
 \item{ensemble_dir}{Character string, name of the folder to save the output
-files. A subfolder will be created. Defaults to "ensemble".}
+files. A subfolder will be created. Defaults to "\code{ensemble}"}
 
 \item{proj_dir}{Character. The name of the subfolder with the projection.
 Defaults to "present" but can be set according to the other projections (i.e.
-to execute the function in projected models).}
+to execute the function in projected models)}
 
 \item{which_final}{Which \code{final_model} will be used? Currently it can
 be:
@@ -57,22 +61,22 @@ be:
 }}
 
 \item{consensus}{Logical. If \code{TRUE} a consensus between the algorithms
-will be applied.}
+will be applied}
 
 \item{consensus_level}{Which proportion of models will be kept when creating
-\code{bin_consensus} (binary).}
+\code{bin_consensus} (binary)}
 
 \item{write_ensemble}{Logical. If \code{TRUE} writes png files of the
-ensemble models.}
+ensemble models}
 
 \item{write_occs}{Logical. If \code{TRUE} writes the occurrence points on the
-png file of the ensemble models.}
+png file of the ensemble model}
 
 \item{write_map}{Logical. If \code{TRUE} adds a map contour to the png file
-of the ensemble models.}
+of the ensemble models}
 
 \item{scale_models}{Logical. Whether input models should be scaled between 0
-and 1.}
+and 1}
 
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}}.}
 }

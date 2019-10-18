@@ -2,30 +2,38 @@
 % Please edit documentation in R/select_variables.R
 \name{select_variables}
 \alias{select_variables}
-\title{Automatically selects environmental variables from a stack}
+\title{Automatically selects environmental variables according to an upper
+correlation value}
 \usage{
 select_variables(predictors, buffer = NULL, cutoff = 0.8,
   percent = 0.8)
 }
 \arguments{
-\item{predictors}{A Raster or RasterStack object with the environmental raster layers}
+\item{predictors}{A Raster or RasterStack object with the environmental
+raster layers}
 
-\item{buffer}{Raster specified by the user or output from create_buffer()}
+\item{buffer}{Raster specified by the user or output from
+\code{\link{create_buffer}}}
 
-\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer.
+\item{cutoff}{Cutoff value of correlation between variables to exclude
+environmental layers.
 Default is to exclude environmental variables with correlation > 0.8}
 
-\item{percent}{percentage of the raster values to be sampled to calculate the correlation.
-Default is to 0.8 but should be useful with high resolution rasters}
+\item{percent}{percentage of the raster values to be sampled to calculate the
+ correlation.
+Default is 0.8 but setting a lower value should be useful when working with
+ high resolution rasters}
 }
 \value{
 A RasterStack of independent environmental variables based on a
  specific cutoff
 }
 \description{
-This function takes a stack of environmental variables and the calibration area.
-The function calculates Pearson correlations between all environmental variables and
-returns a new stack with uncorrelated variables based on a cutoff.
+This function takes a RasterStack of environmental variables and the ENM
+ calibration area, it calculates Pearson correlations between all
+ environmental variables within the calibration area and returns a new
+ RasterStack with the largest subset of uncorrelated variables given a
+ specific cutoff.
 }
 \examples{
 
@@ -34,12 +42,16 @@ coord1sp <- coordenadas[[1]]
 ## selecting only columns with longitude and latitude
 occ <- coord1sp[,c(2,3)]
 ## using coord1sp to create buffer w/ mean distance between points
-buf <- create_buffer("foo", occ, predictors = example_vars)
+buf <- create_buffer("foo",
+                     occ,
+                     predictors = example_vars)
 ## running select_variables w/ output from create_buffer
-select_variables(predictors = example_vars, buffer = buf)
+select_variables(predictors = example_vars,
+                 buffer = buf)
 
 ## selecting variables for the entire area with a different cutoff
-select_variables(example_vars, cutoff = 0.5)
+select_variables(example_vars,
+                 cutoff = 0.5)
 }
 \seealso{
 \code{\link[modleR]{create_buffer}}

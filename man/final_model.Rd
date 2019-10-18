@@ -13,44 +13,46 @@ final_model(species_name, algorithms = NULL, weight_par = NULL,
   write_final = TRUE, ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name. Because species name will be used as
-a directory name, avoid non-ASCII characters, spaces and punctuation marks.
-Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example}
+\item{species_name}{A character string with the species name. Because species
+name will be used as a directory name, avoid non-ASCII characters, spaces and
+punctuation marks.
+Recommendation is to adopt "Genus_species" format. See names in
+\code{\link{coordenadas}} as an example}
 
 \item{algorithms}{Which algorithms will be processed. If no name is given it
-will process all algorithms present in the evaluation files.}
+will process all algorithms present in the evaluation files}
 
 \item{weight_par}{Which performance statistic should be used to weigh the
-partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used.}
+partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used}
 
 \item{select_partitions}{Logical. If TRUE only partitions above a particular
-threshold value are selected.}
+threshold value are selected}
 
 \item{cut_level}{Which selecting threshold will be used to cut the mean
 models. Default is set to "spec_sens" but any \pkg{dismo} threshold (see
 function \code{\link[dismo]{threshold}}) can be used: "kappa", "no_omission",
- "prevalence", "equal_sens_spec", "sensitivity".}
+ "prevalence", "equal_sens_spec", "sensitivity"}
 
 \item{scale_models}{Logical. Whether input models should be scaled between 0
-and 1.}
+and 1}
 
 \item{select_par}{Which performance statistic should be used to select the
 partitions. Defaults to NULL but either \code{"AUC"} or \code{"TSS"} can be
-used.}
+used}
 
-\item{select_par_val}{Threshold to select models from TSS values.}
+\item{select_par_val}{Threshold to select models from TSS values}
 
 \item{consensus_level}{Which proportion of models will be kept when creating
-\code{bin_consensus} (binary).}
+\code{bin_consensus} (binary)}
 
-\item{models_dir}{Character. Folder path where the input files are located.}
+\item{models_dir}{Character. Folder path where the input files are located}
 
 \item{final_dir}{Character. Name of the folder to save the output files.
 A subfolder will be created.}
 
 \item{proj_dir}{Character. The name of the subfolder with the projection.
 Defaults to "present" but can be set according to the other projections (i.e.
-to execute the function in projected models).}
+to execute the function in projected models)}
 
 \item{which_models}{Which \code{final_model} will be used? Currently it can
 be:
@@ -74,16 +76,16 @@ be:
 }}
 
 \item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
-should be calculated.}
+should be calculated}
 
 \item{write_final}{Logical. If \code{TRUE}, writes png files of the final
-models.}
+models}
 
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
 \value{
 A set of ecological niche models (.tif files) and figures (optional)
-written in the \code{final_dir} subfolder.
+written in the \code{final_dir} subfolder
 }
 \description{
 This function reads the models generated either by \code{\link{do_any}} or
@@ -101,8 +103,9 @@ calculated.
 # run setup_sdmdata
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord,
-example_vars)
+sp_setup <- setup_sdmdata(species_name = sp,
+                          occurrences = sp_coord,
+                          example_vars)
 
 # run do_any
 sp_bioclim <- do_any(species_name = sp,

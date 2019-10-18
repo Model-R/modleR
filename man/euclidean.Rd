@@ -8,16 +8,18 @@ euclidean(predictors, occurrences, env_dist = "centroid",
   filename = "", ...)
 }
 \arguments{
-\item{predictors}{A Raster or RasterStack object with the environmental raster layers}
+\item{predictors}{A Raster or RasterStack object with the environmental
+raster layers}
 
-\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
-See \code{coordenadas} as an example.}
+\item{occurrences}{A data frame with occurrence data. Data must have at least
+ columns with latitude and longitude values of species occurrences.
+See \code{\link{coordenadas}} as an example}
 
-\item{env_dist}{Character. Either \code{"centroid"} or \code{"mindist"}}
+\item{env_dist}{Character. Either "\code{centroid}" or "\code{mindist}"}
 
 \item{filename}{Optional. The raster that will be created in disk}
 
-\item{...}{other parameters in raster::writeRaster()}
+\item{...}{other parameters in \code{\link[raster]{writeRaster}}}
 }
 \description{
 This function calculates the euclidean distance from each pixel in a
@@ -26,6 +28,8 @@ distribution (\code{centroid}) or the minimum distance from each pixel to
 any of the occurrence points (\code{mindist})
 }
 \examples{
-centr <- euclidean(example_vars, occurrences = coordenadas[[1]][, c(2,3)])
+sp_coord <- coordenadas[[1]][, c("lon", "lat")]
+centr <- euclidean(example_vars,
+                   occurrences = sp_coord)
 raster::plot(centr)
 }

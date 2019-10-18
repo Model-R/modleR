@@ -4,7 +4,7 @@
 \alias{do_any}
 \alias{do_many}
 \alias{model_fit}
-\title{Ecological niche model fit, prediction and evaluation using several
+\title{Ecological niche model fit, prediction and evaluation using one or several
 algorithms}
 \usage{
 do_any(species_name, predictors, models_dir = "./models",
@@ -18,18 +18,23 @@ do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   svmk = FALSE, svme = FALSE, brt = FALSE, ...)
 }
 \arguments{
-\item{species_name}{A character string with the species name. Because species name will be used as
-a directory name, avoid non-ASCII characters, spaces and punctuation marks.
-Recommendation is to adopt "Genus_species" format. See names in \code{\link{coordenadas}} as an example}
+\item{species_name}{A character string with the species name. Because species
+name will be used as a directory name, avoid non-ASCII characters, spaces and
+punctuation marks.
+Recommendation is to adopt "Genus_species" format. See names in
+\code{\link{coordenadas}} as an example}
 
-\item{predictors}{A Raster or RasterStack object with the environmental raster layers}
+\item{predictors}{A Raster or RasterStack object with the environmental
+raster layers}
 
-\item{models_dir}{Folder path to save the output files}
+\item{models_dir}{Folder path to save the output files. Defaults to
+"\code{./models}"}
 
-\item{algo}{The algorithm to be fit \code{c("bioclim", "brt", "domain",
-"glm", "maxent", "mahal", "svme", "svmk", "rf")}.}
+\item{algo}{The algorithm to be fit: "\code{bioclim}", "\code{brt}",
+"\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
+"\code{svme}", "\code{svmk}", "\code{rf}"}
 
-\item{project_model}{Logical, whether to perform a projection.}
+\item{project_model}{Logical, whether to perform a projection}
 
 \item{proj_data_folder}{Path to directory with projections containing one or
 more folders with the projection datasets (e.g. "./env/proj/proj1").
@@ -37,82 +42,82 @@ Projection diretctory should only contain raster files corresponding to the
 environmental variables. If more than one projection, each projection should
 be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 equivalent raster files at diferent subdirectories must have the same names
-(e.g. "./env/proj/proj1/layer1.asc" and "./env/proj/proj2/layer1.asc").}
+(e.g. "./env/proj/proj1/layer1.asc" and "./env/proj/proj2/layer1.asc")}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models.}
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 
-\item{write_png}{Logical, whether png files will be written.}
+\item{write_png}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)
-should be written.}
+should be written}
 
 \item{threshold}{Character string indicating threshold (cut-off) to transform
 model predictions to a binary score as in \code{\link[dismo]{threshold}}:
 "kappa", "spec_sens", "no_omission", "prevalence", "equal_sens_spec",
-"sensitivity". Default value is "spec_sens".}
+"sensitivity". Default value is "spec_sens"}
 
-\item{conf_mat}{Logical, whether confusion tables should be written in the HD.}
+\item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 
 \item{equalize}{Logical, whether the number of presences and absences should be
-equalized in randomForest and brt.}
+equalized in randomForest and brt}
 
 \item{proc_threshold}{Numeric, value from 0 to 100 that will be used as (E)
 for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is
-\code{proc_threshold = 5}.}
+\code{proc_threshold = 5}}
 
-\item{...}{Other arguments from \code{\link[kuenm]{kuenm_proc}}.}
+\item{...}{Other arguments from \code{\link[kuenm]{kuenm_proc}}}
 
 \item{bioclim}{Execute bioclim algorithm from the \pkg{dismo} implementation
-with \code{\link[dismo]{bioclim}} function.}
+with \code{\link[dismo]{bioclim}} function}
 
 \item{domain}{Execute domain from the \pkg{dismo} implementation with
-\code{\link[dismo]{domain}} function.}
+\code{\link[dismo]{domain}} function}
 
 \item{glm}{Execute GLM as suggested by the \pkg{dismo} documentation with
-\code{\link{glm}} and \code{\link{step}}.}
+\code{\link{glm}} and \code{\link{step}}}
 
 \item{mahal}{Execute Mahalanobis distance from the \pkg{dismo} implementation
-with \code{\link[dismo]{mahal}}.}
+with \code{\link[dismo]{mahal}}}
 
 \item{maxent}{Execute Maxent algorithm from the \pkg{dismo} implementation
-with \code{\link[dismo]{maxent}} function.}
+with \code{\link[dismo]{maxent}} function}
 
 \item{maxnet}{Execute Maxent algorithm from the \pkg{maxnet} implementation
-with \code{\link[maxnet]{maxnet}} function.}
+with \code{\link[maxnet]{maxnet}} function}
 
-\item{rf}{Execute Random forests algorithm from \pkg{randomForest} package
-with function\code{\link[randomForest]{tuneRF}} as suggested by the
-\pkg{dismo} documentation.}
+\item{rf}{Execute Random forest algorithm from \pkg{randomForest} package
+with function \code{\link[randomForest]{tuneRF}} as suggested by the
+\pkg{dismo} documentation}
 
 \item{svmk}{Execute Support Vector Machines (SVM) algorithm from
-\pkg{kernlab} package with \code{\link[kernlab]{ksvm}} function.}
+\pkg{kernlab} package with \code{\link[kernlab]{ksvm}} function}
 
 \item{svme}{Execute Support Vector Machines (SVM) algorithm from \pkg{e1071}
-package with \code{\link[e1071]{best.tune}} function.}
+package with \code{\link[e1071]{best.tune}} function}
 
 \item{brt}{Execute Boosted Regression Trees with
-\code{\link[dismo]{gbm.step}} from \pkg{dismo}.}
+\code{\link[dismo]{gbm.step}} from \pkg{dismo}}
 }
 \value{
 Writes on disk a .tif model for each partition and a .csv file with
-evaluation statistics (TSS, AUC, etc).
+evaluation statistics (TSS, AUC, etc)
 }
 \description{
-\code{\link{do_any}} reads the output from \code{\link{setup_sdmdata}} and
+\code{do_any} reads the output from \code{\link{setup_sdmdata}} and
 computes ecological niche models for a species based on an algorithm
-specified by the user. It fits the model, calculates the predicted values and
- basic statistics for model evaluation. in addition to commonly adopted
- metrics such as AUC and TSS, this package also calculates partial ROC (pROC)
- (for details on model evaluation see
+specified by the user. It fits the model, predicts it into the current
+environmental layers and calculates basic statistics for model evaluation. In
+addition to commonly adopted metrics such as AUC and TSS, this package also
+calculates partial ROC (
+\insertCite{peterson_rethinking_2008, cobos_kuenm_2019}{modleR}). For details on model evaluation see
  \insertCite{phillips_maximum_2006;textual}{modleR} and
  \insertCite{peterson_ecological_2011;textual}{modleR}. \code{do_any}
  performs one algorithm at a time. \code{do_many} runs internally
- \code{do_any} and can be used to run multiple algorithms at a time. See
- \strong{Details} for a description of how each algorithm is implemented.
+ \code{do_any} and can be used to run multiple algorithms at a time.
  Given that there are "\emph{no silver bullets in correlative ecological
  niche modeling}" \insertCite{qiao_no_2015}{modleR} the choice of which
- algorithm to run is on the user. See details for a description of all
- algorithms supported in this package.
+ algorithm to run is on the user. See \strong{Details} for a description of
+ how each algorithm supported in this package is implemented.
 }
 \details{
 See below for a description on the implementation of the algorithms
@@ -196,14 +201,14 @@ using  \code{\link[dismo]{evaluate}} and \code{\link[dismo]{predict}} also in
 }
 \item{Random Forest}{
 Specified by \code{algo = "rf"} uses \code{\link[randomForest]{tuneRF}}
-function from \pkg{ramdomForest} package
+function from \pkg{randomForest} package
 \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine
 learning regression based on decision trees. In this package uses
 \code{\link[randomForest]{tuneRF}} function with the optimal number of
-variables available for splitting at each tree node (i.e. mtry) found as set
-by parameter \code{doBest = TRUE}. Random Forest model is evaluated with
-\code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with
-\code{\link[raster]{predict}} function from \pkg{raster} package.
+variables available for splitting at each tree node (i.e. \code{mtry}) found
+as set by parameter \code{doBest = TRUE}. Random Forest model is evaluated
+with \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted
+with \code{\link[raster]{predict}} function from \pkg{raster} package.
 }
 \item{Support Vector Machines (SVM)}{
 Specified either by \code{algo = "svme"} or \code{algo = "svmk"}
@@ -212,11 +217,11 @@ corresponding to implementation on \pkg{e1071}
 \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectively. SVM are
  supervised learning models that use learning algorithms for classification
  and regression analysis. In \pkg{e1071} package SVM is implemented through
- function \code{\link[e1071]{best.tune}} with method set to \code{"svm"}
+ function \code{\link[e1071]{best.tune}} with method set to "\code{svm}"
  which uses RBF-kernel (radial basis function kernel) for classification. In
  \pkg{kernlab} package SVM is implemented through function
  \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the
- default method \code{"kbfdot"}). We expect both implementations to differ
+ default method "\code{kbfdot}"). We expect both implementations to differ
  only in performance. Both \code{svme} and \code{svmk} are evaluated with
  \code{\link[dismo]{evaluate}} function from dismo and predicted with
  \code{\link[raster]{predict}} function from \pkg{raster} package.
@@ -227,19 +232,14 @@ corresponding to implementation on \pkg{e1071}
 # run setup_sdmdata first from one species in coordenadas data
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord,
-example_vars)
+sp_setup <- setup_sdmdata(species_name = sp,
+                          occurrences = sp_coord,
+                          example_vars)
 
 # run bioclim for one species
 do_any(species_name = sp,
        predictors = example_vars,
        algo = "bioclim")
-
-# run setup_sdmdata
-sp <- names(coordenadas)[1]
-sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord,
-example_vars)
 
 # run do_many
 sp_many <- do_many(species_name = sp,

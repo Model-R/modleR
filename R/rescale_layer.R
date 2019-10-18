@@ -1,8 +1,9 @@
 #' Rescales rasters to values between 0 and 1
 #'
-#' This function rescales rasters to values between 0 and 1.
+#' This function rescales rasters to values between 0 and 1
+#'
 #' @param layers A RasterStack or RasterLayer of predictor variables to scale
-#' @return A RasterStack or RasterLayer with values between 0 and 1.
+#' @return A RasterStack or RasterLayer with values between 0 and 1
 #' @examples
 #' rescale_layer(example_vars)
 #' @import raster
@@ -10,7 +11,7 @@
 rescale_layer <- function(layers) {
     cat(paste("Standardizing models from 0 to 1", "\n"))
     if (missing(layers)) {
-        stop("No layers were provided. Please enter a Raster layer or a Rasterstack")
+        stop("No layers were provided. Please enter a Raster layer or a RasterStack")
         }
     for (i in 1:dim(layers)[3]) {
         stand <- function(x) {

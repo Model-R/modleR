@@ -1,23 +1,8 @@
-#' Ecological niche model fit, prediction and evaluation using several
-#' algorithms
-#'
 #' @inheritParams setup_sdmdata
 #' @inheritParams crop_model
 #' @rdname model_fit
 #' @return Writes on disk a .tif model for each partition and a .csv file with
-#' evaluation statistics (TSS, AUC, etc).
-#' @examples
-#' # run setup_sdmdata first from one species in coordenadas data
-#' sp <- names(coordenadas)[1]
-#' sp_coord <- coordenadas[[1]]
-#' sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord,
-#' example_vars)
-#'
-#' # run bioclim for one species
-#' do_any(species_name = sp,
-#'        predictors = example_vars,
-#'        algo = "bioclim")
-#'
+#' evaluation statistics (TSS, AUC, etc)
 #' @details See below for a description on the implementation of the algorithms
 #' supported in this package.
 #' \describe{
@@ -99,14 +84,14 @@
 #' }
 #' \item{Random Forest}{
 #' Specified by \code{algo = "rf"} uses \code{\link[randomForest]{tuneRF}}
-#' function from \pkg{ramdomForest} package
+#' function from \pkg{randomForest} package
 #' \insertCite{liaw_classification_2002}{modleR}. Corresponds to machine
 #' learning regression based on decision trees. In this package uses
 #' \code{\link[randomForest]{tuneRF}} function with the optimal number of
-#' variables available for splitting at each tree node (i.e. mtry) found as set
-#' by parameter \code{doBest = TRUE}. Random Forest model is evaluated with
-#' \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted with
-#' \code{\link[raster]{predict}} function from \pkg{raster} package.
+#' variables available for splitting at each tree node (i.e. \code{mtry}) found
+#' as set by parameter \code{doBest = TRUE}. Random Forest model is evaluated
+#' with \code{\link[dismo]{evaluate}} function from \pkg{dismo} and predicted
+#' with \code{\link[raster]{predict}} function from \pkg{raster} package.
 #' }
 #' \item{Support Vector Machines (SVM)}{
 #' Specified either by \code{algo = "svme"} or \code{algo = "svmk"}
@@ -115,11 +100,11 @@
 #' \insertCite{karatzoglou_kernlab_2004}{modleR} packages respectively. SVM are
 #'  supervised learning models that use learning algorithms for classification
 #'  and regression analysis. In \pkg{e1071} package SVM is implemented through
-#'  function \code{\link[e1071]{best.tune}} with method set to \code{"svm"}
+#'  function \code{\link[e1071]{best.tune}} with method set to "\code{svm}"
 #'  which uses RBF-kernel (radial basis function kernel) for classification. In
 #'  \pkg{kernlab} package SVM is implemented through function
 #'  \code{\link[kernlab]{ksvm}} also with RBF-kernel method (in this case the
-#'  default method \code{"kbfdot"}). We expect both implementations to differ
+#'  default method "\code{kbfdot}"). We expect both implementations to differ
 #'  only in performance. Both \code{svme} and \code{svmk} are evaluated with
 #'  \code{\link[dismo]{evaluate}} function from dismo and predicted with
 #'  \code{\link[raster]{predict}} function from \pkg{raster} package.

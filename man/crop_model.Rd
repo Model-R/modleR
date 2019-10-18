@@ -2,20 +2,20 @@
 % Please edit documentation in R/crop_model.R
 \name{crop_model}
 \alias{crop_model}
-\title{Crops environmental raster based on specific buffer}
+\title{Crops and masks environmental raster based on specific mask}
 \usage{
 crop_model(modelo, mask)
 }
 \arguments{
-\item{modelo}{Raster with the ecological niche model.}
+\item{modelo}{RasterStack object of the ecological niche model}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models.}
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
 }
 \value{
 Croppped environmental raster based on specific buffer
 }
 \description{
-Crops environmental raster based on specific buffer
+Crops and masks environmental raster based on specific mask
 }
 \seealso{
 \code{\link[raster]{crop}}

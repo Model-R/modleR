@@ -7,20 +7,21 @@
 geo_filt(occurrences, lon = "lon", lat = "lat", min_distance = 10)
 }
 \arguments{
-\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
-See \code{coordenadas} as an example.}
+\item{occurrences}{A data frame with occurrence data. Data must have at least
+ columns with latitude and longitude values of species occurrences.
+See \code{\link{coordenadas}} as an example}
 
 \item{lon}{The name of the longitude column. Defaults to "lon"}
 
 \item{lat}{The name of the latitude column. Defaults to "lat"}
 
-\item{min_distance}{numeric. Minimum distance between points in the unit of
+\item{min_distance}{Numeric. Minimum distance between points in the unit of
 the predictor raster. This value will be used to create a RaserStack object
 with a \code{min_distance} resolution, from which the redundant occurences
 will be excluded}
 }
 \value{
-Dataframe of the occurrence points thinned to have the minimum
+Data frame of the occurrence points thinned to have the minimum
 distance indicated in \code{min_distance} between them
 }
 \description{
@@ -35,5 +36,5 @@ Ecography, 37(11), 1084-1091. doi:10.1111/j.1600-0587.2013.00441.x
 \seealso{
 \code{\link[dismo]{gridSample}}
 
-\code{\pkg[spThin]}
+\pkg{spThin}
 }

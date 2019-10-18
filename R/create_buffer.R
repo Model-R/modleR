@@ -3,28 +3,30 @@
 #' @inheritParams setup_sdmdata
 #' @inheritParams euclidean
 #' @param buffer_type Character string indicating whether the buffer should be
-#' calculated using the \code{"mean"}, \code{"median"}, \code{"maximum"}
+#' calculated using the "\code{mean}", "\code{median}", "\code{maximum}"
 #' distance between occurrence points, or an absolute geographic
-#' \code{"distance"}. If set to \code{"user"}, \code{"buffer_shape"} needs to be
-#' specified. If NULL no distance buffer is applied. If set to \code{"distance"},
-#' \code{"dist_buf"} needs to be specified
+#' "\code{distance}". If set to "\code{user}", a user-supplied shapefile will be
+#' used as a sampling area, and \code{buffer_shape} needs to be specified. If
+#' NULL, no distance buffer is applied. If set to "\code{distance}",
+#' \code{dist_buf} needs to be specified
 #' @param dist_buf Defines the width of the buffer. Needs to be specified if
 #' \code{buffer_type = "distance"}. Distance unit is in the same unit of the
 #' RasterStack of predictor variables
 #' @param env_buffer Logical. Should an euclidean environmental filter be
-#' applied? If TRUE, \code{"env_distance"} and \code{"max_env_dist"} need to be
+#' applied? If TRUE, \code{env_distance} and \code{max_env_dist} need to be
 #' specified
 #' @param env_distance Character. Type of environmental distance, any in
-#' \code{"centroid", "mindist"}. Defaults to \code{"centroid"}, the distance of
-#' each raster pixel to the environmental centroid of the distribution. When set
-#'  to \code{"mindist"}, the minimum distance of each raster pixel to any of the
-#'  occurrence points is calculated. Needs to be specified if \code{env_buffer =
-#'   T}. A maximum value needs to be specified (\code{max_env_dist})
+#' "\code{centroid}", "\code{mindist}". Defaults to "\code{centroid}", the
+#' distance of each raster pixel to the environmental centroid of the
+#' distribution. When set to "\code{mindist}", the minimum distance of each
+#' raster pixel to any of the occurrence points is calculated. Needs to be
+#' specified if \code{env_buffer = TRUE}. A maximum value needs to be specified
+#'  (parameter \code{max_env_dist})
 #' @param max_env_dist Numeric. Since large negative values can arise
 #'  during the calculation of the euclidean environmental distance, this
 #'  parameter sets a maximum value to cut the environmental distance buffer.
-#'  Expressed in quantiles, from 0: all values to 1: no values, defaults to 0.5
-#'  the median value.Needs to be specified if \code{env_buffer = TRUE}
+#'  Expressed in quantiles, from 0: all values to 1: no values. Defaults to 0.5,
+#'  the median value. Needs to be specified if \code{env_buffer = TRUE}
 #' @param dist_min Optional, numeric. A distance for the exclusion of areas too
 #' close from the occurrence points. Distance unit is in the same unit of the
 #' RasterStack of predictor variables
@@ -34,8 +36,19 @@
 #' Defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @return A buffer around the occurrence points
-#' @details It will return a RasterStack with the same resolution and extent,
-#' and cropped by the predictors stack
+#' @details This function is used internally by function
+#' \code{\link{setup_sdmdata}} to define the area where pseudoabsences will be
+#' sampled in different ways. First, it can create a maximum inclusion buffer,
+#' within which the pseudoabsences will be sampled, to restrict model evaluation
+#'  to accesible areas. This can be performed by either setting a user-defined
+#'  shapefile, or by selecting one of several distance measures, including a
+#'  numeric fixed value, to draw a buffer around the occurrences. In addition to
+#'  this, an euclidean environmental distance can be superimposed to the
+#'  previous step. The third step aims to control for overfitting by excluding
+#'  areas that are too close to the occurrence points, with parameter dist_min.
+#'  The function will return the resulting buffer as a RasterStack object with
+#'  the same resolution and NA values of the predictors RasterStack.
+#'
 #' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
 #' Selecting pseudo-absence data for presence-only distribution modeling: How
 #' far should you stray from what you know? Ecological Modelling, 220(4),
@@ -46,8 +59,9 @@
 #' library(raster)
 #' sp <- names(coordenadas)[1]
 #' occs <- coordenadas[[1]]
-#' buf <- create_buffer(species_name = sp, occurrences = occs,
-#' predictors = example_vars)
+#' buf <- create_buffer(species_name = sp,
+#'                      occurrences = occs,
+#'                      predictors = example_vars)
 #' plot(buf)
 #'
 #' @import raster

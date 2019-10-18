@@ -3,8 +3,8 @@
 #' A list with four elements containing occurrence points for four species:
 #' \emph{Abarema langsdorfii}, \emph{Eugenia florida}, \emph{Leandra carassana}
 #' and \emph{Ouratea semiserrata}.
-#' Each element contains three variables: \code{sp} species name separated by _,
-#' \code{lat} and \code{lon} contain Latitude and Longitude information.
+#' Each element contains three variables: \code{sp} (species name separated by
+#' "_"), \code{lat} and \code{lon} (Latitude and Longitude in decimal degrees)
 #'
 #' @format A list of 4:
 #' \describe{

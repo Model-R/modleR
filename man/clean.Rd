@@ -8,35 +8,40 @@ clean(occurrences, lon = "lon", lat = "lat", predictors,
   clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE)
 }
 \arguments{
-\item{occurrences}{A data frame with occurrence data. Data must have at least columns with latitude an longitude values of species occurrences.
-See \code{coordenadas} as an example.}
+\item{occurrences}{A data frame with occurrence data. Data must have at least
+ columns with latitude and longitude values of species occurrences.
+See \code{\link{coordenadas}} as an example}
 
 \item{lon}{The name of the longitude column. Defaults to "lon"}
 
 \item{lat}{The name of the latitude column. Defaults to "lat"}
 
-\item{predictors}{A Raster or RasterStack object with the environmental raster layers}
+\item{predictors}{A Raster or RasterStack object with the environmental
+raster layers}
 
-\item{clean_dupl}{Logical. If TRUE removes points with the same longitude and
+\item{clean_dupl}{Logical. If TRUE, removes points with the same longitude and
 latitude}
 
-\item{clean_nas}{Logical. If TRUE removes points that are outside the bounds
+\item{clean_nas}{Logical. If TRUE, removes points that are outside the bounds
 of the raster}
 
-\item{clean_uni}{Logical. If TRUE selects only one point per pixel}
+\item{clean_uni}{Logical. If TRUE, selects only one point per pixel}
 }
 \value{
-A data.frame containing longitude and latitude.
+A data frame containing longitude and latitude.
 }
 \description{
-This function performs data cleaning of occurrence records by removing records outside the extension of the raster of predictor variables. It also allows data cleaning of; (1) NAs; (2) duplicated records; (3) duplicated records in the same pixel.
+This function performs data cleaning of occurrence records by removing
+records outside the extension of the raster of predictor variables. It also
+allows data cleaning of (1) NAs; (2) duplicated records; (3) duplicated
+records in the same pixel.
 }
 \details{
 Used internally in function \code{\link[modleR]{setup_sdmdata}}.
 }
 \examples{
 occs <- coordenadas[[1]]
-clean(occurrences = occs, 
+clean(occurrences = occs,
       predictors = example_vars,
       clean_dupl = TRUE,
       clean_nas = TRUE,

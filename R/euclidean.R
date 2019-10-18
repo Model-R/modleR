@@ -5,12 +5,14 @@
 #' distribution (\code{centroid}) or the minimum distance from each pixel to
 #' any of the occurrence points (\code{mindist})
 #' @inheritParams setup_sdmdata
-#' @param env_dist Character. Either \code{"centroid"} or \code{"mindist"}
-#' @param ... other parameters in raster::writeRaster()
+#' @param env_dist Character. Either "\code{centroid}" or "\code{mindist}"
+#' @param ... other parameters in \code{\link[raster]{writeRaster}}
 #' @param filename Optional. The raster that will be created in disk
 #' @importFrom stats median
 #' @examples
-#' centr <- euclidean(example_vars, occurrences = coordenadas[[1]][, c(2,3)])
+#' sp_coord <- coordenadas[[1]][, c("lon", "lat")]
+#' centr <- euclidean(example_vars,
+#'                    occurrences = sp_coord)
 #' raster::plot(centr)
 #' @export
 
@@ -24,6 +26,7 @@ euclidean <- function(predictors,
     stop('Algorithm must be either "centroid" or "mindist"')
   }
     x.st <- raster::scale(predictors)
+
     pres.vals <- raster::extract(x.st, occurrences)
     if (!is.null(dim(pres.vals))) {
     centroid.val <- apply(pres.vals, 2, median, na.rm = TRUE)

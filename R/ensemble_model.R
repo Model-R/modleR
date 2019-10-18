@@ -7,7 +7,7 @@
 #' @inheritParams setup_sdmdata
 #' @inheritParams final_model
 #' @param ensemble_dir Character string, name of the folder to save the output
-#' files. A subfolder will be created. Defaults to "ensemble".
+#' files. A subfolder will be created. Defaults to "\code{ensemble}"
 #' @param which_final Which \code{final_model} will be used? Currently it can
 #' be:
 #' \describe{
@@ -29,13 +29,13 @@
 #'   the thresholds are down-weighted by zeros.}
 #' }
 #' @param consensus Logical. If \code{TRUE} a consensus between the algorithms
-#' will be applied.
+#' will be applied
 #' @param write_ensemble Logical. If \code{TRUE} writes png files of the
-#' ensemble models.
+#' ensemble models
 #' @param write_map Logical. If \code{TRUE} adds a map contour to the png file
-#' of the ensemble models.
+#' of the ensemble models
 #' @param write_occs Logical. If \code{TRUE} writes the occurrence points on the
-#' png file of the ensemble models.
+#' png file of the ensemble model
 #' @param ... Other parameters from \code{\link[raster]{writeRaster}}.
 #'
 #' @import raster
