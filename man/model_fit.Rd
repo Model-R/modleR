@@ -108,8 +108,8 @@ computes ecological niche models for a species based on an algorithm
 specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
 addition to commonly adopted metrics such as AUC and TSS, this package also
-calculates partial ROC (
-\insertCite{peterson_rethinking_2008, cobos_kuenm_2019}{modleR}). For details on model evaluation see
+calculates partial ROC 
+\insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details on model evaluation see
  \insertCite{phillips_maximum_2006;textual}{modleR} and
  \insertCite{peterson_ecological_2011;textual}{modleR}. \code{do_any}
  performs one algorithm at a time. \code{do_many} runs internally
