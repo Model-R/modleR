@@ -13,7 +13,7 @@ raster layers}
 
 \item{occurrences}{A data frame with occurrence data. Data must have at least
  columns with latitude and longitude values of species occurrences.
-See \code{\link{coordenadas}} as an example}
+See \code{\link{example_occs}} as an example}
 
 \item{env_dist}{Character. Either "\code{centroid}" or "\code{mindist}"}
 

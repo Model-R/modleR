@@ -5,17 +5,16 @@
 #' variable selection according to their correlation. It saves the metadata and
 #' sdmdata files into the hard disk.
 #'
-#' @inheritParams clean
 #' @inheritParams create_buffer
 #' @inheritParams select_variables
 #' @param species_name A character string with the species name. Because species
 #' name will be used as a directory name, avoid non-ASCII characters, spaces and
 #' punctuation marks.
 #' Recommendation is to adopt "Genus_species" format. See names in
-#' \code{\link{coordenadas}} as an example
+#' \code{\link{example_occs}} as an example
 #' @param occurrences A data frame with occurrence data. Data must have at least
 #'  columns with latitude and longitude values of species occurrences.
-#' See \code{\link{coordenadas}} as an example
+#' See \code{\link{example_occs}} as an example
 #' @param lon The name of the longitude column. Defaults to "lon"
 #' @param lat The name of the latitude column. Defaults to "lat"
 #' @param predictors A Raster or RasterStack object with the environmental
@@ -36,13 +35,15 @@
 #' @param plot_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points. Default is 1,000
 #' @param partition_type Character. Type of data partitioning scheme, either
-#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
+#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
+#' \code{boot_proportion} and \code{boot_n} must be specified. If set to
+#' crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n Number of bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n Number of crossvalidation runs
-#' @param ... Othre parameters from \code{\link{create_buffer}}
+#' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), a presence/absence vector, the geographical
 #' coordinates of the occurrence and pseudoabsence points, and the associated
@@ -51,15 +52,14 @@
 #' at \code{models_dir} directory) a text file named sdmdata.csv that will be used
 #' by \code{\link{do_any}} or \code{\link{do_many}}
 #' @examples
-#' sp <- names(coordenadas)[1]
-#' sp_coord <- coordenadas[[1]]
+#' sp <- names(example_occs)[1]
+#' sp_coord <- example_occs[[1]]
 #' sp_setup <- setup_sdmdata(species_name = sp,
 #'                           occurrences = sp_coord,
 #'                           example_vars)
 #' head(sp_setup)
 #'
 #' @seealso \code{\link{create_buffer}}
-#' @seealso \code{\link{clean}}
 #' @seealso \code{\link[dismo]{gridSample}}
 #' @importFrom utils write.table
 #' @export

@@ -22,7 +22,7 @@ do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-\code{\link{coordenadas}} as an example}
+\code{\link{example_occs}} as an example}
 
 \item{predictors}{A Raster or RasterStack object with the environmental
 raster layers}

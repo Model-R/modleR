@@ -16,11 +16,11 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-\code{\link{coordenadas}} as an example}
+\code{\link{example_occs}} as an example}
 
 \item{occurrences}{A data frame with occurrence data. Data must have at least
  columns with latitude and longitude values of species occurrences.
-See \code{\link{coordenadas}} as an example}
+See \code{\link{example_occs}} as an example}
 
 \item{lon}{The name of the longitude column. Defaults to "lon"}
 

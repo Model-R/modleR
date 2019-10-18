@@ -21,11 +21,11 @@ setup_sdmdata(species_name, occurrences, predictors,
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-\code{\link{coordenadas}} as an example}
+\code{\link{example_occs}} as an example}
 
 \item{occurrences}{A data frame with occurrence data. Data must have at least
  columns with latitude and longitude values of species occurrences.
-See \code{\link{coordenadas}} as an example}
+See \code{\link{example_occs}} as an example}
 
 \item{predictors}{A Raster or RasterStack object with the environmental
 raster layers}
@@ -118,7 +118,7 @@ for bootstrap}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{...}{Othre parameters from \code{\link{create_buffer}}}
+\item{...}{Other parameters from \code{\link{create_buffer}}}
 }
 \value{
 Returns a data frame with the groups for each run (in columns called
@@ -136,8 +136,8 @@ variable selection according to their correlation. It saves the metadata and
 sdmdata files into the hard disk.
 }
 \examples{
-sp <- names(coordenadas)[1]
-sp_coord <- coordenadas[[1]]
+sp <- names(example_occs)[1]
+sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
                           example_vars)
@@ -146,8 +146,6 @@ head(sp_setup)
 }
 \seealso{
 \code{\link{create_buffer}}
-
-\code{\link{clean}}
 
 \code{\link[dismo]{gridSample}}
 }
