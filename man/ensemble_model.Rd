@@ -96,8 +96,9 @@ deviation statistics such as standard deviation and range (maximum - minimum).
 # run setup_sdmdata
 sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
-sp_setup <- setup_sdmdata(species_name = sp, occurrences = sp_coord,
-example_vars)
+sp_setup <- setup_sdmdata(species_name = sp,
+                          occurrences = sp_coord,
+                          example_vars)
 
 # run do_many
 sp_many <- do_many(species_name = sp,

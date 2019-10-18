@@ -1,5 +1,18 @@
 #' Samples pseudoabsences inside a geographic or environmental buffer
 #'
+#'This function is used internally by function
+#' \code{\link{setup_sdmdata}} to define the area where pseudoabsences will be
+#' sampled in different ways. First, it can create a maximum inclusion buffer,
+#' within which the pseudoabsences will be sampled, to restrict model evaluation
+#'  to accesible areas. This can be performed by either setting a user-defined
+#'  shapefile, or by selecting one of several distance measures, including a
+#'  numeric fixed value, to draw a buffer around the occurrences. In addition to
+#'  this, an euclidean environmental distance can be superimposed to the
+#'  previous step. The third step aims to control for overfitting by excluding
+#'  areas that are too close to the occurrence points, with parameter "\code{dist_min}".
+#'  The function will return the resulting buffer as a RasterStack object with
+#'  the same resolution and NA values of the predictors RasterStack.
+#'#'
 #' @inheritParams setup_sdmdata
 #' @inheritParams euclidean
 #' @param buffer_type Character string indicating whether the buffer should be
@@ -36,20 +49,7 @@
 #' Defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @return A buffer around the occurrence points
-#' @details This function is used internally by function
-#' \code{\link{setup_sdmdata}} to define the area where pseudoabsences will be
-#' sampled in different ways. First, it can create a maximum inclusion buffer,
-#' within which the pseudoabsences will be sampled, to restrict model evaluation
-#'  to accesible areas. This can be performed by either setting a user-defined
-#'  shapefile, or by selecting one of several distance measures, including a
-#'  numeric fixed value, to draw a buffer around the occurrences. In addition to
-#'  this, an euclidean environmental distance can be superimposed to the
-#'  previous step. The third step aims to control for overfitting by excluding
-#'  areas that are too close to the occurrence points, with parameter dist_min.
-#'  The function will return the resulting buffer as a RasterStack object with
-#'  the same resolution and NA values of the predictors RasterStack.
-#'
-#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
+#'#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
 #' Selecting pseudo-absence data for presence-only distribution modeling: How
 #' far should you stray from what you know? Ecological Modelling, 220(4),
 #' 589-594. doi:10.1016/j.ecolmodel.2008.11.010
