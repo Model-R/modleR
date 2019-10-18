@@ -11,10 +11,10 @@ sp <- names(coordenadas)[1]
 sp_coord <- coordenadas[[1]]
 # helper function
 run_setup <- function(my_seed, ...){
-  setup_sdmdata(species_name=sp,
-                occurrences=sp_coord,
+  setup_sdmdata(species_name = sp,
+                occurrences = sp_coord,
                 example_vars,
-                seed=my_seed,
+                seed = my_seed,
                 boot_n = 4,
                 models_dir = my_dir,
                 ...)
@@ -33,13 +33,12 @@ test_that("all outputs were generated", {
   setup_dir <- paste0(my_dir, sp, "/present/data_setup/")
   # does it have two metadata and sdmdata csv files?
   expect_length(list.files(path = setup_dir, 
-                                 pattern="metadata.csv"), 1)
+                           pattern = "metadata.csv"), 1)
   expect_length(list.files(path = setup_dir, 
-                                 pattern="sdmdata.csv"), 1)
+                           pattern = "sdmdata.csv"), 1)
   # does it have sdmdata png file?
   expect_length(list.files(path = setup_dir, 
-                                 pattern="sdmdata_.*png"), 1)
-  
+                           pattern = "sdmdata_.*png"), 1)
 })
 
 test_that("setup is a data frame and has numeric values", {
