@@ -6,7 +6,6 @@
 #' sdmdata files into the hard disk.
 #'
 #' @inheritParams create_buffer
-#' @inheritParams select_variables
 #' @param species_name A character string with the species name. Because species
 #' name will be used as a directory name, avoid non-ASCII characters, spaces and
 #' punctuation marks.
@@ -23,27 +22,32 @@
 #'  sampling pseudoabsences
 #' @param real_absences User-defined absence points
 #' @param geo_filt Logical, delete occurrences that are too close to each other?
-#'  see \code{\link[modleR]{geo_filt}}
+#'  See \insertCite{varela_environmental_2014;textual}{modleR}
 #' @param geo_filt_dist The distance of the geographic filter in the unit of the
-#' predictor raster, see \code{\link[modleR]{geo_filt}}
-#' @param select_variables Logical. Whether a call to
-#' \code{\link[modleR]{select_variables}}
-#' should be performed. This function excludes highly correlated environmental
+#' predictor raster, see \insertCite{varela_environmental_2014;textual}{modleR}
+#' @param select_variables Logical. Whether a variable selection should be performed. It excludes highly correlated environmental
 #'  variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified
 #' @param models_dir Folder path to save the output files. Defaults to
 #' "\code{./models}"
 #' @param plot_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points. Default is 1,000
 #' @param partition_type Character. Type of data partitioning scheme, either
-#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
-#' \code{boot_proportion} and \code{boot_n} must be specified. If set to
-#' crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
+#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n Number of bootstrap runs
 #' @param cv_partitions Number of partitions in the crossvalidation
 #' @param cv_n Number of crossvalidation runs
-#' @param ... Other parameters from \code{\link{create_buffer}}
+#' @param clean_dupl Logical. If TRUE, removes points with the same longitude and
+#' latitude
+#' @param clean_nas Logical. If TRUE, removes points that are outside the bounds	#' of the raster
+#' @param clean_uni Logical. If TRUE, selects only one point per pixel
+#' @param cutoff Cutoff value of correlation between variables to exclude
+#' environmental layers
+#' Default is to exclude environmental variables with correlation > 0.8
+#' @param percent percentage of the raster values to be sampled to calculate the
+#'  correlation
+#' @param ... Othre parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), a presence/absence vector, the geographical
 #' coordinates of the occurrence and pseudoabsence points, and the associated
@@ -58,7 +62,8 @@
 #'                           occurrences = sp_coord,
 #'                           example_vars)
 #' head(sp_setup)
-#'
+#' @references
+#'     \insertAllCited{}
 #' @seealso \code{\link{create_buffer}}
 #' @seealso \code{\link[dismo]{gridSample}}
 #' @importFrom utils write.table

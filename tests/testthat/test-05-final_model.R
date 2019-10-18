@@ -1,7 +1,7 @@
 context("basic final_model test")
 
 my_dir <- "../tmp_test/"
-sp <- names(coordenadas)[1]
+sp <- names(example_occs)[1]
 n.algos <- 2
 final_dir <- paste0(my_dir, sp, "/present/final_models/")
 

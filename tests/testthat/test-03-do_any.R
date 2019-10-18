@@ -2,8 +2,8 @@ context("basic do_any test")
 
 # objects to be used on tests
 my_dir <- "../tmp_test/"
-sp <- names(coordenadas)[1]
-#sp_coord <- coordenadas[[1]]
+sp <- names(example_occs)[1]
+#sp_coord <- example_occs[[1]]
 part <- 4
 algo <- "bioclim"
 mod_dir <- paste0(my_dir, sp, "/present/partitions/")
@@ -15,14 +15,14 @@ test_that("do_any produces model and stats file", {
                    algo = algo)
   # does it have two txt files (matrix and evaluate) ?
   expect_length(list.files(path = mod_dir,
-                           pattern = "confusion_matrices_.*csv"), 
+                           pattern = "confusion_matrices_.*csv"),
                 part)
   expect_length(list.files(path = mod_dir,
-                           pattern ="evaluate.*csv"), 
+                           pattern ="evaluate.*csv"),
                 part)
   # does it have png file (model)?
    expect_length(list.files(path = mod_dir,
-                            pattern = paste0(algo, ".*.tif")), 
+                            pattern = paste0(algo, ".*.tif")),
                  part)
 
 })

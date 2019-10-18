@@ -95,7 +95,7 @@ apply some data cleaning procedures, as well as some filters. This is done by
 function `setup_sdmdata()`
 
 
-__modleR__ comes with example data, a data frame called `coordenadas`, with
+__modleR__ comes with example data, a data frame called `example_occs`, with
 occurrence data for four species, and predictor variables called
 `example_vars`
 
@@ -104,8 +104,8 @@ occurrence data for four species, and predictor variables called
 #library(modleR)
 devtools::load_all() # for development
 #library(raster)
-str(coordenadas)
-species <- names(coordenadas)
+str(example_occs)
+species <- names(example_occs)
 species
 ```
 
@@ -113,17 +113,17 @@ species
 
 ```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = TRUE}
 par(mfrow = c(2, 2), mar = c(2, 2, 3, 1))
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]), legend = FALSE, main = species[i])
-  points(lat ~ lon, data = coordenadas[[i]])
+  points(lat ~ lon, data = example_occs[[i]])
   }
 par(mfrow = c(1, 1))
 ```
 
-We will filter the `coordenadas` file to select only the data for the first species:
+We will filter the `example_occs` file to select only the data for the first species:
 
 ```{r occs, message = FALSE, eval = TRUE}
-occs <- coordenadas[[1]]
+occs <- example_occs[[1]]
 ```
 
 
@@ -402,16 +402,16 @@ plot(ens_mod)
 
 # Workflows with multiple species
 
-Our `coordenadas` dataset has data for four species.
+Our `example_occs` dataset has data for four species.
 An option to do the several models is to use a `for` loop
 
 ```{r forloop, eval = FALSE}
 args(do_many)
 args(setup_sdmdata)
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
+    occs <- example_occs[[i]]
     setup_sdmdata(
         species_name = sp,
         models_dir = "~/modleR_test/forlooptest",
@@ -431,7 +431,7 @@ for (i in 1:length(coordenadas)) {
         )
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
     do_many(species_name = sp,
             predictors = example_vars,
@@ -451,7 +451,7 @@ for (i in 1:length(coordenadas)) {
             write_bin_cut = TRUE)
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
     final_model(species_name = sp,
                 select_partitions = TRUE,
@@ -464,9 +464,9 @@ for (i in 1:length(coordenadas)) {
                 overwrite = TRUE)
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
+    occs <- example_occs[[i]]
     ensemble_model(species_name = sp,
                    occurrences = occs,
                    which_final = "bin_consensus",
@@ -480,7 +480,7 @@ Another option is to use the `purrr` package [@henry_purrr_2017].
 ```{r purrr example, eval = FALSE}
 library(purrr)
 
-coordenadas %>% purrr::map2(.x= .,
+example_occs %>% purrr::map2(.x= .,
                             .y= as.list(names(.)),
                             ~ setup_sdmdata(species_name = .y,
                                             occurrences = .x,
@@ -524,7 +524,7 @@ species %>% as.list(.) %>%
 ```
 
 ```{r purrr_ensemble, eval = FALSE}
-coordenadas %>% purrr::map2(.x= .,
+example_occs %>% purrr::map2(.x= .,
                             .y= as.list(names(.)),
                             ~ ensemble_model(species_name = .y,
                                              occurrences = .x,

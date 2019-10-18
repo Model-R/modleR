@@ -1,8 +1,8 @@
 context("basic ensemble test")
 
 my_dir <- "../tmp_test/"
-sp <- names(coordenadas)[1]
-sp_coord <- coordenadas[[1]]
+sp <- names(example_occs)[1]
+sp_coord <- example_occs[[1]]
 ens_dir <- paste0(my_dir, sp, "/present/ensemble/")
 
 test_that("output is generated", {

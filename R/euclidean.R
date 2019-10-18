@@ -1,21 +1,3 @@
-#' Calculates environmental euclidean distances to the occurrences of a species
-#'
-#' This function calculates the euclidean distance from each pixel in a
-#' RasterStack of predictor variables to the environmental centroid of a
-#' distribution (\code{centroid}) or the minimum distance from each pixel to
-#' any of the occurrence points (\code{mindist})
-#' @inheritParams setup_sdmdata
-#' @param env_dist Character. Either "\code{centroid}" or "\code{mindist}"
-#' @param ... other parameters in \code{\link[raster]{writeRaster}}
-#' @param filename Optional. The raster that will be created in disk
-#' @importFrom stats median
-#' @examples
-#' sp_coord <- coordenadas[[1]][, c("lon", "lat")]
-#' centr <- euclidean(example_vars,
-#'                    occurrences = sp_coord)
-#' raster::plot(centr)
-#' @export
-
 euclidean <- function(predictors,
                       occurrences,
                       env_dist = "centroid",

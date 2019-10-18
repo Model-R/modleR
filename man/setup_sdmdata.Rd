@@ -82,25 +82,28 @@ Defaults to FALSE}
 \item{seed}{Random number generator for reproducibility purposes. Used for
 sampling pseudoabsences}
 
+\item{clean_dupl}{Logical. If TRUE, removes points with the same longitude and
+latitude}
+
+\item{clean_nas}{Logical. If TRUE, removes points that are outside the bounds    #' of the raster}
+
+\item{clean_uni}{Logical. If TRUE, selects only one point per pixel}
+
 \item{geo_filt}{Logical, delete occurrences that are too close to each other?
-see \code{\link[modleR]{geo_filt}}}
+See \insertCite{varela_environmental_2014;textual}{modleR}}
 
 \item{geo_filt_dist}{The distance of the geographic filter in the unit of the
-predictor raster, see \code{\link[modleR]{geo_filt}}}
+predictor raster, see \insertCite{varela_environmental_2014;textual}{modleR}}
 
-\item{select_variables}{Logical. Whether a call to
-\code{\link[modleR]{select_variables}}
-should be performed. This function excludes highly correlated environmental
- variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified}
+\item{select_variables}{Logical. Whether a variable selection should be performed. It excludes highly correlated environmental
+variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified}
 
 \item{cutoff}{Cutoff value of correlation between variables to exclude
-environmental layers.
+environmental layers
 Default is to exclude environmental variables with correlation > 0.8}
 
 \item{percent}{percentage of the raster values to be sampled to calculate the
- correlation.
-Default is 0.8 but setting a lower value should be useful when working with
- high resolution rasters}
+correlation}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
@@ -118,7 +121,7 @@ for bootstrap}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{...}{Other parameters from \code{\link{create_buffer}}}
+\item{...}{Othre parameters from \code{\link{create_buffer}}}
 }
 \value{
 Returns a data frame with the groups for each run (in columns called
@@ -142,7 +145,9 @@ sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
                           example_vars)
 head(sp_setup)
-
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link{create_buffer}}
