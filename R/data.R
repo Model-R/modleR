@@ -13,10 +13,16 @@
 #'   \item{Leandra_carassana}{82 observations of 3 variables}
 #'   \item{Ouratea_semiserrata}{90 observations of 3 variables}
 #' }
-"coordenadas"
+"example_occs"
 
 #' Predictor variables
 #'
 #' @format A RasterStack with 6 predictor variables issued from a PCA of the 19
 #' Worldclim 1.0 variables cut for South America, at 10min resolution
 "example_vars"
+
+#' Example mask for cropping the partition models
+#'
+#' @format A SpatialPolygonsDataFrame of the Brazilian Atlantic Forest, based
+#' on IBGE
+"example_mask"

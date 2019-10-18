@@ -97,8 +97,8 @@ within which the pseudoabsences will be sampled, to restrict model evaluation
 }
 \examples{
 library(raster)
-sp <- names(coordenadas)[1]
-occs <- coordenadas[[1]]
+sp <- names(example_occs)[1]
+occs <- example_occs[[1]]
 buf <- create_buffer(species_name = sp,
                      occurrences = occs,
                      predictors = example_vars)

@@ -101,8 +101,8 @@ calculated.
 }
 \examples{
 # run setup_sdmdata
-sp <- names(coordenadas)[1]
-sp_coord <- coordenadas[[1]]
+sp <- names(example_occs)[1]
+sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
                           example_vars)

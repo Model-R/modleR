@@ -44,6 +44,10 @@ be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 equivalent raster files at diferent subdirectories must have the same names
 (e.g. "./env/proj/proj1/layer1.asc" and "./env/proj/proj2/layer1.asc")}
 
+\item{mask}{A SpatialPolygonsDataFrame to be used to mask the models. This
+mask can be used if the final area of interest is smaller than the area used
+ for model fitting, to save disk space}
+
 \item{write_png}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)
@@ -51,8 +55,9 @@ should be written}
 
 \item{threshold}{Character string indicating threshold (cut-off) to transform
 model predictions to a binary score as in \code{\link[dismo]{threshold}}:
-"kappa", "spec_sens", "no_omission", "prevalence", "equal_sens_spec",
-"sensitivity". Default value is "spec_sens"}
+"\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
+ "\code{prevalence}", "\code{equal_sens_spec}",
+"\code{sensitivity}". Default value is "\code{spec_sens}"}
 
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 
@@ -106,7 +111,7 @@ computes ecological niche models for a species based on an algorithm
 specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
 addition to commonly adopted metrics such as AUC and TSS, this package also
-calculates partial ROC 
+calculates partial ROC
 \insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details on model evaluation see
  \insertCite{phillips_maximum_2006;textual}{modleR} and
  \insertCite{peterson_ecological_2011;textual}{modleR}. \code{do_any}
@@ -227,23 +232,23 @@ corresponding to implementation on \pkg{e1071}
 }
 }
 \examples{
-# run setup_sdmdata first from one species in coordenadas data
-sp <- names(coordenadas)[1]
-sp_coord <- coordenadas[[1]]
+# run setup_sdmdata first from one species in example_occs data
+sp <- names(example_occs)[1]
+sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
                           example_vars)
 
 # run bioclim for one species
-do_any(species_name = sp,
-       predictors = example_vars,
-       algo = "bioclim")
+sp_any <- do_any(species_name = sp,
+                 predictors = example_vars,
+                 algo = "bioclim")
 
 # run do_many
 sp_many <- do_many(species_name = sp,
-                     predictors = example_vars,
-                     bioclim = TRUE,
-                     maxent = TRUE)
+                   predictors = example_vars,
+                   bioclim = TRUE,
+                   maxent = TRUE)
 }
 \references{
 \insertAllCited{}
