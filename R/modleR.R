@@ -6,6 +6,7 @@
 #'
 #' @section modleR functions:
 #' The four-step workflow implemented here to perform ecological niche modeling using functions from \code{\link{dismo}} package.
+#' 
 #' 1. prepare data  using \code{setup_sdmdata}
 #'
 #' 2. run model(s) with \code{do_any} or \code{do_many} (for multiple

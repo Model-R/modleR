@@ -44,8 +44,6 @@ be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 equivalent raster files at diferent subdirectories must have the same names
 (e.g. "./env/proj/proj1/layer1.asc" and "./env/proj/proj2/layer1.asc")}
 
-\item{mask}{A SpatialPolygonsDataFrame to be used to mask the final models}
-
 \item{write_png}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)

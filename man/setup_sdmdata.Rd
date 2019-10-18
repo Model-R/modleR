@@ -82,14 +82,6 @@ Defaults to FALSE}
 \item{seed}{Random number generator for reproducibility purposes. Used for
 sampling pseudoabsences}
 
-\item{clean_dupl}{Logical. If TRUE, removes points with the same longitude and
-latitude}
-
-\item{clean_nas}{Logical. If TRUE, removes points that are outside the bounds
-of the raster}
-
-\item{clean_uni}{Logical. If TRUE, selects only one point per pixel}
-
 \item{geo_filt}{Logical, delete occurrences that are too close to each other?
 see \code{\link[modleR]{geo_filt}}}
 

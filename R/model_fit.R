@@ -209,9 +209,9 @@
 #'
 #' # run do_many
 #' sp_many <- do_many(species_name = sp,
-#'                      predictors = example_vars,
-#'                      bioclim = TRUE,
-#'                      maxent = TRUE)
+#'                    predictors = example_vars,
+#'                    bioclim = TRUE,
+#'                    maxent = TRUE)
 #' @name model_fit
 #'
 NULL
