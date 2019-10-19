@@ -14,7 +14,6 @@
 #'  the same resolution and NA values of the predictors RasterStack.
 #'#'
 #' @inheritParams setup_sdmdata
-#' @inheritParams euclidean
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the "\code{mean}", "\code{median}", "\code{maximum}"
 #' distance between occurrence points, or an absolute geographic

@@ -67,6 +67,7 @@
 #' @seealso \code{\link{create_buffer}}
 #' @seealso \code{\link[dismo]{gridSample}}
 #' @importFrom utils write.table
+#' @importFrom stats cor
 #' @export
 #'
 #'
