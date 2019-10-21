@@ -12,7 +12,7 @@
 #'  areas that are too close to the occurrence points, with parameter "\code{dist_min}".
 #'  The function will return the resulting buffer as a RasterStack object with
 #'  the same resolution and NA values of the predictors RasterStack.
-#'#'
+#'
 #' @inheritParams setup_sdmdata
 #' @param buffer_type Character string indicating whether the buffer should be
 #' calculated using the "\code{mean}", "\code{median}", "\code{maximum}"
@@ -48,7 +48,7 @@
 #' Defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
 #' @return A buffer around the occurrence points
-#'#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
+#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
 #' Selecting pseudo-absence data for presence-only distribution modeling: How
 #' far should you stray from what you know? Ecological Modelling, 220(4),
 #' 589-594. doi:10.1016/j.ecolmodel.2008.11.010

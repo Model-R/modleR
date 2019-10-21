@@ -75,10 +75,6 @@ Defaults to FALSE}
 Table of pseudoabsence points sampled within the selected distance
 
 A buffer around the occurrence points
-#' @references VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
-Selecting pseudo-absence data for presence-only distribution modeling: How
-far should you stray from what you know? Ecological Modelling, 220(4),
-589-594. doi:10.1016/j.ecolmodel.2008.11.010
 }
 \description{
 This function is used internally by function
@@ -93,7 +89,6 @@ within which the pseudoabsences will be sampled, to restrict model evaluation
  areas that are too close to the occurrence points, with parameter "\code{dist_min}".
  The function will return the resulting buffer as a RasterStack object with
  the same resolution and NA values of the predictors RasterStack.
-#'
 }
 \examples{
 library(raster)
@@ -104,6 +99,12 @@ buf <- create_buffer(species_name = sp,
                      predictors = example_vars)
 plot(buf)
 
+}
+\references{
+VanDerWal, J., Shoo, L. P., Graham, C., & Williams, S. E. (2009).
+Selecting pseudo-absence data for presence-only distribution modeling: How
+far should you stray from what you know? Ecological Modelling, 220(4),
+589-594. doi:10.1016/j.ecolmodel.2008.11.010
 }
 \seealso{
 \code{\link[raster]{buffer}}  in \pkg{raster} package
