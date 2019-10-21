@@ -61,8 +61,10 @@
 #' @param write_final Logical. If \code{TRUE}, writes png files of the final
 #' models
 #' @param ... Other parameters from \code{\link[raster]{writeRaster}}
-#' @return A set of ecological niche models (.tif files) and figures (optional)
-#' written in the \code{final_dir} subfolder
+#' @return Returns a data.frame with final statistics of the partitions included in the final model
+#' @return Writes on disk a set of ecological niche models (.tif files) in the \code{final_dir} subfolder
+#' @return If \code{write_final = TRUE} writes .png figures
+#'  in the \code{final_dir} subfolder
 #' @seealso \code{\link[dismo]{threshold}}
 #' @seealso \code{\link[raster]{writeRaster}}
 #' @examples

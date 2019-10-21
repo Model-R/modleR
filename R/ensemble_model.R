@@ -44,10 +44,13 @@
 #' @importFrom stats sd
 #' @export
 #' @seealso \code{\link{final_model}}
+#' @return Retuns a RasterStack with
+#' all generated statistics written in the \code{ensemble_dir}
+#' subfolder
 #' @return Writes on disk raster files with the median, mean and standard
-#' deviation and range of the assembled models. Also retuns a RasterStack with
-#' all generated statistics (optional) written in the \code{ensemble_dir}
-#' subfolder.
+#' deviation and range of the assembled models
+#' @return If \code{write_ensemble = TRUE} writes .png figures
+#'  in the \code{ensemble_dir} subfolder
 #' @examples
 #' # run setup_sdmdata
 #' sp <- names(example_occs)[1]

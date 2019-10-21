@@ -49,10 +49,11 @@
 #'  correlation
 #' @param ... Othre parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
-#' cv.1, cv.2 or boot.1, boot.2), a presence/absence vector, the geographical
+#' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
 #' coordinates of the occurrence and pseudoabsence points, and the associated
 #' environmental variables (either all the layers or the selected ones if
-#' \code{select_variables = TRUE}). Function writes on disk (inside subfolder
+#' \code{select_variables = TRUE}). 
+#' @return Function writes on disk (inside subfolder
 #' at \code{models_dir} directory) a text file named sdmdata.csv that will be used
 #' by \code{\link{do_any}} or \code{\link{do_many}}
 #' @examples
