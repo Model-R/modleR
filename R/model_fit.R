@@ -131,13 +131,13 @@
 #' }
 #' @references
 #'     \insertAllCited{}
-#' @seealso \code{\link[dismo]{bioclim}}
-#' @seealso \code{\link[dismo]{domain}}
-#' @seealso \code{\link{do_many}}
-#' @seealso \code{\link[dismo]{evaluate}}
-#' @seealso \code{\link[dismo]{maxent}}
-#' @seealso \code{\link[maxnet]{maxnet}}
-#' @seealso \code{\link[dismo]{mahal}}
+#' @seealso \code{\link[dismo]{bioclim}} in \pkg{dismo} package
+#' @seealso \code{\link[dismo]{domain}} in \pkg{dismo} package
+#' @seealso \code{\link{do_many}} 
+#' @seealso \code{\link[dismo]{evaluate}} in \pkg{dismo} package
+#' @seealso \code{\link[dismo]{maxent}} in \pkg{dismo} package
+#' @seealso \code{\link[maxnet]{maxnet}} in \pkg{maxnet} package
+#' @seealso \code{\link[dismo]{mahal}} in \pkg{dismo} package
 #' @seealso \code{\link[dismo]{predict}} in \pkg{dismo} package
 #' @seealso \code{\link[raster]{predict}} in \pkg{raster} package
 #' @import raster

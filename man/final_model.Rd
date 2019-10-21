@@ -84,8 +84,12 @@ models}
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
 \value{
-A set of ecological niche models (.tif files) and figures (optional)
-written in the \code{final_dir} subfolder
+Returns a data.frame with final statistics of the partitions included in the final model
+
+Writes on disk a set of ecological niche models (.tif files) in the \code{final_dir} subfolder
+
+If \code{write_final = TRUE} writes .png figures
+ in the \code{final_dir} subfolder
 }
 \description{
 This function reads the models generated either by \code{\link{do_any}} or
@@ -93,11 +97,11 @@ This function reads the models generated either by \code{\link{do_any}} or
 summarizes them into a final model for each species-algorithm combination.
 These final models may be created from the raw uncut models, the binary
 models or the "cut" models (see \code{\link{do_any}}). They may use all
-partitions or select only partitions with performance metrics above a defined
-value. The mean can be calculated as arithmetic mean or weighted by a
-performance statistic (AUC or TSS). A majority rule can be applied to binary
+partitions or select only partitions (\code{select_partitions = TRUE}) with performance metrics above a defined
+value (specified in \code{cut_level}. The mean can be calculated as arithmetic mean or weighted by a
+performance statistic ("\code{AUC}" or "\code{TSS}" given to \code{select_par} argument). A majority rule can be applied to binary
 models and uncertainty taken as ranges between paritition may also be
-calculated.
+calculated. Analogous to \emph{no silver bullets in correlative ecological niche modeling}, no method for evaluating and selecting partitions is always better. The user should choose how to create the final model based on their assumptions and use. We simply recommend to focus on statistical clarity rather than significance \insertCite{dushoff_can_2019}{modleR}.
 }
 \examples{
 # run setup_sdmdata
@@ -123,8 +127,11 @@ sp_final <- final_model(species_name = sp,
                         overwrite = TRUE)
 
 }
+\references{
+\insertAllCited{}
+}
 \seealso{
-\code{\link[dismo]{threshold}}
+\code{\link[dismo]{threshold}}  in \pkg{dismo} package
 
-\code{\link[raster]{writeRaster}}
+\code{\link[raster]{writeRaster}}  in \pkg{raster} package
 }

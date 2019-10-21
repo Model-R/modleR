@@ -81,10 +81,15 @@ and 1}
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}}.}
 }
 \value{
+Retuns a RasterStack with
+all generated statistics written in the \code{ensemble_dir}
+subfolder
+
 Writes on disk raster files with the median, mean and standard
-deviation and range of the assembled models. Also retuns a RasterStack with
-all generated statistics (optional) written in the \code{ensemble_dir}
-subfolder.
+deviation and range of the assembled models
+
+If \code{write_ensemble = TRUE} writes .png figures
+ in the \code{ensemble_dir} subfolder
 }
 \description{
 This function reads the output of \code{final_model} for multiple algorithms

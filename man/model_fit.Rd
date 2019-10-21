@@ -102,8 +102,12 @@ package with \code{\link[e1071]{best.tune}} function}
 \code{\link[dismo]{gbm.step}} from \pkg{dismo}}
 }
 \value{
-Writes on disk a .tif model for each partition and a .csv file with
-evaluation statistics (TSS, AUC, etc)
+Returns a data.frame with evaluation statistics of each algotithm (thresold values, omission, TSS, AUC, pROC etc)
+
+Writes on disk a .tif model for each partition of each algorithm
+
+Writes in disk a .csv file with
+evaluation statistics of each algorithm
 }
 \description{
 \code{do_any} reads the output from \code{\link{setup_sdmdata}} and
@@ -254,19 +258,19 @@ sp_many <- do_many(species_name = sp,
 \insertAllCited{}
 }
 \seealso{
-\code{\link[dismo]{bioclim}}
+\code{\link[dismo]{bioclim}} in \pkg{dismo} package
 
-\code{\link[dismo]{domain}}
+\code{\link[dismo]{domain}} in \pkg{dismo} package
 
 \code{\link{do_many}}
 
-\code{\link[dismo]{evaluate}}
+\code{\link[dismo]{evaluate}} in \pkg{dismo} package
 
-\code{\link[dismo]{maxent}}
+\code{\link[dismo]{maxent}} in \pkg{dismo} package
 
-\code{\link[maxnet]{maxnet}}
+\code{\link[maxnet]{maxnet}} in \pkg{maxnet} package
 
-\code{\link[dismo]{mahal}}
+\code{\link[dismo]{mahal}} in \pkg{dismo} package
 
 \code{\link[dismo]{predict}} in \pkg{dismo} package
 

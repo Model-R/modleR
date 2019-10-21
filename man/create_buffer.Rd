@@ -106,7 +106,7 @@ plot(buf)
 
 }
 \seealso{
-\code{\link[raster]{buffer}}
+\code{\link[raster]{buffer}}  in \pkg{raster} package
 
-\code{\link[dismo]{randomPoints}}
+\code{\link[dismo]{randomPoints}}  in \pkg{dismo} package
 }

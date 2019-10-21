@@ -52,8 +52,8 @@
 #' Selecting pseudo-absence data for presence-only distribution modeling: How
 #' far should you stray from what you know? Ecological Modelling, 220(4),
 #' 589-594. doi:10.1016/j.ecolmodel.2008.11.010
-#' @seealso \code{\link[raster]{buffer}}
-#' @seealso \code{\link[dismo]{randomPoints}}
+#' @seealso \code{\link[raster]{buffer}}  in \pkg{raster} package
+#' @seealso \code{\link[dismo]{randomPoints}}  in \pkg{dismo} package
 #' @examples
 #' library(raster)
 #' sp <- names(example_occs)[1]

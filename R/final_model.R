@@ -5,12 +5,12 @@
 #' summarizes them into a final model for each species-algorithm combination.
 #' These final models may be created from the raw uncut models, the binary
 #' models or the "cut" models (see \code{\link{do_any}}). They may use all
-#' partitions or select only partitions with performance metrics above a defined
-#' value. The mean can be calculated as arithmetic mean or weighted by a
-#' performance statistic (AUC or TSS). A majority rule can be applied to binary
+#' partitions or select only partitions (\code{select_partitions = TRUE}) with performance metrics above a defined
+#' value (specified in \code{cut_level}. The mean can be calculated as arithmetic mean or weighted by a
+#' performance statistic ("\code{AUC}" or "\code{TSS}" given to \code{select_par} argument). A majority rule can be applied to binary
 #' models and uncertainty taken as ranges between paritition may also be
-#' calculated.
-#'
+#' calculated. Analogous to \emph{no silver bullets in correlative ecological niche modeling}, no method for evaluating and selecting partitions is always better. The user should choose how to create the final model based on their assumptions and use. We simply recommend to focus on statistical clarity rather than significance \insertCite{dushoff_can_2019}{modleR}.
+#' 
 #' @inheritParams setup_sdmdata
 #' @param algorithms Which algorithms will be processed. If no name is given it
 #' will process all algorithms present in the evaluation files
@@ -65,8 +65,8 @@
 #' @return Writes on disk a set of ecological niche models (.tif files) in the \code{final_dir} subfolder
 #' @return If \code{write_final = TRUE} writes .png figures
 #'  in the \code{final_dir} subfolder
-#' @seealso \code{\link[dismo]{threshold}}
-#' @seealso \code{\link[raster]{writeRaster}}
+#' @seealso \code{\link[dismo]{threshold}}  in \pkg{dismo} package
+#' @seealso \code{\link[raster]{writeRaster}}  in \pkg{raster} package
 #' @examples
 #' # run setup_sdmdata
 #' sp <- names(example_occs)[1]
@@ -90,6 +90,8 @@
 #'                         consensus_level = 0.5,
 #'                         overwrite = TRUE)
 #'
+#' @references
+#'     \insertAllCited{}
 #' @import raster
 #' @importFrom utils read.table write.csv read.csv
 #' @export
