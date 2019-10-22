@@ -1,4 +1,3 @@
-#' Ecological niche model fit, prediction and evaluation using one or several
 #' algorithms
 #'
 #' \code{do_any} reads the output from \code{\link{setup_sdmdata}} and
@@ -18,7 +17,7 @@
 #'  how each algorithm supported in this package is implemented.
 #'
 #' @inheritParams setup_sdmdata
-#' @return Returns a data.frame with evaluation statistics of each algotithm (thresold values, omission, TSS, AUC, pROC etc)
+#' @return Returns a data frame with evaluation statistics of each algotithm (thresold values, omission, TSS, AUC, pROC etc)
 #' @return Writes on disk a .tif model for each partition of each algorithm
 #' @return Writes in disk a .csv file with
 #' evaluation statistics of each algorithm
@@ -133,7 +132,7 @@
 #'     \insertAllCited{}
 #' @seealso \code{\link[dismo]{bioclim}} in \pkg{dismo} package
 #' @seealso \code{\link[dismo]{domain}} in \pkg{dismo} package
-#' @seealso \code{\link{do_many}} 
+#' @seealso \code{\link{do_many}}
 #' @seealso \code{\link[dismo]{evaluate}} in \pkg{dismo} package
 #' @seealso \code{\link[dismo]{maxent}} in \pkg{dismo} package
 #' @seealso \code{\link[maxnet]{maxnet}} in \pkg{maxnet} package

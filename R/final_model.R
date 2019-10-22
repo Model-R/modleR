@@ -10,7 +10,7 @@
 #' performance statistic ("\code{AUC}" or "\code{TSS}" given to \code{select_par} argument). A majority rule can be applied to binary
 #' models and uncertainty taken as ranges between paritition may also be
 #' calculated. Analogous to \emph{no silver bullets in correlative ecological niche modeling}, no method for evaluating and selecting partitions is always better. The user should choose how to create the final model based on their assumptions and use. We simply recommend to focus on statistical clarity rather than significance \insertCite{dushoff_can_2019}{modleR}.
-#' 
+#'
 #' @inheritParams setup_sdmdata
 #' @param algorithms Which algorithms will be processed. If no name is given it
 #' will process all algorithms present in the evaluation files
@@ -61,7 +61,7 @@
 #' @param write_final Logical. If \code{TRUE}, writes png files of the final
 #' models
 #' @param ... Other parameters from \code{\link[raster]{writeRaster}}
-#' @return Returns a data.frame with final statistics of the partitions included in the final model
+#' @return Returns a data frame with final statistics of the partitions included in the final model
 #' @return Writes on disk a set of ecological niche models (.tif files) in the \code{final_dir} subfolder
 #' @return If \code{write_final = TRUE} writes .png figures
 #'  in the \code{final_dir} subfolder
