@@ -16,61 +16,61 @@ do_many <- function(species_name,
   if (bioclim == TRUE) {
     do_any(
       species_name,
-      algo = "bioclim",
+      algorithm = "bioclim",
       ...)
   }
   if (domain == TRUE) {
     do_any(
       species_name,
-      algo = "domain",
+      algorithm = "domain",
       ...)
   }
   if (glm == TRUE) {
     do_any(
       species_name,
-      algo = "glm",
+      algorithm = "glm",
       ...)
   }
   if (mahal == TRUE) {
     do_any(
       species_name,
-      algo = "mahal",
+      algorithm = "mahal",
       ...)
   }
   if (maxent == TRUE) {
     do_any(
       species_name,
-      algo = "maxent",
+      algorithm = "maxent",
       ...)
   }
   if (maxnet == TRUE) {
     do_any(
       species_name,
-      algo = "maxnet",
+      algorithm = "maxnet",
       ...)
   }
   if (rf == TRUE) {
     do_any(
       species_name,
-      algo = "rf",
+      algorithm = "rf",
       ...)
   }
   if (svmk == TRUE) {
     do_any(
       species_name,
-      algo = "svmk",
+      algorithm = "svmk",
       ...)
   }
   if (svme == TRUE) {
     do_any(
       species_name,
-      algo = "svme",
+      algorithm = "svme",
       ...)
   }
   if (brt == TRUE) {
     do_any(
       species_name,
-      algo = "brt",
+      algorithm = "brt",
       ...)
   }
 }

@@ -30,7 +30,7 @@ See \code{\link{example_occs}} as an example}
 "\code{./models}"}
 
 \item{final_dir}{Character. Name of the folder to save the output files.
-A subfolder will be created.}
+A subfolder will be created, defaults to "final_model"}
 
 \item{ensemble_dir}{Character string, name of the folder to save the output
 files. A subfolder will be created. Defaults to "\code{ensemble}"}
@@ -46,25 +46,24 @@ be:
   models (scale from 0 to 1)}
   \item{\code{raw_mean_th}}{Cuts the \code{raw_mean} by the mean of the
   thresholds that maximize the selected evaluation metric (e.g. TSS
-  (\code{spec_sens}) to make a binary model.}
+  (\code{spec_sens}) to make a binary model}
    \item{\code{raw_mean_cut}}{Recovers \code{raw_mean} values above the mean
    threshold that
    maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
-   other \pkg{dismo} thresholds). Generates a continuous model.}
+   other \pkg{dismo} thresholds). Generates a continuous model}
   \item{\code{bin_mean}}{The mean of the selected binary models. Generates a
-   model in a discrete scale.}
-  \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}.
+   model in a discrete scale}
+  \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}
   Parameter \code{consensus_level} must be defined, 0.5 means a majority
   consensus}
   \item{\code{cut_mean}}{The mean of the selected cut models. Values below
-  the thresholds are down-weighted by zeros.}
+  the thresholds are down-weighted by zeros}
 }}
 
 \item{consensus}{Logical. If \code{TRUE} a consensus between the algorithms
 will be applied}
 
-\item{consensus_level}{Which proportion of models will be kept when creating
-\code{bin_consensus} (binary)}
+\item{consensus_level}{Which proportion of binary models will be kept when creating \code{bin_consensus}}
 
 \item{write_ensemble}{Logical. If \code{TRUE} writes png files of the
 ensemble models}
@@ -78,7 +77,7 @@ of the ensemble models}
 \item{scale_models}{Logical. Whether input models should be scaled between 0
 and 1}
 
-\item{...}{Other parameters from \code{\link[raster]{writeRaster}}.}
+\item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
 \value{
 Retuns a RasterStack with
@@ -95,7 +94,7 @@ If \code{write_ensemble = TRUE} writes .png figures
 This function reads the output of \code{final_model} for multiple algorithms
 and builds an ensemble model by calculating the mean of each final model
 (i.e. one model per species per algorithm). It also calculates median and
-deviation statistics such as standard deviation and range (maximum - minimum).
+deviation statistics such as standard deviation and range (maximum - minimum)
 }
 \examples{
 # run setup_sdmdata

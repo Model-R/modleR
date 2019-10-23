@@ -4,11 +4,10 @@
 \alias{do_any}
 \alias{do_many}
 \alias{model_fit}
-\title{Ecological niche model fit, prediction and evaluation using one or several
-algorithms}
+\title{Ecological niche models fit, prediction, projection and evaluation using one or several algorithms}
 \usage{
 do_any(species_name, predictors, models_dir = "./models",
-  algo = c("bioclim"), project_model = FALSE,
+  algorithm = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
   write_bin_cut = FALSE, threshold = "spec_sens", conf_mat = TRUE,
   equalize = TRUE, proc_threshold = 0.5, ...)
@@ -30,7 +29,8 @@ raster layers}
 \item{models_dir}{Folder path to save the output files. Defaults to
 "\code{./models}"}
 
-\item{algo}{The algorithm to be fit: "\code{bioclim}", "\code{brt}",
+\item{algorithm}{Character string of length 1 specifying the algorithm to
+be fit: "\code{bioclim}", "\code{brt}",
 "\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
 "\code{svme}", "\code{svmk}", "\code{rf}"}
 
@@ -102,7 +102,7 @@ package with \code{\link[e1071]{best.tune}} function}
 \code{\link[dismo]{gbm.step}} from \pkg{dismo}}
 }
 \value{
-Returns a data.frame with evaluation statistics of each algotithm (thresold values, omission, TSS, AUC, pROC etc)
+Returns a data frame with evaluation statistics of each algorithm (threshold values, omission, TSS, AUC, pROC etc)
 
 Writes on disk a .tif model for each partition of each algorithm
 
@@ -246,7 +246,7 @@ sp_setup <- setup_sdmdata(species_name = sp,
 # run bioclim for one species
 sp_any <- do_any(species_name = sp,
                  predictors = example_vars,
-                 algo = "bioclim")
+                 algorithm = "bioclim")
 
 # run do_many
 sp_many <- do_many(species_name = sp,

@@ -3,7 +3,8 @@
 #' This function reads the output of \code{final_model} for multiple algorithms
 #' and builds an ensemble model by calculating the mean of each final model
 #' (i.e. one model per species per algorithm). It also calculates median and
-#' deviation statistics such as standard deviation and range (maximum - minimum).
+#' deviation statistics such as standard deviation and range (maximum - minimum)
+#'
 #' @inheritParams setup_sdmdata
 #' @inheritParams final_model
 #' @param ensemble_dir Character string, name of the folder to save the output
@@ -15,18 +16,18 @@
 #'   models (scale from 0 to 1)}
 #'   \item{\code{raw_mean_th}}{Cuts the \code{raw_mean} by the mean of the
 #'   thresholds that maximize the selected evaluation metric (e.g. TSS
-#'   (\code{spec_sens}) to make a binary model.}
+#'   (\code{spec_sens}) to make a binary model}
 #'    \item{\code{raw_mean_cut}}{Recovers \code{raw_mean} values above the mean
 #'    threshold that
 #'    maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
-#'    other \pkg{dismo} thresholds). Generates a continuous model.}
+#'    other \pkg{dismo} thresholds). Generates a continuous model}
 #'   \item{\code{bin_mean}}{The mean of the selected binary models. Generates a
-#'    model in a discrete scale.}
-#'   \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}.
+#'    model in a discrete scale}
+#'   \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}
 #'   Parameter \code{consensus_level} must be defined, 0.5 means a majority
 #'   consensus}
 #'   \item{\code{cut_mean}}{The mean of the selected cut models. Values below
-#'   the thresholds are down-weighted by zeros.}
+#'   the thresholds are down-weighted by zeros}
 #' }
 #' @param consensus Logical. If \code{TRUE} a consensus between the algorithms
 #' will be applied
@@ -36,7 +37,7 @@
 #' of the ensemble models
 #' @param write_occs Logical. If \code{TRUE} writes the occurrence points on the
 #' png file of the ensemble model
-#' @param ... Other parameters from \code{\link[raster]{writeRaster}}.
+#' @param ... Other parameters from \code{\link[raster]{writeRaster}}
 #'
 #' @import raster
 #' @importFrom scales alpha

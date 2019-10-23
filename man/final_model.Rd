@@ -4,9 +4,9 @@
 \alias{final_model}
 \title{Joins ENM from several partitions, creating a model per algorithm}
 \usage{
-final_model(species_name, algorithms = NULL, weight_par = NULL,
-  select_partitions = TRUE, cut_level = c("spec_sens"),
-  scale_models = TRUE, select_par = "TSS", select_par_val = 0.7,
+final_model(species_name, algorithms = NULL, select_partitions = TRUE,
+  select_par = "TSS", select_par_val = 0.7, weight_par = NULL,
+  cut_level = c("spec_sens"), scale_models = TRUE,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
   which_models = c("raw_mean"), uncertainty = FALSE,
@@ -19,36 +19,36 @@ punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
 \code{\link{example_occs}} as an example}
 
-\item{algorithms}{Which algorithms will be processed. If no name is given it
-will process all algorithms present in the evaluation files}
-
-\item{weight_par}{Which performance statistic should be used to weigh the
-partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used}
+\item{algorithms}{Character vector specifying which algorithms will be
+processed. Note that it can have length > 1, ex. \code{c("bioclim", "rf")}. Defaults to
+ NULL: if no name is given it will process all algorithms present in the evaluation files}
 
 \item{select_partitions}{Logical. If TRUE only partitions above a particular
 threshold value are selected}
-
-\item{cut_level}{Which selecting threshold will be used to cut the mean
-models. Default is set to "spec_sens" but any \pkg{dismo} threshold (see
-function \code{\link[dismo]{threshold}}) can be used: "kappa", "no_omission",
- "prevalence", "equal_sens_spec", "sensitivity"}
-
-\item{scale_models}{Logical. Whether input models should be scaled between 0
-and 1}
 
 \item{select_par}{Which performance statistic should be used to select the
 partitions. Defaults to NULL but either \code{"AUC"} or \code{"TSS"} can be
 used}
 
-\item{select_par_val}{Threshold to select models from TSS values}
+\item{select_par_val}{Performance metric value to select partitions}
 
-\item{consensus_level}{Which proportion of models will be kept when creating
-\code{bin_consensus} (binary)}
+\item{weight_par}{Which performance statistic should be used to weigh the
+partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used}
+
+\item{cut_level}{Which selecting threshold will be used to cut the mean
+models. Default is set to "\code{spec_sens}" but any \pkg{dismo} threshold (see
+function \code{\link[dismo]{threshold}}) can be used: "\code{kappa}", "\code{no_omission}",
+ "\code{prevalence}", "\code{equal_sens_spec}", "\code{sensitivity}"}
+
+\item{scale_models}{Logical. Whether input models should be scaled between 0
+and 1}
+
+\item{consensus_level}{Which proportion of binary models will be kept when creating \code{bin_consensus}}
 
 \item{models_dir}{Character. Folder path where the input files are located}
 
 \item{final_dir}{Character. Name of the folder to save the output files.
-A subfolder will be created.}
+A subfolder will be created, defaults to "final_model"}
 
 \item{proj_dir}{Character. The name of the subfolder with the projection.
 Defaults to "present" but can be set according to the other projections (i.e.
@@ -61,18 +61,18 @@ be:
   models (scale from 0 to 1)}
   \item{\code{raw_mean_th}}{Cuts the \code{raw_mean} by the mean of the
   thresholds that maximize the selected evaluation metric (e.g. TSS
-  (\code{spec_sens}) to make a binary model.}
+  (\code{spec_sens}) to make a binary model}
    \item{\code{raw_mean_cut}}{Recovers \code{raw_mean} values above the mean
    threshold that maximizes the selected evaluation metric (e.g. TSS
    (\code{spec_sens}) or other \pkg{dismo} thresholds). Generates a
-   continuous model.}
+   continuous model}
   \item{\code{bin_mean}}{The mean of the selected binary models. Generates a
-  model in a discrete scale.}
+  model in a discrete scale (0 to 1 in 1/n intervals where n is the number of retained models)}
   \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}.
   Parameter \code{consensus_level} must be defined, 0.5 means a majority
   consensus}
   \item{\code{cut_mean}}{The mean of the selected cut models. Values below
-  the thresholds are down-weighted by zeros.}
+  the thresholds are down-weighted by zeros}
 }}
 
 \item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
@@ -81,10 +81,10 @@ should be calculated}
 \item{write_final}{Logical. If \code{TRUE}, writes png files of the final
 models}
 
-\item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
+\item{...}{Other parameters from \code{\link[raster]{writeRaster}}, especially \code{overwrite = TRUE}, when needed}
 }
 \value{
-Returns a data.frame with final statistics of the partitions included in the final model
+Returns a data frame with final statistics of the partitions included in the final model
 
 Writes on disk a set of ecological niche models (.tif files) in the \code{final_dir} subfolder
 
@@ -98,9 +98,9 @@ summarizes them into a final model for each species-algorithm combination.
 These final models may be created from the raw uncut models, the binary
 models or the "cut" models (see \code{\link{do_any}}). They may use all
 partitions or select only partitions (\code{select_partitions = TRUE}) with performance metrics above a defined
-value (specified in \code{cut_level}. The mean can be calculated as arithmetic mean or weighted by a
-performance statistic ("\code{AUC}" or "\code{TSS}" given to \code{select_par} argument). A majority rule can be applied to binary
-models and uncertainty taken as ranges between paritition may also be
+value (specified in \code{select_par_val}). The function can also calculate weighted means of the partitions (selected or not) using
+performance statistic ("\code{AUC}" or "\code{TSS}" given to \code{weight_par} argument). A majority rule can be applied to binary
+models and uncertainty taken as ranges between partitions may also be
 calculated. Analogous to \emph{no silver bullets in correlative ecological niche modeling}, no method for evaluating and selecting partitions is always better. The user should choose how to create the final model based on their assumptions and use. We simply recommend to focus on statistical clarity rather than significance \insertCite{dushoff_can_2019}{modleR}.
 }
 \examples{
@@ -114,7 +114,7 @@ sp_setup <- setup_sdmdata(species_name = sp,
 # run do_any
 sp_bioclim <- do_any(species_name = sp,
                      predictors = example_vars,
-                     algo = "bioclim")
+                     algorithm = "bioclim")
 
 # run final_model
 sp_final <- final_model(species_name = sp,

@@ -197,7 +197,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 
 Functions `do_any` and `do_many()` create a *model per partition, per algorithm*.
 The difference between these functions that `do_any()` performs modeling for one
-individual algorithm at a time, that can be chosen by using parameter `algo`,
+individual algorithm at a time, that can be chosen by using parameter `algorithm`,
 while `do_many()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
 
 The available algorithms are:
@@ -209,7 +209,7 @@ The available algorithms are:
 + Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package [@hastie_elements_2001; @elith_working_2009].
 
 Details for the implementation of each model can be accessed in the documentation of the function.
-<!--Ö escrever os detalhes das implementações -->
+
 
 Here you can see the differences between the parameters of both functions. `do_many()` calls several instances of `do_any()` In practice you may only want to call `do_many()`
 but for parallelization by algorithm it may be better to call `do_any()` individually.
@@ -219,12 +219,12 @@ args(do_any)
 args(do_many)
 ```
 
-Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
+Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
 ```{r do_any, echo = TRUE, eval = TRUE}
 
 sp_maxent <- do_any(species_name = species[1],
-                    algo = "maxent",
+                    algorithm = "maxent",
                     predictors = example_vars,
                     models_dir = test_folder,
                     write_png = TRUE,

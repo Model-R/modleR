@@ -1,4 +1,4 @@
-#' algorithms
+#' Ecological niche models fit, prediction, projection and evaluation using one or several algorithms
 #'
 #' \code{do_any} reads the output from \code{\link{setup_sdmdata}} and
 #' computes ecological niche models for a species based on an algorithm
@@ -17,7 +17,7 @@
 #'  how each algorithm supported in this package is implemented.
 #'
 #' @inheritParams setup_sdmdata
-#' @return Returns a data frame with evaluation statistics of each algotithm (thresold values, omission, TSS, AUC, pROC etc)
+#' @return Returns a data frame with evaluation statistics of each algorithm (threshold values, omission, TSS, AUC, pROC etc)
 #' @return Writes on disk a .tif model for each partition of each algorithm
 #' @return Writes in disk a .csv file with
 #' evaluation statistics of each algorithm
@@ -147,7 +147,8 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom kuenm kuenm_proc
 #'
-#' @param algo The algorithm to be fit: "\code{bioclim}", "\code{brt}",
+#' @param algorithm Character string of length 1 specifying the algorithm to
+#' be fit: "\code{bioclim}", "\code{brt}",
 #' "\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
 #' "\code{svme}", "\code{svmk}", "\code{rf}"
 #' @param bioclim Execute bioclim algorithm from the \pkg{dismo} implementation
@@ -209,7 +210,7 @@
 #' # run bioclim for one species
 #' sp_any <- do_any(species_name = sp,
 #'                  predictors = example_vars,
-#'                  algo = "bioclim")
+#'                  algorithm = "bioclim")
 #'
 #' # run do_many
 #' sp_many <- do_many(species_name = sp,
