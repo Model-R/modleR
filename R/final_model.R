@@ -131,16 +131,17 @@ final_model <- function(species_name,
     stats <- as.data.frame(stats)
     names(stats)[1] <- "species"
 
-    write.csv(stats, file = paste0(models_dir, "/", species_name, "/present/",
-                                   final_dir, "/", species_name,
-                                   "_final_statistics.csv"))
-
     # Extracts only for the selected algorithm
     # if the user doesnt specify, it will take all of them
     if (is.null(algorithms)) {
         algorithms <- unique(stats$algorithm)
     }
     algorithms <- as.factor(algorithms)
+    #write stats only for the selected algorithms
+    write.csv(stats[stats$algorithm %in% algorithms, ],
+              file = paste0(models_dir, "/", species_name, "/present/",
+                                   final_dir, "/", species_name,
+                                   "_final_statistics.csv"))
 
     for (algo in algorithms) {
         final_algo <- raster::stack()
