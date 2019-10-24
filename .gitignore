@@ -1,23 +1,29 @@
-.Rproj.user
-.Rhistory
-.RData
+# R files
 .Rapp.history
-script.R
-inst/doc
+.RData
+.Rhistory
+*.Rproj
+.Rproj.user
+
+# other files
 *.html
-*.pdf
-vignettes/modelR_cache
+modelos_teste.log
 *.odg
+*.pdf
+script.R
+teste.R
+
+# dirs
 1sdmtest_boot
 1sdmtest_cv
 1sdmtest_cvrep
-sdmtest
 docs
+inst/doc
+modelos_teste
+sdmtest
 setupsdmdata
 setupsdmdatamed
 test
+vignettes/modelR_cache
 wc10
-modelos_teste
-modelos_teste.log
-*.Rproj
-teste.R
+.Rd2pdf*/

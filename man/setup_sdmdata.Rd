@@ -2,102 +2,155 @@
 % Please edit documentation in R/setup_sdmdata.R
 \name{setup_sdmdata}
 \alias{setup_sdmdata}
-\title{Prepares the dataset to perform ENM.}
+\title{Prepares the dataset to perform ENM}
 \usage{
 setup_sdmdata(species_name, occurrences, predictors,
   models_dir = "./models", real_absences = NULL, lon = "lon",
   lat = "lat", buffer_type = NULL, dist_buf = NULL,
-  dist_min = NULL, buffer_shape = NULL, write_buffer = F,
+  env_buffer = FALSE, env_distance = "centroid", dist_min = NULL,
+  buffer_shape = NULL, max_env_dist = 0.5, write_buffer = FALSE,
   seed = NULL, clean_dupl = FALSE, clean_nas = FALSE,
   clean_uni = FALSE, geo_filt = FALSE, geo_filt_dist = NULL,
-  select_variables = F, cutoff = 0.8, percent = 0.8,
-  plot_sdmdata = T, n_back = 1000, partition_type = c("bootstrap"),
-  boot_n = 1, boot_proportion = 0.7, cv_n = NULL,
-  cv_partitions = NULL, ...)
+  select_variables = FALSE, cutoff = 0.8, percent = 0.8,
+  plot_sdmdata = TRUE, n_back = 1000,
+  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
+  cv_n = NULL, cv_partitions = NULL)
 }
 \arguments{
-\item{species_name}{A character string with the species name}
+\item{species_name}{A character string with the species name. Because species
+name will be used as a directory name, avoid non-ASCII characters, spaces and
+punctuation marks.
+Recommendation is to adopt "Genus_species" format. See names in
+\code{\link{example_occs}} as an example}
 
-\item{occurrences}{A data frame with occurrence data}
+\item{occurrences}{A data frame with occurrence data. Data must have at least
+ columns with latitude and longitude values of species occurrences.
+See \code{\link{example_occs}} as an example}
 
-\item{predictors}{A RasterStack of predictor variables}
+\item{predictors}{A Raster or RasterStack object with the environmental
+raster layers}
 
-\item{models_dir}{Folder path to save the output files}
+\item{models_dir}{Folder path to save the output files. Defaults to
+"\code{./models}"}
 
 \item{real_absences}{User-defined absence points}
 
-\item{lon}{the name of the longitude column. defaults to "lon"}
+\item{lon}{The name of the longitude column. Defaults to "lon"}
 
-\item{lat}{the name of the latitude column. defaults to "lat"}
+\item{lat}{The name of the latitude column. Defaults to "lat"}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
-calculated using the "mean", "median", "maximum" distance between occurrence
-points, or an absolute "distance". If set to "distance", "dist_buf" needs to
-be specified. If set to "user", "buffer_shape" needs to be specified.}
+calculated using the "\code{mean}", "\code{median}", "\code{maximum}"
+distance between occurrence points, or an absolute geographic
+"\code{distance}". If set to "\code{user}", a user-supplied shapefile will be
+used as a sampling area, and \code{buffer_shape} needs to be specified. If
+NULL, no distance buffer is applied. If set to "\code{distance}",
+\code{dist_buf} needs to be specified}
 
-\item{dist_buf}{Defines the width of the buffer. Needs to be specified if buffer_type = "distance"}
+\item{dist_buf}{Defines the width of the buffer. Needs to be specified if
+\code{buffer_type = "distance"}. Distance unit is in the same unit of the
+RasterStack of predictor variables}
 
-\item{dist_min}{Optional, a distance in km for the exclusion buffer.}
+\item{env_buffer}{Logical. Should an euclidean environmental filter be
+applied? If TRUE, \code{env_distance} and \code{max_env_dist} need to be
+specified}
 
-\item{buffer_shape}{User-defined buffer shapefile. Needs to be specified if buffer_type = "user"}
+\item{env_distance}{Character. Type of environmental distance, any in
+"\code{centroid}", "\code{mindist}". Defaults to "\code{centroid}", the
+distance of each raster pixel to the environmental centroid of the
+distribution. When set to "\code{mindist}", the minimum distance of each
+raster pixel to any of the occurrence points is calculated. Needs to be
+specified if \code{env_buffer = TRUE}. A maximum value needs to be specified
+ (parameter \code{max_env_dist})}
 
-\item{write_buffer}{Logical. Should the resulting raster file be written? defaults to FALSE}
+\item{dist_min}{Optional, numeric. A distance for the exclusion of areas too
+close from the occurrence points. Distance unit is in the same unit of the
+RasterStack of predictor variables}
 
-\item{seed}{For reproducibility purposes}
+\item{buffer_shape}{User-defined buffer shapefile in which pseudoabsences
+will be generated. Needs to be specified if \code{buffer_type = "user"}}
 
-\item{clean_dupl}{logical. If TURE removes points with the same longitude and latitude}
+\item{max_env_dist}{Numeric. Since large negative values can arise
+during the calculation of the euclidean environmental distance, this
+parameter sets a maximum value to cut the environmental distance buffer.
+Expressed in quantiles, from 0: all values to 1: no values. Defaults to 0.5,
+the median value. Needs to be specified if \code{env_buffer = TRUE}}
 
-\item{clean_nas}{logical. If TURE removes points that are outside the bounds of the raster}
+\item{write_buffer}{Logical. Should the resulting RasterStack be written?
+Defaults to FALSE}
 
-\item{clean_uni}{logical. If TURE selects only one point per pixel}
+\item{seed}{Random number generator for reproducibility purposes. Used for
+sampling pseudoabsences}
 
-\item{geo_filt}{Logical, delete occurrence that are too close?}
+\item{clean_dupl}{Logical. If TRUE, removes points with the same longitude and
+latitude}
 
-\item{geo_filt_dist}{The distance of the geographic filter (in kilometers)}
+\item{clean_nas}{Logical. If TRUE, removes points that are outside the bounds    #' of the raster}
 
-\item{select_variables}{Logical. Whether a call to \link{select_variables}
-should be performed. cutoff and percent parameters can be specified}
+\item{clean_uni}{Logical. If TRUE, selects only one point per pixel}
 
-\item{cutoff}{Cutoff value of correlation between variables to exclude environmental layer. Default is to exclude environmental variables with correlation > 0.8.}
+\item{geo_filt}{Logical, delete occurrences that are too close to each other?
+See \insertCite{varela_environmental_2014;textual}{modleR}}
 
-\item{percent}{percentage of the raster values to be sampled to calculate the correlation. Defaults to 0.8 but should be useful with high resolution rasters}
+\item{geo_filt_dist}{The distance of the geographic filter in the unit of the
+predictor raster, see \insertCite{varela_environmental_2014;textual}{modleR}}
+
+\item{select_variables}{Logical. Whether a variable selection should be performed. It excludes highly correlated environmental
+variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified}
+
+\item{cutoff}{Cutoff value of correlation between variables to exclude
+environmental layers
+Default is to exclude environmental variables with correlation > 0.8}
+
+\item{percent}{percentage of the raster values to be sampled to calculate the
+correlation}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 
-\item{n_back}{Number of pseudoabsence points}
+\item{n_back}{Number of pseudoabsence points. Default is 1,000}
 
-\item{partition_type}{Perform bootstrap or k-fold crossvalidation?}
+\item{partition_type}{Character. Type of data partitioning scheme, either
+"\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified}
 
-\item{boot_n}{How many bootstrap runs}
+\item{boot_n}{Number of bootstrap runs}
 
 \item{boot_proportion}{Numerical 0 to 1, proportion of points to be sampled
 for bootstrap}
 
-\item{cv_n}{How many crossvalidation runs}
+\item{cv_n}{Number of crossvalidation runs}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{...}{parameters from create_buffer()}
+\item{...}{Othre parameters from \code{\link{create_buffer}}}
 }
 \value{
-A dataframe called sdmdata with the groups for each run
-(in columns called cv.1, cv.2 or boot.1, boot.2), a presence/absence vector,
-the geographical coordinates, of the occurrence and pseudoabsence points, and
-the associated environmental variables.
+Returns a data frame with the groups for each run (in columns called
+cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
+coordinates of the occurrence and pseudoabsence points, and the associated
+environmental variables (either all the layers or the selected ones if
+\code{select_variables = TRUE}).
+
+Function writes on disk (inside subfolder
+at \code{models_dir} directory) a text file named sdmdata.csv that will be used
+by \code{\link{do_any}} or \code{\link{do_many}}
 }
 \description{
-This function takes the occurrence points files and makes the data cleaning,
-data partitioning and the pseudo-absence point sampling, and saves the
-metadata and sdmdata files into the hard disk.
+This function takes the occurrence points files and the predictor layers and
+executes data cleaning, data partitioning, pseudo-absence point sampling and
+variable selection according to their correlation. It saves the metadata and
+sdmdata files into the hard disk.
 }
 \examples{
-sp <- unique(coordenadas$sp)[1]
-setup_sdmdata(sp, coordenadas[sp == sp,], example_vars)
-
+sp <- names(example_occs)[1]
+sp_coord <- example_occs[[1]]
+sp_setup <- setup_sdmdata(species_name = sp,
+                          occurrences = sp_coord,
+                          example_vars)
+head(sp_setup)
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
-\code{\link[dismo]{gridSample}}
-}
-\author{
-Andrea Sánchez-Tapia
+\code{\link{create_buffer}}
 }

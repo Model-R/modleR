@@ -1,4 +1,6 @@
+.Rd2pdf*/
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README.*$
+^teste.R
 
