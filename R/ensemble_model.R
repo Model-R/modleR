@@ -1,9 +1,9 @@
 #' Creates ensemble models from several algorithms
 #'
-#' This function reads the output of \code{final_model} for multiple algorithms
-#' and builds an ensemble model by calculating the mean of each final model
-#' (i.e. one model per species per algorithm). It also calculates median and
-#' deviation statistics such as standard deviation and range (maximum - minimum)
+#' This function reads the output of \code{final_model} for each species and
+#' multiple algorithms and builds a simple ensemble model by calculating the
+#' mean of the final models in order to obtain one model per species. It also
+#' calculates median, standard deviation and range (maximum - minimum)
 #'
 #' @inheritParams setup_sdmdata
 #' @inheritParams final_model

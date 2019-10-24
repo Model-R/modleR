@@ -1,10 +1,10 @@
 # modleR: a workflow for ecological niche models based on dismo
 
-__modleR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
+__modleR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
 
 # Installing
 
-Currently modleR can be installed from github (but we aim to submit to CRAN soon):
+Currently modleR can be installed from github:
 
 ```
 # Without vignette
@@ -167,7 +167,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 
 Functions `do_any` and `do_many()` create a *model per partition, per algorithm*.
 The difference between these functions that `do_any()` performs modeling for one
-individual algorithm at a time, that can be chosen by using parameter `algo`,
+individual algorithm at a time, that can be chosen by using parameter `algorithm`,
 while `do_many()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
 
 The available algorithms are:
@@ -179,7 +179,6 @@ The available algorithms are:
 + Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package (Hastie et al. 2001, Elith & Hijmans 2009).
 
 Details for the implementation of each model can be accessed in the documentation of the function.
-<!--Ö escrever os detalhes das implementações -->
 
 Here you can see the differences between the parameters of both functions. `do_many()` calls several instances of `do_any()` In practice you may only want to call `do_many()`
 but for parallelization by algorithm it may be better to call `do_any()` individually.
@@ -189,11 +188,11 @@ args(do_any)
 args(do_many)
 ```
 
-Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algo = "bioclim"`.
+Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
 ```{r do_any, echo = T, eval = T}
 sp_maxent <- do_any(species_name = species[1],
-                    algo = "maxent",
+                    algorithm = "maxent",
                     predictors = example_vars,
                     models_dir = test_folder,
                     write_png = T,

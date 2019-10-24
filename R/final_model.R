@@ -3,18 +3,27 @@
 #' This function reads the models generated either by \code{\link{do_any}} or
 #' \code{\link{do_many}} (i.e. one model per partition per algorithm) and
 #' summarizes them into a final model for each species-algorithm combination.
-#' These final models may be created from the raw uncut models, the binary
+#' These final models may be created from the raw continuous models, the binary
 #' models or the "cut" models (see \code{\link{do_any}}). They may use all
-#' partitions or select only partitions (\code{select_partitions = TRUE}) with performance metrics above a defined
-#' value (specified in \code{select_par_val}). The function can also calculate weighted means of the partitions (selected or not) using
-#' performance statistic ("\code{AUC}" or "\code{TSS}" given to \code{weight_par} argument). A majority rule can be applied to binary
-#' models and uncertainty taken as ranges between partitions may also be
-#' calculated. Analogous to \emph{no silver bullets in correlative ecological niche modeling}, no method for evaluating and selecting partitions is always better. The user should choose how to create the final model based on their assumptions and use. We simply recommend to focus on statistical clarity rather than significance \insertCite{dushoff_can_2019}{modleR}.
+#' partitions or select only partitions with performance metrics above a defined
+#' value (parameters \code{select_partitions}, \code{select_par} and
+#' \code{select_par_val}). The function can also calculate weighted means of the
+#' partitions (selected or not) using a performance statistic (passed to
+#' argument \code{weight_par}). After selecting and/or weighing each partition,
+#' a series of output can be created, see \code{which_models} for details about
+#' the final outputs available. Uncertainty taken as ranges between partitions may
+#' also be calculated. Analogous to \emph{no silver bullets in correlative
+#' ecological niche modeling}, no method for evaluating and selecting partitions
+#' is always better and these are only a subset of the possibilities. The user
+#' should choose how to create the final model based on their assumptions. We
+#' simply recommend to focus on statistical clarity rather than significance
+#'  \insertCite{dushoff_can_2019}{modleR}.
 #'
 #' @inheritParams setup_sdmdata
 #' @param algorithms Character vector specifying which algorithms will be
-#' processed. Note that it can have length > 1, ex. \code{c("bioclim", "rf")}. Defaults to
-#'  NULL: if no name is given it will process all algorithms present in the evaluation files
+#' processed. Note that it can have length > 1, ex. \code{c("bioclim", "rf")}.
+#' Defaults to NULL: if no name is given it will process all algorithms present
+#' in the evaluation files
 #' @param weight_par Which performance statistic should be used to weigh the
 #'  partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used
 #' @param select_partitions Logical. If TRUE only partitions above a particular
