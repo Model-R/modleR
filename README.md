@@ -4,7 +4,7 @@ __modleR__ is a workflow based on package __dismo__ (Hijmans et al 2017), design
 
 # Installing
 
-Currently modleR can be installed from github:
+Currently __modleR__ can be installed from github:
 
 ```
 # Without vignette
@@ -24,16 +24,17 @@ installation. During installation, R may ask for some missing packages, which yo
 A shiny application currently available at: https://github.com/Model-R/modleR_shiny_app
 uses a previous version of this workflow and is currently being updated to this newest version.
 
+
 # The workflow
 
 The workflow consists of mainly four functions that should be used sequentially.
 
-![__`modleR` workflow__](vignettes/workflow.png){ width=80% }
+![__`modleR` workflow__](vignettes/workflow.png)
 
-1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;
-2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
-3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm;
-4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus).
+1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling
+2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms
+3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm
+4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus)
 
 
 ## Folder structure created by this package
@@ -337,7 +338,7 @@ plot(final_models)
 
 ## ensemble_model()
 
-The third step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
+The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
 `ensemble_model()` uses the same `which.model` parameter of the `final_model()` function to specify which final model (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 

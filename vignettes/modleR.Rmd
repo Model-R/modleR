@@ -59,12 +59,13 @@ The workflow consists of mainly four functions that should be used sequentially.
 knitr::include_graphics("workflow.png", dpi = 150)
 ```
 
-1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling;
-2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms.
-3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm;
+
+1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling  
+2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms
+3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus).
 
- <!-- NOTE: `setup_sdmdata()` can be called apart or it can be called from within `do_any()` or `do_many()`. Likewise, `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
+ <!-- NOTE: `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
 
 ## Folder structure created by this package
 
