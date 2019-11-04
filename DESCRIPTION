@@ -4,10 +4,10 @@ Version: 0.0.0.9000
 Authors@R: c(
     person("Andrea", "Sánchez-Tapia", email = "andreasancheztapia@gmail.com", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-3521-4338")),
-    person("Diogo", "Rocha", email = "diogosbr@gmail.com", 
-    role = c("aut")),
     person("Sara", "Mortara", email = "saramortara@gmail.com", 
-    role = c("aut")),
+    role = c("aut"), comment = c(ORCID = "0000-0001-6221-7537")),
+    person("Diogo", "Rocha", email = "diogosbr@gmail.com", 
+    role = c("aut"), comment = c(ORCID = "0000-0003-2913-4072")),
     person("Felipe", "Barros", email = "felipe.b4rros@gmail.com", 
     role = c("aut")),
     person("Guilherme", "Gall", email = "gmgall@gmail.com", 

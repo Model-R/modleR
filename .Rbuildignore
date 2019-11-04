@@ -4,3 +4,6 @@
 ^README.*$
 ^teste.R
 
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
