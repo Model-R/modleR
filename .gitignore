@@ -6,7 +6,6 @@
 .Rproj.user
 
 # other files
-*.html
 modelos_teste.log
 *.odg
 *.pdf
@@ -17,7 +16,6 @@ teste.R
 1sdmtest_boot
 1sdmtest_cv
 1sdmtest_cvrep
-inst/doc
 modelos_teste
 sdmtest
 setupsdmdata
