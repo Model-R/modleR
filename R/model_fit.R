@@ -205,7 +205,7 @@
 #' sp_coord <- example_occs[[1]]
 #' sp_setup <- setup_sdmdata(species_name = sp,
 #'                           occurrences = sp_coord,
-#'                           example_vars)
+#'                           predictors = example_vars)
 #'
 #' # run bioclim for one species
 #' sp_any <- do_any(species_name = sp,

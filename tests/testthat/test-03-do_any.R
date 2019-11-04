@@ -9,16 +9,16 @@ algo <- "bioclim"
 mod_dir <- paste0(my_dir, sp, "/present/partitions/")
 
 test_that("do_any produces model and stats file", {
-  my_mod <- do_any(species_name=sp,
-                   predictors=example_vars,
-                   models_dir=my_dir,
+  my_mod <- do_any(species_name = sp,
+                   predictors = example_vars,
+                   models_dir = my_dir,
                    algo = algo)
   # does it have two txt files (matrix and evaluate) ?
   expect_length(list.files(path = mod_dir,
                            pattern = "confusion_matrices_.*csv"),
                 part)
   expect_length(list.files(path = mod_dir,
-                           pattern ="evaluate.*csv"),
+                           pattern = "evaluate.*csv"),
                 part)
   # does it have png file (model)?
    expect_length(list.files(path = mod_dir,
@@ -29,7 +29,7 @@ test_that("do_any produces model and stats file", {
 
 test_that("eval and confusion matrix are numeric", {
   # are all columns numeric
-  for(i in 1:part) {
+  for (i in 1:part) {
     apply(read.csv(list.files(path = mod_dir,
                               pattern = "confusion_matrices_.*csv",
                               full.names = TRUE)[i],
@@ -38,6 +38,3 @@ test_that("eval and confusion matrix are numeric", {
           expect_type, "integer")
   }
 })
-
-
-

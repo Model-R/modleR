@@ -47,12 +47,12 @@
 #' Default is to exclude environmental variables with correlation > 0.8
 #' @param percent percentage of the raster values to be sampled to calculate the
 #'  correlation
-#' @param ... Othre parameters from \code{\link{create_buffer}}
+#' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
 #' coordinates of the occurrence and pseudoabsence points, and the associated
 #' environmental variables (either all the layers or the selected ones if
-#' \code{select_variables = TRUE}). 
+#' \code{select_variables = TRUE}).
 #' @return Function writes on disk (inside subfolder
 #' at \code{models_dir} directory) a text file named sdmdata.csv that will be used
 #' by \code{\link{do_any}} or \code{\link{do_many}}
@@ -61,7 +61,7 @@
 #' sp_coord <- example_occs[[1]]
 #' sp_setup <- setup_sdmdata(species_name = sp,
 #'                           occurrences = sp_coord,
-#'                           example_vars)
+#'                           predictors = example_vars)
 #' head(sp_setup)
 #' @references
 #'     \insertAllCited{}
@@ -75,10 +75,10 @@
 setup_sdmdata <- function(species_name,
                           occurrences,
                           predictors,
-                          models_dir = "./models",
-                          real_absences = NULL,
                           lon = "lon",
                           lat = "lat",
+                          models_dir = "./models",
+                          real_absences = NULL,
                           buffer_type = NULL,
                           dist_buf = NULL,
                           env_buffer = FALSE,
@@ -177,7 +177,7 @@ setup_sdmdata <- function(species_name,
             }
     }
 
-    ##cleaning occurrences with clean and geo_filt----
+    ##cleaning occurrences with clean and thin with geo_filt----
     message("running data setup")
     message("cleaning data")
     occurrences <-
@@ -207,7 +207,7 @@ setup_sdmdata <- function(species_name,
                                     species_name = species_name,
                                     buffer_type = buffer_type,
                                     predictors = predictors,
-                                    dist_buf = dist_buf, #tiene que estar
+                                    dist_buf = dist_buf,
                                     dist_min = dist_min,
                                     buffer_shape = buffer_shape,
                                     env_distance = env_distance,
@@ -303,7 +303,7 @@ setup_sdmdata <- function(species_name,
             group <- dismo::kfold(occurrences, cv_partitions)
             set.seed(seed)
             bg.grp <- dismo::kfold(backgr, cv_partitions)
-            group.all <- c(group, bg.grp)
+            cv_0 <- c(group, bg.grp)
         }
         if (cv_n > 1) {
             # Repeated CV
@@ -351,7 +351,7 @@ setup_sdmdata <- function(species_name,
     boot.matrix <- rbind(boot_p, boot_a)
 }
 
-    if (exists("group.all"))   sdmdata <- data.frame(group.all, sdmdata)
+    if (exists("cv_0"))   sdmdata <- data.frame(cv_0, sdmdata)
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
     message(paste("saving sdmdata", "\n"))

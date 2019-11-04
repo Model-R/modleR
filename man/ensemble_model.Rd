@@ -102,7 +102,7 @@ sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
-                          example_vars)
+                          predictors = example_vars)
 
 # run do_many
 sp_many <- do_many(species_name = sp,

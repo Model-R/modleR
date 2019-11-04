@@ -4,15 +4,14 @@
 \alias{setup_sdmdata}
 \title{Prepares the dataset to perform ENM}
 \usage{
-setup_sdmdata(species_name, occurrences, predictors,
-  models_dir = "./models", real_absences = NULL, lon = "lon",
-  lat = "lat", buffer_type = NULL, dist_buf = NULL,
-  env_buffer = FALSE, env_distance = "centroid", dist_min = NULL,
-  buffer_shape = NULL, max_env_dist = 0.5, write_buffer = FALSE,
-  seed = NULL, clean_dupl = FALSE, clean_nas = FALSE,
-  clean_uni = FALSE, geo_filt = FALSE, geo_filt_dist = NULL,
-  select_variables = FALSE, cutoff = 0.8, percent = 0.8,
-  plot_sdmdata = TRUE, n_back = 1000,
+setup_sdmdata(species_name, occurrences, predictors, lon = "lon",
+  lat = "lat", models_dir = "./models", real_absences = NULL,
+  buffer_type = NULL, dist_buf = NULL, env_buffer = FALSE,
+  env_distance = "centroid", dist_min = NULL, buffer_shape = NULL,
+  max_env_dist = 0.5, write_buffer = FALSE, seed = NULL,
+  clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE,
+  geo_filt = FALSE, geo_filt_dist = NULL, select_variables = FALSE,
+  cutoff = 0.8, percent = 0.8, plot_sdmdata = TRUE, n_back = 1000,
   partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
   cv_n = NULL, cv_partitions = NULL)
 }
@@ -30,14 +29,14 @@ See \code{\link{example_occs}} as an example}
 \item{predictors}{A Raster or RasterStack object with the environmental
 raster layers}
 
+\item{lon}{The name of the longitude column. Defaults to "lon"}
+
+\item{lat}{The name of the latitude column. Defaults to "lat"}
+
 \item{models_dir}{Folder path to save the output files. Defaults to
 "\code{./models}"}
 
 \item{real_absences}{User-defined absence points}
-
-\item{lon}{The name of the longitude column. Defaults to "lon"}
-
-\item{lat}{The name of the latitude column. Defaults to "lat"}
 
 \item{buffer_type}{Character string indicating whether the buffer should be
 calculated using the "\code{mean}", "\code{median}", "\code{maximum}"
@@ -121,7 +120,7 @@ for bootstrap}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
 
-\item{...}{Othre parameters from \code{\link{create_buffer}}}
+\item{...}{Other parameters from \code{\link{create_buffer}}}
 }
 \value{
 Returns a data frame with the groups for each run (in columns called
@@ -145,7 +144,7 @@ sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
-                          example_vars)
+                          predictors = example_vars)
 head(sp_setup)
 }
 \references{
