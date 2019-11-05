@@ -285,7 +285,7 @@ At the end of a modeling round, the partition folder containts:
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![__`final_model()` options__](vignettes/final_model_english.png){ width=75% }
+![__`final_model()` options__](vignettes/final_model_english.png)
 
 + It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.
 + The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
