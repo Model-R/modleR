@@ -114,7 +114,7 @@ ensemble_model <- function(species_name,
                                        final_dir),
                                 recursive = TRUE,
                                 full.names = TRUE,
-                                pattern = paste0(whi, ".*tif$"))
+                                pattern = paste0(whi, ".tif$"))
 
         if (length(tif.files) == 0) {
             cat(paste("No", whi, "models to ensemble from for", species_name, "\n"))

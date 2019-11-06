@@ -371,9 +371,9 @@ names(final_models) <- sapply(strsplit(names(final_models), paste0(species[1], '
 plot(final_models)
 ```
 
-## Algorithm consensus with `ensemble_model()`
+## Algorithmic consensus with `ensemble_model()`
 
-The third step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
+The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
 `ensemble_model()` uses a `which.final` parameter -analog to `which_model` in `final_model()` to specify which final(s) model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
 
