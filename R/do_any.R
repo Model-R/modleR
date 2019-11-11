@@ -169,9 +169,27 @@ do_any <- function(species_name,
                                                 predictors, type = "logistic")
                     mod_cont <- raster::predict(predictors, mod, type = "logistic")
                 }
+              message("evaluating the models")
+              #for tests: export eval_mod as a global variable
+              eval_mod <<- eval_mod
+              #evaluate as a complete data.frame
+              eval_df <- data.frame(threshold = eval_mod@t,
+                                    eval_mod@confusion,
+                                    prevalence = eval_mod@prevalence,
+                                    ODP = eval_mod@ODP,
+                                    CCR = eval_mod@CCR,
+                                    TPR = eval_mod@TPR,
+                                    TNR = eval_mod@TNR,
+                                    FPR = eval_mod@FPR,
+                                    FNR = eval_mod@FNR,
+                                    PPP = eval_mod@PPP,
+                                    NPP = eval_mod@NPP,
+                                    MCR = eval_mod@MCR,
+                                    OR = eval_mod@OR,
+                                    kappa = eval_mod@kappa,
+                                    TSS = (eval_mod@TPR + eval_mod@TNR) - 1,
+                                    FScore = (1 / eval_mod@TPR + 1/eval_mod@PPP)/2)#bu doğru mu?
 
-
-            message("evaluating the models")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #PROC kuenm
             proc <- kuenm::kuenm_proc(occ.test = pres_test,
@@ -180,19 +198,21 @@ do_any <- function(species_name,
                                       ...)
 
             #threshold-independent values
-            th_table$AUC <- eval_mod@auc
-            th_table$AUCratio <- eval_mod@auc / 0.5
-            th_table$pROC <- proc$pROC_summary[1]
-            th_table$pval_pROC <- proc$pROC_summary[2]
-            th_table$TSS <- mod_TSS
+            th_table$species_name <- species_name
             th_table$algorithm <- algorithm
             th_table$run <- i
             th_table$partition <- g
-            th_table$presencenb <- eval_mod@np
-            th_table$absencenb <- eval_mod@na
+            th_table$presencenb  <- eval_mod@np
+            th_table$absencenb   <- eval_mod@na
             th_table$correlation <- eval_mod@cor
-            th_table$pvaluecor <- eval_mod@pcor
-            row.names(th_table) <- species_name
+            th_table$pvaluecor   <- eval_mod@pcor
+            th_table$AUC         <- eval_mod@auc
+            th_table$AUC_pval    <- ifelse(length(eval_mod@pauc) == 0, NA, eval_mod@pauc)
+            th_table$AUCratio    <- eval_mod@auc / 0.5
+            th_table$pROC        <- proc$pROC_summary[1]
+            th_table$pROC_pval   <- proc$pROC_summary[2]
+            th_table$TSSmax      <- max(eval_df$TSS)
+            th_table$KAPPAmax    <- max(eval_df$kappa)
 
             # threshold dependent values
             #which threshold? any value from function threshold() in dismo
@@ -233,6 +253,9 @@ do_any <- function(species_name,
             #writing evaluation tables
 
             message("writing evaluation tables")
+            write.csv(eval_df, file = paste0(partition.folder, "/evaluate_all_",
+                                              species_name, "_", i, "_", g,
+                                              "_", algorithm, ".csv"))
             write.csv(th_table, file = paste0(partition.folder, "/evaluate_",
                                               species_name, "_", i, "_", g,
                                               "_", algorithm, ".csv"))
