@@ -9,7 +9,7 @@ do_any <- function(species_name,
                    mask = NULL,
                    write_png = FALSE,
                    write_bin_cut = FALSE,
-                   threshold = "spec_sens",
+                   dismo_threshold = "spec_sens",
                    conf_mat = TRUE,
                    equalize = TRUE,
                    proc_threshold = 0.5,
@@ -173,7 +173,6 @@ do_any <- function(species_name,
 
             message("evaluating the models")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
-            mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
             #PROC kuenm
             proc <- kuenm::kuenm_proc(occ.test = pres_test,
                                       model = mod_cont,
@@ -197,8 +196,8 @@ do_any <- function(species_name,
 
             # threshold dependent values
             #which threshold? any value from function threshold() in dismo
-            th_mod <- th_table[, threshold]
-            th_table$threshold <- as.character(threshold)
+            th_table$dismo_threshold <- as.character(dismo_threshold)
+            th_mod <- th_table[, dismo_threshold]
             #confusion matrix
             if (algorithm == "brt") {
                 conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
@@ -277,7 +276,7 @@ do_any <- function(species_name,
                     raster::plot(mod_cont,
                                  main = paste(algorithm, "raw", "\n", "AUC =",
                                               round(eval_mod@auc, 2), "-", "TSS =",
-                                              round(mod_TSS, 2)))
+                                              round(max_TSS, 2)))
                     dev.off()
 
                     if (write_bin_cut == TRUE) {
@@ -286,14 +285,14 @@ do_any <- function(species_name,
                         raster::plot(mod_bin,
                                      main = paste(algorithm, "bin", "\n", "AUC =",
                                                   round(eval_mod@auc, 2), "-", "TSS =",
-                                                  round(mod_TSS, 2)))
+                                                  round(max_TSS, 2)))
                         dev.off()
                         png(paste0(partition.folder, "/", algorithm, "_cut_", species_name,
                                    "_", i, "_", g, ".png"))
                         raster::plot(mod_cut,
                                      main = paste(algorithm, "cut", "\n", "AUC =",
                                                   round(eval_mod@auc, 2), "-", "TSS =",
-                                                  round(mod_TSS, 2)))
+                                                  round(max_TSS, 2)))
                         dev.off()
                     }
 
@@ -378,7 +377,7 @@ do_any <- function(species_name,
                                          main = paste(algorithm, "proj_raw", "\n",
                                                       "AUC =",
                                                       round(eval_mod@auc, 2), "-",
-                                                      "TSS =", round(mod_TSS, 2)))
+                                                      "TSS =", round(max_TSS, 2)))
                             dev.off()
 
                             if (write_bin_cut == TRUE) {
@@ -389,7 +388,7 @@ do_any <- function(species_name,
                                                           "AUC =",
                                                           round(eval_mod@auc, 2),
                                                           "-", "TSS =",
-                                                          round(mod_TSS, 2)))
+                                                          round(max_TSS, 2)))
                                 dev.off()
                                 png(paste0(projection.folder, "/", algorithm, "_cut_",
                                            species_name, "_", i, "_", g, ".png"))
@@ -397,7 +396,7 @@ do_any <- function(species_name,
                                              main = paste(algorithm, "proj_cut", "\n",
                                                           "AUC =",
                                                           round(eval_mod@auc, 2), "-",
-                                                          "TSS =", round(mod_TSS, 2)))
+                                                          "TSS =", round(max_TSS, 2)))
                                 dev.off()
                             }
 

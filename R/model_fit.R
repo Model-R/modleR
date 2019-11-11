@@ -17,10 +17,11 @@
 #'  how each algorithm supported in this package is implemented.
 #'
 #' @inheritParams setup_sdmdata
-#' @return Returns a data frame with evaluation statistics of each algorithm (threshold values, omission, TSS, AUC, pROC etc)
+#' @return Returns a data frame with some key threshold values and evaluation
+#' statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)
 #' @return Writes on disk a .tif model for each partition of each algorithm
-#' @return Writes in disk a .csv file with
-#' evaluation statistics of each algorithm
+#' @return Writes in disk a .csv file with evaluation statistics of each
+#' algorithm
 #' @details See below for a description on the implementation of the algorithms
 #' supported in this package.
 #' \describe{

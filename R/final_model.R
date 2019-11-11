@@ -25,19 +25,20 @@
 #' Defaults to NULL: if no name is given it will process all algorithms present
 #' in the evaluation files
 #' @param weight_par Which performance statistic should be used to weigh the
-#'  partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used
+#'  partitions. Defaults to NULL but either \code{c("AUC", "TSSmax")} can be used
 #' @param select_partitions Logical. If TRUE only partitions above a particular
 #' threshold value are selected
-#' @param cut_level Which selecting threshold will be used to cut the mean
-#' models. Default is set to "\code{spec_sens}" but any \pkg{dismo} threshold (see
-#' function \code{\link[dismo]{threshold}}) can be used: "\code{kappa}", "\code{no_omission}",
-#'  "\code{prevalence}", "\code{equal_sens_spec}", "\code{sensitivity}"
-#' @param scale_models Logical. Whether input models should be scaled between 0
-#' and 1
 #' @param select_par Which performance statistic should be used to select the
-#'  partitions. Defaults to NULL but either \code{"AUC"} or \code{"TSS"} can be
+#'  partitions. Defaults to NULL but either \code{"AUC"} or \code{"TSSmax"} can be
 #'  used
 #' @param select_par_val Performance metric value to select partitions
+#' @param cut_level A threshold that will be used to cut the
+#' raw mean models. Default is set to "\code{spec_sens}" but any \pkg{dismo}
+#' threshold (see function \code{\link[dismo]{threshold}}) can be used:
+#' "\code{kappa}", "\code{no_omission}", "\code{prevalence}",
+#' "\code{equal_sens_spec}", "\code{sensitivity}"
+#' @param scale_models Logical. Whether input models should be scaled between 0
+#' and 1
 #' @param consensus_level Which proportion of binary models will be kept when creating \code{bin_consensus}
 #' @param models_dir Character. Folder path where the input files are located
 #' @param final_dir Character. Name of the folder to save the output files.
@@ -94,7 +95,7 @@
 #' sp_final <- final_model(species_name = sp,
 #'                         algorithms = "bioclim",
 #'                         select_partitions = TRUE,
-#'                         select_par = "TSS",
+#'                         select_par = "TSSmax",
 #'                         select_par_val = 0,
 #'                         which_models = c("bin_consensus"),
 #'                         consensus_level = 0.5,
@@ -109,7 +110,7 @@
 final_model <- function(species_name,
                         algorithms = NULL,
                         select_partitions = TRUE,
-                        select_par = "TSS",
+                        select_par = "TSSmax",
                         select_par_val = 0.7,
                         weight_par = NULL,
                         cut_level = c("spec_sens"),
@@ -176,10 +177,10 @@ final_model <- function(species_name,
             cat(paste("selecting partitions for", species_name, algo, "\n"))
             sel.index <- which(stats.algo[, select_par] >= select_par_val)
         }
-        if (!is.null(weight_par)) {
+          if (!is.null(weight_par)) {
             pond.stats <- stats.algo[, weight_par][sel.index]
-            if ("TSS" %in% weight_par)
-                pond.stats$TSS <- (pond.stats$TSS + 1) / 2
+            if ("TSSmax" %in% weight_par)
+                pond.stats$TSSmax <- (pond.stats$TSSmax + 1) / 2
         } else {
             pond.stats <- rep(1, length(sel.index))#either selected or not
         }

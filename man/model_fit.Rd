@@ -9,8 +9,8 @@
 do_any(species_name, predictors, models_dir = "./models",
   algorithm = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
-  write_bin_cut = FALSE, threshold = "spec_sens", conf_mat = TRUE,
-  equalize = TRUE, proc_threshold = 0.5, ...)
+  write_bin_cut = FALSE, dismo_threshold = "spec_sens",
+  conf_mat = TRUE, equalize = TRUE, proc_threshold = 0.5, ...)
 
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
@@ -53,12 +53,6 @@ mask can be used if the final area of interest is smaller than the area used
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)
 should be written}
 
-\item{threshold}{Character string indicating threshold (cut-off) to transform
-model predictions to a binary score as in \code{\link[dismo]{threshold}}:
-"\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
- "\code{prevalence}", "\code{equal_sens_spec}",
-"\code{sensitivity}". Default value is "\code{spec_sens}"}
-
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 
 \item{equalize}{Logical, whether the number of presences and absences should be
@@ -100,14 +94,21 @@ package with \code{\link[e1071]{best.tune}} function}
 
 \item{brt}{Execute Boosted Regression Trees with
 \code{\link[dismo]{gbm.step}} from \pkg{dismo}}
+
+\item{threshold}{Character string indicating threshold (cut-off) to transform
+model predictions to a binary score as in \code{\link[dismo]{threshold}}:
+"\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
+ "\code{prevalence}", "\code{equal_sens_spec}",
+"\code{sensitivity}". Default value is "\code{spec_sens}"}
 }
 \value{
-Returns a data frame with evaluation statistics of each algorithm (threshold values, omission, TSS, AUC, pROC etc)
+Returns a data frame with some key threshold values and evaluation
+statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)
 
 Writes on disk a .tif model for each partition of each algorithm
 
-Writes in disk a .csv file with
-evaluation statistics of each algorithm
+Writes in disk a .csv file with evaluation statistics of each
+algorithm
 }
 \description{
 \code{do_any} reads the output from \code{\link{setup_sdmdata}} and
