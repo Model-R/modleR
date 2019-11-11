@@ -219,34 +219,28 @@ do_any <- function(species_name,
             th_table$dismo_threshold <- as.character(dismo_threshold)
             th_mod <- th_table[, dismo_threshold]
             #confusion matrix
-            if (algorithm == "brt") {
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                            n.trees = n.trees, tr = th_mod)
-            } else {
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                        tr = th_mod)
-            }
-            th_table$prevalence.value <- conf@prevalence
-            th_table$PPP <- conf@PPP
-            th_table$NPP <- conf@NPP
-            th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-            th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
-            th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
-            th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
-            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR +
-                                                            conf@FNR + conf@FPR)
-            th_table$KAPPA.value <- conf@kappa
-
+            conf <- eval_mod@confusion[which(eval_mod@t == th_mod),]
+            th_table$prevalence.value <- eval_mod@prevalence[which(eval_mod@t == th_mod)]#a prevalencia desse threshold
+            th_table$PPP <- eval_mod@PPP[which(eval_mod@t == th_mod)] #precision
+            th_table$NPP <- eval_mod@NPP[which(eval_mod@t == th_mod)]
+            th_table$TPR <- eval_mod@TPR[which(eval_mod@t == th_mod)] #sensitivity
+            th_table$TNR <- eval_mod@TNR[which(eval_mod@t == th_mod)]#specificity
+            th_table$FPR <- eval_mod@FPR[which(eval_mod@t == th_mod)]#comission
+            th_table$FNR <- eval_mod@FNR[which(eval_mod@t == th_mod)]#omission
+            th_table$CCR <- eval_mod@CCR[which(eval_mod@t == th_mod)] #accuracy
+            th_table$Kappa <- eval_mod@kappa[which(eval_mod@t == th_mod)] #kappa
+            th_table$F_score <- eval_df$FScore[which(eval_mod@t == th_mod)]
+            #for tests: export th_table as a global object
+            th_table <<- th_table
             #confusion matrix
             if (conf_mat == TRUE) {
-                conf_res <-
-                    data.frame(presence_record = conf@confusion[, c("tp", "fp")],
-                               absence_record = conf@confusion[, c("fn", "tn")])
-                rownames(conf_res) <- c("presence_predicted", "absence_predicted")
-                write.csv(conf_res, file = paste0(partition.folder,
-                                                  "/confusion_matrices_",
-                                                  species_name, "_", i, "_", g,
-                                                  "_", algorithm, ".csv"))
+              conf_res <- matrix(conf, ncol = 2, byrow = T)
+              dimnames(conf_res) <- list(c("predicted_presence", "predicted_absence"), c("actual_presence", "actual_absence"))
+              write.csv(conf_res, file = paste0(partition.folder,
+                                                "/confusion_matrices_",
+                                                species_name, "_", i, "_", g,
+                                                "_", algorithm,"_",
+                                                dismo_threshold, ".csv"))
             }
 
 
