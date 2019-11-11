@@ -187,7 +187,7 @@ do_any <- function(species_name,
                                     OR = eval_mod@OR,
                                     kappa = eval_mod@kappa,
                                     TSS = (eval_mod@TPR + eval_mod@TNR) - 1,
-                                    FScore = (1 / eval_mod@TPR + 1/eval_mod@PPP)/2)#bu doğru mu?
+                                    FScore = 1/((1/eval_mod@TPR + 1/eval_mod@PPP)/2))
 
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #PROC kuenm
