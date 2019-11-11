@@ -17,10 +17,11 @@
 #'  how each algorithm supported in this package is implemented.
 #'
 #' @inheritParams setup_sdmdata
-#' @return Returns a data frame with evaluation statistics of each algorithm (threshold values, omission, TSS, AUC, pROC etc)
+#' @return Returns a data frame with some key threshold values and evaluation
+#' statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)
 #' @return Writes on disk a .tif model for each partition of each algorithm
-#' @return Writes in disk a .csv file with
-#' evaluation statistics of each algorithm
+#' @return Writes in disk a .csv file with evaluation statistics of each
+#' algorithm
 #' @details See below for a description on the implementation of the algorithms
 #' supported in this package.
 #' \describe{
@@ -186,8 +187,9 @@
 #' @param write_png Logical, whether png files will be written
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png)
 #' should be written
-#' @param threshold Character string indicating threshold (cut-off) to transform
-#'  model predictions to a binary score as in \code{\link[dismo]{threshold}}:
+#' @param dismo_threshold Character string indicating threshold (cut-off) to
+#' transform model predictions to a binary score as in
+#' \code{\link[dismo]{threshold}}:
 #'  "\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
 #'   "\code{prevalence}", "\code{equal_sens_spec}",
 #'  "\code{sensitivity}". Default value is "\code{spec_sens}"

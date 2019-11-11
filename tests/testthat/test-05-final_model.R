@@ -10,7 +10,7 @@ test_that("final_model generates joint model per algorithm", {
                                 models_dir = my_dir,
                                 #algorithms = "bioclim",
                                 select_partitions = TRUE,
-                                select_par = "TSS",
+                                select_par = "TSSmax",
                                 select_par_val = 0,
                                 which_models = c("bin_consensus"),
                                 consensus_level = 0.5,

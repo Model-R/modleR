@@ -70,7 +70,7 @@
 #' sp_final <- final_model(species_name = sp,
 #'                         algorithms = c("bioclim", "maxent"),
 #'                         select_partitions = TRUE,
-#'                         select_par = "TSS",
+#'                         select_par = "TSSmax",
 #'                         select_par_val = 0,
 #'                         which_models = c("raw_mean"),
 #'                         consensus_level = 0.5,

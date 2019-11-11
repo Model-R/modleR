@@ -5,7 +5,7 @@
 \title{Joins ENM from several partitions, creating a model per algorithm}
 \usage{
 final_model(species_name, algorithms = NULL, select_partitions = TRUE,
-  select_par = "TSS", select_par_val = 0.7, weight_par = NULL,
+  select_par = "TSSmax", select_par_val = 0.7, weight_par = NULL,
   cut_level = c("spec_sens"), scale_models = TRUE,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
@@ -28,18 +28,19 @@ in the evaluation files}
 threshold value are selected}
 
 \item{select_par}{Which performance statistic should be used to select the
-partitions. Defaults to NULL but either \code{"AUC"} or \code{"TSS"} can be
+partitions. Defaults to NULL but either \code{"AUC"} or \code{"TSSmax"} can be
 used}
 
 \item{select_par_val}{Performance metric value to select partitions}
 
 \item{weight_par}{Which performance statistic should be used to weigh the
-partitions. Defaults to NULL but either \code{c("AUC", "TSS")} can be used}
+partitions. Defaults to NULL but either \code{c("AUC", "TSSmax")} can be used}
 
-\item{cut_level}{Which selecting threshold will be used to cut the mean
-models. Default is set to "\code{spec_sens}" but any \pkg{dismo} threshold (see
-function \code{\link[dismo]{threshold}}) can be used: "\code{kappa}", "\code{no_omission}",
- "\code{prevalence}", "\code{equal_sens_spec}", "\code{sensitivity}"}
+\item{cut_level}{A threshold that will be used to cut the
+raw mean models. Default is set to "\code{spec_sens}" but any \pkg{dismo}
+threshold (see function \code{\link[dismo]{threshold}}) can be used:
+"\code{kappa}", "\code{no_omission}", "\code{prevalence}",
+"\code{equal_sens_spec}", "\code{sensitivity}"}
 
 \item{scale_models}{Logical. Whether input models should be scaled between 0
 and 1}
@@ -129,7 +130,7 @@ sp_bioclim <- do_any(species_name = sp,
 sp_final <- final_model(species_name = sp,
                         algorithms = "bioclim",
                         select_partitions = TRUE,
-                        select_par = "TSS",
+                        select_par = "TSSmax",
                         select_par_val = 0,
                         which_models = c("bin_consensus"),
                         consensus_level = 0.5,

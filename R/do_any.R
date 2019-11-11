@@ -9,7 +9,7 @@ do_any <- function(species_name,
                    mask = NULL,
                    write_png = FALSE,
                    write_bin_cut = FALSE,
-                   threshold = "spec_sens",
+                   dismo_threshold = "spec_sens",
                    conf_mat = TRUE,
                    equalize = TRUE,
                    proc_threshold = 0.5,
@@ -169,11 +169,27 @@ do_any <- function(species_name,
                                                 predictors, type = "logistic")
                     mod_cont <- raster::predict(predictors, mod, type = "logistic")
                 }
+              message("evaluating the models")
 
+              #evaluate as a complete data.frame
+              eval_df <- data.frame(threshold = eval_mod@t,
+                                    eval_mod@confusion,
+                                    prevalence = eval_mod@prevalence,
+                                    ODP = eval_mod@ODP,
+                                    CCR = eval_mod@CCR,
+                                    TPR = eval_mod@TPR,
+                                    TNR = eval_mod@TNR,
+                                    FPR = eval_mod@FPR,
+                                    FNR = eval_mod@FNR,
+                                    PPP = eval_mod@PPP,
+                                    NPP = eval_mod@NPP,
+                                    MCR = eval_mod@MCR,
+                                    OR = eval_mod@OR,
+                                    kappa = eval_mod@kappa,
+                                    TSS = (eval_mod@TPR + eval_mod@TNR) - 1,
+                                    FScore = (1 / eval_mod@TPR + 1/eval_mod@PPP)/2)#bu doğru mu?
 
-            message("evaluating the models")
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
-            mod_TSS  <- max(eval_mod@TPR + eval_mod@TNR) - 1
             #PROC kuenm
             proc <- kuenm::kuenm_proc(occ.test = pres_test,
                                       model = mod_cont,
@@ -181,59 +197,58 @@ do_any <- function(species_name,
                                       ...)
 
             #threshold-independent values
-            th_table$AUC <- eval_mod@auc
-            th_table$AUCratio <- eval_mod@auc / 0.5
-            th_table$pROC <- proc$pROC_summary[1]
-            th_table$pval_pROC <- proc$pROC_summary[2]
-            th_table$TSS <- mod_TSS
+            th_table$species_name <- species_name
             th_table$algorithm <- algorithm
             th_table$run <- i
             th_table$partition <- g
-            th_table$presencenb <- eval_mod@np
-            th_table$absencenb <- eval_mod@na
+            th_table$presencenb  <- eval_mod@np
+            th_table$absencenb   <- eval_mod@na
             th_table$correlation <- eval_mod@cor
-            th_table$pvaluecor <- eval_mod@pcor
-            row.names(th_table) <- species_name
+            th_table$pvaluecor   <- eval_mod@pcor
+            th_table$AUC         <- eval_mod@auc
+            th_table$AUC_pval    <- ifelse(length(eval_mod@pauc) == 0, NA, eval_mod@pauc)
+            th_table$AUCratio    <- eval_mod@auc / 0.5
+            th_table$pROC        <- proc$pROC_summary[1]
+            th_table$pROC_pval   <- proc$pROC_summary[2]
+            th_table$TSSmax      <- max(eval_df$TSS)
+            th_table$KAPPAmax    <- max(eval_df$kappa)
 
             # threshold dependent values
             #which threshold? any value from function threshold() in dismo
-            th_mod <- th_table[, threshold]
-            th_table$threshold <- as.character(threshold)
+            th_table$dismo_threshold <- as.character(dismo_threshold)
+            th_mod <- th_table[, dismo_threshold]
             #confusion matrix
-            if (algorithm == "brt") {
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                            n.trees = n.trees, tr = th_mod)
-            } else {
-                conf <- dismo::evaluate(pres_test, backg_test, mod, predictors,
-                                        tr = th_mod)
-            }
-            th_table$prevalence.value <- conf@prevalence
-            th_table$PPP <- conf@PPP
-            th_table$NPP <- conf@NPP
-            th_table$sensitivity.value <- conf@TPR / (conf@TPR + conf@FPR)
-            th_table$specificity.value <- conf@TNR / (conf@FNR + conf@TNR)
-            th_table$comission <- conf@FNR / (conf@FNR + conf@TNR)
-            th_table$omission <- conf@FPR / (conf@TPR + conf@FPR)
-            th_table$accuracy <- (conf@TPR + conf@TNR) / (conf@TPR + conf@TNR +
-                                                            conf@FNR + conf@FPR)
-            th_table$KAPPA.value <- conf@kappa
-
+            conf <- eval_mod@confusion[which(eval_mod@t == th_mod),]
+            th_table$prevalence.value <- eval_mod@prevalence[which(eval_mod@t == th_mod)]#a prevalencia desse threshold
+            th_table$PPP <- eval_mod@PPP[which(eval_mod@t == th_mod)] #precision
+            th_table$NPP <- eval_mod@NPP[which(eval_mod@t == th_mod)]
+            th_table$TPR <- eval_mod@TPR[which(eval_mod@t == th_mod)] #sensitivity
+            th_table$TNR <- eval_mod@TNR[which(eval_mod@t == th_mod)]#specificity
+            th_table$FPR <- eval_mod@FPR[which(eval_mod@t == th_mod)]#comission
+            th_table$FNR <- eval_mod@FNR[which(eval_mod@t == th_mod)]#omission
+            th_table$CCR <- eval_mod@CCR[which(eval_mod@t == th_mod)] #accuracy
+            th_table$Kappa <- eval_mod@kappa[which(eval_mod@t == th_mod)] #kappa
+            th_table$F_score <- eval_df$FScore[which(eval_mod@t == th_mod)]
+            #for tests: export th_table as a global object
+            #th_table <<- th_table
             #confusion matrix
             if (conf_mat == TRUE) {
-                conf_res <-
-                    data.frame(presence_record = conf@confusion[, c("tp", "fp")],
-                               absence_record = conf@confusion[, c("fn", "tn")])
-                rownames(conf_res) <- c("presence_predicted", "absence_predicted")
-                write.csv(conf_res, file = paste0(partition.folder,
-                                                  "/confusion_matrices_",
-                                                  species_name, "_", i, "_", g,
-                                                  "_", algorithm, ".csv"))
+              conf_res <- matrix(conf, ncol = 2, byrow = T)
+              dimnames(conf_res) <- list(c("predicted_presence", "predicted_absence"), c("actual_presence", "actual_absence"))
+              write.csv(conf_res, file = paste0(partition.folder,
+                                                "/confusion_matrices_",
+                                                species_name, "_", i, "_", g,
+                                                "_", algorithm,"_",
+                                                dismo_threshold, ".csv"))
             }
 
 
             #writing evaluation tables
 
             message("writing evaluation tables")
+            write.csv(eval_df, file = paste0(partition.folder, "/eval_mod_",
+                                              species_name, "_", i, "_", g,
+                                              "_", algorithm, ".csv"))
             write.csv(th_table, file = paste0(partition.folder, "/evaluate_",
                                               species_name, "_", i, "_", g,
                                               "_", algorithm, ".csv"))
@@ -277,7 +292,7 @@ do_any <- function(species_name,
                     raster::plot(mod_cont,
                                  main = paste(algorithm, "raw", "\n", "AUC =",
                                               round(eval_mod@auc, 2), "-", "TSS =",
-                                              round(mod_TSS, 2)))
+                                              round(th_table$TSSmax, 2)))
                     dev.off()
 
                     if (write_bin_cut == TRUE) {
@@ -286,14 +301,14 @@ do_any <- function(species_name,
                         raster::plot(mod_bin,
                                      main = paste(algorithm, "bin", "\n", "AUC =",
                                                   round(eval_mod@auc, 2), "-", "TSS =",
-                                                  round(mod_TSS, 2)))
+                                                  round(th_table$TSSmax, 2)))
                         dev.off()
                         png(paste0(partition.folder, "/", algorithm, "_cut_", species_name,
                                    "_", i, "_", g, ".png"))
                         raster::plot(mod_cut,
                                      main = paste(algorithm, "cut", "\n", "AUC =",
                                                   round(eval_mod@auc, 2), "-", "TSS =",
-                                                  round(mod_TSS, 2)))
+                                                  round(th_table$TSSmax, 2)))
                         dev.off()
                     }
 
@@ -378,7 +393,7 @@ do_any <- function(species_name,
                                          main = paste(algorithm, "proj_raw", "\n",
                                                       "AUC =",
                                                       round(eval_mod@auc, 2), "-",
-                                                      "TSS =", round(mod_TSS, 2)))
+                                                      "TSS =", round(th_table$TSSmax, 2)))
                             dev.off()
 
                             if (write_bin_cut == TRUE) {
@@ -389,7 +404,7 @@ do_any <- function(species_name,
                                                           "AUC =",
                                                           round(eval_mod@auc, 2),
                                                           "-", "TSS =",
-                                                          round(mod_TSS, 2)))
+                                                          round(th_table$TSSmax, 2)))
                                 dev.off()
                                 png(paste0(projection.folder, "/", algorithm, "_cut_",
                                            species_name, "_", i, "_", g, ".png"))
@@ -397,7 +412,7 @@ do_any <- function(species_name,
                                              main = paste(algorithm, "proj_cut", "\n",
                                                           "AUC =",
                                                           round(eval_mod@auc, 2), "-",
-                                                          "TSS =", round(mod_TSS, 2)))
+                                                          "TSS =", round(th_table$TSSmax, 2)))
                                 dev.off()
                             }
 
