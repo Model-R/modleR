@@ -170,8 +170,7 @@ do_any <- function(species_name,
                     mod_cont <- raster::predict(predictors, mod, type = "logistic")
                 }
               message("evaluating the models")
-              #for tests: export eval_mod as a global variable
-              eval_mod <<- eval_mod
+
               #evaluate as a complete data.frame
               eval_df <- data.frame(threshold = eval_mod@t,
                                     eval_mod@confusion,
@@ -231,7 +230,7 @@ do_any <- function(species_name,
             th_table$Kappa <- eval_mod@kappa[which(eval_mod@t == th_mod)] #kappa
             th_table$F_score <- eval_df$FScore[which(eval_mod@t == th_mod)]
             #for tests: export th_table as a global object
-            th_table <<- th_table
+            #th_table <<- th_table
             #confusion matrix
             if (conf_mat == TRUE) {
               conf_res <- matrix(conf, ncol = 2, byrow = T)
@@ -247,7 +246,7 @@ do_any <- function(species_name,
             #writing evaluation tables
 
             message("writing evaluation tables")
-            write.csv(eval_df, file = paste0(partition.folder, "/evaluate_all_",
+            write.csv(eval_df, file = paste0(partition.folder, "/eval_mod_",
                                               species_name, "_", i, "_", g,
                                               "_", algorithm, ".csv"))
             write.csv(th_table, file = paste0(partition.folder, "/evaluate_",
@@ -293,7 +292,7 @@ do_any <- function(species_name,
                     raster::plot(mod_cont,
                                  main = paste(algorithm, "raw", "\n", "AUC =",
                                               round(eval_mod@auc, 2), "-", "TSS =",
-                                              round(max_TSS, 2)))
+                                              round(th_table$TSSmax, 2)))
                     dev.off()
 
                     if (write_bin_cut == TRUE) {
@@ -302,14 +301,14 @@ do_any <- function(species_name,
                         raster::plot(mod_bin,
                                      main = paste(algorithm, "bin", "\n", "AUC =",
                                                   round(eval_mod@auc, 2), "-", "TSS =",
-                                                  round(max_TSS, 2)))
+                                                  round(th_table$TSSmax, 2)))
                         dev.off()
                         png(paste0(partition.folder, "/", algorithm, "_cut_", species_name,
                                    "_", i, "_", g, ".png"))
                         raster::plot(mod_cut,
                                      main = paste(algorithm, "cut", "\n", "AUC =",
                                                   round(eval_mod@auc, 2), "-", "TSS =",
-                                                  round(max_TSS, 2)))
+                                                  round(th_table$TSSmax, 2)))
                         dev.off()
                     }
 
@@ -394,7 +393,7 @@ do_any <- function(species_name,
                                          main = paste(algorithm, "proj_raw", "\n",
                                                       "AUC =",
                                                       round(eval_mod@auc, 2), "-",
-                                                      "TSS =", round(max_TSS, 2)))
+                                                      "TSS =", round(th_table$TSSmax, 2)))
                             dev.off()
 
                             if (write_bin_cut == TRUE) {
@@ -405,7 +404,7 @@ do_any <- function(species_name,
                                                           "AUC =",
                                                           round(eval_mod@auc, 2),
                                                           "-", "TSS =",
-                                                          round(max_TSS, 2)))
+                                                          round(th_table$TSSmax, 2)))
                                 dev.off()
                                 png(paste0(projection.folder, "/", algorithm, "_cut_",
                                            species_name, "_", i, "_", g, ".png"))
@@ -413,7 +412,7 @@ do_any <- function(species_name,
                                              main = paste(algorithm, "proj_cut", "\n",
                                                           "AUC =",
                                                           round(eval_mod@auc, 2), "-",
-                                                          "TSS =", round(max_TSS, 2)))
+                                                          "TSS =", round(th_table$TSSmax, 2)))
                                 dev.off()
                             }
 

@@ -187,8 +187,9 @@
 #' @param write_png Logical, whether png files will be written
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png)
 #' should be written
-#' @param threshold Character string indicating threshold (cut-off) to transform
-#'  model predictions to a binary score as in \code{\link[dismo]{threshold}}:
+#' @param dismo_threshold Character string indicating threshold (cut-off) to
+#' transform model predictions to a binary score as in
+#' \code{\link[dismo]{threshold}}:
 #'  "\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
 #'   "\code{prevalence}", "\code{equal_sens_spec}",
 #'  "\code{sensitivity}". Default value is "\code{spec_sens}"

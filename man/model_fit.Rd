@@ -53,6 +53,13 @@ mask can be used if the final area of interest is smaller than the area used
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)
 should be written}
 
+\item{dismo_threshold}{Character string indicating threshold (cut-off) to
+transform model predictions to a binary score as in
+\code{\link[dismo]{threshold}}:
+ "\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
+  "\code{prevalence}", "\code{equal_sens_spec}",
+ "\code{sensitivity}". Default value is "\code{spec_sens}"}
+
 \item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 
 \item{equalize}{Logical, whether the number of presences and absences should be
@@ -94,12 +101,6 @@ package with \code{\link[e1071]{best.tune}} function}
 
 \item{brt}{Execute Boosted Regression Trees with
 \code{\link[dismo]{gbm.step}} from \pkg{dismo}}
-
-\item{threshold}{Character string indicating threshold (cut-off) to transform
-model predictions to a binary score as in \code{\link[dismo]{threshold}}:
-"\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
- "\code{prevalence}", "\code{equal_sens_spec}",
-"\code{sensitivity}". Default value is "\code{spec_sens}"}
 }
 \value{
 Returns a data frame with some key threshold values and evaluation

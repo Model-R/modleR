@@ -305,7 +305,7 @@ should return something like this:
 
 At the end of a modeling round, the partition folder containts:
 
-+ A `.tif` file for each partition, continuous, binary and cut by the threshold that maximizes its TSS. Its name will indicate the algorithm, the type of model (cont, bin or cut), the name of the species, the run and partition.
++ A `.tif` file for each partition, continuous, binary and cut by the threshold that maximizes its TSS (TSSmax). Its name will indicate the algorithm, the type of model (cont, bin or cut), the name of the species, the run and partition.
 + Figures in `.png` to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these figures can be controlled with the `write_png` parameter.
 + A `.txt` table with the evaluation data for each partition: `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These files will be read by the `final_model()` function, to generate the final model per species.
 + A file called `sdmdata.txt` with the data used for each partition
@@ -322,7 +322,7 @@ There are many ways to create a final model per algorithm per species. `final_mo
 knitr::include_graphics("final_model_english.png", dpi = 150)
 ```
 
-+ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSS value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.
++ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSSmax value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.
 + The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
 + Their means can be calculated (`raw_mean`, `bin_mean` or `cut_mean`, second line in Figure 2)
 + From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_mean_th`). A "cut" model can also be obtained (`cut_mean_th`).
@@ -340,7 +340,7 @@ final_model(species_name = species[1],
             algorithms = NULL, #if null it will take all the in-disk algorithms
             models_dir = test_folder,
             select_partitions = TRUE,
-            select_par = "TSS",
+            select_par = "TSSmax",
             select_par_val = 0,
             which_models = c("raw_mean", "bin_consensus"),
             consensus_level = 0.5,
@@ -456,7 +456,7 @@ for (i in 1:length(example_occs)) {
     sp <- species[i]
     final_model(species_name = sp,
                 select_partitions = TRUE,
-                select_par = "TSS",
+                select_par = "TSSmax",
                 select_par_val = 0.5,
                 consensus_level = 0.5,
                 models_dir = "~/modleR_test/forlooptest",
@@ -516,7 +516,7 @@ species %>% as.list(.) %>% purrr::map(~ do_many(species_name = .,
 species %>% as.list(.) %>%
   purrr::map(~ final_model(species_name = .,
                            select_partitions = TRUE,
-                           select_par = "TSS",
+                           select_par = "TSSmax",
                            select_par_val = 0.5,
                            consensus_level = 0.5,
                            models_dir = "~/modleR_test/temp_purrr",
