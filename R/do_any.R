@@ -188,6 +188,8 @@ do_any <- function(species_name,
                                     kappa = eval_mod@kappa,
                                     TSS = (eval_mod@TPR + eval_mod@TNR) - 1,
                                     FScore = 1/((1/eval_mod@TPR + 1/eval_mod@PPP)/2))
+              eval_df$Jaccard  <- eval_df$tp / (eval_df$fn + eval_df$tp + eval_df$fp)
+              #eval_df$Sorensen <- 2 * eval_df$tp / (eval_df$fn + 2 * eval_df$tp + eval_df$fp)#same as Fscore
 
             th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
             #PROC kuenm
@@ -229,6 +231,7 @@ do_any <- function(species_name,
             th_table$CCR <- eval_mod@CCR[which(eval_mod@t == th_mod)] #accuracy
             th_table$Kappa <- eval_mod@kappa[which(eval_mod@t == th_mod)] #kappa
             th_table$F_score <- eval_df$FScore[which(eval_mod@t == th_mod)]
+            th_table$Jaccard <- eval_df$Jaccard[which(eval_mod@t == th_mod)]
             #for tests: export th_table as a global object
             #th_table <<- th_table
             #confusion matrix
