@@ -20,14 +20,15 @@ clean <- function(occurrences,
             message("cleaning occurrences with no environmental data")
             presvals <- raster::extract(predictors, occurrences)
             compl <- complete.cases(presvals)
-            if (any(compl)) {
+            if (all(compl == F)) stop("All occurrence points are outside the predictor variable rasters")
             occurrences <- occurrences[compl, ]
-            }
         }
         if (clean_uni == TRUE) {
             if (clean_nas == FALSE) {
-                warning("There may be points that are outside the raster")
-            }
+                warning("There may be points outside the raster")
+                }
+          message("cleaning occurrences within the same pixel")
+
             mask <- predictors[[1]]
             cell <- raster::cellFromXY(mask, occurrences)
             dup <- duplicated(cell)
