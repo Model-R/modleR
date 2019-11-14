@@ -41,14 +41,19 @@ The workflow consists of mainly four functions that should be used sequentially.
 
 __modleR__ writes the outputs in the hard disk, according to the following folder structure:
 
-    `models_dir/projection1/data_setup`
-    `models_dir/projection1/partitions`
-    `models_dir/projection1/final_models`
-    `models_dir/projection1/ensemble_models`
-    `models_dir/projection2/data_setup`
-    `models_dir/projection2/partitions`
-    `models_dir/projection2/final_models`
-    `models_dir/projection2/ensemble_models`
+```bash
+models_dir
+├── projection1
+│   ├── data_setup
+│   ├── ensemble_models
+│   ├── final_models
+│   └── partitions
+└── projection2
+    ├── data_setup
+    ├── ensemble_models
+    ├── final_models
+    └── partitions
+```
 
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them.
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.
