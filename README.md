@@ -77,9 +77,9 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = T, eval = T}
-#library(modleR)
-devtools::load_all() # for development
-#library(raster)
+library(modleR)
+# devtools::load_all() # for development
+library(raster)
 str(coordenadas)
 species <- names(coordenadas)
 species
