@@ -71,7 +71,7 @@ apply some data cleaning procedures, as well as some filters. This is done by
 function `setup_sdmdata()`
 
 
-__modleR__ comes with example data, a data frame called `coordenadas`, with
+__modleR__ comes with example data, a data frame called `example_occs`, with
 occurrence data for four species, and predictor variables called
 `example_vars`
 
@@ -80,8 +80,8 @@ occurrence data for four species, and predictor variables called
 library(modleR)
 # devtools::load_all() # for development
 library(raster)
-str(coordenadas)
-species <- names(coordenadas)
+str(example_occs)
+species <- names(example_occs)
 species
 ```
 
@@ -89,17 +89,17 @@ species
 
 ```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = T}
 par(mfrow = c(2, 2))
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]), legend = F, main = species[i])
-  points(lat ~ lon, data = coordenadas[[i]])
+  points(lat ~ lon, data = example_occs[[i]])
   }
 par(mfrow = c(1, 1))
 ```
 
-We will filter the `coordenadas` file to select only the data for the first species:
+We will filter the `example_occs` file to select only the data for the first species:
 
 ```{r occs, message = F, eval = TRUE}
-occs <- coordenadas[[1]]
+occs <- example_occs[[1]]
 ```
 
 
@@ -373,16 +373,16 @@ plot(ens_mod)
 
 # Workflows with multiple species
 
-Our `coordenadas` dataset has data for four species.
+Our `example_occs` dataset has data for four species.
 An option to do the several models is to use a `for` loop
 
 ```{r forloop, eval = F}
 args(do_many)
 args(setup_sdmdata)
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
+    occs <- example_occs[[i]]
     setup_sdmdata(
         species_name = sp,
         models_dir = "~/modleR_test/forlooptest",
@@ -402,7 +402,7 @@ for (i in 1:length(coordenadas)) {
         )
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
     do_many(species_name = sp,
             predictors = example_vars,
@@ -422,7 +422,7 @@ for (i in 1:length(coordenadas)) {
             write_bin_cut = T)
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
     final_model(species_name = sp,
                 select_partitions = TRUE,
@@ -435,9 +435,9 @@ for (i in 1:length(coordenadas)) {
                 overwrite = T)
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
+    occs <- example_occs[[i]]
     ensemble_model(species_name = sp,
                    occurrences = occs,
                    which_final = "bin_consensus",
@@ -451,7 +451,7 @@ Another option is to use the `purrr` package (Henry & Wickham 2017).
 ```{r purrr example, eval = F}
 library(purrr)
 
-coordenadas %>% purrr::map2(.x= .,
+example_occs %>% purrr::map2(.x= .,
                             .y= as.list(names(.)),
                             ~ setup_sdmdata(species_name = .y,
                                             occurrences = .x,
@@ -495,7 +495,7 @@ species %>% as.list(.) %>%
 ```
 
 ```{r purrr_ensemble, eval = F}
-coordenadas %>% purrr::map2(.x= .,
+example_occs %>% purrr::map2(.x= .,
                             .y= as.list(names(.)),
                             ~ ensemble_model(species_name = .y,
                                              occurrences = .x,
@@ -531,4 +531,3 @@ Liaw, Andy, and Matthew Wiener. 2002. “Classification and Regression by random
 Meyer, David, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel, and Friedrich Leisch. 2017. E1071: Misc Functions of the Department of Statistics, Probability Theory Group (Formerly: E1071), TU Wien. https://CRAN.R-project.org/package=e1071.
 
 Varela, Sara, Robert P. Anderson, Raúl García-Valdés, and Federico Fernández-González. 2014. “Environmental Filters Reduce the Effects of Sampling Bias and Improve Predictions of Ecological Niche Models.” Ecography 37 (11): 1084–91. doi:10.1111/j.1600-0587.2013.00441.x.
-
