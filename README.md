@@ -506,11 +506,14 @@ example_occs %>% purrr::map2(.x= .,
 
 ```
 
+<!--
+TODO: WIP
 ## Parallel computing
 
 ```{r remedy001, eval=F}
 library(parallel)
 ```
+-->
 
 # References
 
