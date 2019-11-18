@@ -45,8 +45,8 @@
 #' @param cutoff Cutoff value of correlation between variables to exclude
 #' environmental layers
 #' Default is to exclude environmental variables with correlation > 0.8
-#' @param percent percentage of the raster values to be sampled to calculate the
-#'  correlation
+#' @param percent Numeric. Percentage of the raster values to be sampled to calculate the
+#'  correlation. The value should be set as a decimal, between 0 and 1.
 #' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical

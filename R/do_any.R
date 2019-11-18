@@ -96,13 +96,14 @@ do_any <- function(species_name,
             if (algorithm == "svme") {
                 sv <- 1
                 while (!exists("mod")) {
-                    mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
+                    mod <- e1071::best.tune("svm", envtrain,
+                                            sdmdata_train$pa,
                                             data = envtrain)
                     sv <- sv + 1
                     message(paste("Trying svme", sv, "times"))
                     if (sv == 10 & !exists("mod")) {
                         break
-                        message("svme algorithm did not find a solution in 10 runs")
+                        message("svme algorithm did not converge to a solution in 10 runs")
                     }
                 }
             }

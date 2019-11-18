@@ -101,8 +101,8 @@ variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specifie
 environmental layers
 Default is to exclude environmental variables with correlation > 0.8}
 
-\item{percent}{percentage of the raster values to be sampled to calculate the
-correlation}
+\item{percent}{Numeric. Percentage of the raster values to be sampled to calculate the
+correlation. The value should be set as a decimal, between 0 and 1.}
 
 \item{plot_sdmdata}{Logical, whether png files will be written}
 

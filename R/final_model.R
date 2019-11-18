@@ -136,10 +136,9 @@ final_model <- function(species_name,
     evall <- list.files(
         path = paste0(models_dir, "/", species_name, "/present/partitions"),
         pattern = "^evaluate.+.csv$", full.names = TRUE)
-    lista_eval <- lapply(evall, read.csv, header = TRUE)
+    lista_eval <- lapply(evall, read.csv, header = TRUE, row.names = 1)
     stats <- data.table::rbindlist(lista_eval)
-    stats <- as.data.frame(stats)
-    names(stats)[1] <- "species"
+    stats <- data.frame(stats)
 
     # Extracts only for the selected algorithm
     # if the user doesnt specify, it will take all of them
@@ -148,11 +147,27 @@ final_model <- function(species_name,
     }
     algorithms <- as.factor(algorithms)
     #write stats only for the selected algorithms
-    write.csv(stats[stats$algorithm %in% algorithms, ],
+    stat_algos <- stats[stats$algorithm %in% algorithms, ]
+    write.csv(stat_algos,
               file = paste0(models_dir, "/", species_name, "/present/",
                                    final_dir, "/", species_name,
                                    "_final_statistics.csv"))
+    #write mean stats per algorithm
+    metrics <- c("kappa", "spec_sens", "no_omission", "prevalence", "equal_sens_spec",
+                  "sensitivity", "correlation", "AUC", "AUCratio", "pROC", "TSSmax",
+                  "KAPPAmax", "prevalence.value", "PPP", "NPP", "TPR", "TNR", "FPR",
+                  "FNR", "CCR", "Kappa", "F_score", "Jaccard")
 
+    stats_summary <- aggregate(stat_algos[,metrics],
+                               by = list(
+                                   species_name = stat_algos$species_name,
+                                   algorithm = stat_algos$algorithm,
+                                   dismo_threshold = stat_algos$dismo_threshold
+                               ),
+                               FUN = mean)
+     write.csv(stats_summary, file = paste0(models_dir, "/", species_name, "/present/",
+                                            final_dir, "/", species_name,
+                                            "_mean_statistics.csv"))
     for (algo in algorithms) {
         final_algo <- raster::stack()
         cat(paste("Extracting data for", species_name, algo, "\n"))
