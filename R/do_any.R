@@ -245,7 +245,24 @@ do_any <- function(species_name,
                                                 dismo_threshold, ".csv"))
             }
 
-
+            # creating and writing do_any metadata
+            metadata <- data.frame(
+              species_name = as.character(species_name),
+              algorithm = algorithm,
+              project_model_dir = ifelse(project_model, proj_data_folder, NA),
+              projections = ifelse(project_model, paste(pfiles, collapse = "-"), NA),
+              mask = ifelse(is.null(mask), NA, mask),
+              dismo_threshold = dismo_threshold,
+              equalized_occ = ifelse(equalize, "yes", "no"),
+              n_equalized_occ = ifelse(algorithm %in% c("rf", "brt")
+                                       & equalize == TRUE,
+                                       length(aus.eq), NA),
+              proc_threshold = proc_threshold
+            )
+            message("writing metadata")
+            write.csv(metadata, file = paste0(partition.folder, "/metadata_",
+                                             species_name, "_", i, "_", g,
+                                             "_", algorithm, ".csv"))
             #writing evaluation tables
 
             message("writing evaluation tables")
