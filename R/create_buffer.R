@@ -1,15 +1,16 @@
 #' Samples pseudoabsences inside a geographic or environmental buffer
 #'
-#'This function is used internally by function
-#' \code{\link{setup_sdmdata}} to define the area where pseudoabsences will be
-#' sampled in different ways. First, it can create a maximum inclusion buffer,
-#' within which the pseudoabsences will be sampled, to restrict model evaluation
-#'  to accesible areas. This can be performed by either setting a user-defined
-#'  shapefile, or by selecting one of several distance measures, including a
-#'  numeric fixed value, to draw a buffer around the occurrences. In addition to
-#'  this, an euclidean environmental distance can be superimposed to the
-#'  previous step. The third step aims to control for overfitting by excluding
-#'  areas that are too close to the occurrence points, with parameter "\code{dist_min}".
+#' This function is used internally by function \code{\link{setup_sdmdata}} to
+#' define the area where pseudoabsences will be sampled in different ways.
+#' First, it can create an inclusion buffer, within which the pseudoabsences
+#' will be sampled, to restrict model evaluation to accesible areas. This can be
+#' performed by either setting a user-defined shapefile, or by drawing a buffer
+#' around the species occurrences: a geographic distance fixed value, or the
+#' mean, median or maximum pairwise distance between occurrences. In addition to
+#' this, an euclidean environmental distance filter can be superimposed to the
+#' previous step. The third step aims to control for overfitting by excluding
+#'  areas that are too close to the occurrence points, either in the
+#'  environmental space or in the geographic space.
 #'  The function will return the resulting buffer as a RasterStack object with
 #'  the same resolution and NA values of the predictors RasterStack.
 #'
@@ -21,29 +22,39 @@
 #' used as a sampling area, and \code{buffer_shape} needs to be specified. If
 #' NULL, no distance buffer is applied. If set to "\code{distance}",
 #' \code{dist_buf} needs to be specified
+#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences
+#' will be generated. Needs to be specified if \code{buffer_type = "user"}
 #' @param dist_buf Defines the width of the buffer. Needs to be specified if
 #' \code{buffer_type = "distance"}. Distance unit is in the same unit of the
 #' RasterStack of predictor variables
 #' @param env_buffer Logical. Should an euclidean environmental filter be
-#' applied? If TRUE, \code{env_distance} and \code{max_env_dist} need to be
-#' specified
+#' applied? If TRUE, \code{env_distance}, and \code{max_env_dist} or
+#' \code{min_env_dist} need to be specified. Areas closest than
+#' \code{min_env_dist} and farther than \code{max_env_dist} in the environmental
+#' space will be omitted
 #' @param env_distance Character. Type of environmental distance, any in
 #' "\code{centroid}", "\code{mindist}". Defaults to "\code{centroid}", the
 #' distance of each raster pixel to the environmental centroid of the
 #' distribution. When set to "\code{mindist}", the minimum distance of each
 #' raster pixel to any of the occurrence points is calculated. Needs to be
-#' specified if \code{env_buffer = TRUE}. A maximum value needs to be specified
-#'  (parameter \code{max_env_dist})
-#' @param max_env_dist Numeric. Since large negative values can arise
-#'  during the calculation of the euclidean environmental distance, this
-#'  parameter sets a maximum value to cut the environmental distance buffer.
-#'  Expressed in quantiles, from 0: all values to 1: no values. Defaults to 0.5,
-#'  the median value. Needs to be specified if \code{env_buffer = TRUE}
-#' @param dist_min Optional, numeric. A distance for the exclusion of areas too
-#' close from the occurrence points. Distance unit is in the same unit of the
-#' RasterStack of predictor variables
-#' @param buffer_shape User-defined buffer shapefile in which pseudoabsences
-#' will be generated. Needs to be specified if \code{buffer_type = "user"}
+#' specified if \code{env_buffer = TRUE}. Maximum or minimum values need to be
+#' specified (parameters \code{max_env_dist} and \code{min_env_dist})
+#' @param max_env_dist Numeric. Sets a maximum value to exclude the areas
+#' farthest (in the environmental space) to the occurrences or their centroid,
+#' expressed in quantiles, from 0 (the closest) to 1 (the whole range of
+#' environmental distances). \code{max_env_dist} has to be larger than
+#' \code{min_env_dist} or no values will be left
+#' @param min_env_dist Numeric. Sets a minimum value to exclude the areas
+#' closest (in the environmental space) to the occurrences or their centroid,
+#' expressed in quantiles, from 0 (the closest) to 1 (the whole range of
+#' environmental distances). \code{min_env_dist} defaults to 0.05, excluding
+#' areas belonging to the 5% closest environmental values. Note that since this
+#' is based on quantiles, and environmental similarity can take large negative
+#' values, this is an abitrary value. \code{max_env_dist} has to be larger than
+#' \code{min_env_dist} or no values will be left
+#' @param min_geog_dist Optional, numeric. A distance for the exclusion of the
+#' areas closeste to the occurrence points (in the geographical space). Distance
+#'  unit is in the same unit of the RasterStack of predictor variables
 #' @param write_buffer Logical. Should the resulting RasterStack be written?
 #' Defaults to FALSE
 #' @return Table of pseudoabsence points sampled within the selected distance
@@ -74,12 +85,13 @@ create_buffer <- function(species_name,
                           lat = "lat",
                           predictors,
                           buffer_type = "median",
+                          buffer_shape,
                           dist_buf = NULL,
                           env_buffer = FALSE,
                           env_distance = "centroid",
-                          dist_min = NULL,
-                          max_env_dist = 0.5,
-                          buffer_shape,
+                          max_env_dist = NULL,
+                          min_env_dist = NULL,
+                          min_geog_dist = NULL,
                           models_dir = "./models",
                           write_buffer = FALSE) {
     sp::coordinates(occurrences) <- ~lon + lat
@@ -132,32 +144,44 @@ create_buffer <- function(species_name,
         if (missing(env_distance))
             stop(paste("The type of environmental distance ('centroid',
                        'mindist') must be specified"))
-        if (missing(max_env_dist))
-            stop(paste("A quantile for maximum environmental distance must be
+        if (missing(max_env_dist) & missing(min_env_dist))
+            stop(paste("A quantile for maximum or mininum environmental distance must be
                        specified"))
+        if (!missing(max_env_dist) & !missing(min_env_dist) & max_env_dist <= min_env_dist)
+            stop(paste("If both are defined, max_env_dist cannot be equal or
+                       smaller than min_env_dist"))
         message("Applying environmental filter")
 
         env.buffer <- euclidean(predictors = predictors,
                                 occurrences = occurrences,
                                 env_dist = env_distance)
-        q <- quantile(raster::getValues(env.buffer),
+        if (!missing(max_env_dist)) {
+        #max_env_dist
+        q_max <- quantile(raster::getValues(env.buffer),
                       max_env_dist, names = FALSE, na.rm = TRUE)
-        env.buffer[env.buffer <= q] <- NA
+        env.buffer[env.buffer <= q_max] <- NA
+        }
+        if (!missing(min_env_dist)) {
+        #min_env_dist
+        q_min <- quantile(raster::getValues(env.buffer),
+                      min_env_dist, names = FALSE, na.rm = TRUE)
+        env.buffer[env.buffer >= q_min] <- NA
+        }
         # we create a shapefile so it can be masked like the other types
         env.shape <- raster::rasterToPolygons(env.buffer, dissolve = TRUE)
         r_buffer <- raster::crop(r_buffer, env.shape)
         r_buffer <- raster::mask(r_buffer, env.shape)
     }
-    if (is.numeric(dist_min)) {
+    if (is.numeric(min_geog_dist)) {
         if (exists("dist.buf")) {
-            if (dist_min >= dist.buf) {
-                warning("dist_min is higher than dist_buf")
+            if (min_geog_dist >= dist.buf) {
+                warning("min_geog_dist is higher than dist_buf")
             }
         }
 
         buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
                                            byid = FALSE,
-                                           width = dist_min)
+                                           width = min_geog_dist)
 
         r_buffer <- raster::mask(r_buffer, buffer.shape.min, inverse = TRUE)
     }

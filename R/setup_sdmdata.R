@@ -32,7 +32,9 @@
 #' @param plot_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points. Default is 1,000
 #' @param partition_type Character. Type of data partitioning scheme, either
-#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
+#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
+#'  \code{boot_proportion} and \code{boot_n} must be specified. If set to
+#'  crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n Number of bootstrap runs
@@ -83,9 +85,10 @@ setup_sdmdata <- function(species_name,
                           dist_buf = NULL,
                           env_buffer = FALSE,
                           env_distance = "centroid",
-                          dist_min = NULL,
                           buffer_shape = NULL,
-                          max_env_dist = 0.5,
+                          max_env_dist = NULL,
+                          min_env_dist = NULL,
+                          min_geog_dist = NULL,
                           write_buffer = FALSE,
                           seed = NULL,
                           clean_dupl = FALSE,
@@ -208,10 +211,11 @@ setup_sdmdata <- function(species_name,
                                     buffer_type = buffer_type,
                                     predictors = predictors,
                                     dist_buf = dist_buf,
-                                    dist_min = dist_min,
                                     buffer_shape = buffer_shape,
                                     env_distance = env_distance,
                                     max_env_dist = max_env_dist,
+                                    min_env_dist = min_env_dist,
+                                    min_geog_dist = min_geog_dist,
                                     write_buffer = write_buffer)
 
         } else {
