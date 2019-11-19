@@ -261,8 +261,8 @@ do_any <- function(species_name,
             )
             message("writing metadata")
             write.csv(metadata, file = paste0(partition.folder, "/metadata_",
-                                             species_name, "_", i, "_", g,
-                                             "_", algorithm, ".csv"))
+                                              species_name, "_",
+                                              algorithm, ".csv"))
             #writing evaluation tables
 
             message("writing evaluation tables")
