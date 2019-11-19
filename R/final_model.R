@@ -329,8 +329,7 @@ final_model <- function(species_name,
       uncertainty = ifelse(uncertainty, "yes", "no")
       )
     message("writing metadata")
-    write.csv(metadata, file = paste0(final_path, "/metadata_",
-                                      species_name, ".csv"))
+    write.csv(metadata, file = paste0(final_path, "/metadata.csv"))
     print(paste("DONE", algo, "!"))
     return(stats)
     print(date())

@@ -236,9 +236,9 @@ ensemble_model <- function(species_name,
         scale_models = ifelse(scale_models, "yes", "no")
     )
     message("writing metadata")
-    write.csv(metadata, file = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                      ensemble_dir, "/metadata_",
-                                      species_name, ".csv"))
+    write.csv(metadata, file = paste0(models_dir, "/", species_name, "/",
+                                      proj_dir, "/", ensemble_dir,
+                                      "/metadata.csv"))
     print("DONE!")
     print(date())
     return(ensemble.mods)
