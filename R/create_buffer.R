@@ -84,7 +84,7 @@ create_buffer <- function(species_name,
                           lon = "lon",
                           lat = "lat",
                           predictors,
-                          buffer_type = "median",
+                          buffer_type = "none",
                           buffer_shape,
                           dist_buf = NULL,
                           env_buffer = FALSE,
@@ -96,8 +96,7 @@ create_buffer <- function(species_name,
                           write_buffer = FALSE) {
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
-    if (is.null(buffer_type) |
-        !buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
+    if (!buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
         message("buffer_type NULL or not recognized, returning predictors")
         r_buffer <- predictors[[1]]
     }

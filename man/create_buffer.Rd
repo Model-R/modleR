@@ -5,7 +5,7 @@
 \title{Samples pseudoabsences inside a geographic or environmental buffer}
 \usage{
 create_buffer(species_name, occurrences, lon = "lon", lat = "lat",
-  predictors, buffer_type = "median", buffer_shape, dist_buf = NULL,
+  predictors, buffer_type = "none", buffer_shape, dist_buf = NULL,
   env_buffer = FALSE, env_distance = "centroid", max_env_dist = NULL,
   min_env_dist = NULL, min_geog_dist = NULL, models_dir = "./models",
   write_buffer = FALSE)
