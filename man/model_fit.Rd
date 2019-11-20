@@ -104,12 +104,15 @@ package with \code{\link[e1071]{best.tune}} function}
 }
 \value{
 Returns a data frame with some key threshold values and evaluation
-statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)
+statistics of each algorithm (FNR, FPR, TSSmax, AUC, pROC, FScore,
+Jaccard dissimilarity etc.) for the selected threshold
 
 Writes on disk a .tif model for each partition of each algorithm
 
-Writes in disk a .csv file with evaluation statistics of each
-algorithm
+Writes in disk a .csv file with thresholds and evaluation statistics
+of each algorithm for a given threshold
+#' @return Writes in disk a .csv file with evaluation statistics for all
+threshold values
 }
 \description{
 \code{do_any} reads the output from \code{\link{setup_sdmdata}} and
@@ -118,7 +121,8 @@ specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
 addition to commonly adopted metrics such as AUC and TSS, this package also
 calculates partial ROC
-\insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details on model evaluation see
+\insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details
+on model evaluation see
  \insertCite{phillips_maximum_2006;textual}{modleR} and
  \insertCite{peterson_ecological_2011;textual}{modleR}. \code{do_any}
  performs one algorithm at a time. \code{do_many} runs internally
