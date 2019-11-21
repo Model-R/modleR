@@ -1,38 +1,7 @@
-## Sample .travis.yml file for use with metacran/r-builder
-## See https://github.com/metacran/r-builder for details.
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: r
-cache: packages
+language: R
 sudo: false
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: true
-
-before_install:
-  - sudo apt-get -y install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libgdal-dev bwidget libgdal-dev libgdal1-dev libgeos-dev libgeos++-dev libgsl0-dev libproj-dev libspatialite-dev netcdf-bin libgmp3-dev libudunits2-dev
-
-r_github_packages:
-  - marlonkobos/kuenm
-
-r_packages:
-  - caret
-  - data.table
-  - dismo
-  - e1071
-  - gbm
-  - graphics
-  - kernlab
-  - kuenm
-  - maps
-  - maxnet
-  - randomForest
-  - raster
-  - Rdpack
-  - rgeos
-  - rgdal
-  - rJava
-  - scales
-  - sp
+cache: packages
+after_success:
+  - Rscript -e 'covr::codecov()'
