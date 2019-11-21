@@ -1,5 +1,5 @@
 Package: modleR
-Title: Environmental Niche Modeling Workflow Based on dismo
+Title: Ecological Niche Modeling Workflow Based on dismo
 Version: 0.0.0.9000
 Authors@R: c(
     person("Andrea", "Sánchez-Tapia", email = "andreasancheztapia@gmail.com", 
