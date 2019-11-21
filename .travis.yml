@@ -11,23 +11,23 @@ deploy:
   keep_history: true
 
 r_packages:
-  - caret,
-  - data.table,
-  - dismo,
-  - e1071,
-  - gbm,
-  - graphics,
-  - kernlab,
-  - kuenm,
-  - maps,
-  - maxnet,
-  - randomForest,
-  - raster,
-  - Rdpack,
-  - rgeos,
-  - rgdal,
-  - rJava,
-  - scales,
+  - caret
+  - data.table
+  - dismo
+  - e1071
+  - gbm
+  - graphics
+  - kernlab
+  - kuenm
+  - maps
+  - maxnet
+  - randomForest
+  - raster
+  - Rdpack
+  - rgeos
+  - rgdal
+  - rJava
+  - scales
   - sp
 
  include:
