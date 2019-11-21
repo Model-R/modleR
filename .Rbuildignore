@@ -3,8 +3,10 @@
 ^\.Rproj\.user$
 ^README.*$
 ^teste.R
+test/
 
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
 index.md
+^.travis\..yml$

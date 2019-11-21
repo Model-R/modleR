@@ -20,7 +20,7 @@ modelos_teste
 sdmtest
 setupsdmdata
 setupsdmdatamed
-test
+test/
 vignettes/modelR_cache
 wc10
 .Rd2pdf*/
