@@ -26,12 +26,3 @@ notifications:
 
 env:
   matrix:
- - name: Strict Latin-1 locale
-    r: release
-    before_script:
-      - sudo locale-gen en_US
-      - export LC_ALL=en_US
-  - name: Dev rlang and vctrs
-    r: release
-    r_github_packages:
-      - marlonecobos/kuenm
