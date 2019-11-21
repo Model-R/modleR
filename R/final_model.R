@@ -314,6 +314,22 @@ final_model <- function(species_name,
       #  warning(paste("no models were selected for", species_name, algo, "\n"))
     #}
       #  }
+    # creating and writing final_model metadata
+    metadata <- data.frame(
+      species_name = as.character(species_name),
+      algorithms = paste(algorithms, collapse = "-"),
+      select_partition = ifelse(select_partitions, "yes", "no"),
+      select_par = "TSSmax",
+      select_par_val = select_par_val,
+      weight_par = ifelse(is.null(weight_par), "no", weight_par),
+      cut_level = ifelse(sum(which_models %in% "raw_mean_cut" == 1), cut_level, NA),
+      scale_models = ifelse(scale_models, "yes", "no"),
+      consensus_level = ifelse(sum(which_models %in% "bin_consensus" == 1), consensus_level, NA),
+      which_models = paste(which_models, collapse = "-"),
+      uncertainty = ifelse(uncertainty, "yes", "no")
+      )
+    message("writing metadata")
+    write.csv(metadata, file = paste0(final_path, "/metadata.csv"))
     print(paste("DONE", algo, "!"))
     return(stats)
     print(date())

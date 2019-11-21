@@ -228,6 +228,17 @@ ensemble_model <- function(species_name,
             }
         }
     }
+    # creating and writing ensemble_model metadata
+    metadata <- data.frame(
+        species_name = as.character(species_name),
+        which_final = paste(which_final, collapse = "-"),
+        consensus_level = ifelse(consensus, consensus_level, NA),
+        scale_models = ifelse(scale_models, "yes", "no")
+    )
+    message("writing metadata")
+    write.csv(metadata, file = paste0(models_dir, "/", species_name, "/",
+                                      proj_dir, "/", ensemble_dir,
+                                      "/metadata.csv"))
     print("DONE!")
     print(date())
     return(ensemble.mods)
