@@ -4,25 +4,18 @@
 language: R
 cache: packages
 
-before_install:
-  - curl -OL https://raw.githubusercontent.com/metacran/r-builder/master/pkg-build.sh
-  - chmod 755 pkg-build.sh
-  - ./pkg-build.sh bootstrap
-
-install:
-  - ./pkg-build.sh install_github marlonecobos/kuenm
-  - ./pkg-build.sh install_deps
-
-script:
-  - ./pkg-build.sh run_tests
-
-after_failure:
-  - ./pkg-build.sh dump_logs
-
-notifications:
-  email:
-  on_success: change
-  on_failure: change
-
-env:
-  matrix:
+ include:
+  - r: devel
+  - r: release
+    deploy:
+      provider: script
+      skip_cleanup: true
+  - name: Strict Latin-1 locale
+    r: release
+    before_script:
+      - sudo locale-gen en_US
+      - export LC_ALL=en_US
+  - name: Dev rlang and vctrs
+    r: release
+    r_github_packages:
+      - marlonkobos/kuenm
