@@ -3,12 +3,24 @@
 
 language: r
 cache: packages
+sudo: false
+
+addons:
+   apt:
+     packages:
+      -
 
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   keep_history: true
+
+before_install:
+  - sudo apt-get -y install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libgdal-dev bwidget libgdal-dev libgdal1-dev libgeos-dev libgeos++-dev libgsl0-dev libproj-dev libspatialite-dev netcdf-bin libgmp3-dev libudunits2-dev
+
+r_github_packages:
+  - marlonkobos/kuenm
 
 r_packages:
   - caret
@@ -31,5 +43,4 @@ r_packages:
   - sp
 
  include:
-    r_github_packages:
-      - marlonkobos/kuenm
+
