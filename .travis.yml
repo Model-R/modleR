@@ -5,7 +5,7 @@ sudo: false
 cache: packages
 
 before_install:
-  - R -e 'install.packages("rgdal", repos=c("http://R-Forge.R-project.org", "http://cran.rstudio.com"))'
+  - sudo apt-get -y install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libgdal-dev bwidget libgdal-dev libgdal1-dev libgeos-dev libgeos++-dev libgsl0-dev libproj-dev libspatialite-dev netcdf-bin libgmp3-dev libudunits2-dev
 
 after_success:
   - Rscript -e 'covr::codecov()'
