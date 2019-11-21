@@ -4,15 +4,11 @@
 language: r
 cache: packages
 
-cache: packages
-
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   keep_history: true
-  on:
-    branch: master
 
 r_packages:
   - caret,
