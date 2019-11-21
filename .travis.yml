@@ -1,8 +1,38 @@
 ## Sample .travis.yml file for use with metacran/r-builder
 ## See https://github.com/metacran/r-builder for details.
 
-language: R
+language: r
 cache: packages
+
+cache: packages
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: master
+
+r_packages:
+  - caret,
+  - data.table,
+  - dismo,
+  - e1071,
+  - gbm,
+  - graphics,
+  - kernlab,
+  - kuenm,
+  - maps,
+  - maxnet,
+  - randomForest,
+  - raster,
+  - Rdpack,
+  - rgeos,
+  - rgdal,
+  - rJava,
+  - scales,
+  - sp
 
  include:
     r_github_packages:
