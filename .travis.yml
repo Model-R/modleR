@@ -5,12 +5,8 @@ sudo: false
 cache: packages
 
 before_install:
-  - sudo apt-get -y install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libgdal-dev bwidget libgdal-dev libgdal1-dev libgeos-dev libgeos++-dev libgsl0-dev libproj-dev libspatialite-dev netcdf-bin libgmp3-dev libudunits2-dev
+  - sudo apt-get -y install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libgdal-dev bwidget libgdal-dev libgdal1-dev libgeos-dev libgeos++-dev libgsl0-dev libproj-dev libspatialite-dev netcdf-bin libgmp3-dev libudunits2-dev unzip wget
 
 after_success:
+  - wget -O /home/travis/R/Library/dismo/java/maxent.jar.zip "http://www.java2s.com/Code/JarDownload/maxent/maxent.jar.zip" & unzip /home/travis/R/Library/dismo/java/maxent.jar.zip -d /home/travis/R/Library/dismo/java/
   - Rscript -e 'covr::codecov()'
-  before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
-    deploy:
-      provider: script
-      script: Rscript -e 'pkgdown::deploy_site_github()'
-      skip_cleanup: true
