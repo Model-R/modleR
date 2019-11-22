@@ -197,37 +197,36 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
 ```{r do_any, echo = T, eval = T}
-sp_maxent <- do_any(species_name = species[1],
-                    algorithm = "maxent",
+sp_maxnet <- do_any(species_name = species[1],
+                    algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
                     write_png = T,
                     write_bin_cut = F,
                     equalize = T)
 
-sp_maxent
+sp_maxnet
 ```
 
 
-The following lines call for bioclim, GLM, maxent, random forests and smvk (from package __kernlab__)
+The following lines call for bioclim, GLM, maxnet, random forests and smvk (from package __kernlab__)
 
 ```{r do_many, echo = T, eval = T}
 many <- do_many(species_name = species[1],
                 predictors = example_vars,
                 models_dir = test_folder,
-                write_png = T,
-                write_bin_cut = F,
-                bioclim = T,
-                domain = F,
-                glm = T,
-                svmk = T,
-                svme = T,
-                maxent = T,
-                maxnet = T,
-                rf = T,
-                mahal = F,
-                brt = T,
-                equalize = T)
+                write_png = TRUE,
+                write_bin_cut = FALSE,
+                bioclim = TRUE,
+                domain = FALSE,
+                glm = TRUE,
+                svmk = TRUE,
+                svme = TRUE,
+                maxnet = TRUE,
+                rf = TRUE,
+                mahal = FALSE,
+                brt = TRUE,
+                equalize = TRUE)
 ```
 
 In addition:
@@ -266,7 +265,7 @@ should return something like this:
 ...
 [31] "evaluate_Abarema_langsdorffii_1_1_bioclim.txt"
 [32] "evaluate_Abarema_langsdorffii_1_1_glm.txt"
-[33] "evaluate_Abarema_langsdorffii_1_1_maxent.txt"
+[33] "evaluate_Abarema_langsdorffii_1_1_maxnet.txt"
 ...
 [116] "metadata.txt"
 ...
@@ -407,19 +406,18 @@ for (i in 1:length(example_occs)) {
     do_many(species_name = sp,
             predictors = example_vars,
             models_dir = "~/modleR_test/forlooptest",
-            write_png = T,
-            bioclim = T,
-            maxent = T,
-            maxnet = F,
-            rf = T,
-            svmk = T,
-            svme = T,
-            brt = T,
-            glm = T,
-            domain = F,
-            mahal = F,
-            equalize = T,
-            write_bin_cut = T)
+            write_png = TRUE,
+            bioclim = TRUE,
+            maxnet = TRUE,
+            rf = TRUE,
+            svmk = TRUE,
+            svme = TRUE,
+            brt = TRUE,
+            glm = TRUE,
+            domain = FALSE,
+            mahal = FALSE,
+            equalize = TRUE,
+            write_bin_cut = TRUE)
 }
 
 for (i in 1:length(example_occs)) {
@@ -470,16 +468,16 @@ example_occs %>% purrr::map2(.x= .,
 species %>% as.list(.) %>% purrr::map(~ do_many(species_name = .,
                                                 predictors = example_vars,
                                                 models_dir = "~/modleR_test/temp_purrr",
-                                                bioclim = T,
-                                                maxent = T,
-                                                rf = T,
-                                                svme = T,
-                                                svmk = T,
-                                                domain = F,
-                                                glm = T,
-                                                mahal = F,
-                                                brt = T,
-                                                equalize = T))
+                                                bioclim = TRUE,
+                                                maxnet = TRUE,
+                                                rf = TRUE,
+                                                svme = TRUE,
+                                                svmk = TRUE,
+                                                domain = FALSE,
+                                                glm = TRUE,
+                                                mahal = FALSE,
+                                                brt = TRUE,
+                                                equalize = TRUE))
 ```
 
 ```{r purrr_final, eval = F}

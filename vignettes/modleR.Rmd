@@ -224,19 +224,19 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call
 
 ```{r do_any, echo = TRUE, eval = TRUE}
 
-sp_maxent <- do_any(species_name = species[1],
-                    algorithm = "maxent",
+sp_maxnet <- do_any(species_name = species[1],
+                    algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
                     write_png = TRUE,
                     write_bin_cut = FALSE,
                     equalize = TRUE)
 
-sp_maxent
+sp_maxnet
 ```
 
 
-The following lines call for bioclim, GLM, maxent, random forests and smvk (from package __kernlab__)
+The following lines call for bioclim, GLM, maxnet, random forests and smvk (from package __kernlab__)
 
 ```{r do_many, echo = TRUE, eval = TRUE}
 many <- do_many(species_name = species[1],
@@ -249,7 +249,6 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxent = TRUE,
                 maxnet = TRUE,
                 rf = TRUE,
                 mahal = FALSE,
@@ -293,7 +292,7 @@ should return something like this:
 ...
 [31] "evaluate_Abarema_langsdorffii_1_1_bioclim.txt"
 [32] "evaluate_Abarema_langsdorffii_1_1_glm.txt"
-[33] "evaluate_Abarema_langsdorffii_1_1_maxent.txt"
+[33] "evaluate_Abarema_langsdorffii_1_1_maxnet.txt"
 ...
 [116] "metadata.txt"
 ...
@@ -439,8 +438,7 @@ for (i in 1:length(example_occs)) {
             models_dir = "~/modleR_test/forlooptest",
             write_png = TRUE,
             bioclim = TRUE,
-            maxent = TRUE,
-            maxnet = FALSE,
+            maxnet = TRUE,
             rf = TRUE,
             svmk = TRUE,
             svme = TRUE,
@@ -501,7 +499,7 @@ species %>% as.list(.) %>% purrr::map(~ do_many(species_name = .,
                                                 predictors = example_vars,
                                                 models_dir = "~/modleR_test/temp_purrr",
                                                 bioclim = TRUE,
-                                                maxent = TRUE,
+                                                maxnet = TRUE,
                                                 rf = TRUE,
                                                 svme = TRUE,
                                                 svmk = TRUE,
