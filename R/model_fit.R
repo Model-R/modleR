@@ -177,10 +177,11 @@
 #'  package with \code{\link[e1071]{best.tune}} function
 #' @param svmk Execute Support Vector Machines (SVM) algorithm from
 #' \pkg{kernlab} package with \code{\link[kernlab]{ksvm}} function
-#' @param project_model Logical, whether to perform a projection
+#' @param project_model Logical, whether to project the models to variable sets
+#' in \code{proj_data_folder} directory
 #' @param proj_data_folder Path to directory with projections containing one or
 #' more folders with the projection datasets (e.g. "./env/proj/proj1").
-#' Projection diretctory should only contain raster files corresponding to the
+#' This directory should only contain raster files corresponding to the
 #' environmental variables. If more than one projection, each projection should
 #' be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 #' equivalent raster files at diferent subdirectories must have the same names

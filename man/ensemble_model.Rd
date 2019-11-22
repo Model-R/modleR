@@ -29,8 +29,8 @@ See \code{\link{example_occs}} as an example}
 \item{models_dir}{Folder path to save the output files. Defaults to
 "\code{./models}"}
 
-\item{final_dir}{Character. Name of the folder to save the output files.
-A subfolder will be created, defaults to "final_model"}
+\item{final_dir}{Character. Name of the folder to save the output files. A
+subfolder will be created, defaults to "final_model"}
 
 \item{ensemble_dir}{Character string, name of the folder to save the output
 files. A subfolder will be created. Defaults to "\code{ensemble}"}
@@ -63,7 +63,8 @@ be:
 \item{consensus}{Logical. If \code{TRUE} a consensus between the algorithms
 will be applied}
 
-\item{consensus_level}{Which proportion of binary models will be kept when creating \code{bin_consensus}}
+\item{consensus_level}{Which proportion of binary models will be kept when
+creating \code{bin_consensus}}
 
 \item{write_ensemble}{Logical. If \code{TRUE} writes png files of the
 ensemble models}

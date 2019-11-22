@@ -34,11 +34,12 @@ be fit: "\code{bioclim}", "\code{brt}",
 "\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
 "\code{svme}", "\code{svmk}", "\code{rf}"}
 
-\item{project_model}{Logical, whether to perform a projection}
+\item{project_model}{Logical, whether to project the models to variable sets
+in \code{proj_data_folder} directory}
 
 \item{proj_data_folder}{Path to directory with projections containing one or
 more folders with the projection datasets (e.g. "./env/proj/proj1").
-Projection diretctory should only contain raster files corresponding to the
+This directory should only contain raster files corresponding to the
 environmental variables. If more than one projection, each projection should
 be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 equivalent raster files at diferent subdirectories must have the same names

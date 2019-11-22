@@ -63,7 +63,7 @@ knitr::include_graphics("workflow.png", dpi = 150)
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling  
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms
-3. Partition joining: `final_model()` selects or weighs (optionally) the partition models and joins them into a model per species per algorithm
+3. Partition joining: `final_model()` <!--selects or weighs (optionally) the partition models--> joins the partition models into a model per species per algorithm
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus).
 
  <!-- NOTE: `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
@@ -103,8 +103,8 @@ occurrence data for four species, and predictor variables called
 
 
 ```{r lib, echo = TRUE, eval = TRUE}
-library(modleR)
-#devtools::load_all() # for development
+#library(modleR)
+devtools::load_all() # for development
 library(raster)
 str(example_occs)
 species <- names(example_occs)
@@ -158,7 +158,6 @@ Pseudoabsence sampling has also some options:
 + `real_absences` can be used to specify a set of user-defined absences, with species name, lat and lon columns.
 + `geo_filt` will eliminate records that are at less than `geo_filt_dist` between them, in order to control for spatial autocorrelation
 + `buffer_type`: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using `dismo::randomPoints()`) _within_ this buffer, in order to control for the area accessible to the species (M in the BAM diagram).
-
 + `seed`: for reproducilibity purposes
 
 
@@ -325,11 +324,11 @@ There are many ways to create a final model per algorithm per species. `final_mo
 knitr::include_graphics("final_model_english.png", dpi = 150)
 ```
 
-+ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSSmax value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.
-+ The selected partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
+<!--+ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSSmax value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.-->
++ The <!--selected--> partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
 + Their means can be calculated (`raw_mean`, `bin_mean` or `cut_mean`, second line in Figure 2)
 + From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_mean_th`). A "cut" model can also be obtained (`cut_mean_th`).
-+ From `bin_mean`, a consensus model (i.e. how many of the retained models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
++ From `bin_mean`, a consensus model (i.e. how many of the <!--retained--> models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
 + NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
 
 
@@ -342,9 +341,6 @@ args(final_model)
 final_model(species_name = species[1],
             algorithms = NULL, #if null it will take all the in-disk algorithms
             models_dir = test_folder,
-            select_partitions = TRUE,
-            select_par = "TSSmax",
-            select_par_val = 0,
             which_models = c("raw_mean", "bin_consensus"),
             consensus_level = 0.5,
             uncertainty = TRUE,
@@ -379,7 +375,7 @@ plot(final_models)
 
 The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
-`ensemble_model()` uses a `which.final` parameter -analog to `which_model` in `final_model()` to specify which final(s) model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which.models = c("raw_mean")`).
+`ensemble_model()` uses a `which_final` parameter -analog to `which_model` in `final_model()` to specify which final(s) model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which_final = c("raw_mean")`).
 
 ```{r ensemble_model, eval = TRUE}
 args(ensemble_model)
@@ -458,9 +454,6 @@ for (i in 1:length(example_occs)) {
 for (i in 1:length(example_occs)) {
     sp <- species[i]
     final_model(species_name = sp,
-                select_partitions = TRUE,
-                select_par = "TSSmax",
-                select_par_val = 0.5,
                 consensus_level = 0.5,
                 models_dir = "~/modleR_test/forlooptest",
                 which_models = c("raw_mean", "bin_consensus"),
@@ -521,9 +514,6 @@ species %>%
 species %>% 
     as.list(.) %>%
     purrr::map(~ final_model(species_name = .,
-                             select_partitions = TRUE,
-                             select_par = "TSSmax",
-                             select_par_val = 0.5,
                              consensus_level = 0.5,
                              models_dir =  "~/modleR_test/temp_purrr",
                              which_models = "raw_mean",
