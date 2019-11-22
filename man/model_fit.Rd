@@ -254,7 +254,7 @@ sp_any <- do_any(species_name = sp,
 sp_many <- do_many(species_name = sp,
                    predictors = example_vars,
                    bioclim = TRUE,
-                   maxent = TRUE)
+                   maxnet = TRUE)
 }
 \references{
 \insertAllCited{}

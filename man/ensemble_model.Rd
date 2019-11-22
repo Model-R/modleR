@@ -108,11 +108,11 @@ sp_setup <- setup_sdmdata(species_name = sp,
 sp_many <- do_many(species_name = sp,
                    predictors = example_vars,
                    bioclim = TRUE,
-                   maxent = TRUE)
+                   maxnet = TRUE)
 
 # run final_model
 sp_final <- final_model(species_name = sp,
-                        algorithms = c("bioclim", "maxent"),
+                        algorithms = c("bioclim", "maxnet"),
                         select_partitions = TRUE,
                         select_par = "TSSmax",
                         select_par_val = 0,

@@ -9,4 +9,5 @@ test/
 ^docs$
 ^pkgdown$
 index.md
-^.travis\..yml$
+^.travis\.yml$
+^codecov\.yml$
