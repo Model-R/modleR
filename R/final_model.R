@@ -3,10 +3,8 @@
 #' This function reads the models generated either by \code{\link{do_any}} or
 #' \code{\link{do_many}} (i.e. one model per partition per algorithm) and
 #' summarizes them into a final model for each species-algorithm combination.
-#' These final models may be created from the raw continuous models, the binary
-#' models or the "cut" models (see \code{\link{do_any}}). The function
-#' calculates a mean or a weighted mean between partitions using a performance
-#' statistic (passed to argument \code{weight_par}). From these means, several
+#' These final models may be created from the raw continuous models or the
+#' binary models (see \code{\link{do_any}}). From these means, several
 #' outputs can be created, see \code{which_models} for details about
 #' the final outputs available. The uncertainty between partitions, taken as
 #' ranges (maximum - minimum values) between partitions may also be calculated.
@@ -58,10 +56,6 @@
 #'   \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}.
 #'   Parameter \code{consensus_level} must be defined, 0.5 means a majority
 #'   consensus}
-#'   \item{\code{cut_mean}}{The mean of the cut models, created by cutting the
-#'   raw mean models by the threshold selected in \code{mean_th_par} and
-#'   recovering the continuous models above this threshold. Values below
-#'   the thresholds are down-weighted by zeros}
 #' }
 #' @param uncertainty Whether an uncertainty map, measured as range (max-min)
 #' should be calculated
@@ -217,7 +211,7 @@ final_model <- function(species_name,
                     }
                 }
              #second column of the figure. creates binary first -they may have been NOT created in disk but the information to do so is available so instead of running again do_any() we read the raw models and create them here
-             if (any(c("bin_mean", "cut_mean", "bin_consensus") %in% which_models)) {
+             if (any(c("bin_mean", "bin_consensus") %in% which_models)) {
                  mod.sel.bin <- cont.sel.1 > (stats.algo[, mean_th_par][sel.index]) #(0)
 
                 if (any(c("bin_mean", "bin_consensus") %in% which_models)) {
@@ -234,13 +228,6 @@ final_model <- function(species_name,
                         final_algo <- raster::addLayer(final_algo, bin_consensus)
                     }
                 }
-                #third column of the figure depends on mod.sel.bin
-                 if ("cut_mean" %in% which_models) {
-                     mod.cut.sel <- mod.sel.bin * cont.sel.1
-                     cut_mean <- raster::weighted.mean(mod.cut.sel, w = pond.stats)  #(6)
-                     names(cut_mean) <- "cut_mean"
-                     final_algo <- raster::addLayer(final_algo, cut_mean)
-                 }
              }
 
             if (scale_models == TRUE) {

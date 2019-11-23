@@ -326,7 +326,7 @@ knitr::include_graphics("final_model_english.png", dpi = 150)
 
 <!--+ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSSmax value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.-->
 + The <!--selected--> partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
-+ Their means can be calculated (`raw_mean`, `bin_mean` or `cut_mean`, second line in Figure 2)
++ Their means can be calculated (`raw_mean`, `bin_mean`)
 + From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_mean_th`). A "cut" model can also be obtained (`cut_mean_th`).
 + From `bin_mean`, a consensus model (i.e. how many of the <!--retained--> models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
 + NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
