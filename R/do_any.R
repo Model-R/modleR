@@ -12,6 +12,7 @@ do_any <- function(species_name,
                    dismo_threshold = "spec_sens",
                    conf_mat = TRUE,
                    equalize = TRUE,
+                   sensitivity = 0.9,
                    proc_threshold = 0.5,
                    ...) {
   # replacing characters not welcome in species name
@@ -192,7 +193,7 @@ do_any <- function(species_name,
               eval_df$Jaccard  <- eval_df$tp / (eval_df$fn + eval_df$tp + eval_df$fp)
               #eval_df$Sorensen <- 2 * eval_df$tp / (eval_df$fn + 2 * eval_df$tp + eval_df$fp)#same as Fscore
 
-            th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
+            th_table <- dismo::threshold(eval_mod, sensitivity = sensitivity)
             #PROC kuenm
             proc <- kuenm::kuenm_proc(occ.test = pres_test,
                                       model = mod_cont,

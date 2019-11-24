@@ -201,6 +201,8 @@
 #' @param conf_mat Logical, whether confusion tables should be written in the HD
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt
+#' @param sensitivity Numeric, value from 0 to 0.9 to indicate the sensitivity
+#' value to calculate the threshold. Defaults to 0.9 as in dismo package
 #' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E)
 #' for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is
 #' \code{proc_threshold = 5}

@@ -10,7 +10,8 @@ do_any(species_name, predictors, models_dir = "./models",
   algorithm = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
   write_bin_cut = FALSE, dismo_threshold = "spec_sens",
-  conf_mat = TRUE, equalize = TRUE, proc_threshold = 0.5, ...)
+  conf_mat = TRUE, equalize = TRUE, sensitivity = 0.9,
+  proc_threshold = 0.5, ...)
 
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
@@ -65,6 +66,9 @@ transform model predictions to a binary score as in
 
 \item{equalize}{Logical, whether the number of presences and absences should be
 equalized in randomForest and brt}
+
+\item{sensitivity}{Numeric, value from 0 to 0.9 to indicate the sensitivity
+value to calculate the threshold. Defaults to 0.9 as in dismo package}
 
 \item{proc_threshold}{Numeric, value from 0 to 100 that will be used as (E)
 for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is
