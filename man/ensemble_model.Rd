@@ -6,8 +6,9 @@
 \usage{
 ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   models_dir = "./models", final_dir = "final_models",
-  ensemble_dir = "ensemble", proj_dir = "present",
-  which_final = c("raw_mean"), consensus = FALSE,
+  ensemble_dir = "ensemble", proj_dir = "present", algorithms = NULL,
+  which_ensemble = c("average"), which_final = c("raw_mean"),
+  performance_metric = "TSSmax", consensus = FALSE,
   consensus_level = 0.5, write_ensemble = TRUE, write_occs = F,
   write_map = F, scale_models = TRUE, ...)
 }
@@ -39,6 +40,30 @@ files. A subfolder will be created. Defaults to "\code{ensemble}"}
 Defaults to "present" but can be set according to the other projections (i.e.
 to execute the function in projected models)}
 
+\item{algorithms}{Character vector specifying which algorithms will be
+processed. Note that it can have length > 1, ex. \code{c("bioclim", "rf")}.
+Defaults to NULL: if no name is given it will process all algorithms present
+in the evaluation files}
+
+\item{which_ensemble}{Which method to apply consensus between algorithms will
+be used? Current options are:
+\describe{
+\item{\code{best}}{Selects models from the best-performing algorithm. A
+performance metric must be specified (\code{performance_metric}). Parameter \code{which_final} indicates
+which model will be returned}
+\item{\code{average}}{Computes the means between models. Parameter
+\code{which_final} indicates which model will be returned}
+\item{\code{weighted_average}}{Computes a weighted mean between models. A
+performance metric must be specified. Parameter \code{which_final} indicates
+which model will be returned}
+\item{\code{median}}{Computes the median between models. Parameter
+\code{which_final} indicates which model will be returned}
+\item{\code{frequency}{Computes the mean between binary models, which is
+analogous to calculating a relative consensus. If a \code{consensus_level} is
+ specified, it will return a binary model with the final consensus area}}
+\item{\code{pca}{Computes a PCA between the models for each algorithm and extract the first axis, that summarizes variation between them}}
+}}
+
 \item{which_final}{Which \code{final_model} will be used? Currently it can
 be:
 \describe{
@@ -48,20 +73,22 @@ be:
   thresholds that maximize the selected evaluation metric (e.g. TSS
   (\code{spec_sens}) to make a binary model}
    \item{\code{raw_mean_cut}}{Recovers \code{raw_mean} values above the mean
-   threshold that
-   maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
-   other \pkg{dismo} thresholds). Generates a continuous model}
+   threshold that maximizes the selected evaluation metric
+   (e.g. TSS (\code{spec_sens}) or other \pkg{dismo} thresholds). Generates a
+    continuous model}
   \item{\code{bin_mean}}{The mean of the selected binary models. Generates a
    model in a discrete scale}
   \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}
   Parameter \code{consensus_level} must be defined, 0.5 means a majority
   consensus}
-  \item{\code{cut_mean}}{The mean of the selected cut models. Values below
-  the thresholds are down-weighted by zeros}
 }}
 
-\item{consensus}{Logical. If \code{TRUE} a consensus between the algorithms
-will be applied}
+\item{performance_metric}{Which performance metric will be used to define
+the \code{"best"} algorithm any in \code{c("AUC", "pROC", "TSSmax",
+"KAPPAmax", "CCR", "F_score", "Jaccard")}}
+
+\item{consensus}{Logical. If \code{TRUE} a consensus between the binary
+algorithms will be applied}
 
 \item{consensus_level}{Which proportion of binary models will be kept when
 creating \code{bin_consensus}}
@@ -79,11 +106,13 @@ of the ensemble models}
 and 1}
 
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
+
+\item{algorithm}{Which algorithms should be processed? Defaults to NULL, will
+use all algorithms in disk}
 }
 \value{
-Retuns a RasterStack with
-all generated statistics written in the \code{ensemble_dir}
-subfolder
+Retuns a RasterStack with all generated statistics written in the
+\code{ensemble_dir} subfolder
 
 Writes on disk raster files with the median, mean and standard
 deviation and range of the assembled models
@@ -109,11 +138,11 @@ sp_setup <- setup_sdmdata(species_name = sp,
 sp_many <- do_many(species_name = sp,
                    predictors = example_vars,
                    bioclim = TRUE,
-                   maxent = TRUE)
+                   maxnet = TRUE)
 
 # run final_model
 sp_final <- final_model(species_name = sp,
-                        algorithms = c("bioclim", "maxent"),
+                        algorithms = c("bioclim", "maxnet"),
                         select_partitions = TRUE,
                         select_par = "TSSmax",
                         select_par_val = 0,

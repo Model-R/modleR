@@ -9,6 +9,24 @@
 #' @inheritParams final_model
 #' @param ensemble_dir Character string, name of the folder to save the output
 #' files. A subfolder will be created. Defaults to "\code{ensemble}"
+#' @param which_ensemble Which method to apply consensus between algorithms will
+#' be used? Current options are:
+#' \describe{
+#' \item{\code{best}}{Selects models from the best-performing algorithm. A
+#' performance metric must be specified (\code{performance_metric}). Parameter \code{which_final} indicates
+#' which model will be returned}
+#' \item{\code{average}}{Computes the means between models. Parameter
+#' \code{which_final} indicates which model will be returned}
+#' \item{\code{weighted_average}}{Computes a weighted mean between models. A
+#' performance metric must be specified. Parameter \code{which_final} indicates
+#' which model will be returned}
+#' \item{\code{median}}{Computes the median between models. Parameter
+#' \code{which_final} indicates which model will be returned}
+#' \item{\code{frequency}{Computes the mean between binary models, which is
+#' analogous to calculating a relative consensus. If a \code{consensus_level} is
+#'  specified, it will return a binary model with the final consensus area}}
+#' \item{\code{pca}{Computes a PCA between the models for each algorithm and extract the first axis, that summarizes variation between them}}
+#' }
 #' @param which_final Which \code{final_model} will be used? Currently it can
 #' be:
 #' \describe{
@@ -18,19 +36,22 @@
 #'   thresholds that maximize the selected evaluation metric (e.g. TSS
 #'   (\code{spec_sens}) to make a binary model}
 #'    \item{\code{raw_mean_cut}}{Recovers \code{raw_mean} values above the mean
-#'    threshold that
-#'    maximizes the selected evaluation metric (e.g. TSS (\code{spec_sens}) or
-#'    other \pkg{dismo} thresholds). Generates a continuous model}
+#'    threshold that maximizes the selected evaluation metric
+#'    (e.g. TSS (\code{spec_sens}) or other \pkg{dismo} thresholds). Generates a
+#'     continuous model}
 #'   \item{\code{bin_mean}}{The mean of the selected binary models. Generates a
 #'    model in a discrete scale}
 #'   \item{\code{bin_consensus}}{The binary consensus from \code{bin_mean}
 #'   Parameter \code{consensus_level} must be defined, 0.5 means a majority
 #'   consensus}
-#'   \item{\code{cut_mean}}{The mean of the selected cut models. Values below
-#'   the thresholds are down-weighted by zeros}
 #' }
-#' @param consensus Logical. If \code{TRUE} a consensus between the algorithms
-#' will be applied
+#' @param algorithm Which algorithms should be processed? Defaults to NULL, will
+#' use all algorithms in disk
+#' @param performance_metric Which performance metric will be used to define
+#' the \code{"best"} algorithm any in \code{c("AUC", "pROC", "TSSmax",
+#' "KAPPAmax", "CCR", "F_score", "Jaccard")}
+#' @param consensus Logical. If \code{TRUE} a consensus between the binary
+#' algorithms will be applied
 #' @param write_ensemble Logical. If \code{TRUE} writes png files of the
 #' ensemble models
 #' @param write_map Logical. If \code{TRUE} adds a map contour to the png file
@@ -45,9 +66,8 @@
 #' @importFrom stats sd
 #' @export
 #' @seealso \code{\link{final_model}}
-#' @return Retuns a RasterStack with
-#' all generated statistics written in the \code{ensemble_dir}
-#' subfolder
+#' @return Retuns a RasterStack with all generated statistics written in the
+#' \code{ensemble_dir} subfolder
 #' @return Writes on disk raster files with the median, mean and standard
 #' deviation and range of the assembled models
 #' @return If \code{write_ensemble = TRUE} writes .png figures
@@ -64,11 +84,11 @@
 #' sp_many <- do_many(species_name = sp,
 #'                    predictors = example_vars,
 #'                    bioclim = TRUE,
-#'                    maxent = TRUE)
+#'                    maxnet = TRUE)
 #'
 #' # run final_model
 #' sp_final <- final_model(species_name = sp,
-#'                         algorithms = c("bioclim", "maxent"),
+#'                         algorithms = c("bioclim", "maxnet"),
 #'                         select_partitions = TRUE,
 #'                         select_par = "TSSmax",
 #'                         select_par_val = 0,
@@ -88,7 +108,10 @@ ensemble_model <- function(species_name,
                            final_dir = "final_models",
                            ensemble_dir = "ensemble",
                            proj_dir = "present",
+                           algorithms = NULL,
+                           which_ensemble = c("average"),
                            which_final = c("raw_mean"),
+                           performance_metric = "TSSmax",
                            consensus = FALSE,
                            consensus_level = 0.5,
                            write_ensemble = TRUE,
@@ -105,130 +128,338 @@ ensemble_model <- function(species_name,
         dir.create(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
                           ensemble_dir, "/"))
     }
+    print(date())
+    cat(paste(species_name, "\n"))
+    cat(paste("Reading mean evaluation files for", species_name, "in", proj_dir, "\n"))
+
+    ## reads mean statistics table per algorithm
+
+    stats_summary <- read.csv(paste0(models_dir, "/", species_name, "/present/",
+                                     final_dir, "/", species_name,
+                                     "_mean_statistics.csv"), header = T,
+                              row.names = 1)
+    #specify algorithms or not
+    if (is.null(algorithms)) {
+        algorithms <- unique(stats_summary$algorithm)
+    }
+    stats_summary <- stats_summary[, stats_summary$algorithm %in% algorithms]
+#for(whi_e %in% which_ensemble) { #maybe like this?
+    if (which_ensemble == "best") {
+        if (is.null(performance_metric))
+        stop("A performance metric must be specified to select the 'best' algorithm")
+    best <- which.max(stats_summary[,performance_metric])
+    message(paste("The best performing algorithm was", stats_summary$algorithm[best]))
+    if (is.null(which_final))
+        stop("A which_final model must be specified to return the 'best' algorithm")
+    best_mod_files <- list.files(paste0(models_dir, "/",
+                                        species_name, "/",
+                                        proj_dir, "/",
+                                        final_dir),
+                                 recursive = TRUE,
+                                 full.names = TRUE,
+                                 pattern =
+                                     paste0(stats_summary$algorithm[best],
+                                            "_", which_final, ".tif$"))
+    best_mod <- raster(best_mod_files)
+    #plot(best_mod)
+    writeRaster(best_mod,
+                filename = paste0(models_dir, "/", species_name,
+                                  "/", proj_dir, "/",
+                                  ensemble_dir, "/", species_name,
+                                  "_", which_final,
+                                  "_ensemble", "_best",
+                                  ".tif"),
+                ...
+                )#isto tem que ser salvo em outro lado, talvez
+    }
+    if (which_ensemble == "average") {
+        raw_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                                "_raw_mean.tif$"))
+        raw_mean_models <- raster::stack(raw_mean_files)
+        average_ensemble <- mean(raw_mean_models)
+        #plot(average_ensemble)
+        writeRaster(average_ensemble,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "_ensemble", "_average",
+                                      ".tif"),
+                    ...
+        )#isto tem que ser salvo em outro lado, talvez
+    }
+    if (which_ensemble == "weighted_average") {
+        if (is.null(performance_metric))
+            stop("A performance metric must be specified to compute the weighted average")
+        w_coefs <- stats_summary[,performance_metric]
+        raw_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                                "_raw_mean.tif$"))
+        raw_mean_models <- raster::stack(raw_mean_files)
+        weighted_average <- raster::weighted.mean(raw_mean_models, w_coefs)
+        #plot(weighted_average)
+        writeRaster(weighted_average,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "_", performance_metric,
+                                      "_ensemble_weighted_average",
+                                      ".tif"),
+                    ...
+        )#isto tem que ser salvo em outro lado, talvez
+    }
+    if (which_ensemble == "median") {
+        raw_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                             "_raw_mean.tif$"))
+        raw_mean_models <- raster::stack(raw_mean_files)
+        median_ensemble <- raster::calc(raw_mean_models,
+                                         fun = function(x) {
+                                             stats::median(x, na.rm = TRUE)
+                                             }
+                                         )
+        #plot(median_ensemble)
+        writeRaster(median_ensemble,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "_ensemble", "_median",
+                                      ".tif"),
+                    ...
+        )#isto tem que ser salvo em outro lado, talvez
+    }
+    if (which_ensemble == "frequency") {
+        bin_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                             "_bin_mean.tif$"))
+        #ö se a pessoa não executou bin_mean teria que executar - o que sempre fiz foi criar aqui os binários porque sou muito querida mas aí seria a tabela, o threshold, o stack e a média.
+        bin_mean_models <- raster::stack(bin_mean_files)
+        frequency_ensemble <- mean(bin_mean_models)
+        #plot(frequency_ensemble)
+        writeRaster(frequency_ensemble,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "_ensemble", "_frequency",
+                                      ".tif"),
+                    ...
+        )
+    }
+    if (which_ensemble == "consensus") {
+        if (missing("consensus_level"))
+            stop("Parameter consensus_level must be specified to calculate consensus average")
+        bin_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                             "_bin_mean.tif$"))
+        #ö se a pessoa não executou bin_mean teria que executar - o que sempre fiz foi criar aqui os binários porque sou muito querida mas aí seria a tabela, o threshold, o stack e a média.
+        bin_mean_models <- raster::stack(bin_mean_files)
+        frequency_ensemble <- mean(bin_mean_models)
+        consensus_ensemble <- frequency_ensemble > consensus_level
+        #plot(consensus_ensemble)
+        writeRaster(consensus_ensemble,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "_ensemble_",consensus_level,
+                                      "_consensus",
+                                      ".tif"),
+                    ...
+        )
+    }
+    if (which_ensemble == "pca") {
+        raw_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                             "_raw_mean.tif$"))
+        raw_mean_models <- raster::stack(raw_mean_files)
+        vals <- raster::getValues(raw_mean_models)
+        vals <- vals[!is.na(rowSums(vals)),]
+        vals.st <- scale(vals)
+        pca_mod <- prcomp(vals.st)
+        summary_pca <- summary(pca_mod)
+        #axis_nb <- which(summary_pca$importance["Cumulative Proportion",] >= 0.95)[1]
+        expl <- summary_pca$importance["Cumulative Proportion",1]
+        first_axis <- predict(raw_mean_models, pca_mod, index = 1)
+        first_axis <- rescale_layer(first_axis)
+        #plot(first_axis)
+        writeRaster(first_axis,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "_ensemble_pca_", round(expl,3),
+                                      ".tif"),
+                    ...
+        )
+    }
+    if (uncertainty == TRUE) {
+        #ö acá toca saber si raw_mean existe. tal vez sacarlo de los loops de arriba
+        message("Calculating range")
+        ensemble.inctz <- raster::calc(raw_mean_models,
+                                       fun = function(x) {
+                                           max(x) - min(x)
+                                       }
+        )
+    }
 
     ## for each model specified in final_models
-    for (whi in which_final) {
-        cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
-        tif.files <- list.files(paste0(models_dir, "/", species_name, "/",
-                                       proj_dir, "/",
-                                       final_dir),
-                                recursive = TRUE,
-                                full.names = TRUE,
-                                pattern = paste0(whi, ".tif$"))
+    #for (whi in which_final) {
+        #cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
+        #tif.files <- list.files(paste0(models_dir, "/", species_name, "/",
+         #                              proj_dir, "/",
+          #                             final_dir),
+           #                     recursive = TRUE,
+            #                    full.names = TRUE,
+             #                   pattern = paste0(whi, ".tif$"))
+#poner todo esto arriba
+        #if (length(tif.files) == 0) {
+        #    cat(paste("No", whi, "models to ensemble from for", species_name, "\n"))
+        #} else {
+        #    cat(paste(length(tif.files), whi,
+        #              "models to ensemble from for", species_name, "\n"))
+        #    mod2 <- raster::stack(tif.files)
+        #    #scale models to 0-1
+        #    if (scale_models == TRUE) {
+        #        mod2 <- rescale_layer(mod2)
+        #    }
+#hasta acá
+            #message("Calculating mean")
+            #ensemble.mean <- raster::calc(mod2,
+            #                              fun = function(x) {
+            #                                  mean(x, na.rm = TRUE)
+            #                              }
+            #)
+            # message("Calculating sd")
+            # ensemble.sd <- raster::calc(mod2,
+            #                             fun = function(x) {
+            #                                 sd(x, na.rm = TRUE)
+            #                             }
+            # )
+            # message("Calculating median")
+            # ensemble.median <- raster::calc(mod2,
+            #                                 fun = function(x) {
+            #                                     stats::median(x, na.rm = TRUE)
+            #                                 }
+            # )
+            #message("Calculating range")
+            #ensemble.inctz <- raster::calc(mod2,
+            #                               fun = function(x) {
+            #                                   max(x) - min(x)
+            #                               }
+            #)
+            #message("Stack results")#ö resolver esta firula
+            # ensemble.mods <- raster::stack(ensemble.mean,
+            #                                ensemble.median,
+            #                                ensemble.sd,
+            #                                ensemble.inctz
+            #                                )
+            # names(ensemble.mods) <- c("mean",
+            #                           "median",
+            #                           "sd",
+            #                           "range"
+            #                           )
 
-        if (length(tif.files) == 0) {
-            cat(paste("No", whi, "models to ensemble from for", species_name, "\n"))
-        } else {
-            cat(paste(length(tif.files), whi,
-                      "models to ensemble from for", species_name, "\n"))
-            mod2 <- raster::stack(tif.files)
-            #scale models to 0-1
-            if (scale_models == TRUE) {
-                mod2 <- rescale_layer(mod2)
-            }
-            message("Calculating mean")
-            ensemble.mean <- raster::calc(mod2,
-                                          fun = function(x) {
-                                              mean(x, na.rm = TRUE)
-                                          }
-            )
-            message("Calculating sd")
-            ensemble.sd <- raster::calc(mod2,
-                                        fun = function(x) {
-                                            sd(x, na.rm = TRUE)
-                                        }
-            )
-            message("Calculating median")
-            ensemble.median <- raster::calc(mod2,
-                                            fun = function(x) {
-                                                stats::median(x, na.rm = TRUE)
-                                            }
-            )
-            message("Calculating range")
-            ensemble.inctz <- raster::calc(mod2,
-                                           fun = function(x) {
-                                               max(x) - min(x)
-                                           }
-            )
-            message("Stack results")
-            ensemble.mods <- raster::stack(ensemble.mean,
-                                           ensemble.median,
-                                           ensemble.sd,
-                                           ensemble.inctz
-                                           )
-            names(ensemble.mods) <- c("mean",
-                                      "median",
-                                      "sd",
-                                      "range"
-                                      )
+            #coord <- occurrences[, c(lon, lat)]
 
-            coord <- occurrences[, c(lon, lat)]
+            # if (write_ensemble) {
+            # message("Writing pngs")
+            #     for (i in 1:dim(ensemble.mods)[3]) {
+            #     png(filename = paste0(models_dir, "/", species_name, "/",
+            #                           proj_dir, "/",
+            #                           ensemble_dir, "/", species_name, "_", whi,
+            #                           "_", names(ensemble.mods)[i], ".png"),
+            #         res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
+            #     par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
+            #     raster::plot(ensemble.mods[[i]])
+            #     if (write_map) {
+            #     maps::map("world",
+            #               c("", "South America"),
+            #               add = TRUE,
+            #               col = "grey")
+            #     }
+            #     if (write_occs) {
+            #     points(coord, pch = 21, cex = 0.6,
+            #            bg = scales::alpha("cyan", 0.6))
+            #     }
+            #     dev.off()
+            #     }
+            # }
 
-            if (write_ensemble) {
-            message("Writing pngs")
-                for (i in 1:dim(ensemble.mods)[3]) {
-                png(filename = paste0(models_dir, "/", species_name, "/",
-                                      proj_dir, "/",
-                                      ensemble_dir, "/", species_name, "_", whi,
-                                      "_", names(ensemble.mods)[i], ".png"),
-                    res = 300, width = 410 * 300 / 72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
-                raster::plot(ensemble.mods[[i]])
-                if (write_map) {
-                maps::map("world",
-                          c("", "South America"),
-                          add = TRUE,
-                          col = "grey")
-                }
-                if (write_occs) {
-                points(coord, pch = 21, cex = 0.6,
-                       bg = scales::alpha("cyan", 0.6))
-                }
-                dev.off()
-                }
-            }
-
-            raster::writeRaster(ensemble.mods,
-                                filename = paste0(models_dir, "/", species_name,
-                                                  "/", proj_dir, "/",
-                                                  ensemble_dir, "/", species_name, "_",
-                                                  whi),
-                                bylayer = TRUE,
-                                suffix = "names",
-                                format = "GTiff",
-                                ...)
+            # raster::writeRaster(ensemble.mods,
+            #                     filename = paste0(models_dir, "/", species_name,
+            #                                       "/", proj_dir, "/",
+            #                                       ensemble_dir, "/", species_name, "_",
+            #                                       whi),
+            #                     bylayer = TRUE,
+            #                     suffix = "names",
+            #                     format = "GTiff",
+            #                     ...)
 
             #### Consensus models
-            if (consensus == TRUE) {
-                ensemble.consensus <- ensemble.mean >= consensus_level
-                raster::writeRaster(ensemble.consensus,
-                                    filename = paste0(models_dir, "/", species_name,
-                                                      "/", proj_dir, "/",
-                                                      ensemble_dir, "/", species_name,
-                                                      "_", whi,
-                                                      "_ensemble", "_meanconsensus",
-                                                      consensus_level * 100,
-                                                      ".tif"),
-                                    ...)
-
-                if (write_ensemble) {
-                png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                                      ensemble_dir, "/",
-                                      species_name, "_", whi,
-                                      "_ensemble", "_meanconsensus",
-                                      consensus_level * 100, ".png"), res = 300,
-                    width = 410 * 300 / 72, height = 480 * 300 / 72)
-                par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
-                raster::plot(ensemble.consensus)
-                maps::map("world", , add = TRUE, col = "grey")
-                points(coord, pch = 19, cex = 0.3,
-                       col = scales::alpha("cyan", 0.6))
-                dev.off()
-                }
-            }
-        }
-    }
+            # if (consensus == TRUE) {
+            #     ensemble.consensus <- ensemble.mean >= consensus_level
+            #     raster::writeRaster(ensemble.consensus,
+            #                         filename = paste0(models_dir, "/", species_name,
+            #                                           "/", proj_dir, "/",
+            #                                           ensemble_dir, "/", species_name,
+            #                                           "_", whi,
+            #                                           "_ensemble", "_meanconsensus",
+            #                                           consensus_level * 100,
+            #                                           ".tif"),
+            #                         ...)
+            #
+            #     if (write_ensemble) {
+            #     png(filename = paste0(models_dir, "/", species_name, "/", proj_dir, "/",
+            #                           ensemble_dir, "/",
+            #                           species_name, "_", whi,
+            #                           "_ensemble", "_meanconsensus",
+            #                           consensus_level * 100, ".png"), res = 300,
+            #         width = 410 * 300 / 72, height = 480 * 300 / 72)
+            #     par(mfrow = c(1, 1), mar = c(4, 4, 0, 0))
+            #     raster::plot(ensemble.consensus)
+            #     maps::map("world", , add = TRUE, col = "grey")
+            #     points(coord, pch = 19, cex = 0.3,
+            #            col = scales::alpha("cyan", 0.6))
+            #     dev.off()
+            #     }
+            # }
+        #}
+    #}
     print("DONE!")
     print(date())
-    return(ensemble.mods)
+    #return(ensemble.mods)
 }
