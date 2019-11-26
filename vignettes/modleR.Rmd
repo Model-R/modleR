@@ -24,6 +24,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+<img src="modleR.png" align="right" alt="" width="120" />
 
 __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap <!-- or jacknife -->procedures<!-- depending on the number of occurrence points -->, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
 
@@ -390,7 +391,7 @@ ens <- ensemble_model(species_name = species[1],
 
 At any point we can explore the outputs in the folders:
 
-```{r check_ensemble, fig.width = 5, fig.height = 5, eval= TRUE}
+```{r check_ensemble, fig.width = 8, fig.height = 5, eval= TRUE}
 ensemble_files <-  list.files(paste0(test_folder,"/", species[1],"/present/ensemble"),
                               recursive = TRUE,
                               full.names = TRUE)
