@@ -32,7 +32,7 @@ raster layers}
 
 \item{algorithm}{Character string of length 1 specifying the algorithm to
 be fit: "\code{bioclim}", "\code{brt}",
-"\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
+"\code{domain}", "\code{glm}", "\code{maxent}", "\code{maxnet}", "\code{mahal}",
 "\code{svme}", "\code{svmk}", "\code{rf}"}
 
 \item{project_model}{Logical, whether to project the models to variable sets
@@ -263,7 +263,7 @@ sp_any <- do_any(species_name = sp,
 sp_many <- do_many(species_name = sp,
                    predictors = example_vars,
                    bioclim = TRUE,
-                   maxent = TRUE)
+                   maxnet = TRUE)
 }
 \references{
 \insertAllCited{}

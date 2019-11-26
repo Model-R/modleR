@@ -9,8 +9,8 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   ensemble_dir = "ensemble", proj_dir = "present", algorithms = NULL,
   which_ensemble = c("average"), which_final = c("raw_mean"),
   performance_metric = "TSSmax", consensus = FALSE,
-  consensus_level = 0.5, write_ensemble = TRUE, write_occs = F,
-  write_map = F, scale_models = TRUE, ...)
+  consensus_level = 0.5, write_ensemble = TRUE, write_occs = FALSE,
+  write_map = FALSE, scale_models = TRUE, uncertainty = TRUE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species
@@ -42,15 +42,15 @@ to execute the function in projected models)}
 
 \item{algorithms}{Character vector specifying which algorithms will be
 processed. Note that it can have length > 1, ex. \code{c("bioclim", "rf")}.
-Defaults to NULL: if no name is given it will process all algorithms present
-in the evaluation files}
+Defaults to NULL: it no name is given it will process all algorithms present
+in the final_models folder}
 
 \item{which_ensemble}{Which method to apply consensus between algorithms will
 be used? Current options are:
 \describe{
 \item{\code{best}}{Selects models from the best-performing algorithm. A
-performance metric must be specified (\code{performance_metric}). Parameter \code{which_final} indicates
-which model will be returned}
+performance metric must be specified (\code{performance_metric}). Parameter
+\code{which_final} indicates which model will be returned}
 \item{\code{average}}{Computes the means between models. Parameter
 \code{which_final} indicates which model will be returned}
 \item{\code{weighted_average}}{Computes a weighted mean between models. A
@@ -58,10 +58,10 @@ performance metric must be specified. Parameter \code{which_final} indicates
 which model will be returned}
 \item{\code{median}}{Computes the median between models. Parameter
 \code{which_final} indicates which model will be returned}
-\item{\code{frequency}{Computes the mean between binary models, which is
+\item{\code{frequency}}{Computes the mean between binary models, which is
 analogous to calculating a relative consensus. If a \code{consensus_level} is
- specified, it will return a binary model with the final consensus area}}
-\item{\code{pca}{Computes a PCA between the models for each algorithm and extract the first axis, that summarizes variation between them}}
+ specified, it will return a binary model with the final consensus area}
+\item{\code{pca}}{Computes a PCA between the models for each algorithm and extract the first axis, that summarizes variation between them}
 }}
 
 \item{which_final}{Which \code{final_model} will be used? Currently it can
@@ -105,10 +105,10 @@ of the ensemble models}
 \item{scale_models}{Logical. Whether input models should be scaled between 0
 and 1}
 
-\item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
+\item{uncertainty}{Calculates the uncertainty between models, as a range
+(maximum - minimum)}
 
-\item{algorithm}{Which algorithms should be processed? Defaults to NULL, will
-use all algorithms in disk}
+\item{...}{Other parameters from \code{\link[raster]{writeRaster}}}
 }
 \value{
 Retuns a RasterStack with all generated statistics written in the

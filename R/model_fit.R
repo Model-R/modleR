@@ -154,7 +154,7 @@
 #'
 #' @param algorithm Character string of length 1 specifying the algorithm to
 #' be fit: "\code{bioclim}", "\code{brt}",
-#' "\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
+#' "\code{domain}", "\code{glm}", "\code{maxent}", "\code{maxnet}", "\code{mahal}",
 #' "\code{svme}", "\code{svmk}", "\code{rf}"
 #' @param bioclim Execute bioclim algorithm from the \pkg{dismo} implementation
 #' with \code{\link[dismo]{bioclim}} function
@@ -225,7 +225,7 @@
 #' sp_many <- do_many(species_name = sp,
 #'                    predictors = example_vars,
 #'                    bioclim = TRUE,
-#'                    maxent = TRUE)
+#'                    maxnet = TRUE)
 #' @name model_fit
 #'
 NULL

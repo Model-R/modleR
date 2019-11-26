@@ -13,8 +13,8 @@
 #' be used? Current options are:
 #' \describe{
 #' \item{\code{best}}{Selects models from the best-performing algorithm. A
-#' performance metric must be specified (\code{performance_metric}). Parameter \code{which_final} indicates
-#' which model will be returned}
+#' performance metric must be specified (\code{performance_metric}). Parameter
+#' \code{which_final} indicates which model will be returned}
 #' \item{\code{average}}{Computes the means between models. Parameter
 #' \code{which_final} indicates which model will be returned}
 #' \item{\code{weighted_average}}{Computes a weighted mean between models. A
@@ -22,10 +22,10 @@
 #' which model will be returned}
 #' \item{\code{median}}{Computes the median between models. Parameter
 #' \code{which_final} indicates which model will be returned}
-#' \item{\code{frequency}{Computes the mean between binary models, which is
+#' \item{\code{frequency}}{Computes the mean between binary models, which is
 #' analogous to calculating a relative consensus. If a \code{consensus_level} is
-#'  specified, it will return a binary model with the final consensus area}}
-#' \item{\code{pca}{Computes a PCA between the models for each algorithm and extract the first axis, that summarizes variation between them}}
+#'  specified, it will return a binary model with the final consensus area}
+#' \item{\code{pca}}{Computes a PCA between the models for each algorithm and extract the first axis, that summarizes variation between them}
 #' }
 #' @param which_final Which \code{final_model} will be used? Currently it can
 #' be:
@@ -45,8 +45,10 @@
 #'   Parameter \code{consensus_level} must be defined, 0.5 means a majority
 #'   consensus}
 #' }
-#' @param algorithm Which algorithms should be processed? Defaults to NULL, will
-#' use all algorithms in disk
+#' @param algorithms Character vector specifying which algorithms will be
+#' processed. Note that it can have length > 1, ex. \code{c("bioclim", "rf")}.
+#' Defaults to NULL: it no name is given it will process all algorithms present
+#' in the final_models folder
 #' @param performance_metric Which performance metric will be used to define
 #' the \code{"best"} algorithm any in \code{c("AUC", "pROC", "TSSmax",
 #' "KAPPAmax", "CCR", "F_score", "Jaccard")}
@@ -59,11 +61,13 @@
 #' @param write_occs Logical. If \code{TRUE} writes the occurrence points on the
 #' png file of the ensemble model
 #' @param ... Other parameters from \code{\link[raster]{writeRaster}}
-#'
+#' @param uncertainty Calculates the uncertainty between models, as a range
+#' (maximum - minimum)
 #' @import raster
 #' @importFrom scales alpha
 #' @import graphics
 #' @importFrom stats sd
+#' @importFrom stats prcomp
 #' @export
 #' @seealso \code{\link{final_model}}
 #' @return Retuns a RasterStack with all generated statistics written in the
@@ -115,9 +119,10 @@ ensemble_model <- function(species_name,
                            consensus = FALSE,
                            consensus_level = 0.5,
                            write_ensemble = TRUE,
-                           write_occs = F,
-                           write_map = F,
+                           write_occs = FALSE,
+                           write_map = FALSE,
                            scale_models = TRUE,
+                           uncertainty = TRUE,
                            ...) {
 
 
@@ -327,12 +332,28 @@ ensemble_model <- function(species_name,
         )
     }
     if (uncertainty == TRUE) {
-        #ö acá toca saber si raw_mean existe. tal vez sacarlo de los loops de arriba
+        raw_mean_files <- list.files(paste0(models_dir, "/",
+                                            species_name, "/",
+                                            proj_dir, "/",
+                                            final_dir),
+                                     recursive = TRUE,
+                                     full.names = TRUE,
+                                     pattern =
+                                         paste0(
+                                             "_raw_mean.tif$"))
+        raw_mean_models <- raster::stack(raw_mean_files)
         message("Calculating range")
-        ensemble.inctz <- raster::calc(raw_mean_models,
+        ensemble_inctz <- raster::calc(raw_mean_models,
                                        fun = function(x) {
                                            max(x) - min(x)
-                                       }
+                                           }
+                                       )
+        writeRaster(ensemble_inctz,
+                    filename = paste0(models_dir, "/", species_name,
+                                      "/", proj_dir, "/",
+                                      ensemble_dir, "/", species_name,
+                                      "uncertainty.tif"),
+                    ...
         )
     }
 

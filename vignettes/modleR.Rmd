@@ -225,7 +225,7 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call
 ```{r do_any, echo = TRUE, eval = TRUE}
 
 sp_maxent <- do_any(species_name = species[1],
-                    algorithm = "maxent",
+                    algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
                     write_png = TRUE,
@@ -249,7 +249,7 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxent = TRUE,
+                maxent = FALSE,
                 maxnet = TRUE,
                 rf = TRUE,
                 mahal = FALSE,
@@ -341,7 +341,9 @@ args(final_model)
 final_model(species_name = species[1],
             algorithms = NULL, #if null it will take all the in-disk algorithms
             models_dir = test_folder,
-            which_models = c("raw_mean", "bin_consensus"),
+            which_models = c("raw_mean",
+                             "bin_mean",
+                             "bin_consensus"),
             consensus_level = 0.5,
             uncertainty = TRUE,
             overwrite = TRUE)
@@ -379,11 +381,11 @@ The fourth step of the workflow is joining the models for each algorithm into a 
 
 ```{r ensemble_model, eval = TRUE}
 args(ensemble_model)
-ens <- ensemble_model(species[1],
-               occurrences = occs,
-               which_final = "raw_mean",
-               models_dir = test_folder,
-               overwrite = TRUE) #argument from writeRaster
+ens <- ensemble_model(species_name = species[1],
+                      occurrences = occs,
+                      which_final = "raw_mean",
+                      models_dir = test_folder,
+                      overwrite = TRUE) #argument from writeRaster
 ```
 
 At any point we can explore the outputs in the folders:
@@ -391,12 +393,11 @@ At any point we can explore the outputs in the folders:
 ```{r check_ensemble, fig.width = 5, fig.height = 5, eval= TRUE}
 ensemble_files <-  list.files(paste0(test_folder,"/", species[1],"/present/ensemble"),
                               recursive = TRUE,
-                              pattern = "raw_mean.+tif$",
                               full.names = TRUE)
 
 ensemble_files
 ens_mod <- stack(ensemble_files)
-names(ens_mod) <- c("mean", "median", "range", "st.dev")
+#names(ens_mod) <- c("mean", "median", "range", "st.dev")
 plot(ens_mod)
 ```
 
@@ -438,8 +439,8 @@ for (i in 1:length(example_occs)) {
             models_dir = "~/modleR_test/forlooptest",
             write_png = TRUE,
             bioclim = TRUE,
-            maxent = TRUE,
-            maxnet = FALSE,
+            maxent = FALSE,
+            maxnet = TRUE,
             rf = TRUE,
             svmk = TRUE,
             svme = TRUE,
@@ -456,7 +457,9 @@ for (i in 1:length(example_occs)) {
     final_model(species_name = sp,
                 consensus_level = 0.5,
                 models_dir = "~/modleR_test/forlooptest",
-                which_models = c("raw_mean", "bin_consensus"),
+                which_models = c("raw_mean",
+                                 "bin_mean", 
+                                 "bin_consensus"),
                 uncertainty = TRUE,
                 overwrite = TRUE)
 }
@@ -499,7 +502,7 @@ species %>%
                          predictors = example_vars,
                          models_dir = "~/modleR_test/temp_purrr",
                          bioclim = TRUE,
-                         maxent = TRUE,
+                         maxnet = TRUE,
                          rf = TRUE,
                          svme = TRUE,
                          svmk = TRUE,
