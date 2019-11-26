@@ -165,6 +165,8 @@ ensemble_model <- function(species_name,
                                  pattern =
                                      paste0(stats_summary$algorithm[best],
                                             "_", which_final, ".tif$"))
+    if (length(best_mod_files) == 0)
+        stop(paste("No", which_final, "models to ensemble from for", species_name, "\n"))
     best_mod <- raster(best_mod_files)
     #plot(best_mod)
     writeRaster(best_mod,
@@ -175,7 +177,7 @@ ensemble_model <- function(species_name,
                                   "_ensemble", "_best",
                                   ".tif"),
                 ...
-                )#isto tem que ser salvo em outro lado, talvez
+                )
     }
     if (which_ensemble == "average") {
         raw_mean_files <- list.files(paste0(models_dir, "/",
@@ -187,6 +189,8 @@ ensemble_model <- function(species_name,
                                      pattern =
                                          paste0(
                                                 "_raw_mean.tif$"))
+        if (length(raw_mean_files) == 0)
+            stop(paste("No models to ensemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         average_ensemble <- mean(raw_mean_models)
         #plot(average_ensemble)
@@ -197,7 +201,7 @@ ensemble_model <- function(species_name,
                                       "_ensemble", "_average",
                                       ".tif"),
                     ...
-        )#isto tem que ser salvo em outro lado, talvez
+        )
     }
     if (which_ensemble == "weighted_average") {
         if (is.null(performance_metric))
@@ -212,6 +216,8 @@ ensemble_model <- function(species_name,
                                      pattern =
                                          paste0(
                                                 "_raw_mean.tif$"))
+        if (length(raw_mean_files) == 0)
+            stop(paste("No models to ensemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         weighted_average <- raster::weighted.mean(raw_mean_models, w_coefs)
         #plot(weighted_average)
@@ -223,7 +229,7 @@ ensemble_model <- function(species_name,
                                       "_ensemble_weighted_average",
                                       ".tif"),
                     ...
-        )#isto tem que ser salvo em outro lado, talvez
+        )
     }
     if (which_ensemble == "median") {
         raw_mean_files <- list.files(paste0(models_dir, "/",
@@ -235,6 +241,8 @@ ensemble_model <- function(species_name,
                                      pattern =
                                          paste0(
                                              "_raw_mean.tif$"))
+        if (length(raw_mean_files) == 0)
+            stop(paste("No models to ensemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         median_ensemble <- raster::calc(raw_mean_models,
                                          fun = function(x) {
@@ -249,10 +257,11 @@ ensemble_model <- function(species_name,
                                       "_ensemble", "_median",
                                       ".tif"),
                     ...
-        )#isto tem que ser salvo em outro lado, talvez
+        )
     }
-    if (which_ensemble == "frequency") {
-        bin_mean_files <- list.files(paste0(models_dir, "/",
+    if (which_ensemble %in% c("frequency", "consensus")) {
+        #reads raw
+        raw_mean_files <- list.files(paste0(models_dir, "/",
                                             species_name, "/",
                                             proj_dir, "/",
                                             final_dir),
@@ -260,11 +269,19 @@ ensemble_model <- function(species_name,
                                      full.names = TRUE,
                                      pattern =
                                          paste0(
-                                             "_bin_mean.tif$"))
-        #ö se a pessoa não executou bin_mean teria que executar - o que sempre fiz foi criar aqui os binários porque sou muito querida mas aí seria a tabela, o threshold, o stack e a média.
-        bin_mean_models <- raster::stack(bin_mean_files)
+                                             "_raw_mean.tif$"))
+        if (length(raw_mean_files) == 0)
+            stop(paste("No models to ensemble from for", species_name, "\n"))
+        raw_mean_models <- raster::stack(raw_mean_files)
+        if (is.null(dismo_threshold))
+            stop("A dismo_threshold must be specified to create binary models")
+        #cuts the models by the mean threshold for each algorithm
+        th <- stats_summary[,dismo_threshold]
+        bin_mean_models <- raw_mean_models > th
+        #calculates the mean
         frequency_ensemble <- mean(bin_mean_models)
         #plot(frequency_ensemble)
+        if (which_ensemble == "frequency") {
         writeRaster(frequency_ensemble,
                     filename = paste0(models_dir, "/", species_name,
                                       "/", proj_dir, "/",
@@ -273,33 +290,23 @@ ensemble_model <- function(species_name,
                                       ".tif"),
                     ...
         )
-    }
-    if (which_ensemble == "consensus") {
-        if (missing("consensus_level"))
-            stop("Parameter consensus_level must be specified to calculate consensus average")
-        bin_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
-                                     recursive = TRUE,
-                                     full.names = TRUE,
-                                     pattern =
-                                         paste0(
-                                             "_bin_mean.tif$"))
-        #ö se a pessoa não executou bin_mean teria que executar - o que sempre fiz foi criar aqui os binários porque sou muito querida mas aí seria a tabela, o threshold, o stack e a média.
-        bin_mean_models <- raster::stack(bin_mean_files)
-        frequency_ensemble <- mean(bin_mean_models)
-        consensus_ensemble <- frequency_ensemble > consensus_level
-        #plot(consensus_ensemble)
-        writeRaster(consensus_ensemble,
-                    filename = paste0(models_dir, "/", species_name,
-                                      "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name,
-                                      "_ensemble_",consensus_level,
-                                      "_consensus",
-                                      ".tif"),
-                    ...
-        )
+        }
+        if (which_ensemble == "consensus") {
+            if (missing("consensus_level"))
+                stop("Parameter consensus_level must be specified to calculate consensus average")
+            consensus_ensemble <- frequency_ensemble > consensus_level
+            #plot(consensus_ensemble)
+            writeRaster(consensus_ensemble,
+                        filename = paste0(models_dir, "/", species_name,
+                                          "/", proj_dir, "/",
+                                          ensemble_dir, "/", species_name,
+                                          "_ensemble_", consensus_level,
+                                          "_consensus",
+                                          ".tif"),
+                        ...
+            )
+
+        }
     }
     if (which_ensemble == "pca") {
         raw_mean_files <- list.files(paste0(models_dir, "/",
@@ -311,6 +318,8 @@ ensemble_model <- function(species_name,
                                      pattern =
                                          paste0(
                                              "_raw_mean.tif$"))
+        if (length(raw_mean_files) == 0)
+            stop(paste("No models to ensemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         vals <- raster::getValues(raw_mean_models)
         vals <- vals[!is.na(rowSums(vals)),]
@@ -357,51 +366,10 @@ ensemble_model <- function(species_name,
         )
     }
 
-    ## for each model specified in final_models
-    #for (whi in which_final) {
-        #cat(paste(whi, "-", species_name, "\n"))  #lê os arquivos
-        #tif.files <- list.files(paste0(models_dir, "/", species_name, "/",
-         #                              proj_dir, "/",
-          #                             final_dir),
-           #                     recursive = TRUE,
-            #                    full.names = TRUE,
-             #                   pattern = paste0(whi, ".tif$"))
-#poner todo esto arriba
-        #if (length(tif.files) == 0) {
-        #    cat(paste("No", whi, "models to ensemble from for", species_name, "\n"))
-        #} else {
-        #    cat(paste(length(tif.files), whi,
-        #              "models to ensemble from for", species_name, "\n"))
-        #    mod2 <- raster::stack(tif.files)
-        #    #scale models to 0-1
+            #    #scale models to 0-1#ö escalar??
         #    if (scale_models == TRUE) {
         #        mod2 <- rescale_layer(mod2)
         #    }
-#hasta acá
-            #message("Calculating mean")
-            #ensemble.mean <- raster::calc(mod2,
-            #                              fun = function(x) {
-            #                                  mean(x, na.rm = TRUE)
-            #                              }
-            #)
-            # message("Calculating sd")
-            # ensemble.sd <- raster::calc(mod2,
-            #                             fun = function(x) {
-            #                                 sd(x, na.rm = TRUE)
-            #                             }
-            # )
-            # message("Calculating median")
-            # ensemble.median <- raster::calc(mod2,
-            #                                 fun = function(x) {
-            #                                     stats::median(x, na.rm = TRUE)
-            #                                 }
-            # )
-            #message("Calculating range")
-            #ensemble.inctz <- raster::calc(mod2,
-            #                               fun = function(x) {
-            #                                   max(x) - min(x)
-            #                               }
-            #)
             #message("Stack results")#ö resolver esta firula
             # ensemble.mods <- raster::stack(ensemble.mean,
             #                                ensemble.median,
