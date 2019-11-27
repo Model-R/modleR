@@ -59,7 +59,7 @@
 #' }
 #' @param uncertainty Whether an uncertainty map, measured as range (max-min)
 #' should be calculated
-#' @param write_final Logical. If \code{TRUE}, writes png files of the final
+#' @param png_final Logical. If \code{TRUE}, writes png files of the final
 #' models
 #' @param ... Other parameters from \code{\link[raster]{writeRaster}},
 #' especially \code{overwrite = TRUE}, when needed
@@ -70,7 +70,7 @@
 #' included in the final model
 #' @return Writes on disk a set of ecological niche models (.tif files) in the
 #' \code{final_dir} subfolder
-#' @return If \code{write_final = TRUE} writes .png figures in the
+#' @return If \code{png_final = TRUE} writes .png figures in the
 #' \code{final_dir} subfolder
 #' @seealso \code{\link[dismo]{threshold}}  in \pkg{dismo} package
 #' @seealso \code{\link[raster]{writeRaster}}  in \pkg{raster} package
@@ -110,7 +110,7 @@ final_model <- function(species_name,
                         which_models = c("raw_mean"),
                         mean_th_par = c("spec_sens"),
                         uncertainty = FALSE,
-                        write_final = TRUE,
+                        png_final = TRUE,
                         ...) {
     # Escribe final
     final_path <- paste(models_dir, species_name, proj_dir,
@@ -274,7 +274,7 @@ final_model <- function(species_name,
                                 format = "GTiff", ...)
                }
 
-            if (write_final == TRUE) {
+            if (png_final == TRUE) {
                 for (i in 1:raster::nlayers(which_final)) {
                     png(filename = paste0(final_path, "/",
                                           species_name, "_", algo, "_",

@@ -2,7 +2,7 @@
 title: "modleR: a workflow for ecological niche models based on dismo"
 author: "Andrea Sánchez-Tapia, Sara Mortara & Diogo S. B. Rocha"
 date: "`r Sys.Date()`"
-output: 
+output:
     rmarkdown::html_vignette:
         toc: true
     md_document:
@@ -62,10 +62,10 @@ knitr::include_graphics("workflow.png", dpi = 150)
 ```
 
 
-1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling  
+1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms
-3. Partition joining: `final_model()` <!--selects or weighs (optionally) the partition models--> joins the partition models into a model per species per algorithm
-4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus).
+3. Partition joining: `final_model()` joins the partition models into a model per species per algorithm
+4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus) using several methods.
 
  <!-- NOTE: `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
 
@@ -106,7 +106,7 @@ occurrence data for four species, and predictor variables called
 ```{r lib, echo = TRUE, eval = TRUE}
 #library(modleR)
 devtools::load_all() # for development
-library(raster)
+#library(raster)
 str(example_occs)
 species <- names(example_occs)
 species
@@ -174,7 +174,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cv_n = 1,
                              seed = 512,
                              buffer_type = "mean",
-                             plot_sdmdata = TRUE,
+                             png_sdmdata = TRUE,
                              n_back = 500,
                              clean_dupl = FALSE,
                              clean_uni = FALSE,
@@ -225,32 +225,31 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call
 
 ```{r do_any, echo = TRUE, eval = TRUE}
 
-sp_maxent <- do_any(species_name = species[1],
+sp_maxnet <- do_any(species_name = species[1],
                     algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
-                    write_png = TRUE,
+                    png_partitions = TRUE,
                     write_bin_cut = FALSE,
                     equalize = TRUE)
 
-sp_maxent
+sp_maxnet
 ```
 
 
-The following lines call for bioclim, GLM, maxent, random forests and smvk (from package __kernlab__)
+The following lines call for bioclim, GLM, maxnet, random forests and smvk (from package __kernlab__)
 
 ```{r do_many, echo = TRUE, eval = TRUE}
 many <- do_many(species_name = species[1],
                 predictors = example_vars,
                 models_dir = test_folder,
-                write_png = TRUE,
+                png_partitions = TRUE,
                 write_bin_cut = FALSE,
                 bioclim = TRUE,
                 domain = FALSE,
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxent = FALSE,
                 maxnet = TRUE,
                 rf = TRUE,
                 mahal = FALSE,
@@ -261,7 +260,7 @@ many <- do_many(species_name = species[1],
 In addition:
 
 + `mask`: will crop and mask the partition models into a ShapeFile
-+ `write_png` will create a png file of the output
++ `png_partitions` will create a png file of the output
 
 You can explore the list of files created at this phase, for example:
 
@@ -296,7 +295,7 @@ should return something like this:
 ...
 [31] "evaluate_Abarema_langsdorffii_1_1_bioclim.txt"
 [32] "evaluate_Abarema_langsdorffii_1_1_glm.txt"
-[33] "evaluate_Abarema_langsdorffii_1_1_maxent.txt"
+[33] "evaluate_Abarema_langsdorffii_1_1_maxnet.txt"
 ...
 [116] "metadata.txt"
 ...
@@ -309,11 +308,11 @@ should return something like this:
 At the end of a modeling round, the partition folder containts:
 
 + A `.tif` file for each partition, continuous, binary and cut by the threshold that maximizes its TSS (TSSmax). Its name will indicate the algorithm, the type of model (cont, bin or cut), the name of the species, the run and partition.
-+ Figures in `.png` to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these figures can be controlled with the `write_png` parameter.
++ Figures in `.png` to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these figures can be controlled with the `png_partitions` parameter.
 + A `.txt` table with the evaluation data for each partition: `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These files will be read by the `final_model()` function, to generate the final model per species.
 + A file called `sdmdata.txt` with the data used for each partition
 + A file called `metadata.txt` with the metadata of the current modeling round.
-+ An optional `.png` image of the data (controlled by parameter `plot_sdmdata = TRUE`)
++ An optional `.png` image of the data (controlled by parameter `png_sdmdata = TRUE`)
 
 
 ## Joining partitions: `final_model()`
@@ -325,11 +324,10 @@ There are many ways to create a final model per algorithm per species. `final_mo
 knitr::include_graphics("final_model_english.png", dpi = 150)
 ```
 
-<!--+ It can select the best partitions if the parameter `select.partitions = TRUE`, selecting only those who obtained a TSSmax value above `TSS.value` (TSS varies between -1 and 1, defaults to 0.7). If `select.partitions` is set to FALSE, no selection will be performed and it will use all the partitions.-->
-+ The <!--selected--> partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
++ The partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
 + Their means can be calculated (`raw_mean`, `bin_mean`)
 + From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_mean_th`). A "cut" model can also be obtained (`cut_mean_th`).
-+ From `bin_mean`, a consensus model (i.e. how many of the <!--retained--> models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
++ From `bin_mean`, a consensus model (i.e. how many of the models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
 + NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
 
 
@@ -391,15 +389,8 @@ ens <- ensemble_model(species_name = species[1],
 
 At any point we can explore the outputs in the folders:
 
-```{r check_ensemble, fig.width = 8, fig.height = 5, eval= TRUE}
-ensemble_files <-  list.files(paste0(test_folder,"/", species[1],"/present/ensemble"),
-                              recursive = TRUE,
-                              full.names = TRUE)
-
-ensemble_files
-ens_mod <- stack(ensemble_files)
-#names(ens_mod) <- c("mean", "median", "range", "st.dev")
-plot(ens_mod)
+```{r, fig.width = 8}
+plot(ens)
 ```
 
 
@@ -425,7 +416,7 @@ for (i in 1:length(example_occs)) {
                   clean_dupl = TRUE,
                   clean_nas = TRUE,
                   clean_uni = TRUE,
-                  plot_sdmdata = TRUE,
+                  png_sdmdata = TRUE,
                   n_back = 1000,
                   partition_type = "bootstrap",
                   boot_n = 5,
@@ -438,9 +429,8 @@ for (i in 1:length(example_occs)) {
     do_many(species_name = sp,
             predictors = example_vars,
             models_dir = "~/modleR_test/forlooptest",
-            write_png = TRUE,
+            png_partitions = TRUE,
             bioclim = TRUE,
-            maxent = FALSE,
             maxnet = TRUE,
             rf = TRUE,
             svmk = TRUE,
@@ -459,7 +449,7 @@ for (i in 1:length(example_occs)) {
                 consensus_level = 0.5,
                 models_dir = "~/modleR_test/forlooptest",
                 which_models = c("raw_mean",
-                                 "bin_mean", 
+                                 "bin_mean",
                                  "bin_consensus"),
                 uncertainty = TRUE,
                 overwrite = TRUE)
@@ -471,7 +461,7 @@ for (i in 1:length(example_occs)) {
     ensemble_model(species_name = sp,
                    occurrences = occs,
                    which_final = "bin_consensus",
-                   write_ensemble = TRUE,
+                   png_ensemble = TRUE,
                    models_dir = "~/modleR_test/forlooptest")
     }
 ```
@@ -497,7 +487,7 @@ example_occs %>% purrr::map2(.x= .,
                                             models_dir = "~/modleR_test/temp_purrr",
                                             n_back = 1000))
 
-species %>% 
+species %>%
     as.list(.) %>%
     purrr::map(~ do_many(species_name = .,
                          predictors = example_vars,
@@ -515,12 +505,14 @@ species %>%
 ```
 
 ```{r purrr_final, eval = FALSE}
-species %>% 
+species %>%
     as.list(.) %>%
     purrr::map(~ final_model(species_name = .,
                              consensus_level = 0.5,
                              models_dir =  "~/modleR_test/temp_purrr",
-                             which_models = "raw_mean",
+                             which_models = c("raw_mean",
+                                              "bin_mean",
+                                              "bin_consensus"),
                              overwrite = TRUE))
 ```
 
@@ -530,7 +522,7 @@ example_occs %>% purrr::map2(.x= .,
                             ~ ensemble_model(species_name = .y,
                                              occurrences = .x,
                                              which_final = "raw_mean",
-                                             write_ensemble = TRUE,
+                                             png_ensemble = TRUE,
                                              models_dir = "~/modleR_test/temp_purrr",
                                              overwrite = TRUE))
 

@@ -29,7 +29,7 @@
 #'  variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified
 #' @param models_dir Folder path to save the output files. Defaults to
 #' "\code{./models}"
-#' @param plot_sdmdata Logical, whether png files will be written
+#' @param png_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points. Default is 1,000
 #' @param partition_type Character. Type of data partitioning scheme, either
 #' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
@@ -99,7 +99,7 @@ setup_sdmdata <- function(species_name,
                           select_variables = FALSE,
                           cutoff = 0.8,
                           percent = 0.8,
-                          plot_sdmdata = TRUE,
+                          png_sdmdata = TRUE,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
                           boot_n = 1,
@@ -363,7 +363,7 @@ setup_sdmdata <- function(species_name,
                 sep = ",", row.names = FALSE, col.names = TRUE)
 
 
-    if (plot_sdmdata) {
+    if (png_sdmdata) {
         message(paste("Plotting the dataset...", "\n"))
         png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))

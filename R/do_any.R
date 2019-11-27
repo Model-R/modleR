@@ -7,7 +7,7 @@ do_any <- function(species_name,
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
                    mask = NULL,
-                   write_png = FALSE,
+                   png_partitions = FALSE,
                    write_bin_cut = FALSE,
                    dismo_threshold = "spec_sens",
                    conf_mat = TRUE,
@@ -290,7 +290,7 @@ do_any <- function(species_name,
                 }
 
 
-                if (write_png == TRUE) {
+                if (png_partitions == TRUE) {
                     message("writing png files")
                     png(paste0(partition.folder, "/", algorithm, "_cont_", species_name,
                                "_", i, "_", g, ".png"))
@@ -390,7 +390,7 @@ do_any <- function(species_name,
                                                 overwrite = TRUE)
                         }
 
-                        if (write_png == TRUE) {
+                        if (png_partitions == TRUE) {
                             message("writing projected models .png")
                             png(paste0(projection.folder, "/", algorithm, "_cont_",
                                        species_name, "_", i, "_", g, ".png"))

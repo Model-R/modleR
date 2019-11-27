@@ -9,7 +9,7 @@ ensemble_model(species_name, occurrences, lon = "lon", lat = "lat",
   ensemble_dir = "ensemble", proj_dir = "present", algorithms = NULL,
   which_ensemble = c("average"), which_final = c("raw_mean"),
   performance_metric = "TSSmax", consensus = FALSE,
-  consensus_level = 0.5, write_ensemble = TRUE, write_occs = FALSE,
+  consensus_level = 0.5, png_ensemble = TRUE, write_occs = FALSE,
   write_map = FALSE, scale_models = TRUE, uncertainty = TRUE, ...)
 }
 \arguments{
@@ -93,7 +93,7 @@ algorithms will be applied}
 \item{consensus_level}{Which proportion of binary models will be kept when
 creating \code{bin_consensus}}
 
-\item{write_ensemble}{Logical. If \code{TRUE} writes png files of the
+\item{png_ensemble}{Logical. If \code{TRUE} writes png files of the
 ensemble models}
 
 \item{write_occs}{Logical. If \code{TRUE} writes the occurrence points on the
@@ -117,7 +117,7 @@ Retuns a RasterStack with all generated statistics written in the
 Writes on disk raster files with the median, mean and standard
 deviation and range of the assembled models
 
-If \code{write_ensemble = TRUE} writes .png figures
+If \code{png_ensemble = TRUE} writes .png figures
  in the \code{ensemble_dir} subfolder
 }
 \description{

@@ -8,7 +8,7 @@ final_model(species_name, algorithms = NULL, scale_models = TRUE,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
   which_models = c("raw_mean"), mean_th_par = c("spec_sens"),
-  uncertainty = FALSE, write_final = TRUE, ...)
+  uncertainty = FALSE, png_final = TRUE, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species
@@ -69,7 +69,7 @@ Defaults to "\code{spec_sens}" but any \pkg{dismo} threshold can be used (see
 \item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
 should be calculated}
 
-\item{write_final}{Logical. If \code{TRUE}, writes png files of the final
+\item{png_final}{Logical. If \code{TRUE}, writes png files of the final
 models}
 
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}},
@@ -85,7 +85,7 @@ included in the final model
 Writes on disk a set of ecological niche models (.tif files) in the
 \code{final_dir} subfolder
 
-If \code{write_final = TRUE} writes .png figures in the
+If \code{png_final = TRUE} writes .png figures in the
 \code{final_dir} subfolder
 }
 \description{

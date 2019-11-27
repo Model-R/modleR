@@ -8,10 +8,10 @@
 \usage{
 do_any(species_name, predictors, models_dir = "./models",
   algorithm = c("bioclim"), project_model = FALSE,
-  proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
-  write_bin_cut = FALSE, dismo_threshold = "spec_sens",
-  conf_mat = TRUE, equalize = TRUE, sensitivity = 0.9,
-  proc_threshold = 0.5, ...)
+  proj_data_folder = "./data/proj", mask = NULL,
+  png_partitions = FALSE, write_bin_cut = FALSE,
+  dismo_threshold = "spec_sens", conf_mat = TRUE, equalize = TRUE,
+  sensitivity = 0.9, proc_threshold = 0.5, ...)
 
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
@@ -50,7 +50,7 @@ equivalent raster files at diferent subdirectories must have the same names
 mask can be used if the final area of interest is smaller than the area used
  for model fitting, to save disk space}
 
-\item{write_png}{Logical, whether png files will be written}
+\item{png_partitions}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)
 should be written}

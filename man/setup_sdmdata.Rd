@@ -12,7 +12,7 @@ setup_sdmdata(species_name, occurrences, predictors, lon = "lon",
   write_buffer = FALSE, seed = NULL, clean_dupl = FALSE,
   clean_nas = FALSE, clean_uni = FALSE, geo_filt = FALSE,
   geo_filt_dist = NULL, select_variables = FALSE, cutoff = 0.8,
-  percent = 0.8, plot_sdmdata = TRUE, n_back = 1000,
+  percent = 0.8, png_sdmdata = TRUE, n_back = 1000,
   partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
   cv_n = NULL, cv_partitions = NULL)
 }
@@ -116,7 +116,7 @@ Default is to exclude environmental variables with correlation > 0.8}
 \item{percent}{Numeric. Percentage of the raster values to be sampled to calculate the
 correlation. The value should be set as a decimal, between 0 and 1.}
 
-\item{plot_sdmdata}{Logical, whether png files will be written}
+\item{png_sdmdata}{Logical, whether png files will be written}
 
 \item{n_back}{Number of pseudoabsence points. Default is 1,000}
 
