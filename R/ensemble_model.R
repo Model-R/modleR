@@ -151,7 +151,7 @@ ensemble_model <- function(species_name,
 #for(whi_e %in% which_ensemble) { #maybe like this?
     ensemble_mods <- raster::stack()
 
-    if (which_ensemble == "best") {
+    if ("best" %in% which_ensemble) {
         if (is.null(performance_metric))
         stop("A performance metric must be specified to select the 'best' algorithm")
     best <- which.max(stats_summary[,performance_metric])
@@ -184,7 +184,7 @@ ensemble_model <- function(species_name,
     ensemble_mods <- raster::addLayer(ensemble_mods, best_mod)
 
     }
-    if (which_ensemble == "average") {
+    if ("average" %in% which_ensemble) {
         raw_mean_files <- list.files(paste0(models_dir, "/",
                                             species_name, "/",
                                             proj_dir, "/",
@@ -211,7 +211,7 @@ ensemble_model <- function(species_name,
         ensemble_mods <- raster::addLayer(ensemble_mods, average_ensemble)
 
     }
-    if (which_ensemble == "weighted_average") {
+    if ("weighted_average" %in% which_ensemble) {
         if (is.null(performance_metric))
             stop("A performance metric must be specified to compute the weighted average")
         w_coefs <- stats_summary[,performance_metric]
@@ -242,7 +242,7 @@ ensemble_model <- function(species_name,
         ensemble_mods <- raster::addLayer(ensemble_mods, weighted_average)
 
     }
-    if (which_ensemble == "median") {
+    if ("median" %in% which_ensemble) {
         raw_mean_files <- list.files(paste0(models_dir, "/",
                                             species_name, "/",
                                             proj_dir, "/",
@@ -295,7 +295,7 @@ ensemble_model <- function(species_name,
         frequency_ensemble <- mean(bin_mean_models)
         names(frequency_ensemble) <- "frequency"
         #plot(frequency_ensemble)
-        if (which_ensemble == "frequency") {
+        if ("frequency" %in% which_ensemble) {
         writeRaster(frequency_ensemble,
                     filename = paste0(models_dir, "/", species_name,
                                       "/", proj_dir, "/",
@@ -306,7 +306,7 @@ ensemble_model <- function(species_name,
         )
             ensemble_mods <- raster::addLayer(ensemble_mods, frequency_ensemble)
         }
-        if (which_ensemble == "consensus") {
+        if ("consensus" %in% which_ensemble) {
             if (missing("consensus_level"))
                 stop("Parameter consensus_level must be specified to calculate consensus average")
             consensus_ensemble <- frequency_ensemble > consensus_level
@@ -325,7 +325,7 @@ ensemble_model <- function(species_name,
 
         }
     }
-    if (which_ensemble == "pca") {
+    if ("pca" %in% which_ensemble) {
         raw_mean_files <- list.files(paste0(models_dir, "/",
                                             species_name, "/",
                                             proj_dir, "/",
