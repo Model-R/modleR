@@ -18,12 +18,12 @@ test_that("do_many produces model and stats file", {
   # does it have two txt files (matrix and evaluate) ?
   expect_length(list.files(path = mod_dir,
                            pattern = "confusion_matrices_.*csv"),
-                part*n.algos)
+                part * n.algos)
   expect_length(list.files(path = mod_dir,
                            pattern = "evaluate.*csv"),
-                part*n.algos)
-  # does it have png file (model)?
+                part * n.algos)
+  # does it have tif file (model)?
   expect_length(list.files(path = mod_dir,
                            pattern = ".*.tif"),
-                part*n.algos)
+                part * n.algos)
 })

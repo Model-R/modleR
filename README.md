@@ -10,7 +10,7 @@ Currently __modleR__ can be installed from github:
 
 ```
 # Without vignette
-remotes::install_github("Model-R/modleR", build = TRUE)
+remotes::install_github("Model-R/modleR",build = TRUE)
 # With vignette
 remotes::install_github("Model-R/modleR", build = TRUE,
                         build_opts = c("--no-resave-data", "--no-manual"))
@@ -46,10 +46,10 @@ __modleR__ writes the outputs in the hard disk, according to the following folde
 ```bash
 models_dir
 ├── projection1
-│   ├── data_setup
-│   ├── ensemble_models
-│   ├── final_models
-│   └── partitions
+│   ├── data_setup
+│   ├── ensemble_models
+│   ├── final_models
+│   └── partitions
 └── projection2
     ├── data_setup
     ├── ensemble_models
@@ -73,7 +73,7 @@ apply some data cleaning procedures, as well as some filters. This is done by
 function `setup_sdmdata()`
 
 
-__modleR__ comes with example data, a data frame called `example_occs`, with
+__modleR__ comes with example data, a list called `example_occs`, with
 occurrence data for four species, and predictor variables called
 `example_vars`
 

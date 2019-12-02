@@ -8,9 +8,10 @@
 \usage{
 do_any(species_name, predictors, models_dir = "./models",
   algorithm = c("bioclim"), project_model = FALSE,
-  proj_data_folder = "./data/proj", mask = NULL, write_png = FALSE,
-  write_bin_cut = FALSE, dismo_threshold = "spec_sens",
-  conf_mat = TRUE, equalize = TRUE, proc_threshold = 0.5, ...)
+  proj_data_folder = "./data/proj", mask = NULL,
+  png_partitions = FALSE, write_bin_cut = FALSE,
+  dismo_threshold = "spec_sens", conf_mat = TRUE, equalize = TRUE,
+  sensitivity = 0.9, proc_threshold = 0.5, ...)
 
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
@@ -31,14 +32,15 @@ raster layers}
 
 \item{algorithm}{Character string of length 1 specifying the algorithm to
 be fit: "\code{bioclim}", "\code{brt}",
-"\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
+"\code{domain}", "\code{glm}", "\code{maxent}", "\code{maxnet}", "\code{mahal}",
 "\code{svme}", "\code{svmk}", "\code{rf}"}
 
-\item{project_model}{Logical, whether to perform a projection}
+\item{project_model}{Logical, whether to project the models to variable sets
+in \code{proj_data_folder} directory}
 
 \item{proj_data_folder}{Path to directory with projections containing one or
 more folders with the projection datasets (e.g. "./env/proj/proj1").
-Projection diretctory should only contain raster files corresponding to the
+This directory should only contain raster files corresponding to the
 environmental variables. If more than one projection, each projection should
 be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 equivalent raster files at diferent subdirectories must have the same names
@@ -48,7 +50,7 @@ equivalent raster files at diferent subdirectories must have the same names
 mask can be used if the final area of interest is smaller than the area used
  for model fitting, to save disk space}
 
-\item{write_png}{Logical, whether png files will be written}
+\item{png_partitions}{Logical, whether png files will be written}
 
 \item{write_bin_cut}{Logical, whether binary and cut model files(.tif, .png)
 should be written}
@@ -64,6 +66,9 @@ transform model predictions to a binary score as in
 
 \item{equalize}{Logical, whether the number of presences and absences should be
 equalized in randomForest and brt}
+
+\item{sensitivity}{Numeric, value from 0 to 0.9 to indicate the sensitivity
+value to calculate the threshold. Defaults to 0.9 as in dismo package}
 
 \item{proc_threshold}{Numeric, value from 0 to 100 that will be used as (E)
 for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is
@@ -104,12 +109,15 @@ package with \code{\link[e1071]{best.tune}} function}
 }
 \value{
 Returns a data frame with some key threshold values and evaluation
-statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)
+statistics of each algorithm (FNR, FPR, TSSmax, AUC, pROC, FScore,
+Jaccard dissimilarity etc.) for the selected threshold
 
 Writes on disk a .tif model for each partition of each algorithm
 
-Writes in disk a .csv file with evaluation statistics of each
-algorithm
+Writes in disk a .csv file with thresholds and evaluation statistics
+of each algorithm for a given threshold
+#' @return Writes in disk a .csv file with evaluation statistics for all
+threshold values
 }
 \description{
 \code{do_any} reads the output from \code{\link{setup_sdmdata}} and
@@ -118,7 +126,8 @@ specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
 addition to commonly adopted metrics such as AUC and TSS, this package also
 calculates partial ROC
-\insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details on model evaluation see
+\insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details
+on model evaluation see
  \insertCite{phillips_maximum_2006;textual}{modleR} and
  \insertCite{peterson_ecological_2011;textual}{modleR}. \code{do_any}
  performs one algorithm at a time. \code{do_many} runs internally

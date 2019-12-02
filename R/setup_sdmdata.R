@@ -29,10 +29,12 @@
 #'  variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified
 #' @param models_dir Folder path to save the output files. Defaults to
 #' "\code{./models}"
-#' @param plot_sdmdata Logical, whether png files will be written
+#' @param png_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points. Default is 1,000
 #' @param partition_type Character. Type of data partitioning scheme, either
-#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
+#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
+#'  \code{boot_proportion} and \code{boot_n} must be specified. If set to
+#'  crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n Number of bootstrap runs
@@ -45,8 +47,8 @@
 #' @param cutoff Cutoff value of correlation between variables to exclude
 #' environmental layers
 #' Default is to exclude environmental variables with correlation > 0.8
-#' @param percent percentage of the raster values to be sampled to calculate the
-#'  correlation
+#' @param percent Numeric. Percentage of the raster values to be sampled to calculate the
+#'  correlation. The value should be set as a decimal, between 0 and 1.
 #' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
@@ -83,9 +85,10 @@ setup_sdmdata <- function(species_name,
                           dist_buf = NULL,
                           env_buffer = FALSE,
                           env_distance = "centroid",
-                          dist_min = NULL,
                           buffer_shape = NULL,
-                          max_env_dist = 0.5,
+                          max_env_dist = NULL,
+                          min_env_dist = NULL,
+                          min_geog_dist = NULL,
                           write_buffer = FALSE,
                           seed = NULL,
                           clean_dupl = FALSE,
@@ -96,7 +99,7 @@ setup_sdmdata <- function(species_name,
                           select_variables = FALSE,
                           cutoff = 0.8,
                           percent = 0.8,
-                          plot_sdmdata = TRUE,
+                          png_sdmdata = TRUE,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
                           boot_n = 1,
@@ -208,10 +211,11 @@ setup_sdmdata <- function(species_name,
                                     buffer_type = buffer_type,
                                     predictors = predictors,
                                     dist_buf = dist_buf,
-                                    dist_min = dist_min,
                                     buffer_shape = buffer_shape,
                                     env_distance = env_distance,
                                     max_env_dist = max_env_dist,
+                                    min_env_dist = min_env_dist,
+                                    min_geog_dist = min_geog_dist,
                                     write_buffer = write_buffer)
 
         } else {
@@ -359,7 +363,7 @@ setup_sdmdata <- function(species_name,
                 sep = ",", row.names = FALSE, col.names = TRUE)
 
 
-    if (plot_sdmdata) {
+    if (png_sdmdata) {
         message(paste("Plotting the dataset...", "\n"))
         png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))

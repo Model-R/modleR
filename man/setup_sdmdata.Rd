@@ -7,11 +7,12 @@
 setup_sdmdata(species_name, occurrences, predictors, lon = "lon",
   lat = "lat", models_dir = "./models", real_absences = NULL,
   buffer_type = NULL, dist_buf = NULL, env_buffer = FALSE,
-  env_distance = "centroid", dist_min = NULL, buffer_shape = NULL,
-  max_env_dist = 0.5, write_buffer = FALSE, seed = NULL,
-  clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE,
-  geo_filt = FALSE, geo_filt_dist = NULL, select_variables = FALSE,
-  cutoff = 0.8, percent = 0.8, plot_sdmdata = TRUE, n_back = 1000,
+  env_distance = "centroid", buffer_shape = NULL,
+  max_env_dist = NULL, min_env_dist = NULL, min_geog_dist = NULL,
+  write_buffer = FALSE, seed = NULL, clean_dupl = FALSE,
+  clean_nas = FALSE, clean_uni = FALSE, geo_filt = FALSE,
+  geo_filt_dist = NULL, select_variables = FALSE, cutoff = 0.8,
+  percent = 0.8, png_sdmdata = TRUE, n_back = 1000,
   partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
   cv_n = NULL, cv_partitions = NULL)
 }
@@ -51,29 +52,40 @@ NULL, no distance buffer is applied. If set to "\code{distance}",
 RasterStack of predictor variables}
 
 \item{env_buffer}{Logical. Should an euclidean environmental filter be
-applied? If TRUE, \code{env_distance} and \code{max_env_dist} need to be
-specified}
+applied? If TRUE, \code{env_distance}, and \code{max_env_dist} or
+\code{min_env_dist} need to be specified. Areas closest than
+\code{min_env_dist} and farther than \code{max_env_dist} in the environmental
+space will be omitted}
 
 \item{env_distance}{Character. Type of environmental distance, any in
 "\code{centroid}", "\code{mindist}". Defaults to "\code{centroid}", the
 distance of each raster pixel to the environmental centroid of the
 distribution. When set to "\code{mindist}", the minimum distance of each
 raster pixel to any of the occurrence points is calculated. Needs to be
-specified if \code{env_buffer = TRUE}. A maximum value needs to be specified
- (parameter \code{max_env_dist})}
-
-\item{dist_min}{Optional, numeric. A distance for the exclusion of areas too
-close from the occurrence points. Distance unit is in the same unit of the
-RasterStack of predictor variables}
+specified if \code{env_buffer = TRUE}. Maximum or minimum values need to be
+specified (parameters \code{max_env_dist} and \code{min_env_dist})}
 
 \item{buffer_shape}{User-defined buffer shapefile in which pseudoabsences
 will be generated. Needs to be specified if \code{buffer_type = "user"}}
 
-\item{max_env_dist}{Numeric. Since large negative values can arise
-during the calculation of the euclidean environmental distance, this
-parameter sets a maximum value to cut the environmental distance buffer.
-Expressed in quantiles, from 0: all values to 1: no values. Defaults to 0.5,
-the median value. Needs to be specified if \code{env_buffer = TRUE}}
+\item{max_env_dist}{Numeric. Sets a maximum value to exclude the areas
+farthest (in the environmental space) to the occurrences or their centroid,
+expressed in quantiles, from 0 (the closest) to 1 (the whole range of
+environmental distances). \code{max_env_dist} has to be larger than
+\code{min_env_dist} or no values will be left}
+
+\item{min_env_dist}{Numeric. Sets a minimum value to exclude the areas
+closest (in the environmental space) to the occurrences or their centroid,
+expressed in quantiles, from 0 (the closest) to 1 (the whole range of
+environmental distances). \code{min_env_dist} defaults to 0.05, excluding
+areas belonging to the 5% closest environmental values. Note that since this
+is based on quantiles, and environmental similarity can take large negative
+values, this is an abitrary value. \code{max_env_dist} has to be larger than
+\code{min_env_dist} or no values will be left}
+
+\item{min_geog_dist}{Optional, numeric. A distance for the exclusion of the
+areas closeste to the occurrence points (in the geographical space). Distance
+ unit is in the same unit of the RasterStack of predictor variables}
 
 \item{write_buffer}{Logical. Should the resulting RasterStack be written?
 Defaults to FALSE}
@@ -101,15 +113,17 @@ variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specifie
 environmental layers
 Default is to exclude environmental variables with correlation > 0.8}
 
-\item{percent}{percentage of the raster values to be sampled to calculate the
-correlation}
+\item{percent}{Numeric. Percentage of the raster values to be sampled to calculate the
+correlation. The value should be set as a decimal, between 0 and 1.}
 
-\item{plot_sdmdata}{Logical, whether png files will be written}
+\item{png_sdmdata}{Logical, whether png files will be written}
 
 \item{n_back}{Number of pseudoabsence points. Default is 1,000}
 
 \item{partition_type}{Character. Type of data partitioning scheme, either
-"\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified}
+"\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
+ \code{boot_proportion} and \code{boot_n} must be specified. If set to
+ crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified}
 
 \item{boot_n}{Number of bootstrap runs}
 

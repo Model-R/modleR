@@ -7,11 +7,12 @@ do_any <- function(species_name,
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
                    mask = NULL,
-                   write_png = FALSE,
+                   png_partitions = FALSE,
                    write_bin_cut = FALSE,
                    dismo_threshold = "spec_sens",
                    conf_mat = TRUE,
                    equalize = TRUE,
+                   sensitivity = 0.9,
                    proc_threshold = 0.5,
                    ...) {
   # replacing characters not welcome in species name
@@ -96,13 +97,14 @@ do_any <- function(species_name,
             if (algorithm == "svme") {
                 sv <- 1
                 while (!exists("mod")) {
-                    mod <- e1071::best.tune("svm", envtrain, sdmdata_train$pa,
+                    mod <- e1071::best.tune("svm", envtrain,
+                                            sdmdata_train$pa,
                                             data = envtrain)
                     sv <- sv + 1
                     message(paste("Trying svme", sv, "times"))
                     if (sv == 10 & !exists("mod")) {
                         break
-                        message("svme algorithm did not find a solution in 10 runs")
+                        message("svme algorithm did not converge to a solution in 10 runs")
                     }
                 }
             }
@@ -191,7 +193,7 @@ do_any <- function(species_name,
               eval_df$Jaccard  <- eval_df$tp / (eval_df$fn + eval_df$tp + eval_df$fp)
               #eval_df$Sorensen <- 2 * eval_df$tp / (eval_df$fn + 2 * eval_df$tp + eval_df$fp)#same as Fscore
 
-            th_table <- dismo::threshold(eval_mod) #sensitivity 0.9
+            th_table <- dismo::threshold(eval_mod, sensitivity = sensitivity)
             #PROC kuenm
             proc <- kuenm::kuenm_proc(occ.test = pres_test,
                                       model = mod_cont,
@@ -287,7 +289,7 @@ do_any <- function(species_name,
                 }
 
 
-                if (write_png == TRUE) {
+                if (png_partitions == TRUE) {
                     message("writing png files")
                     png(paste0(partition.folder, "/", algorithm, "_cont_", species_name,
                                "_", i, "_", g, ".png"))
@@ -387,6 +389,7 @@ do_any <- function(species_name,
                                                 overwrite = TRUE)
                         }
 
+
                       # creating and writing do_any metadata
             metadata <- data.frame(
               species_name = as.character(species_name),
@@ -405,7 +408,7 @@ do_any <- function(species_name,
             write.csv(metadata, file = paste0(partition.folder, "/metadata_",
                                               algorithm, ".csv"))
 
-                        if (write_png == TRUE) {
+                        if (png_partitions == TRUE) {
                             message("writing projected models .png")
                             png(paste0(projection.folder, "/", algorithm, "_cont_",
                                        species_name, "_", i, "_", g, ".png"))

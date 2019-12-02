@@ -45,3 +45,4 @@ test_that("setup is a data frame and has numeric values", {
   #expect_type(my_setup, "data.frame")
   lapply(apply(my_setup, 2, is.numeric), expect_true)
 })
+
