@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR)
+
 # modleR: a workflow for ecological niche models based on dismo <img src="vignettes/modleR.png" align="right" alt="" width="120" />
 
 __modleR__ is a workflow based on package __dismo__ (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
@@ -8,7 +10,7 @@ Currently __modleR__ can be installed from github:
 
 ```
 # Without vignette
-remotes::install_github("Model-R/modleR", build = TRUE)
+remotes::install_github("Model-R/modleR",build = TRUE)
 # With vignette
 remotes::install_github("Model-R/modleR", build = TRUE,
                         build_opts = c("--no-resave-data", "--no-manual"))
@@ -41,14 +43,19 @@ The workflow consists of mainly four functions that should be used sequentially.
 
 __modleR__ writes the outputs in the hard disk, according to the following folder structure:
 
-    `models_dir/projection1/data_setup`
-    `models_dir/projection1/partitions`
-    `models_dir/projection1/final_models`
-    `models_dir/projection1/ensemble_models`
-    `models_dir/projection2/data_setup`
-    `models_dir/projection2/partitions`
-    `models_dir/projection2/final_models`
-    `models_dir/projection2/ensemble_models`
+```bash
+models_dir
+├── projection1
+│   ├── data_setup
+│   ├── ensemble_models
+│   ├── final_models
+│   └── partitions
+└── projection2
+    ├── data_setup
+    ├── ensemble_models
+    ├── final_models
+    └── partitions
+```
 
 + We define a _partition_ as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them.
 + We define the _final models_ as joining together the partitions and obtaining __one model per species per algorithm__.
@@ -66,17 +73,17 @@ apply some data cleaning procedures, as well as some filters. This is done by
 function `setup_sdmdata()`
 
 
-__modleR__ comes with example data, a data frame called `coordenadas`, with
+__modleR__ comes with example data, a list called `example_occs`, with
 occurrence data for four species, and predictor variables called
 `example_vars`
 
 
 ```{r lib, echo = T, eval = T}
-#library(modleR)
-devtools::load_all() # for development
-#library(raster)
-str(coordenadas)
-species <- names(coordenadas)
+library(modleR)
+# devtools::load_all() # for development
+library(raster)
+str(example_occs)
+species <- names(example_occs)
 species
 ```
 
@@ -84,17 +91,17 @@ species
 
 ```{r dataset, fig.width= 5, fig.height=5, fig.cap= "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = T}
 par(mfrow = c(2, 2))
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]), legend = F, main = species[i])
-  points(lat ~ lon, data = coordenadas[[i]])
+  points(lat ~ lon, data = example_occs[[i]])
   }
 par(mfrow = c(1, 1))
 ```
 
-We will filter the `coordenadas` file to select only the data for the first species:
+We will filter the `example_occs` file to select only the data for the first species:
 
 ```{r occs, message = F, eval = TRUE}
-occs <- coordenadas[[1]]
+occs <- example_occs[[1]]
 ```
 
 
@@ -192,37 +199,36 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
 ```{r do_any, echo = T, eval = T}
-sp_maxent <- do_any(species_name = species[1],
-                    algorithm = "maxent",
+sp_maxnet <- do_any(species_name = species[1],
+                    algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
                     write_png = T,
                     write_bin_cut = F,
                     equalize = T)
 
-sp_maxent
+sp_maxnet
 ```
 
 
-The following lines call for bioclim, GLM, maxent, random forests and smvk (from package __kernlab__)
+The following lines call for bioclim, GLM, maxnet, random forests and smvk (from package __kernlab__)
 
 ```{r do_many, echo = T, eval = T}
 many <- do_many(species_name = species[1],
                 predictors = example_vars,
                 models_dir = test_folder,
-                write_png = T,
-                write_bin_cut = F,
-                bioclim = T,
-                domain = F,
-                glm = T,
-                svmk = T,
-                svme = T,
-                maxent = T,
-                maxnet = T,
-                rf = T,
-                mahal = F,
-                brt = T,
-                equalize = T)
+                write_png = TRUE,
+                write_bin_cut = FALSE,
+                bioclim = TRUE,
+                domain = FALSE,
+                glm = TRUE,
+                svmk = TRUE,
+                svme = TRUE,
+                maxnet = TRUE,
+                rf = TRUE,
+                mahal = FALSE,
+                brt = TRUE,
+                equalize = TRUE)
 ```
 
 In addition:
@@ -261,7 +267,7 @@ should return something like this:
 ...
 [31] "evaluate_Abarema_langsdorffii_1_1_bioclim.txt"
 [32] "evaluate_Abarema_langsdorffii_1_1_glm.txt"
-[33] "evaluate_Abarema_langsdorffii_1_1_maxent.txt"
+[33] "evaluate_Abarema_langsdorffii_1_1_maxnet.txt"
 ...
 [116] "metadata.txt"
 ...
@@ -368,16 +374,16 @@ plot(ens_mod)
 
 # Workflows with multiple species
 
-Our `coordenadas` dataset has data for four species.
+Our `example_occs` dataset has data for four species.
 An option to do the several models is to use a `for` loop
 
 ```{r forloop, eval = F}
 args(do_many)
 args(setup_sdmdata)
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
+    occs <- example_occs[[i]]
     setup_sdmdata(
         species_name = sp,
         models_dir = "~/modleR_test/forlooptest",
@@ -397,27 +403,26 @@ for (i in 1:length(coordenadas)) {
         )
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
     do_many(species_name = sp,
             predictors = example_vars,
             models_dir = "~/modleR_test/forlooptest",
-            write_png = T,
-            bioclim = T,
-            maxent = T,
-            maxnet = F,
-            rf = T,
-            svmk = T,
-            svme = T,
-            brt = T,
-            glm = T,
-            domain = F,
-            mahal = F,
-            equalize = T,
-            write_bin_cut = T)
+            write_png = TRUE,
+            bioclim = TRUE,
+            maxnet = TRUE,
+            rf = TRUE,
+            svmk = TRUE,
+            svme = TRUE,
+            brt = TRUE,
+            glm = TRUE,
+            domain = FALSE,
+            mahal = FALSE,
+            equalize = TRUE,
+            write_bin_cut = TRUE)
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
     final_model(species_name = sp,
                 select_partitions = TRUE,
@@ -430,9 +435,9 @@ for (i in 1:length(coordenadas)) {
                 overwrite = T)
 }
 
-for (i in 1:length(coordenadas)) {
+for (i in 1:length(example_occs)) {
     sp <- species[i]
-    occs <- coordenadas[[i]]
+    occs <- example_occs[[i]]
     ensemble_model(species_name = sp,
                    occurrences = occs,
                    which_final = "bin_consensus",
@@ -446,7 +451,7 @@ Another option is to use the `purrr` package (Henry & Wickham 2017).
 ```{r purrr example, eval = F}
 library(purrr)
 
-coordenadas %>% purrr::map2(.x= .,
+example_occs %>% purrr::map2(.x= .,
                             .y= as.list(names(.)),
                             ~ setup_sdmdata(species_name = .y,
                                             occurrences = .x,
@@ -465,16 +470,16 @@ coordenadas %>% purrr::map2(.x= .,
 species %>% as.list(.) %>% purrr::map(~ do_many(species_name = .,
                                                 predictors = example_vars,
                                                 models_dir = "~/modleR_test/temp_purrr",
-                                                bioclim = T,
-                                                maxent = T,
-                                                rf = T,
-                                                svme = T,
-                                                svmk = T,
-                                                domain = F,
-                                                glm = T,
-                                                mahal = F,
-                                                brt = T,
-                                                equalize = T))
+                                                bioclim = TRUE,
+                                                maxnet = TRUE,
+                                                rf = TRUE,
+                                                svme = TRUE,
+                                                svmk = TRUE,
+                                                domain = FALSE,
+                                                glm = TRUE,
+                                                mahal = FALSE,
+                                                brt = TRUE,
+                                                equalize = TRUE))
 ```
 
 ```{r purrr_final, eval = F}
@@ -490,7 +495,7 @@ species %>% as.list(.) %>%
 ```
 
 ```{r purrr_ensemble, eval = F}
-coordenadas %>% purrr::map2(.x= .,
+example_occs %>% purrr::map2(.x= .,
                             .y= as.list(names(.)),
                             ~ ensemble_model(species_name = .y,
                                              occurrences = .x,
@@ -501,11 +506,14 @@ coordenadas %>% purrr::map2(.x= .,
 
 ```
 
+<!--
+TODO: WIP
 ## Parallel computing
 
 ```{r remedy001, eval=F}
 library(parallel)
 ```
+-->
 
 # References
 
@@ -526,4 +534,3 @@ Liaw, Andy, and Matthew Wiener. 2002. “Classification and Regression by random
 Meyer, David, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel, and Friedrich Leisch. 2017. E1071: Misc Functions of the Department of Statistics, Probability Theory Group (Formerly: E1071), TU Wien. https://CRAN.R-project.org/package=e1071.
 
 Varela, Sara, Robert P. Anderson, Raúl García-Valdés, and Federico Fernández-González. 2014. “Environmental Filters Reduce the Effects of Sampling Bias and Improve Predictions of Ecological Niche Models.” Ecography 37 (11): 1084–91. doi:10.1111/j.1600-0587.2013.00441.x.
-

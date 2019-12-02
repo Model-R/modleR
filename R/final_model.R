@@ -290,6 +290,18 @@ final_model <- function(species_name,
       #  warning(paste("no models were selected for", species_name, algo, "\n"))
     #}
       #  }
+    # creating and writing final_model metadata
+    metadata <- data.frame(
+      species_name = as.character(species_name),
+      algorithms = paste(algorithms, collapse = "-"),
+      scale_models = ifelse(scale_models, "yes", "no"),
+      consensus_level = ifelse(sum(which_models %in% "bin_consensus" == 1), consensus_level, NA),
+      which_models = paste(which_models, collapse = "-"),
+      mean_th_par = ifelse(is.null(mean_th_par), "no", mean_th_par),
+      uncertainty = ifelse(uncertainty, "yes", "no")
+      )
+    message("writing metadata")
+    write.csv(metadata, file = paste0(final_path, "/metadata.csv"))
     print(paste("DONE", algo, "!"))
     return(stats)
     print(date())
