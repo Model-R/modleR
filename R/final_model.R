@@ -193,10 +193,10 @@ final_model <- function(species_name,
             #first column of the map. takes raw means and makes them binary or cut by a single mean threshold
             raw_mean <- raster::weighted.mean(cont.sel.1, w = pond.stats)
             #raw_mean <- raster::mean(cont.sel.1)#el futuro es nuestro
-            if ("raw_mean" %in% which_models) {
+            #if ("raw_mean" %in% which_models) {
                 names(raw_mean) <- "raw_mean"#(4)
                 final_algo <- raster::addLayer(final_algo, raw_mean)
-            }
+            #}
             if (any(c("raw_mean_th", "raw_mean_cut") %in% which_models)) {
                         th.mean <- mean(stats.algo[, mean_th_par][sel.index])
                 raw_mean_th <- (raw_mean > th.mean)  #(7)
