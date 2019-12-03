@@ -20,6 +20,9 @@ test_that("do_any produces model and stats file", {
   expect_length(list.files(path = mod_dir,
                            pattern = "evaluate.*csv"),
                 part)
+  expect_length(list.files(path = mod_dir,
+                           pattern = "eval_mod.*csv"),
+                part)
   # does it have tif file (model)?
    expect_length(list.files(path = mod_dir,
                             pattern = paste0(algo, ".*.tif")),

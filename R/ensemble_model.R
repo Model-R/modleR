@@ -184,7 +184,7 @@ ensemble_model <- function(species_name,
                                          paste0(
                                                 "_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
-            stop(paste("No models to ensemble from for", species_name, "\n"))
+            stop(paste("No models to assemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         average_ensemble <- mean(raw_mean_models)
         names(average_ensemble) <-  "average"
@@ -364,7 +364,7 @@ ensemble_model <- function(species_name,
                     filename = paste0(models_dir, "/", species_name,
                                       "/", proj_dir, "/",
                                       ensemble_dir, "/", species_name,
-                                      "uncertainty.tif"),
+                                      "_uncertainty.tif"),
                     ...
         )
         ensemble_mods <- raster::addLayer(ensemble_mods, ensemble_inctz)
