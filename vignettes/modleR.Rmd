@@ -533,8 +533,8 @@ species %>%
 ```
 
 ```{r purrr_ensemble, eval = FALSE}
-example_occs %>% purrr::map2(.x= .,
-                             .y= as.list(names(.)),
+example_occs %>% purrr::map2(.x = .,
+                             .y = as.list(names(.)),
                              ~ ensemble_model(species_name = .y,
                                               occurrences = .x,
                                               which_final = "raw_mean",
