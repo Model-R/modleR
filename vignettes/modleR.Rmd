@@ -67,7 +67,7 @@ knitr::include_graphics("workflow.png", dpi = 150)
 3. Partition joining: `final_model()` joins the partition models into a model per species per algorithm
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus) using several methods.
 
- <!-- NOTE: `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
+<!-- NOTE: `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
 
 ## Folder structure created by this package
 
@@ -124,7 +124,7 @@ par(mfrow = c(2, 2), mar = c(2, 2, 3, 1))
 for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]), legend = FALSE, main = species[i])
   points(lat ~ lon, data = example_occs[[i]])
-  }
+}
 par(mfrow = c(1, 1))
 ```
 
@@ -188,8 +188,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              geo_filt_dist = 10,
                              select_variables = TRUE,
                              percent = 0.5,
-                             cutoff = 0.7
-                             )
+                             cutoff = 0.7)
 ```
 
 + The function will return a `sdmdata` data frame, with the groups for training and test in bootstrap or crossvalidation, a `pa` vector that marks presences and absences, and the environmental dataset. This same dataframe will be written in the hard disk, as `sdmdata.txt`
@@ -270,12 +269,11 @@ In addition:
 You can explore the list of files created at this phase, for example:
 
 ```{r partfiles}
-partitions.folder <-
-     list.files(test_folder,
-                recursive = TRUE,
-                pattern = "partitions",
-                include.dirs = TRUE,
-                full.names = TRUE)
+partitions.folder <-list.files(test_folder,
+                               recursive = TRUE,
+                               pattern = "partitions",
+                               include.dirs = TRUE,
+                               full.names = TRUE)
 partitions.folder
 ```
 
@@ -364,7 +362,10 @@ final.folder <- list.files(test_folder,
                            include.dirs = TRUE,
                            full.names = TRUE)
 final.folder
-final_mods <- list.files(final.folder, full.names = TRUE, pattern = "raw_mean.+tif$", recursive = TRUE)
+final_mods <- list.files(final.folder, 
+                         full.names = TRUE, 
+                         pattern = "raw_mean.+tif$", 
+                         recursive = TRUE)
 final_mods
 ```
 
@@ -373,7 +374,7 @@ final_models <- stack(final_mods)
 
 names(final_models) <- sapply(strsplit(names(final_models),
                                        paste0(species[1], '_')),
-                             function(x) x[2])
+                              function(x) x[2])
 plot(final_models)
 ```
 
@@ -418,66 +419,66 @@ args(do_many)
 args(setup_sdmdata)
 
 for (i in 1:length(example_occs)) {
-    sp <- species[i]
-    occs <- example_occs[[i]]
-    setup_sdmdata(species_name = sp,
-                  models_dir = "~/modleR_test/forlooptest",
-                  occurrences = occs,
-                  predictors = example_vars,
-                  buffer_type = "distance",
-                  dist_buf = 4,
-                  write_buffer = TRUE,
-                  clean_dupl = TRUE,
-                  clean_nas = TRUE,
-                  clean_uni = TRUE,
-                  png_sdmdata = TRUE,
-                  n_back = 1000,
-                  partition_type = "bootstrap",
-                  boot_n = 5,
-                  boot_proportion = 0.7
-    )
-}
-
-for (i in 1:length(example_occs)) {
-    sp <- species[i]
-    do_many(species_name = sp,
-            predictors = example_vars,
-            models_dir = "~/modleR_test/forlooptest",
-            png_partitions = TRUE,
-            bioclim = TRUE,
-            maxnet = TRUE,
-            rf = TRUE,
-            svmk = TRUE,
-            svme = TRUE,
-            brt = TRUE,
-            glm = TRUE,
-            domain = FALSE,
-            mahal = FALSE,
-            equalize = TRUE,
-            write_bin_cut = TRUE)
-}
-
-for (i in 1:length(example_occs)) {
-    sp <- species[i]
-    final_model(species_name = sp,
-                consensus_level = 0.5,
+  sp <- species[i]
+  occs <- example_occs[[i]]
+  setup_sdmdata(species_name = sp,
                 models_dir = "~/modleR_test/forlooptest",
-                which_models = c("raw_mean",
-                                 "bin_mean",
-                                 "bin_consensus"),
-                uncertainty = TRUE,
-                overwrite = TRUE)
+                occurrences = occs,
+                predictors = example_vars,
+                buffer_type = "distance",
+                dist_buf = 4,
+                write_buffer = TRUE,
+                clean_dupl = TRUE,
+                clean_nas = TRUE,
+                clean_uni = TRUE,
+                png_sdmdata = TRUE,
+                n_back = 1000,
+                partition_type = "bootstrap",
+                boot_n = 5,
+                boot_proportion = 0.7
+  )
 }
 
 for (i in 1:length(example_occs)) {
-    sp <- species[i]
-    occs <- example_occs[[i]]
-    ensemble_model(species_name = sp,
-                   occurrences = occs,
-                   which_final = "bin_consensus",
-                   png_ensemble = TRUE,
-                   models_dir = "~/modleR_test/forlooptest")
-    }
+  sp <- species[i]
+  do_many(species_name = sp,
+          predictors = example_vars,
+          models_dir = "~/modleR_test/forlooptest",
+          png_partitions = TRUE,
+          bioclim = TRUE,
+          maxnet = TRUE,
+          rf = TRUE,
+          svmk = TRUE,
+          svme = TRUE,
+          brt = TRUE,
+          glm = TRUE,
+          domain = FALSE,
+          mahal = FALSE,
+          equalize = TRUE,
+          write_bin_cut = TRUE)
+}
+
+for (i in 1:length(example_occs)) {
+  sp <- species[i]
+  final_model(species_name = sp,
+              consensus_level = 0.5,
+              models_dir = "~/modleR_test/forlooptest",
+              which_models = c("raw_mean",
+                               "bin_mean",
+                               "bin_consensus"),
+              uncertainty = TRUE,
+              overwrite = TRUE)
+}
+
+for (i in 1:length(example_occs)) {
+  sp <- species[i]
+  occs <- example_occs[[i]]
+  ensemble_model(species_name = sp,
+                 occurrences = occs,
+                 which_final = "bin_consensus",
+                 png_ensemble = TRUE,
+                 models_dir = "~/modleR_test/forlooptest")
+}
 ```
 
 Another option is to use the `purrr` package [@henry_purrr_2017].
@@ -486,60 +487,60 @@ Another option is to use the `purrr` package [@henry_purrr_2017].
 library(purrr)
 
 example_occs %>% purrr::map2(.x= .,
-                            .y= as.list(names(.)),
-                            ~ setup_sdmdata(species_name = .y,
-                                            occurrences = .x,
-                                            partition_type = "bootstrap",
-                                            boot_n = 5,
-                                            boot_proportion = 0.7,
-                                            clean_nas = TRUE,
-                                            clean_dupl = TRUE,
-                                            clean_uni = TRUE,
-                                            buffer_type = "distance",
-                                            dist_buf = 4,
-                                            predictors = example_vars,
-                                            models_dir = "~/modleR_test/temp_purrr",
-                                            n_back = 1000))
+                             .y= as.list(names(.)),
+                             ~ setup_sdmdata(species_name = .y,
+                                             occurrences = .x,
+                                             partition_type = "bootstrap",
+                                             boot_n = 5,
+                                             boot_proportion = 0.7,
+                                             clean_nas = TRUE,
+                                             clean_dupl = TRUE,
+                                             clean_uni = TRUE,
+                                             buffer_type = "distance",
+                                             dist_buf = 4,
+                                             predictors = example_vars,
+                                             models_dir = "~/modleR_test/temp_purrr",
+                                             n_back = 1000))
 
 species %>%
-    as.list(.) %>%
-    purrr::map(~ do_many(species_name = .,
-                         predictors = example_vars,
-                         models_dir = "~/modleR_test/temp_purrr",
-                         bioclim = TRUE,
-                         maxnet = TRUE,
-                         rf = TRUE,
-                         svme = TRUE,
-                         svmk = TRUE,
-                         domain = FALSE,
-                         glm = TRUE,
-                         mahal = FALSE,
-                         brt = TRUE,
-                         equalize = TRUE))
+  as.list(.) %>%
+  purrr::map(~ do_many(species_name = .,
+                       predictors = example_vars,
+                       models_dir = "~/modleR_test/temp_purrr",
+                       bioclim = TRUE,
+                       maxnet = TRUE,
+                       rf = TRUE,
+                       svme = TRUE,
+                       svmk = TRUE,
+                       domain = FALSE,
+                       glm = TRUE,
+                       mahal = FALSE,
+                       brt = TRUE,
+                       equalize = TRUE))
 
 ```
 
 ```{r purrr_final, eval = FALSE}
 species %>%
-    as.list(.) %>%
-    purrr::map(~ final_model(species_name = .,
-                             consensus_level = 0.5,
-                             models_dir =  "~/modleR_test/temp_purrr",
-                             which_models = c("raw_mean",
-                                              "bin_mean",
-                                              "bin_consensus"),
-                             overwrite = TRUE))
+  as.list(.) %>%
+  purrr::map(~ final_model(species_name = .,
+                           consensus_level = 0.5,
+                           models_dir =  "~/modleR_test/temp_purrr",
+                           which_models = c("raw_mean",
+                                            "bin_mean",
+                                            "bin_consensus"),
+                           overwrite = TRUE))
 ```
 
 ```{r purrr_ensemble, eval = FALSE}
 example_occs %>% purrr::map2(.x= .,
-                            .y= as.list(names(.)),
-                            ~ ensemble_model(species_name = .y,
-                                             occurrences = .x,
-                                             which_final = "raw_mean",
-                                             png_ensemble = TRUE,
-                                             models_dir = "~/modleR_test/temp_purrr",
-                                             overwrite = TRUE))
+                             .y= as.list(names(.)),
+                             ~ ensemble_model(species_name = .y,
+                                              occurrences = .x,
+                                              which_final = "raw_mean",
+                                              png_ensemble = TRUE,
+                                              models_dir = "~/modleR_test/temp_purrr",
+                                              overwrite = TRUE))
 
 ```
 
