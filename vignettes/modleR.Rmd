@@ -486,8 +486,8 @@ Another option is to use the `purrr` package [@henry_purrr_2017].
 ```{r purrr example, eval = FALSE}
 library(purrr)
 
-example_occs %>% purrr::map2(.x= .,
-                             .y= as.list(names(.)),
+example_occs %>% purrr::map2(.x = .,
+                             .y = as.list(names(.)),
                              ~ setup_sdmdata(species_name = .y,
                                              occurrences = .x,
                                              partition_type = "bootstrap",
