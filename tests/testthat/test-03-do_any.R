@@ -3,7 +3,6 @@ context("basic do_any test")
 # objects to be used on tests
 my_dir <- "../tmp_test/"
 sp <- names(example_occs)[1]
-#sp_coord <- example_occs[[1]]
 part <- 4
 algo <- c("bioclim")
 mod_dir <- paste0(my_dir, sp, "/present/partitions/")

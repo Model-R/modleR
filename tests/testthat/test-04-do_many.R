@@ -6,7 +6,7 @@ sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 part <- 4
 mod_dir <- paste0(my_dir, sp, "/present/partitions/")
-algos <- c("bioclim", "maxnet")
+algos <- c("bioclim", "glm", "rf", "svme", "brt")
 n.algos <- length(algos)
 
 test_that("do_many produces model and stats file", {
@@ -14,7 +14,10 @@ test_that("do_many produces model and stats file", {
                      predictors = example_vars,
                      models_dir = my_dir,
                      bioclim = TRUE,
-                     maxnet = TRUE)
+                     glm = TRUE,
+                     rf = TRUE,
+                     svme = TRUE,
+                     brt = TRUE)
   # does it have two txt files (matrix and evaluate) ?
   expect_length(list.files(path = mod_dir,
                            pattern = "confusion_matrices_.*csv"),
