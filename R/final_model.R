@@ -3,8 +3,8 @@
 #' This function reads the models generated either by \code{\link{do_any}} or
 #' \code{\link{do_many}} (i.e. one model per partition per algorithm) and
 #' summarizes them into a final model for each species-algorithm combination.
-#' These final models may be created from the raw continuous models or the
-#' binary models (see \code{\link{do_any}}). From these means, several
+#' All the final models are created from the mean of the raw continuous models
+#' (\code{raw_mean}). From these means, several
 #' outputs can be created, see \code{which_models} for details about
 #' the final outputs available. The uncertainty between partitions, taken as
 #' ranges (maximum - minimum values) between partitions may also be calculated.
