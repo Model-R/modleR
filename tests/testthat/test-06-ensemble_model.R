@@ -30,4 +30,4 @@ test_that("ensemble output", {
 })
 
 # delete test dir at the end
-#teardown(unlink("../tmp_test", recursive = TRUE))
+teardown(unlink("../tmp_test", recursive = TRUE))

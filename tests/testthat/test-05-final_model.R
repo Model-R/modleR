@@ -2,14 +2,15 @@ context("basic final_model test")
 
 my_dir <- "../tmp_test/"
 sp <- names(example_occs)[1]
-algos <- c("bioclim", "glm", "rf", "svme", "brt")
+algos <- c("bioclim", "maxnet", "svme")
 n.algos <- length(algos)
 final_folder <- paste0(my_dir, sp, "/present/final_models/")
 #lists all the options from final
-final_options <- c("raw_mean", "raw_mean_th", "raw_mean_cut", "bin_mean",
-                   "bin_consensus")
+#final_options <- c("raw_mean", "raw_mean_th", "raw_mean_cut", "bin_mean",
+                  # "bin_consensus")
 #creates a random combination of the options- ANY ONE SHOULD WORK
-which <- sample(final_options, sample(1:length(final_options), 1))
+#which <- sample(final_options, sample(1:length(final_options), 1))
+which <- "raw_mean"
 test_that("final_model generates joint model per algorithm", {
         sp_final <- final_model(species_name = sp,
                                 models_dir = my_dir,
