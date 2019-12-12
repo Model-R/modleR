@@ -8,7 +8,7 @@ final_model(species_name, algorithms = NULL, scale_models = TRUE,
   consensus_level = 0.5, models_dir = "./models",
   final_dir = "final_models", proj_dir = "present",
   which_models = c("raw_mean"), mean_th_par = c("spec_sens"),
-  uncertainty = FALSE, png_final = TRUE, ...)
+  uncertainty = FALSE, png_final = TRUE, sensitivity = 0.9, ...)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species
@@ -58,19 +58,20 @@ be:
 
 \item{mean_th_par}{A threshold that will be used to cut the raw mean models
 if \code{which_models} is set to "\code{raw_mean_th}" or to transform the raw
-mean models into binary models if \code{which_models} is set to "\code{bin_consensus}"
-Defaults to "\code{spec_sens}" but any \pkg{dismo} threshold can be used (see
- function \code{\link[dismo]{threshold}}): "\code{kappa}",
- "\code{no_omission}", "\code{prevalence}", "\code{equal_spec_sens}",
- "\code{sensitivity}"
- @param sensitivity The sensitivity value for threshols "\code{sensitivity}".
- Defaults to 0.9}
+mean models into binary models if \code{which_models} is set to
+"\code{bin_consensus}". Defaults to "\code{spec_sens}" but any \pkg{dismo}
+threshold can be used (see function \code{\link[dismo]{threshold}}):
+"\code{kappa}", "\code{no_omission}", "\code{prevalence}",
+"\code{equal_spec_sens}", "\code{sensitivity}"}
 
 \item{uncertainty}{Whether an uncertainty map, measured as range (max-min)
 should be calculated}
 
 \item{png_final}{Logical. If \code{TRUE}, writes png files of the final
 models}
+
+\item{sensitivity}{The sensitivity value for threshold "\code{sensitivity}".
+Defaults to 0.9}
 
 \item{...}{Other parameters from \code{\link[raster]{writeRaster}},
 especially \code{overwrite = TRUE}, when needed}
@@ -97,12 +98,9 @@ All the final models are created from the mean of the raw continuous models
 outputs can be created, see \code{which_models} for details about
 the final outputs available. The uncertainty between partitions, taken as
 ranges (maximum - minimum values) between partitions may also be calculated.
-Just as in \emph{no silver bullets in correlative ecological niche modeling},
-no method for evaluating and selecting partitions is always better and these
-are only a subset of the possibilities. The user should choose how to create
-the final model based on their assumptions. We simply recommend to focus on
-statistical clarity rather than significance
-\insertCite{dushoff_can_2019}{modleR}.
+Just as there are \emph{no silver bullets in correlative ecological niche
+modeling}, no method for presenting this models is always better
+and these are only a subset of the possibilities.
 }
 \examples{
 # run setup_sdmdata

@@ -8,12 +8,9 @@
 #' outputs can be created, see \code{which_models} for details about
 #' the final outputs available. The uncertainty between partitions, taken as
 #' ranges (maximum - minimum values) between partitions may also be calculated.
-#' Just as in \emph{no silver bullets in correlative ecological niche modeling},
-#' no method for evaluating and selecting partitions is always better and these
-#' are only a subset of the possibilities. The user should choose how to create
-#' the final model based on their assumptions. We simply recommend to focus on
-#' statistical clarity rather than significance
-#' \insertCite{dushoff_can_2019}{modleR}.
+#' Just as there are \emph{no silver bullets in correlative ecological niche
+#' modeling}, no method for presenting this models is always better
+#' and these are only a subset of the possibilities.
 #'
 #' @inheritParams setup_sdmdata
 #' @param algorithms Character vector specifying which algorithms will be
@@ -22,12 +19,12 @@
 #' in the evaluation files
 #' @param mean_th_par A threshold that will be used to cut the raw mean models
 #' if \code{which_models} is set to "\code{raw_mean_th}" or to transform the raw
-#' mean models into binary models if \code{which_models} is set to "\code{bin_consensus}"
-#' Defaults to "\code{spec_sens}" but any \pkg{dismo} threshold can be used (see
-#'  function \code{\link[dismo]{threshold}}): "\code{kappa}",
-#'  "\code{no_omission}", "\code{prevalence}", "\code{equal_spec_sens}",
-#'  "\code{sensitivity}"
-#'  @param sensitivity The sensitivity value for threshols "\code{sensitivity}".
+#' mean models into binary models if \code{which_models} is set to
+#' "\code{bin_consensus}". Defaults to "\code{spec_sens}" but any \pkg{dismo}
+#' threshold can be used (see function \code{\link[dismo]{threshold}}):
+#' "\code{kappa}", "\code{no_omission}", "\code{prevalence}",
+#' "\code{equal_spec_sens}", "\code{sensitivity}"
+#' @param sensitivity The sensitivity value for threshold "\code{sensitivity}".
 #'  Defaults to 0.9
 #' @param scale_models Logical. Whether input models should be scaled between 0
 #' and 1
@@ -111,6 +108,7 @@ final_model <- function(species_name,
                         mean_th_par = c("spec_sens"),
                         uncertainty = FALSE,
                         png_final = TRUE,
+                        sensitivity = 0.9,
                         ...) {
     # Escribe final
     final_path <- paste(models_dir, species_name, proj_dir,
