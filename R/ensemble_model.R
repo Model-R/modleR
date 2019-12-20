@@ -377,7 +377,6 @@ ensemble_model <- function(species_name,
         #    }
 
 
-            coord <- occurrences[, c(lon, lat)]
 
             if (png_ensemble) {
             message("Writing pngs")
@@ -397,8 +396,11 @@ ensemble_model <- function(species_name,
                           col = "grey")
                 }
                 if (write_occs) {
-                points(coord, pch = 21, cex = 0.6,
-                       bg = scales::alpha("cyan", 0.6))
+                    if (is.null(occurrences))
+                        stop("occurrences must be provided to write the png if write_occs = TRUE")
+                    coord <- occurrences[, c(lon, lat)]
+                    points(coord, pch = 21, cex = 0.6,
+                           bg = scales::alpha("cyan", 0.6))
                 }
                 dev.off()
                 }
