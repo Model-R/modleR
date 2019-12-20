@@ -10,7 +10,6 @@ do_any <- function(species_name,
                    png_partitions = FALSE,
                    write_bin_cut = FALSE,
                    dismo_threshold = "spec_sens",
-                   conf_mat = TRUE,
                    equalize = TRUE,
                    sensitivity = 0.9,
                    proc_threshold = 0.5,
@@ -221,8 +220,7 @@ do_any <- function(species_name,
             #which threshold? any value from function threshold() in dismo
             th_table$dismo_threshold <- as.character(dismo_threshold)
             th_mod <- th_table[, dismo_threshold]
-            #confusion matrix
-            conf <- eval_mod@confusion[which(eval_mod@t == th_mod),]
+
             th_table$prevalence.value <- eval_mod@prevalence[which(eval_mod@t == th_mod)]#a prevalencia desse threshold
             th_table$PPP <- eval_mod@PPP[which(eval_mod@t == th_mod)] #precision
             th_table$NPP <- eval_mod@NPP[which(eval_mod@t == th_mod)]
@@ -236,18 +234,9 @@ do_any <- function(species_name,
             th_table$Jaccard <- eval_df$Jaccard[which(eval_mod@t == th_mod)]
             #for tests: export th_table as a global object
             #th_table <<- th_table
-            #confusion matrix
-            if (conf_mat == TRUE) {
-              conf_res <- matrix(conf, ncol = 2, byrow = T)
-              dimnames(conf_res) <- list(c("predicted_presence", "predicted_absence"), c("actual_presence", "actual_absence"))
-              write.csv(conf_res, file = paste0(partition.folder,
-                                                "/confusion_matrices_",
-                                                species_name, "_", i, "_", g,
-                                                "_", algorithm,"_",
-                                                dismo_threshold, ".csv"))
-            }
 
-            
+
+
             #writing evaluation tables
             message("writing evaluation tables")
             write.csv(eval_df, file = paste0(partition.folder, "/eval_mod_",

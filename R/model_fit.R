@@ -198,7 +198,6 @@
 #'  "\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
 #'   "\code{prevalence}", "\code{equal_sens_spec}",
 #'  "\code{sensitivity}". Default value is "\code{spec_sens}"
-#' @param conf_mat Logical, whether confusion tables should be written in the HD
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt
 #' @param sensitivity Numeric, value from 0 to 0.9 to indicate the sensitivity

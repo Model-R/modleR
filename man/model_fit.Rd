@@ -10,8 +10,8 @@ do_any(species_name, predictors, models_dir = "./models",
   algorithm = c("bioclim"), project_model = FALSE,
   proj_data_folder = "./data/proj", mask = NULL,
   png_partitions = FALSE, write_bin_cut = FALSE,
-  dismo_threshold = "spec_sens", conf_mat = TRUE, equalize = TRUE,
-  sensitivity = 0.9, proc_threshold = 0.5, ...)
+  dismo_threshold = "spec_sens", equalize = TRUE, sensitivity = 0.9,
+  proc_threshold = 0.5, ...)
 
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,
@@ -61,8 +61,6 @@ transform model predictions to a binary score as in
  "\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
   "\code{prevalence}", "\code{equal_sens_spec}",
  "\code{sensitivity}". Default value is "\code{spec_sens}"}
-
-\item{conf_mat}{Logical, whether confusion tables should be written in the HD}
 
 \item{equalize}{Logical, whether the number of presences and absences should be
 equalized in randomForest and brt}
