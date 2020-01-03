@@ -14,9 +14,6 @@ test_that("do_any produces model and stats file", {
                    algo = algo)
   # does it have two csv files (matrix and evaluate) ?
   expect_length(list.files(path = mod_dir,
-                           pattern = "confusion_matrices_.*csv"),
-                part)
-  expect_length(list.files(path = mod_dir,
                            pattern = "evaluate.*csv"),
                 part)
   expect_length(list.files(path = mod_dir,
@@ -29,14 +26,3 @@ test_that("do_any produces model and stats file", {
 
 })
 
-test_that("eval and confusion matrix are numeric", {
-  # are all columns numeric
-  for (i in 1:part) {
-    apply(read.csv(list.files(path = mod_dir,
-                              pattern = "confusion_matrices_.*csv",
-                              full.names = TRUE)[i],
-                   row.names = 1),
-          MARGIN = 2,
-          expect_type, "integer")
-  }
-})

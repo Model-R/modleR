@@ -41,8 +41,10 @@ Imports:
     scales,
     sp
 Remotes: marlonecobos/kuenm
+URL: https://model-r.github.io/modleR/index.html
 BugReports: https://github.com/Model-R/modleR/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
+Roxygen: list(old_usage = TRUE)
 RdMacros: Rdpack
 Suggests: 
     devtools,

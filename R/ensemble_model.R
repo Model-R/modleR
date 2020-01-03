@@ -130,7 +130,7 @@ ensemble_model <- function(species_name,
 
     stats_summary <- read.csv(paste0(models_dir, "/", species_name, "/present/",
                                      final_dir, "/", species_name,
-                                     "_mean_statistics.csv"), header = T,
+                                     "_mean_statistics.csv"), header = TRUE,
                               row.names = 1)
     #specify algorithms or not
     if (is.null(algorithms)) {
