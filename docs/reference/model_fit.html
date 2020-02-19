@@ -127,7 +127,7 @@ calculates partial ROC
     </div>
 
     <div class="ref-description">
-    <p><code>do_any</code> reads the output from <code>setup_sdmdata</code> and
+    <p><code>do_any</code> reads the output from <code><a href='setup_sdmdata.html'>setup_sdmdata</a></code> and
 computes ecological niche models for a species based on an algorithm
 specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
@@ -151,8 +151,8 @@ calculates partial ROC
     <pre class="usage"><span class='fu'>do_any</span>(<span class='no'>species_name</span>, <span class='no'>predictors</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>,
   <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bioclim"</span>), <span class='kw'>project_model</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>proj_data_folder</span> <span class='kw'>=</span> <span class='st'>"./data/proj"</span>, <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>write_png</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_bin_cut</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='st'>"spec_sens"</span>, <span class='kw'>conf_mat</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>proc_threshold</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='no'>...</span>)
+  <span class='kw'>write_bin_cut</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>dismo_threshold</span> <span class='kw'>=</span> <span class='st'>"spec_sens"</span>,
+  <span class='kw'>conf_mat</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>proc_threshold</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='no'>...</span>)
 
 <span class='fu'>do_many</span>(<span class='no'>species_name</span>, <span class='kw'>bioclim</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>domain</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>glm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>mahal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>maxent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>maxnet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rf</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -167,7 +167,7 @@ calculates partial ROC
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code>example_occs</code> as an example</p></td>
+<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>predictors</th>
@@ -216,12 +216,13 @@ mask can be used if the final area of interest is smaller than the area used
 should be written</p></td>
     </tr>
     <tr>
-      <th>threshold</th>
-      <td><p>Character string indicating threshold (cut-off) to transform
-model predictions to a binary score as in <code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>:
-"<code>kappa</code>", "<code>spec_sens</code>", "<code>no_omission</code>",
- "<code>prevalence</code>", "<code>equal_sens_spec</code>",
-"<code>sensitivity</code>". Default value is "<code>spec_sens</code>"</p></td>
+      <th>dismo_threshold</th>
+      <td><p>Character string indicating threshold (cut-off) to
+transform model predictions to a binary score as in
+<code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>:
+ "<code>kappa</code>", "<code>spec_sens</code>", "<code>no_omission</code>",
+  "<code>prevalence</code>", "<code>equal_sens_spec</code>",
+ "<code>sensitivity</code>". Default value is "<code>spec_sens</code>"</p></td>
     </tr>
     <tr>
       <th>conf_mat</th>
@@ -297,10 +298,11 @@ package with <code><a href='https://rdrr.io/pkg/e1071/man/tune.html'>best.tune</
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Returns a data frame with evaluation statistics of each algorithm (threshold values, omission, TSS, AUC, pROC etc)</p>
+    <p>Returns a data frame with some key threshold values and evaluation
+statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)</p>
 <p>Writes on disk a .tif model for each partition of each algorithm</p>
-<p>Writes in disk a .csv file with
-evaluation statistics of each algorithm</p>
+<p>Writes in disk a .csv file with evaluation statistics of each
+algorithm</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>See below for a description on the implementation of the algorithms
@@ -413,29 +415,29 @@ corresponding to implementation on <span class="pkg">e1071</span>
     <p>Booth TH, Nix HA, Busby JR, Hutchinson MF (2014).
 &#8220;Bioclim: The First Species Distribution Modelling Package, Its Early Applications and Relevance to Most Current MaxEnt Studies.&#8221;
 <em>Diversity and Distributions</em>, <b>20</b>(1), 1-9.
-ISSN 1472-4642, doi: <a href='http://doi.org/10.1111/ddi.12144'>10.1111/ddi.12144</a>
+ISSN 1472-4642, doi: <a href='https://doi.org/10.1111/ddi.12144'>10.1111/ddi.12144</a>
 .<br /><br /> Carpenter G, Gillison AN, Winter J (1993).
 &#8220;DOMAIN: A Flexible Modelling Procedure for Mapping Potential Distributions of Plants and Animals.&#8221;
 <em>Biodiversity \&amp; Conservation</em>, <b>2</b>(6), 667-680.
-ISSN 1572-9710, doi: <a href='http://doi.org/10.1007/BF00051966'>10.1007/BF00051966</a>
+ISSN 1572-9710, doi: <a href='https://doi.org/10.1007/BF00051966'>10.1007/BF00051966</a>
 .<br /><br /> Cobos ME, Peterson AT, Barve N, Osorio-Olvera L (2019).
 &#8220;Kuenm: An R Package for Detailed Development of Ecological Niche Models Using Maxent.&#8221;
 <em>PeerJ</em>, <b>7</b>, e6281.
-ISSN 2167-8359, doi: <a href='http://doi.org/10.7717/peerj.6281'>10.7717/peerj.6281</a>
+ISSN 2167-8359, doi: <a href='https://doi.org/10.7717/peerj.6281'>10.7717/peerj.6281</a>
 .<br /><br /> Elith J, H. Graham* C, P. Anderson R, Dudík M, Ferrier S, Guisan A, J. Hijmans R, Huettmann F, R. Leathwick J, Lehmann A, Li J, G. Lohmann L, A. Loiselle B, Manion G, Moritz C, Nakamura M, Nakazawa Y, McC. M. Overton J, Townsend Peterson A, J. Phillips S, Richardson K, Scachetti-Pereira R, E. Schapire R, Soberón J, Williams S, S. Wisz M, E. Zimmermann N (2006).
 &#8220;Novel Methods Improve Prediction of Species' Distributions from Occurrence Data.&#8221;
 <em>Ecography</em>, <b>29</b>(2), 129-151.
-ISSN 1600-0587, doi: <a href='http://doi.org/10.1111/j.2006.0906-7590.04596.x'>10.1111/j.2006.0906-7590.04596.x</a>
+ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.2006.0906-7590.04596.x'>10.1111/j.2006.0906-7590.04596.x</a>
 .<br /><br /> Elith J, Leathwick JR, Hastie T (2009).
 &#8220;A Working Guide to Boosted Regression Trees.&#8221;
 <em>Journal of Animal Ecology</em>, <b>77</b>(4), 802-813.
-ISSN 1365-2656, doi: <a href='http://doi.org/10/fn6m6v'>10/fn6m6v</a>
+ISSN 1365-2656, doi: <a href='https://doi.org/10/fn6m6v'>10/fn6m6v</a>
 .<br /><br /> Hastie T, Tibshirani R, Friedman J (2001).
 <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>.
 Springer Heidelberg.<br /><br /> Hijmans RJ, Graham CH (2006).
 &#8220;The Ability of Climate Envelope Models to Predict the Effect of Climate Change on Species Distributions.&#8221;
 <em>Global Change Biology</em>, <b>12</b>(12), 2272-2281.
-ISSN 1354-1013, 1365-2486, doi: <a href='http://doi.org/10.1111/j.1365-2486.2006.01256.x'>10.1111/j.1365-2486.2006.01256.x</a>
+ISSN 1354-1013, 1365-2486, doi: <a href='https://doi.org/10.1111/j.1365-2486.2006.01256.x'>10.1111/j.1365-2486.2006.01256.x</a>
 .<br /><br /> Hijmans RJ, Phillips S, Leathwick J, Elith J (2017).
 &#8220;Dismo: Species Distribution Modeling. R Package Version 1.1-4.&#8221;
 R package version 1.1-4.<br /><br /> Karatzoglou A, Smola A, Hornik K, Zeileis A (2004).
@@ -451,7 +453,7 @@ R package version 1.6-8.<br /><br /> Nix HA (1986).
 Australian Government Publishing Service: Canberra.<br /><br /> Peterson AT, Papeş M, Soberón J (2008).
 &#8220;Rethinking Receiver Operating Characteristic Analysis Applications in Ecological Niche Modeling.&#8221;
 <em>Ecological Modelling</em>, <b>213</b>(1), 63-72.
-ISSN 0304-3800, doi: <a href='http://doi.org/10/ctk6cf'>10/ctk6cf</a>
+ISSN 0304-3800, doi: <a href='https://doi.org/10/ctk6cf'>10/ctk6cf</a>
 .<br /><br /> Peterson AT, Soberón J, Pearson RG, Anderson RP, Mart\'inez-Meyer E, Nakamura M (2011).
 <em>Ecological Niches and Geographic Distributions</em>,  number 49 in Monographs in Population Biology.
 Princeton University Press, Princeton, N.J.
@@ -459,7 +461,7 @@ ISBN 978-0-691-13686-8 978-0-691-13688-2, OCLC: ocn724664003.<br /><br /> Philli
 &#8220;Maxnet: Fitting 'Maxent' Species Distribution Models with 'Glmnet'.&#8221;<br /><br /> Phillips SJ, Anderson RP, Schapire RE (2006).
 &#8220;Maximum Entropy Modeling of Species Geographic Distributions.&#8221;
 <em>Ecological Modelling</em>, <b>190</b>(3-4), 231-259.
-ISSN 0304-3800, doi: <a href='http://doi.org/10.1016/j.ecolmodel.2005.03.026'>10.1016/j.ecolmodel.2005.03.026</a>
+ISSN 0304-3800, doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>10.1016/j.ecolmodel.2005.03.026</a>
 .<br /><br /> Qiao H, Soberón J, Peterson AT (2015).
 &#8220;No Silver Bullets in Correlative Ecological Niche Modelling: Insights from Testing among Many Potential Algorithms for Niche Estimation.&#8221;
 <em>Methods in Ecology and Evolution</em>, <b>6</b>(10), 1126-1136.</p>
@@ -479,7 +481,7 @@ ISSN 0304-3800, doi: <a href='http://doi.org/10.1016/j.ecolmodel.2005.03.026'>10
     <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata first from one species in example_occs data</span>
 <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'>setup_sdmdata</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                           <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata </span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run bioclim for one species</span>
@@ -490,7 +492,7 @@ ISSN 0304-3800, doi: <a href='http://doi.org/10.1016/j.ecolmodel.2005.03.026'>10
 <span class='no'>sp_many</span> <span class='kw'>&lt;-</span> <span class='fu'>do_many</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                    <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
                    <span class='kw'>bioclim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                   <span class='kw'>maxent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='output co'>#&gt; <span class='message'>maxent </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii maxent run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div></pre>
+                   <span class='kw'>maxnet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='output co'>#&gt; <span class='message'>maxnet </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii maxnet run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -134,13 +134,13 @@ calculates median, standard deviation and range (maximum - minimum)</p>
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code>example_occs</code> as an example</p></td>
+<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>occurrences</th>
       <td><p>A data frame with occurrence data. Data must have at least
  columns with latitude and longitude values of species occurrences.
-See <code>example_occs</code> as an example</p></td>
+See <code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>lon</th>
@@ -240,47 +240,38 @@ deviation and range of the assembled models</p>
  in the <code>ensemble_dir</code> subfolder</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>final_model</code></p></div>
+    <div class='dont-index'><p><code><a href='final_model.html'>final_model</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata</span>
 <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'>setup_sdmdata</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                           <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata </span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run do_many</span>
-<span class='no'>sp_many</span> <span class='kw'>&lt;-</span> <span class='fu'>do_many</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_many</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='model_fit.html'>do_many</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                    <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
                    <span class='kw'>bioclim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                   <span class='kw'>maxent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='output co'>#&gt; <span class='message'>maxent </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii maxent run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>Loading required namespace: rJava</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
+                   <span class='kw'>maxnet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='output co'>#&gt; <span class='message'>maxnet </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii maxnet run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
 <span class='co'># run final_model</span>
-<span class='no'>sp_final</span> <span class='kw'>&lt;-</span> <span class='fu'>final_model</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                        <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bioclim"</span>, <span class='st'>"maxent"</span>),
+<span class='no'>sp_final</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='final_model.html'>final_model</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+                        <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bioclim"</span>, <span class='st'>"maxnet"</span>),
                         <span class='kw'>select_partitions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                        <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSS"</span>,
+                        <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>,
                         <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0</span>,
                         <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"raw_mean"</span>),
                         <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Tue Nov  5 23:46:11 2019"
+                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Wed Feb 19 09:26:47 2020"
 #&gt; Abarema_langsdorffii 
-#&gt; Reading evaluation files for Abarema_langsdorffii in present 
-#&gt; Extracting data for Abarema_langsdorffii bioclim 
-#&gt; Reading models from .tif files 
-#&gt; selecting partitions for Abarema_langsdorffii bioclim </div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii bioclim </span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected some final models</span>
-#&gt; <span class='warning'>                          are identical </span></div><div class='output co'>#&gt; Standardizing models from 0 to 1 
-#&gt; selected final models for Abarema_langsdorffii bioclim DONE </div><div class='output co'>#&gt; <span class='message'>writing models bioclim raw_mean </span></div><div class='output co'>#&gt; Extracting data for Abarema_langsdorffii maxent 
-#&gt; Reading models from .tif files 
-#&gt; selecting partitions for Abarema_langsdorffii maxent </div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii maxent </span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected some final models</span>
-#&gt; <span class='warning'>                          are identical </span></div><div class='output co'>#&gt; Standardizing models from 0 to 1 
-#&gt; selected final models for Abarema_langsdorffii maxent DONE </div><div class='output co'>#&gt; <span class='message'>writing models maxent raw_mean </span></div><div class='output co'>#&gt; [1] "DONE maxent !"</div><div class='input'>
+#&gt; Reading evaluation files for Abarema_langsdorffii in present </div><div class='output co'>#&gt; <span class='error'>Error in data.table::rbindlist(lista_eval): Item 2 has 29 columns, inconsistent with item 1 which has 34 columns. To fill missing columns use fill=TRUE.</span></div><div class='input'>
 <span class='co'># run ensemble model</span>
 <span class='no'>sp_ensemble</span> <span class='kw'>&lt;-</span> <span class='fu'>ensemble_model</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                               <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                               <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; raw_mean - Abarema_langsdorffii 
 #&gt; 2 raw_mean models to ensemble from for Abarema_langsdorffii 
-#&gt; Standardizing models from 0 to 1 </div><div class='output co'>#&gt; <span class='message'>Calculating mean</span></div><div class='output co'>#&gt; <span class='message'>Calculating sd</span></div><div class='output co'>#&gt; <span class='message'>Calculating median</span></div><div class='output co'>#&gt; <span class='message'>Calculating range</span></div><div class='output co'>#&gt; <span class='message'>Stack results</span></div><div class='output co'>#&gt; <span class='message'>Writing pngs</span></div><div class='output co'>#&gt; [1] "DONE!"
-#&gt; [1] "Tue Nov  5 23:46:35 2019"</div></pre>
+#&gt; Standardizing models from 0 to 1 </div><div class='output co'>#&gt; <span class='message'>Calculating mean</span></div><div class='output co'>#&gt; <span class='message'>Calculating sd</span></div><div class='output co'>#&gt; <span class='message'>Calculating median</span></div><div class='output co'>#&gt; <span class='message'>Calculating range</span></div><div class='output co'>#&gt; <span class='message'>Stack results</span></div><div class='output co'>#&gt; <span class='message'>Writing pngs</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE!"
+#&gt; [1] "Wed Feb 19 09:26:56 2020"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
