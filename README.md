@@ -426,7 +426,7 @@ for (i in 1:length(example_occs)) {
     sp <- species[i]
     final_model(species_name = sp,
                 select_partitions = TRUE,
-                select_par = "TSS",
+                select_par = "TSSmax",
                 select_par_val = 0.5,
                 consensus_level = 0.5,
                 models_dir = "~/modleR_test/forlooptest",
@@ -486,7 +486,7 @@ species %>% as.list(.) %>% purrr::map(~ do_many(species_name = .,
 species %>% as.list(.) %>%
   purrr::map(~ final_model(species_name = .,
                            select_partitions = TRUE,
-                           select_par = "TSS",
+                           select_par = "TSSmax",
                            select_par_val = 0.5,
                            consensus_level = 0.5,
                            models_dir = "~/modleR_test/temp_purrr",
