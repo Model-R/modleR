@@ -8,10 +8,9 @@
 \usage{
 do_any(species_name, predictors, models_dir = "./models",
   algorithm = c("bioclim"), project_model = FALSE,
-  proj_data_folder = "./data/proj", mask = NULL,
-  png_partitions = FALSE, write_bin_cut = FALSE,
-  dismo_threshold = "spec_sens", equalize = TRUE, sensitivity = 0.9,
-  proc_threshold = 0.5, ...)
+  proj_data_folder = "./data/proj", mask = NULL, png_partitions = FALSE,
+  write_bin_cut = FALSE, dismo_threshold = "spec_sens", equalize = TRUE,
+  sensitivity = 0.9, proc_threshold = 0.5, ...)
 
 do_many(species_name, bioclim = FALSE, domain = FALSE, glm = FALSE,
   mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE,

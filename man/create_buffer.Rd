@@ -6,7 +6,7 @@
 \usage{
 create_buffer(species_name, occurrences, lon = "lon", lat = "lat",
   predictors, buffer_type = "none", buffer_shape, dist_buf = NULL,
-  env_buffer = FALSE, env_distance = "centroid", max_env_dist = NULL,
+  env_filter = FALSE, env_distance = "centroid", max_env_dist = NULL,
   min_env_dist = NULL, min_geog_dist = NULL, models_dir = "./models",
   write_buffer = FALSE)
 }
@@ -43,49 +43,52 @@ will be generated. Needs to be specified if \code{buffer_type = "user"}}
 \code{buffer_type = "distance"}. Distance unit is in the same unit of the
 RasterStack of predictor variables}
 
-\item{env_buffer}{Logical. Should an euclidean environmental filter be
-applied? If TRUE, \code{env_distance}, and \code{max_env_dist} or
-\code{min_env_dist} need to be specified. Areas closest than
-\code{min_env_dist} and farther than \code{max_env_dist} in the environmental
-space will be omitted}
+\item{env_filter}{Logical. Should an euclidean environmental filter be
+applied? If TRUE, \code{env_distance}, \code{max_env_dist} and
+\code{min_env_dist} need to be specified. Parameter \code{max_env_dist} will
+set a maximum environmental distance (expressed in quantiles) in order to
+limit large negative values. From the resulting interval, areas closest than
+\code{min_env_dist} (also expressed in quantiles) in the environmental space
+will be omitted}
 
-\item{env_distance}{Character. Type of environmental distance, any in
-"\code{centroid}", "\code{mindist}". Defaults to "\code{centroid}", the
+\item{env_distance}{Character. Type of environmental distance, either
+"\code{centroid}" or "\code{mindist}". Defaults to "\code{centroid}", the
 distance of each raster pixel to the environmental centroid of the
 distribution. When set to "\code{mindist}", the minimum distance of each
 raster pixel to any of the occurrence points is calculated. Needs to be
-specified if \code{env_buffer = TRUE}. Maximum or minimum values need to be
+specified if \code{env_filter = TRUE}. Maximum and minimum values need to be
 specified (parameters \code{max_env_dist} and \code{min_env_dist})}
 
-\item{max_env_dist}{Numeric. Sets a maximum value to exclude the areas
-farthest (in the environmental space) to the occurrences or their centroid,
-expressed in quantiles, from 0 (the closest) to 1 (the whole range of
-environmental distances). \code{max_env_dist} has to be larger than
-\code{min_env_dist} or no values will be left}
+\item{max_env_dist}{Numeric. Sets a maximum value to exclude large negative
+values (farther in the environmental space) from the calculation for the
+environmental filter. Expressed in quantiles, from 0 (the closest) to 1 (the
+whole range of environmental distances). \code{max_env_dist} has to be larger
+ than \code{min_env_dist}}
 
 \item{min_env_dist}{Numeric. Sets a minimum value to exclude the areas
 closest (in the environmental space) to the occurrences or their centroid,
-expressed in quantiles, from 0 (the closest) to 1 (the whole range of
-environmental distances). \code{min_env_dist} defaults to 0.05, excluding
-areas belonging to the 5% closest environmental values. Note that since this
-is based on quantiles, and environmental similarity can take large negative
-values, this is an abitrary value. \code{max_env_dist} has to be larger than
-\code{min_env_dist} or no values will be left}
+expressed in quantiles, from 0 (the closest) to 1 (the range defined by
+parameter \code{max_env_dist{}}). \code{min_env_dist} defaults to 0.05,
+excluding areas belonging to the 5% closest environmental values. Note that
+since this is based on quantiles, and environmental similarity can take large
+ negative values, this is an abitrary value. \code{max_env_dist} has to be
+ larger than \code{min_env_dist} or no values will be selected}
 
 \item{min_geog_dist}{Optional, numeric. A distance for the exclusion of the
-areas closeste to the occurrence points (in the geographical space). Distance
+areas closest to the occurrence points (in the geographical space). Distance
  unit is in the same unit of the RasterStack of predictor variables}
 
 \item{models_dir}{Folder path to save the output files. Defaults to
 "\code{./models}"}
 
-\item{write_buffer}{Logical. Should the resulting RasterStack be written?
-Defaults to FALSE}
+\item{write_buffer}{Logical. Should the resulting buffer RasterLayer be
+written? Defaults to FALSE}
 }
 \value{
 Table of pseudoabsence points sampled within the selected distance
 
-A buffer around the occurrence points
+A RasterLayer object containing the final buffer around the
+occurrence points
 }
 \description{
 This function is used internally by function \code{\link{setup_sdmdata}} to
