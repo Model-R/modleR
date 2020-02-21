@@ -6,9 +6,8 @@
 \usage{
 create_buffer(species_name, occurrences, lon = "lon", lat = "lat",
   predictors, buffer_type = "none", buffer_shape, dist_buf = NULL,
-  env_filter = FALSE, env_distance = "centroid", max_env_dist = NULL,
-  min_env_dist = NULL, min_geog_dist = NULL, models_dir = "./models",
-  write_buffer = FALSE)
+  env_filter = FALSE, env_distance = "centroid", min_env_dist = NULL,
+  min_geog_dist = NULL, models_dir = "./models", write_buffer = FALSE)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species
@@ -44,35 +43,25 @@ will be generated. Needs to be specified if \code{buffer_type = "user"}}
 RasterStack of predictor variables}
 
 \item{env_filter}{Logical. Should an euclidean environmental filter be
-applied? If TRUE, \code{env_distance}, \code{max_env_dist} and
-\code{min_env_dist} need to be specified. Parameter \code{max_env_dist} will
-set a maximum environmental distance (expressed in quantiles) in order to
-limit large negative values. From the resulting interval, areas closest than
-\code{min_env_dist} (also expressed in quantiles) in the environmental space
-will be omitted}
+applied? If TRUE, \code{env_distance} and
+\code{min_env_dist} need to be specified. Areas closest than
+\code{min_env_dist} (expressed in quantiles in the environmental space)will
+be omitted from the pseudoabsence sampling}
 
 \item{env_distance}{Character. Type of environmental distance, either
 "\code{centroid}" or "\code{mindist}". Defaults to "\code{centroid}", the
 distance of each raster pixel to the environmental centroid of the
 distribution. When set to "\code{mindist}", the minimum distance of each
 raster pixel to any of the occurrence points is calculated. Needs to be
-specified if \code{env_filter = TRUE}. Maximum and minimum values need to be
-specified (parameters \code{max_env_dist} and \code{min_env_dist})}
-
-\item{max_env_dist}{Numeric. Sets a maximum value to exclude large negative
-values (farther in the environmental space) from the calculation for the
-environmental filter. Expressed in quantiles, from 0 (the closest) to 1 (the
-whole range of environmental distances). \code{max_env_dist} has to be larger
- than \code{min_env_dist}}
+specified if \code{env_filter = TRUE}. A minimum value needs to be
+specified (parameter \code{min_env_dist})}
 
 \item{min_env_dist}{Numeric. Sets a minimum value to exclude the areas
 closest (in the environmental space) to the occurrences or their centroid,
-expressed in quantiles, from 0 (the closest) to 1 (the range defined by
-parameter \code{max_env_dist{}}). \code{min_env_dist} defaults to 0.05,
+expressed in quantiles, from 0 (the closest) to 1. Defaults to 0.05,
 excluding areas belonging to the 5% closest environmental values. Note that
 since this is based on quantiles, and environmental similarity can take large
- negative values, this is an abitrary value. \code{max_env_dist} has to be
- larger than \code{min_env_dist} or no values will be selected}
+negative values, this is an abitrary value}
 
 \item{min_geog_dist}{Optional, numeric. A distance for the exclusion of the
 areas closest to the occurrence points (in the geographical space). Distance
@@ -99,11 +88,11 @@ performed by either setting a user-defined shapefile, or by drawing a buffer
 around the species occurrences: a geographic distance fixed value, or the
 mean, median or maximum pairwise distance between occurrences. In addition to
 this, an euclidean environmental distance filter can be superimposed to the
-previous step. The third step aims to control for overfitting by excluding
- areas that are too close to the occurrence points, either in the
- environmental space or in the geographic space.
- The function will return the resulting buffer as a RasterStack object with
- the same resolution and NA values of the predictors RasterStack.
+previous step, to control for overfitting by excluding areas that are too
+close to the occurrence points, either in the environmental space or in the
+geographic space.
+The function will return the resulting buffer as a RasterStack object with
+the same resolution and NA values of the predictors RasterStack.
 }
 \examples{
 library(raster)
