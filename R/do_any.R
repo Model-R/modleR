@@ -437,7 +437,8 @@ do_any <- function(species_name,
         }
 
     }
-    return(th_table)
+    out <- list(mod, th_table)
+    return(out)
     message("DONE!")
     print(date())
 }
