@@ -31,7 +31,7 @@ __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], desig
 
 # Installing
 
-Currently modleR can be installed from github:
+Currently __modleR__ can be installed from GitHub:
 
 ```{r, eval = F}
 # Without vignette
@@ -67,7 +67,6 @@ knitr::include_graphics("workflow.png", dpi = 150)
 3. Partition joining: `final_model()` joins the partition models into a model per species per algorithm
 4. Ensemble: `ensemble_model()` joins the different models per algorithm into an ensemble model (algorithmic consensus) using several methods.
 
-<!-- NOTE: `do_many()` is just a wrapper that will call several instances of `do_any()`. -->
 
 ## Folder structure created by this package
 
@@ -111,7 +110,6 @@ occurrence data for four species, and predictor variables called
 ```{r lib, echo = TRUE, eval = TRUE}
 #library(modleR)
 devtools::load_all() # for development
-#library(raster)
 str(example_occs)
 species <- names(example_occs)
 species
@@ -201,7 +199,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 
 ## Fitting a model per partition: `do_any()` and `do_many()`
 
-Functions `do_any` and `do_many()` create a *model per partition, per algorithm*.
+Functions `do_any()` and `do_many()` create a *model per partition, per algorithm*.
 The difference between these functions that `do_any()` performs modeling for one
 individual algorithm at a time, that can be chosen by using parameter `algorithm`,
 while `do_many()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
@@ -211,11 +209,10 @@ The available algorithms are:
 + `"bioclim"`, `"maxent"`, `"mahal"`, `"domain"`, as implemented in __dismo__ package [@hijmans_dismo_2017],
 + Support Vector Machines (SVM), as implemented by packages __kernlab__ [`svmk` @karatzoglou_kernlab_2004] and __e1071__ [`svme` @meyer_e1071_2017],
 + GLM from base R, here implemented with a stepwise selection approach
-+ Random Forests (from package __randomForest__ @liaw_classification_2002)
++ Random Forests [from package __randomForest__ @liaw_classification_2002]
 + Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package [@hastie_elements_2001; @elith_working_2009].
 
 Details for the implementation of each model can be accessed in the documentation of the function.
-
 
 Here you can see the differences between the parameters of both functions. `do_many()` calls several instances of `do_any()` In practice you may only want to call `do_many()`
 but for parallelization by algorithm it may be better to call `do_any()` individually.
@@ -269,11 +266,11 @@ In addition:
 You can explore the list of files created at this phase, for example:
 
 ```{r partfiles}
-partitions.folder <-list.files(test_folder,
-                               recursive = TRUE,
-                               pattern = "partitions",
-                               include.dirs = TRUE,
-                               full.names = TRUE)
+partitions.folder <- list.files(test_folder,
+                                recursive = TRUE,
+                                pattern = "partitions",
+                                include.dirs = TRUE,
+                                full.names = TRUE)
 partitions.folder
 ```
 
@@ -362,9 +359,9 @@ final.folder <- list.files(test_folder,
                            include.dirs = TRUE,
                            full.names = TRUE)
 final.folder
-final_mods <- list.files(final.folder, 
-                         full.names = TRUE, 
-                         pattern = "raw_mean.+tif$", 
+final_mods <- list.files(final.folder,
+                         full.names = TRUE,
+                         pattern = "raw_mean.+tif$",
                          recursive = TRUE)
 final_mods
 ```
@@ -382,7 +379,7 @@ plot(final_models)
 
 The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. `ensemble_model()` calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by `ensemble_dir`. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).
 
-`ensemble_model()` uses a `which_final` parameter -analog to `which_model` in `final_model()` to specify which final(s) model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which_final = c("raw_mean")`).
+`ensemble_model()` uses a `which_final` parameter -analog to `which_model` in `final_model()` to specify which final model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which_final = c("raw_mean")`).
 
 ```{r ensemble_model, eval = TRUE}
 args(ensemble_model)
