@@ -89,7 +89,7 @@ species
 
 
 ```{r dataset, fig.width = 5, fig.height = 5, fig.cap = "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = TRUE}
-par(mfrow = c(2, 2, mar = c(2, 2, 3, 1))
+par(mfrow = c(2, 2), mar = c(2, 2, 3, 1))
 for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]), legend = FALSE, main = species[i])
   points(lat ~ lon, data = example_occs[[i]])
@@ -114,16 +114,16 @@ args(setup_sdmdata)
 ```
 
 ```
-function (species_name, occurrences, predictors, lon = "lon", 
-    lat = "lat", models_dir = "./models", real_absences = NULL, 
-    buffer_type = NULL, dist_buf = NULL, env_filter = FALSE, 
-    env_distance = "centroid", buffer_shape = NULL, min_env_dist = NULL, 
-    min_geog_dist = NULL, write_buffer = FALSE, seed = NULL, 
-    clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE, 
-    geo_filt = FALSE, geo_filt_dist = NULL, select_variables = FALSE, 
-    cutoff = 0.8, percent = 0.8, png_sdmdata = TRUE, n_back = 1000, 
-    partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7, 
-    cv_n = NULL, cv_partitions = NULL) 
+function (species_name, occurrences, predictors, lon = "lon",
+    lat = "lat", models_dir = "./models", real_absences = NULL,
+    buffer_type = NULL, dist_buf = NULL, env_filter = FALSE,
+    env_distance = "centroid", buffer_shape = NULL, min_env_dist = NULL,
+    min_geog_dist = NULL, write_buffer = FALSE, seed = NULL,
+    clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE,
+    geo_filt = FALSE, geo_filt_dist = NULL, select_variables = FALSE,
+    cutoff = 0.8, percent = 0.8, png_sdmdata = TRUE, n_back = 1000,
+    partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
+    cv_n = NULL, cv_partitions = NULL)
 NULL
 ```
 
@@ -186,7 +186,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 
 ## Fitting a model per partition: `do_any()` and `do_many()`
 
-Functions `do_any` and `do_many()` create a *model per partition, per algorithm*.
+Functions `do_any()` and `do_many()` create a *model per partition, per algorithm*.
 The difference between these functions that `do_any()` performs modeling for one
 individual algorithm at a time, that can be chosen by using parameter `algorithm`,
 while `do_many()` can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).
@@ -194,9 +194,9 @@ while `do_many()` can select multiple algorithms, with TRUE or FALSE statements 
 The available algorithms are:
 
 + `"bioclim"`, `"maxent"`, `"mahal"`, `"domain"`, as implemented in __dismo__ package (Hijmans et al 2017),
-+ Support Vector Machines (SVM), as implemented by packages __kernlab__ (`svmk` Karatzoglou et al. 2004] and __e1071__ (`svme` Meyer et al. 2017),
++ Support Vector Machines (SVM), as implemented by packages __kernlab__ (`svmk` Karatzoglou et al. 2004) and __e1071__ (`svme` Meyer et al. 2017),
 + GLM from base R, here implemented with a stepwise selection approach
-+ Random Forests (from package __randomForest__ @liaw_classification_2002)
++ Random Forests (from package __randomForest__, Liaw & Wiener 2002)
 + Boosted regression trees (BRT) as implemented by `gbm.step()` function in __dismo__ package (Hastie et al. 2001, Elith & Hijmans 2009).
 
 Details for the implementation of each model can be accessed in the documentation of the function.
@@ -320,11 +320,11 @@ args(final_model)
 ```
 
 ```
-function (species_name, algorithms = NULL, scale_models = TRUE, 
-    consensus_level = 0.5, models_dir = "./models", final_dir = "final_models", 
-    proj_dir = "present", which_models = c("raw_mean"), mean_th_par = c("spec_sens"), 
-    uncertainty = FALSE, png_final = TRUE, sensitivity = 0.9, 
-    ...) 
+function (species_name, algorithms = NULL, scale_models = TRUE,
+    consensus_level = 0.5, models_dir = "./models", final_dir = "final_models",
+    proj_dir = "present", which_models = c("raw_mean"), mean_th_par = c("spec_sens"),
+    uncertainty = FALSE, png_final = TRUE, sensitivity = 0.9,
+    ...)
 NULL
 ```
 
