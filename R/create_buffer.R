@@ -147,7 +147,7 @@ create_buffer <- function(species_name,
         if (!missing(min_env_dist)) {
         #min_env_dist
         q_min <- quantile(raster::getValues(env.filter),
-                      min_env_dist, names = FALSE, na.rm = TRUE)
+                      (1 - min_env_dist), names = FALSE, na.rm = TRUE)
         env.filter[env.filter >= q_min] <- NA
         }
         # we create a shapefile so it can be used to mask like the other types
