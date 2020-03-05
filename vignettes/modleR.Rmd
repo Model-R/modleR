@@ -39,13 +39,22 @@ remotes::install_github("Model-R/modleR", build = TRUE)
 # With vignette
 remotes::install_github("Model-R/modleR",
                         build = TRUE,
-                        build_opts = c("--no-resave-data", "--no-manual"))
+                        dependencies = TRUE,
+                        build_opts = c("--no-resave-data", "--no-manual"),
+                        build_vignettes = TRUE)
 
 ```
 
-(__Note regarding vignette building__: the default parameters in `build_opts`
-include `--no-build-vignettes`. Removing this will include this vignette on the
-installation. During installation, R may ask for some missing packages, which you can install by running `install.packages()`. Also, make sure that the maxent.jar file is available and in the java folder of dismo package. Please download it here: http://www.cs.princeton.edu/~schapire/maxent/)
+__Note regarding vignette building__: the default parameters in `build_opts`
+include `--no-build-vignettes`. In theory, removing this will include the 
+vignette on the installation but we have found that `build_vignettes = TRUE` is
+also necessary. During installation, R may ask to install or update some 
+packages. If any of these return an error you can install them apart by running
+`install.packages()` and retry. When building the vignette, package __rJava__ 
+and a JDK will be needed. Also, make sure that the maxent.jar file is available 
+and in the `java` folder of package __dismo__. Please download it [here]( 
+http://www.cs.princeton.edu/~schapire/maxent/). Vignette builindg may take a 
+while during installation.
 
 # Shiny app
 

@@ -87,7 +87,8 @@ sampling pseudoabsences}
 \item{clean_dupl}{Logical. If TRUE, removes points with the same longitude and
 latitude}
 
-\item{clean_nas}{Logical. If TRUE, removes points that are outside the bounds    #' of the raster}
+\item{clean_nas}{Logical. If TRUE, removes points that are outside the bounds
+of the raster}
 
 \item{clean_uni}{Logical. If TRUE, selects only one point per pixel}
 

@@ -42,7 +42,8 @@
 #' @param cv_n Number of crossvalidation runs
 #' @param clean_dupl Logical. If TRUE, removes points with the same longitude and
 #' latitude
-#' @param clean_nas Logical. If TRUE, removes points that are outside the bounds	#' of the raster
+#' @param clean_nas Logical. If TRUE, removes points that are outside the bounds
+#' of the raster
 #' @param clean_uni Logical. If TRUE, selects only one point per pixel
 #' @param cutoff Cutoff value of correlation between variables to exclude
 #' environmental layers
