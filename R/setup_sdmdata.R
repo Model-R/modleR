@@ -166,7 +166,7 @@ setup_sdmdata <- function(species_name,
 
         #checking metadata----
     if (file.exists(paste(setup.folder, "metadata.csv", sep = "/"))) {
-        message("metadata file found, checking metadata \n")
+        message("metadata file found, checking metadata")
         metadata_old <- read.csv(paste(setup.folder, "metadata.csv", sep = "/"),
                                    as.is = FALSE) #row.names = 1)
         # removes columns that dont exist yet for comparison
@@ -240,7 +240,7 @@ setup_sdmdata <- function(species_name,
                 if (available_cells < n_back) {
                     n_back_mod <- available_cells
                     message(paste(available_cells, "available cells"))
-                    message(paste("Using", n_back_mod, "pseudoabsences", "\n"))
+                    message(paste("Using", n_back_mod, "pseudoabsences"))
                 } else {
                     n_back_mod <- n_back
                 }
@@ -256,7 +256,7 @@ setup_sdmdata <- function(species_name,
 
     # Seleccionando variables if sel_vars ==TRUE
     if (select_variables == TRUE) {
-    message(paste("selecting variables...", "\n"))
+    message(paste("selecting variables..."))
         predictors <- select_variables(predictors = predictors,
                                        buffer = pbuffr,
                                        cutoff = cutoff,
@@ -268,7 +268,7 @@ setup_sdmdata <- function(species_name,
     metadata_new$final.n <- as.integer(final_n)
     metadata_new$final.n.back <- as.integer(n_back_mod)
 
-    message(paste("saving metadata"), "\n")
+    message("saving metadata")
     write.table(metadata_new, file = paste(setup.folder, "metadata.csv", sep = "/"),
                 sep = ",", col.names = TRUE, row.names = FALSE)
 
@@ -358,13 +358,13 @@ setup_sdmdata <- function(species_name,
     if (exists("cv_0"))   sdmdata <- data.frame(cv_0, sdmdata)
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
-    message(paste("saving sdmdata", "\n"))
+    message("saving sdmdata")
     write.table(sdmdata, file = paste(setup.folder, "sdmdata.csv", sep = "/"),
                 sep = ",", row.names = FALSE, col.names = TRUE)
 
 
     if (png_sdmdata) {
-        message(paste("Plotting the dataset...", "\n"))
+        message("Plotting the dataset...")
         png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = FALSE, col = "grey90", colNA = NA)

@@ -189,6 +189,8 @@
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the models. This
 #' mask can be used if the final area of interest is smaller than the area used
 #'  for model fitting, to save disk space
+#' @param write_rda Logical, whether .rda objects with the fitted models will
+#' be written
 #' @param png_partitions Logical, whether png files will be written
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png)
 #' should be written

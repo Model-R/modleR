@@ -137,7 +137,7 @@ NULL
 ```
 
 + `species_name` is the name of the species to model
-+ `occurrences` is the dataframe with occurrences, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
++ `occurrences` is the data frame with occurrences, lat and lon are the names of the columns for latitude and longitude, respectively. If they are already named `lat` and `lon` they need not be specified.
 + `predictors`: is the rasterStack of the environmental variables
 
 There are a couple options for data cleaning:
@@ -185,7 +185,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              cutoff = 0.7)
 ```
 
-+ The function will return a `sdmdata` data frame, with the groups for training and test in bootstrap or crossvalidation, a `pa` vector that marks presences and absences, and the environmental dataset. This same dataframe will be written in the hard disk, as `sdmdata.txt`
++ The function will return a `sdmdata` data frame, with the groups for training and test in bootstrap or crossvalidation, a `pa` vector that marks presences and absences, and the environmental dataset. This same data frame will be written in the hard disk, as `sdmdata.txt`
 + It will also write a `metadata.txt` with the parameters of the latest modeling round. If there has been a cleaning step, it will show different values in the "original.n" and "final.n" columns.
 + __NOTE:__ `setup_sdmdata` will check if there's a prior folder structure and `sdmdata.txt` and `metadata.txt` files, in order to avoid repeating the data partitioning.
     + If a call to the function encounters previously written metadata, it will check if the current round has the same parameters and skip the data partitioning. A message will be displayed:

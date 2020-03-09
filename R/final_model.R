@@ -178,7 +178,7 @@ final_model <- function(species_name,
             cat(paste("No partition selected", species_name, algo, proj_dir, "\n"))
         } else if (length(sel.index) != 0) {
             message(paste(length(sel.index), "/", n.part,
-                          "partitions will be used for", species_name, algo, "\n"))
+                          "partitions will be used for", species_name, algo))
             if (length(sel.index) == 1) {#this should not happen anymore a menos que sea un solo modelo fitteado
                 warning(paste("when only one partition is selected the final models
                           are identical to the original model", "\n"))
@@ -255,7 +255,7 @@ final_model <- function(species_name,
                 }
             which_final <- final_algo[[which_f]]
 
-           message(paste("writing models", algo, names(which_final), "\n"))
+           message(paste("writing models", algo, names(which_final)))
            if (raster::nlayers(which_final) > 1 ) {
            raster::writeRaster(which_final,
                                 filename = paste0(final_path,

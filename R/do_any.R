@@ -7,6 +7,7 @@ do_any <- function(species_name,
                    project_model = FALSE,
                    proj_data_folder = "./data/proj",
                    mask = NULL,
+                   write_rda = FALSE,
                    png_partitions = FALSE,
                    write_bin_cut = FALSE,
                    dismo_threshold = "spec_sens",
@@ -38,7 +39,7 @@ do_any <- function(species_name,
              folder settings")
         }
 
-    message(paste(algorithm, "\n"))
+    message(paste(algorithm))
 
     retained_predictors <-
         names(sdmdata)[(which(names(sdmdata) == "lat") + 1):ncol(sdmdata)]
@@ -65,7 +66,7 @@ do_any <- function(species_name,
         for (g in setdiff(unique(group), 0)) {
             #excluding the zero allows for bootstrap. only 1 partition will run
             message(paste(species_name, algorithm, "run number", i, "part. nb.",
-                          g, "\n"))
+                          g))
             pres_train <- occurrences[group != g, ]
             if (nrow(occurrences) == 1) #only distance algorithms can be run
                 pres_train <- occurrences[group == g, ]
@@ -277,6 +278,12 @@ do_any <- function(species_name,
                                         overwrite = TRUE)
                 }
 
+                if (write_rda == TRUE) {
+                    message("writing .rda objects")
+                    save(mod, file = paste0(partition.folder, "/", algorithm,
+                                            "_model_", species_name, "_", i,
+                                            "_", g, ".rda"))
+                }
 
                 if (png_partitions == TRUE) {
                     message("writing png files")
@@ -433,12 +440,11 @@ do_any <- function(species_name,
                     }
                 }
             } else message(paste(species_name, algorithm, "run number", i, "part. nb.",
-                                 g, "could not be fit \n"))
+                                 g, "could not be fit"))
         }
 
     }
-    out <- list(mod, th_table)
-    return(out)
+    return(th_table)
     message("DONE!")
     print(date())
 }

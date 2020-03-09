@@ -37,9 +37,9 @@ clean <- function(occurrences,
                 }
         }
 
-        cat(ori - nrow(occurrences), "points removed\n")
-        cat(nrow(occurrences), " clean points\n")
+        message(paste(ori - nrow(occurrences), "points removed"))
+        message(paste(nrow(occurrences), "clean points"))
         return(occurrences)
     } else
-        (cat("Indicate the object with the predictive variables"))
+        message("indicate the object with the predictive variables")
 }
