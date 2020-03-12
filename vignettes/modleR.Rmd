@@ -67,7 +67,7 @@ The workflow consists of mainly four functions that should be used sequentially.
 
 
 ```{r, echo = FALSE}
-knitr::include_graphics("workflow.png", dpi = 150)
+knitr::include_graphics("fig01_workflow.jpg", dpi = 150)
 ```
 
 
@@ -330,7 +330,7 @@ There are many ways to create a final model per algorithm per species. `final_mo
 
 
 ```{r, echo = FALSE}
-knitr::include_graphics("final_model_english.png", dpi = 150)
+knitr::include_graphics("fig05_finalmodel.png", dpi = 150)
 ```
 
 + The partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.

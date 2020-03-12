@@ -41,7 +41,7 @@ uses a previous version of this workflow and is currently being updated to this 
 
 The workflow consists of mainly four functions that should be used sequentially.
 
-![__`modleR` workflow__](vignettes/workflow.png)
+![__`modleR` workflow__](vignettes/fig01_workflow.jpg)
 
 1. Setup: `setup_sdmdata()` prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling
 2. Model fitting and projecting: `do_any()` makes the ENM for one algorithm and partition; optionally, `do_many()` calls `do_any()` to fit multiple algorithms
@@ -315,7 +315,7 @@ At the end of a modeling round, the partition folder containts:
 
 There are many ways to create a final model per algorithm per species. `final_model()` follows the following logic:
 
-![__`final_model()` options__](vignettes/final_model_english.png)
+![__`final_model()` options__](vignettes/fig05_finalmodel.png)
 
 + The partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
 + Their means can be calculated (`raw_mean`, `bin_mean`)
