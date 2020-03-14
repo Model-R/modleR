@@ -127,8 +127,8 @@ ensemble_model <- function(species_name,
     print(date())
 
 
-    cat(paste(species_name, "\n"))
-    cat(paste("Reading mean evaluation files for", species_name, "in", proj_dir, "\n"))
+    message(species_name)
+    message(paste("Reading mean evaluation files for", species_name, "in", proj_dir))
 
     ## reads mean statistics table per algorithm
 
@@ -159,7 +159,7 @@ ensemble_model <- function(species_name,
                                      paste0(stats_summary$algorithm[best],
                                             "_", which_final, ".tif$"))
     if (length(best_mod_files) == 0)
-        stop(paste("No", which_final, "models to ensemble from for", species_name, "\n"))
+        stop(paste("No", which_final, "models to ensemble from for", species_name))
     best_mod <- raster(best_mod_files)
     names(best_mod) <- "best"
     writeRaster(best_mod,
@@ -176,7 +176,7 @@ ensemble_model <- function(species_name,
                                      full.names = TRUE,
                                      pattern = paste0("_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
-            stop(paste("No models to assemble from for", species_name, "\n"))
+            stop(paste("No models to assemble from for", species_name))
         raw_mean_models <- raster::stack(raw_mean_files)
         average_ensemble <- mean(raw_mean_models)
         names(average_ensemble) <-  "average"
@@ -196,7 +196,7 @@ ensemble_model <- function(species_name,
                                      full.names = TRUE,
                                      pattern = "_raw_mean.tif$")
         if (length(raw_mean_files) == 0)
-            stop(paste("No models to ensemble from for", species_name, "\n"))
+            stop(paste("No models to ensemble from for", species_name))
         raw_mean_models <- raster::stack(raw_mean_files)
         weighted_average <- raster::weighted.mean(raw_mean_models, w_coefs)
         names(weighted_average) <- "weighted_average"
@@ -214,7 +214,7 @@ ensemble_model <- function(species_name,
                                      full.names = TRUE,
                                      pattern = paste0("_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
-            stop(paste("No models to ensemble from for", species_name, "\n"))
+            stop(paste("No models to ensemble from for", species_name))
         raw_mean_models <- raster::stack(raw_mean_files)
         median_ensemble <- raster::calc(raw_mean_models,
                                          fun = function(x) {
@@ -237,7 +237,7 @@ ensemble_model <- function(species_name,
                                          paste0(
                                              "_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
-            stop(paste("No models to ensemble from for", species_name, "\n"))
+            stop(paste("No models to ensemble from for", species_name))
         raw_mean_models <- raster::stack(raw_mean_files)
         if (is.null(dismo_threshold))
             stop("A dismo_threshold must be specified to create binary models")
@@ -276,7 +276,7 @@ ensemble_model <- function(species_name,
                                          paste0(
                                              "_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
-            stop(paste("No models to ensemble from for", species_name, "\n"))
+            stop(paste("No models to ensemble from for", species_name))
         raw_mean_models <- raster::stack(raw_mean_files)
         vals <- raster::getValues(raw_mean_models)
         vals <- vals[!is.na(rowSums(vals)),]

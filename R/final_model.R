@@ -117,9 +117,9 @@ final_model <- function(species_name,
         dir.create(final_folder)
     }
     print(date())
-    cat(paste(species_name, "\n")
+    message(species_name)
 
-    cat(paste("Reading evaluation files for", species_name, "in", proj_dir, "\n"))
+    message(paste("Reading evaluation files for", species_name, "in", proj_dir))
     evall <- list.files(
         path = paste0(models_dir, "/", species_name, "/present/partitions"),
         pattern = "^evaluate.+.csv$", full.names = TRUE)
@@ -157,12 +157,12 @@ final_model <- function(species_name,
                                             "_mean_statistics.csv"))
     for (algo in algorithms) {
         final_algo <- raster::stack()
-        cat(paste("Extracting data for", species_name, algo, "\n"))
+        message(paste("Extracting data for", species_name, algo))
         stats.algo <- stats[stats$algorithm == algo, ]
         #stats.algo <- stats.run[stats.run$algoritmo == algo, ]
         n.part <- nrow(stats.algo)  #How many partitions were there
         #n.part <-  length(unique(stats.algo$partition)) #How many partitions were there
-        cat(paste("Reading models from .tif files", "\n"))
+        message(paste("Reading models from .tif files"))
         modelos.cont <-
             list.files(
                 path = paste0(models_dir, "/", species_name, "/", proj_dir,
@@ -175,13 +175,13 @@ final_model <- function(species_name,
         sel.index <- seq(1, n.part, 1)
         pond.stats <- rep(1,n.part)
         if (length(sel.index) == 0) {#this should not happen anymore
-            cat(paste("No partition selected", species_name, algo, proj_dir, "\n"))
+            message(paste("No partition selected", species_name, algo, proj_dir))
         } else if (length(sel.index) != 0) {
             message(paste(length(sel.index), "/", n.part,
                           "partitions will be used for", species_name, algo))
             if (length(sel.index) == 1) {#this should not happen anymore a menos que sea un solo modelo fitteado
                 warning(paste("when only one partition is selected the final models
-                          are identical to the original model", "\n"))
+                          are identical to the original model"))
                 cont.sel.1  <- mod.cont[[c(sel.index, sel.index)]]
                 pond.stats <- c(pond.stats, pond.stats)#(1)
                 }
@@ -242,8 +242,8 @@ final_model <- function(species_name,
                 final_algo <- raster::addLayer(final_algo, raw_inctz)
                 }
             #creation ok
-                #cat(paste("selected final models for", species_name, algo, "run", run, "DONE", "\n"))
-                cat(paste("selected final models for", species_name, algo, "DONE", "\n"))
+                #message(paste("selected final models for", species_name, algo, "run", run, "DONE"))
+                message(paste("selected final models for", species_name, algo, "DONE"))
         }
 #################
 
@@ -255,7 +255,7 @@ final_model <- function(species_name,
                 }
             which_final <- final_algo[[which_f]]
 
-           message(paste("writing models", algo, names(which_final)))
+           message(paste("Writing models", algo))
            if (raster::nlayers(which_final) > 1 ) {
            raster::writeRaster(which_final,
                                 filename = paste0(final_folder,
@@ -285,7 +285,7 @@ final_model <- function(species_name,
         }
 
     } #else {
-      #  warning(paste("no models were selected for", species_name, algo, "\n"))
+      #  warning(paste("no models were selected for", species_name, algo))
     #}
       #  }
     # creating and writing final_model metadata
