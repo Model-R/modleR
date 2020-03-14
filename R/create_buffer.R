@@ -90,10 +90,11 @@ create_buffer <- function(species_name,
     sp::coordinates(occurrences) <- ~lon + lat
     raster::crs(occurrences) <- raster::crs(predictors)
     if (!buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
-        message("buffer_type NULL or not recognized, returning predictors")
+        message("No inclusion buffer was applied")
         r_buffer <- predictors[[1]]
     }
     if (buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
+        message("Applying buffer")
             if (buffer_type == "user") {
                 if (missing(buffer_shape) | !class(buffer_shape) %in%
                     c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
@@ -161,7 +162,7 @@ create_buffer <- function(species_name,
                 warning("min_geog_dist is higher than dist_buf")
             }
         }
-
+        message("Applying geographic filter")
         buffer.shape.min <- rgeos::gBuffer(spgeom = occurrences,
                                            byid = FALSE,
                                            width = min_geog_dist)

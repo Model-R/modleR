@@ -111,13 +111,13 @@ final_model <- function(species_name,
                         sensitivity = 0.9,
                         ...) {
     # Escribe final
-    final_path <- paste(models_dir, species_name, proj_dir,
+    final_folder <- paste(models_dir, species_name, proj_dir,
                         final_dir, sep = "/")
-    if (file.exists(final_path) == FALSE) {
-        dir.create(final_path)
+    if (file.exists(final_folder) == FALSE) {
+        dir.create(final_folder)
     }
     print(date())
-    cat(paste(species_name, "\n"))
+    cat(paste(species_name, "\n")
 
     cat(paste("Reading evaluation files for", species_name, "in", proj_dir, "\n"))
     evall <- list.files(
@@ -258,7 +258,7 @@ final_model <- function(species_name,
            message(paste("writing models", algo, names(which_final)))
            if (raster::nlayers(which_final) > 1 ) {
            raster::writeRaster(which_final,
-                                filename = paste0(final_path,
+                                filename = paste0(final_folder,
                                                   "/", species_name, "_", algo),
                                 suffix = "names",
                                 bylayer = TRUE,
@@ -266,7 +266,7 @@ final_model <- function(species_name,
                }
            if (raster::nlayers(which_final) == 1 ) {
            raster::writeRaster(which_final,
-                                filename = paste0(final_path,
+                                filename = paste0(final_folder,
                                                   "/", species_name, "_", algo,
                                                   "_", names(which_final)),
                                 format = "GTiff", ...)
@@ -274,7 +274,7 @@ final_model <- function(species_name,
 
             if (png_final == TRUE) {
                 for (i in 1:raster::nlayers(which_final)) {
-                    png(filename = paste0(final_path, "/",
+                    png(filename = paste0(final_folder, "/",
                                           species_name, "_", algo, "_",
                                           names(which_final)[i], ".png"))
                     raster::plot(which_final[[i]], main = names(which_final)[i])
@@ -299,7 +299,11 @@ final_model <- function(species_name,
       uncertainty = ifelse(uncertainty, "yes", "no")
       )
     message("writing metadata")
-    write.csv(metadata, file = paste0(final_path, "/metadata.csv"))
+    write.csv(metadata, file = paste0(final_folder, "/metadata.csv"))
+
+    #writes session info
+    write_session_info(final_folder)
+
     print(paste("DONE", algo, "!"))
     return(stats)
     print(date())

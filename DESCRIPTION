@@ -39,6 +39,7 @@ Imports:
     rgdal,
     rJava,
     scales,
+    sessioninfo,
     sp
 Remotes: marlonecobos/kuenm
 URL: https://model-r.github.io/modleR/index.html

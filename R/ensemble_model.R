@@ -116,19 +116,23 @@ ensemble_model <- function(species_name,
 
 
     ## output folder
-    if (file.exists(
-        paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-               ensemble_dir, "/")) == FALSE) {
-        dir.create(paste0(models_dir, "/", species_name, "/", proj_dir, "/",
-                          ensemble_dir, "/"))
+    present_folder <- paste(models_dir, species_name, "present", sep = "/")
+    final_folder <- paste(models_dir, species_name, proj_dir, final_dir,
+                          sep = "/")
+    ensemble_folder <- paste(models_dir, species_name, proj_dir, ensemble_dir,
+                             sep = "/")
+    if (!file.exists(ensemble_folder)) {
+        dir.create(ensemble_folder)
     }
     print(date())
+
+
     cat(paste(species_name, "\n"))
     cat(paste("Reading mean evaluation files for", species_name, "in", proj_dir, "\n"))
 
     ## reads mean statistics table per algorithm
 
-    stats_summary <- read.csv(paste0(models_dir, "/", species_name, "/present/",
+    stats_summary <- read.csv(paste0(present_folder, "/",
                                      final_dir, "/", species_name,
                                      "_mean_statistics.csv"), header = TRUE,
                               row.names = 1)
@@ -148,10 +152,7 @@ ensemble_model <- function(species_name,
                   performance_metric, "values"))
     if (is.null(which_final))
         stop("A which_final model must be specified to return the 'best' algorithm")
-    best_mod_files <- list.files(paste0(models_dir, "/",
-                                        species_name, "/",
-                                        proj_dir, "/",
-                                        final_dir),
+    best_mod_files <- list.files(final_folder,
                                  recursive = TRUE,
                                  full.names = TRUE,
                                  pattern =
@@ -162,40 +163,27 @@ ensemble_model <- function(species_name,
     best_mod <- raster(best_mod_files)
     names(best_mod) <- "best"
     writeRaster(best_mod,
-                filename = paste0(models_dir, "/", species_name,
-                                  "/", proj_dir, "/",
-                                  ensemble_dir, "/", species_name,
+                filename = paste0(ensemble_folder, "/", species_name,
                                   "_", which_final,
                                   "_ensemble", "_best",
-                                  ".tif"),
-                ...
-                )
+                                  ".tif"), ...)
     ensemble_mods <- raster::addLayer(ensemble_mods, best_mod)
 
     }
     if ("average" %in% which_ensemble) {
-        raw_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
+        raw_mean_files <- list.files(final_folder,
                                      recursive = TRUE,
                                      full.names = TRUE,
-                                     pattern =
-                                         paste0(
-                                                "_raw_mean.tif$"))
+                                     pattern = paste0("_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
             stop(paste("No models to assemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         average_ensemble <- mean(raw_mean_models)
         names(average_ensemble) <-  "average"
         writeRaster(average_ensemble,
-                    filename = paste0(models_dir, "/", species_name,
-                                      "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name,
+                    filename = paste0(ensemble_folder, "/", species_name,
                                       "_ensemble", "_average",
-                                      ".tif"),
-                    ...
-        )
+                                      ".tif"), ...)
         ensemble_mods <- raster::addLayer(ensemble_mods, average_ensemble)
 
     }
@@ -203,42 +191,28 @@ ensemble_model <- function(species_name,
         if (is.null(performance_metric))
             stop("A performance metric must be specified to compute the weighted average")
         w_coefs <- stats_summary[,performance_metric]
-        raw_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
+        raw_mean_files <- list.files(final_folder,
                                      recursive = TRUE,
                                      full.names = TRUE,
-                                     pattern =
-                                         paste0(
-                                                "_raw_mean.tif$"))
+                                     pattern = "_raw_mean.tif$")
         if (length(raw_mean_files) == 0)
             stop(paste("No models to ensemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
         weighted_average <- raster::weighted.mean(raw_mean_models, w_coefs)
         names(weighted_average) <- "weighted_average"
         writeRaster(weighted_average,
-                    filename = paste0(models_dir, "/", species_name,
-                                      "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name,
+                    filename = paste0(ensemble_folder, "/", species_name,
                                       "_", performance_metric,
                                       "_ensemble_weighted_average",
-                                      ".tif"),
-                    ...
-        )
+                                      ".tif"), ...)
         ensemble_mods <- raster::addLayer(ensemble_mods, weighted_average)
 
     }
     if ("median" %in% which_ensemble) {
-        raw_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
+        raw_mean_files <- list.files(final_folder,
                                      recursive = TRUE,
                                      full.names = TRUE,
-                                     pattern =
-                                         paste0(
-                                             "_raw_mean.tif$"))
+                                     pattern = paste0("_raw_mean.tif$"))
         if (length(raw_mean_files) == 0)
             stop(paste("No models to ensemble from for", species_name, "\n"))
         raw_mean_models <- raster::stack(raw_mean_files)
@@ -249,21 +223,14 @@ ensemble_model <- function(species_name,
                                          )
         names(median_ensemble) <- "median"
         writeRaster(median_ensemble,
-                    filename = paste0(models_dir, "/", species_name,
-                                      "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name,
+                    filename = paste0(ensemble_folder, "/", species_name,
                                       "_ensemble", "_median",
-                                      ".tif"),
-                    ...
-        )
+                                      ".tif"), ...)
         ensemble_mods <- raster::addLayer(ensemble_mods, median_ensemble)
     }
     if (any(c("frequency", "consensus") %in% which_ensemble)) {
         #reads raw
-        raw_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
+        raw_mean_files <- list.files(final_folder,
                                      recursive = TRUE,
                                      full.names = TRUE,
                                      pattern =
@@ -282,13 +249,9 @@ ensemble_model <- function(species_name,
         names(frequency_ensemble) <- "frequency"
         if ("frequency" %in% which_ensemble) {
         writeRaster(frequency_ensemble,
-                    filename = paste0(models_dir, "/", species_name,
-                                      "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name,
+                    filename = paste0(ensemble_folder, "/", species_name,
                                       "_ensemble", "_frequency",
-                                      ".tif"),
-                    ...
-        )
+                                      ".tif"), ...)
             ensemble_mods <- raster::addLayer(ensemble_mods, frequency_ensemble)
         }
         if ("consensus" %in% which_ensemble) {
@@ -297,23 +260,16 @@ ensemble_model <- function(species_name,
             consensus_ensemble <- frequency_ensemble > consensus_level
             names(consensus_ensemble) <- "consensus"
             writeRaster(consensus_ensemble,
-                        filename = paste0(models_dir, "/", species_name,
-                                          "/", proj_dir, "/",
-                                          ensemble_dir, "/", species_name,
+                        filename = paste0(ensemble_folder, "/", species_name,
                                           "_ensemble_", consensus_level,
                                           "_consensus",
-                                          ".tif"),
-                        ...
-            )
+                                          ".tif"), ...)
             ensemble_mods <- raster::addLayer(ensemble_mods, consensus_ensemble)
 
         }
     }
     if ("pca" %in% which_ensemble) {
-        raw_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
+        raw_mean_files <- list.files(final_folder,
                                      recursive = TRUE,
                                      full.names = TRUE,
                                      pattern =
@@ -333,20 +289,13 @@ ensemble_model <- function(species_name,
         first_axis <- rescale_layer(first_axis)
         names(first_axis) <- "pca"
         writeRaster(first_axis,
-                    filename = paste0(models_dir, "/", species_name,
-                                      "/", proj_dir, "/",
-                                      ensemble_dir, "/", species_name,
+                    filename = paste0(ensemble_folder, "/", species_name,
                                       "_ensemble_pca_", round(expl,3),
-                                      ".tif"),
-                    ...
-        )
+                                      ".tif"), ...)
         ensemble_mods <- raster::addLayer(ensemble_mods, first_axis)
     }
     if (uncertainty == TRUE) {
-        raw_mean_files <- list.files(paste0(models_dir, "/",
-                                            species_name, "/",
-                                            proj_dir, "/",
-                                            final_dir),
+        raw_mean_files <- list.files(final_folder,
                                      recursive = TRUE,
                                      full.names = TRUE,
                                      pattern =
@@ -413,14 +362,16 @@ ensemble_model <- function(species_name,
         which_final = paste(which_final, collapse = "-"),
         performance_metric = as.character(performance_metric),
         dismo_threshold = as.character(dismo_threshold),
-        consensus_level = ifelse("consensus" %in% which_ensemble, consensus_level, NA),
+        consensus_level = ifelse("consensus" %in% which_ensemble,
+                                 consensus_level, NA),
         scale_models = ifelse(scale_models, "yes", "no"),
         uncertainty = ifelse(uncertainty, "yes", "no")
     )
     message("writing metadata")
-    write.csv(metadata, file = paste0(models_dir, "/", species_name, "/",
-                                      proj_dir, "/", ensemble_dir,
+    write.csv(metadata, file = paste0(ensemble_folder,
                                       "/metadata.csv"))
+    #writes session info
+    write_session_info(ensemble_folder)
     print("DONE!")
     print(date())
     return(ensemble_mods)

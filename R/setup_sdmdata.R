@@ -70,7 +70,9 @@
 #'     \insertAllCited{}
 #' @seealso \code{\link{create_buffer}}
 #' @importFrom utils write.table
+#' @importFrom utils capture.output
 #' @importFrom stats cor
+#' @importFrom sessioninfo session_info
 #' @export
 #'
 #'
@@ -122,10 +124,13 @@ setup_sdmdata <- function(species_name,
         dir.create(paste(models_dir, species_name, sep = "/"))
 
     #creates a separate folder for sdmdata and metadata
-    setup.folder <-
+    setup_folder <-
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
-    if (file.exists(setup.folder) == FALSE)
-        dir.create(setup.folder, recursive = TRUE)
+    if (file.exists(setup_folder) == FALSE)
+        dir.create(setup_folder, recursive = TRUE)
+    #writes session info
+    write_session_info(setup_folder)
+
 
     ## checking latitude and longitude columns
     if (all(c(lon, lat) %in% names(occurrences))) {
@@ -165,9 +170,9 @@ setup_sdmdata <- function(species_name,
         )
 
         #checking metadata----
-    if (file.exists(paste(setup.folder, "metadata.csv", sep = "/"))) {
+    if (file.exists(paste(setup_folder, "metadata.csv", sep = "/"))) {
         message("metadata file found, checking metadata")
-        metadata_old <- read.csv(paste(setup.folder, "metadata.csv", sep = "/"),
+        metadata_old <- read.csv(paste(setup_folder, "metadata.csv", sep = "/"),
                                    as.is = FALSE) #row.names = 1)
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
@@ -175,7 +180,7 @@ setup_sdmdata <- function(species_name,
                                              c("final.n", "final.n.back", "selected_predictors"))]
         if (all(all.equal(metadata_old, metadata_new) == TRUE)) {
             message("same metadata, no need to run data partition")
-            sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"), as.is = FALSE)
+            sdmdata <- read.csv(paste(setup_folder, "sdmdata.csv", sep = "/"), as.is = FALSE)
             return(sdmdata)
             }
     }
@@ -269,7 +274,7 @@ setup_sdmdata <- function(species_name,
     metadata_new$final.n.back <- as.integer(n_back_mod)
 
     message("saving metadata")
-    write.table(metadata_new, file = paste(setup.folder, "metadata.csv", sep = "/"),
+    write.table(metadata_new, file = paste(setup_folder, "metadata.csv", sep = "/"),
                 sep = ",", col.names = TRUE, row.names = FALSE)
 
     # cria a tabela de valores
@@ -359,13 +364,13 @@ setup_sdmdata <- function(species_name,
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
     message("saving sdmdata")
-    write.table(sdmdata, file = paste(setup.folder, "sdmdata.csv", sep = "/"),
+    write.table(sdmdata, file = paste(setup_folder, "sdmdata.csv", sep = "/"),
                 sep = ",", row.names = FALSE, col.names = TRUE)
 
 
     if (png_sdmdata) {
         message("Plotting the dataset...")
-        png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
+        png(filename = paste0(setup_folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = FALSE, col = "grey90", colNA = NA)
         points(back, pch = ".", col = "black")
