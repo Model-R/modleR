@@ -138,13 +138,13 @@ sdmdata files into the hard disk.</p>
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code>example_occs</code> as an example</p></td>
+<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>occurrences</th>
       <td><p>A data frame with occurrence data. Data must have at least
  columns with latitude and longitude values of species occurrences.
-See <code>example_occs</code> as an example</p></td>
+See <code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>predictors</th>
@@ -300,7 +300,7 @@ for bootstrap</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Other parameters from <code>create_buffer</code></p></td>
+      <td><p>Other parameters from <code><a href='create_buffer.html'>create_buffer</a></code></p></td>
     </tr>
     </table>
 
@@ -313,17 +313,17 @@ environmental variables (either all the layers or the selected ones if
 <code>select_variables = TRUE</code>).</p>
 <p>Function writes on disk (inside subfolder
 at <code>models_dir</code> directory) a text file named sdmdata.csv that will be used
-by <code>do_any</code> or <code>do_many</code></p>
+by <code><a href='model_fit.html'>do_any</a></code> or <code><a href='model_fit.html'>do_many</a></code></p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Varela S, Anderson RP, Garc\'ia-Valdés R, Fernández-González F (2014).
 &#8220;Environmental Filters Reduce the Effects of Sampling Bias and Improve Predictions of Ecological Niche Models.&#8221;
 <em>Ecography</em>, <b>37</b>(11), 1084-1091.
-ISSN 1600-0587, doi: <a href='http://doi.org/10.1111/j.1600-0587.2013.00441.x'>10.1111/j.1600-0587.2013.00441.x</a>
+ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.1600-0587.2013.00441.x'>10.1111/j.1600-0587.2013.00441.x</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>create_buffer</code></p></div>
+    <div class='dont-index'><p><code><a href='create_buffer.html'>create_buffer</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]

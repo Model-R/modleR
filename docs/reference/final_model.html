@@ -127,11 +127,11 @@ simply recommend to focus on statistical clarity rather than significance
     </div>
 
     <div class="ref-description">
-    <p>This function reads the models generated either by <code>do_any</code> or
-<code>do_many</code> (i.e. one model per partition per algorithm) and
+    <p>This function reads the models generated either by <code><a href='model_fit.html'>do_any</a></code> or
+<code><a href='model_fit.html'>do_many</a></code> (i.e. one model per partition per algorithm) and
 summarizes them into a final model for each species-algorithm combination.
 These final models may be created from the raw continuous models, the binary
-models or the "cut" models (see <code>do_any</code>). They may use all
+models or the "cut" models (see <code><a href='model_fit.html'>do_any</a></code>). They may use all
 partitions or select only partitions with performance metrics above a defined
 value (parameters <code>select_partitions</code>, <code>select_par</code> and
 <code>select_par_val</code>). The function can also calculate weighted means of the
@@ -149,7 +149,7 @@ simply recommend to focus on statistical clarity rather than significance
     </div>
 
     <pre class="usage"><span class='fu'>final_model</span>(<span class='no'>species_name</span>, <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>select_partitions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSS"</span>, <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>weight_par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>, <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>weight_par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>cut_level</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spec_sens"</span>), <span class='kw'>scale_models</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>,
   <span class='kw'>final_dir</span> <span class='kw'>=</span> <span class='st'>"final_models"</span>, <span class='kw'>proj_dir</span> <span class='kw'>=</span> <span class='st'>"present"</span>,
@@ -165,7 +165,7 @@ simply recommend to focus on statistical clarity rather than significance
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code>example_occs</code> as an example</p></td>
+<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>algorithms</th>
@@ -182,7 +182,7 @@ threshold value are selected</p></td>
     <tr>
       <th>select_par</th>
       <td><p>Which performance statistic should be used to select the
-partitions. Defaults to NULL but either <code>"AUC"</code> or <code>"TSS"</code> can be
+partitions. Defaults to NULL but either <code>"AUC"</code> or <code>"TSSmax"</code> can be
 used</p></td>
     </tr>
     <tr>
@@ -192,14 +192,15 @@ used</p></td>
     <tr>
       <th>weight_par</th>
       <td><p>Which performance statistic should be used to weigh the
-partitions. Defaults to NULL but either <code><a href='https://rdrr.io/r/base/c.html'>c("AUC", "TSS")</a></code> can be used</p></td>
+partitions. Defaults to NULL but either <code><a href='https://rdrr.io/r/base/c.html'>c("AUC", "TSSmax")</a></code> can be used</p></td>
     </tr>
     <tr>
       <th>cut_level</th>
-      <td><p>Which selecting threshold will be used to cut the mean
-models. Default is set to "<code>spec_sens</code>" but any <span class="pkg">dismo</span> threshold (see
-function <code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>) can be used: "<code>kappa</code>", "<code>no_omission</code>",
- "<code>prevalence</code>", "<code>equal_sens_spec</code>", "<code>sensitivity</code>"</p></td>
+      <td><p>A threshold that will be used to cut the
+raw mean models. Default is set to "<code>spec_sens</code>" but any <span class="pkg">dismo</span>
+threshold (see function <code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>) can be used:
+"<code>kappa</code>", "<code>no_omission</code>", "<code>prevalence</code>",
+"<code>equal_sens_spec</code>", "<code>sensitivity</code>"</p></td>
     </tr>
     <tr>
       <th>scale_models</th>
@@ -275,7 +276,7 @@ models</p></td>
     <p>Dushoff J, Kain MP, Bolker BM (2019).
 &#8220;I Can See Clearly Now: Reinterpreting Statistical Significance.&#8221;
 <em>Methods in Ecology and Evolution</em>, <b>10</b>(6), 756-759.
-ISSN 2041-210X, doi: <a href='http://doi.org/10.1111/2041-210X.13159'>10.1111/2041-210X.13159</a>
+ISSN 2041-210X, doi: <a href='https://doi.org/10.1111/2041-210X.13159'>10.1111/2041-210X.13159</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -286,29 +287,24 @@ ISSN 2041-210X, doi: <a href='http://doi.org/10.1111/2041-210X.13159'>10.1111/20
     <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata</span>
 <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'>setup_sdmdata</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                           <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata </span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run do_any</span>
-<span class='no'>sp_bioclim</span> <span class='kw'>&lt;-</span> <span class='fu'>do_any</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_bioclim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='model_fit.html'>do_any</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                      <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
                      <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
 <span class='co'># run final_model</span>
 <span class='no'>sp_final</span> <span class='kw'>&lt;-</span> <span class='fu'>final_model</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                         <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>,
                         <span class='kw'>select_partitions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                        <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSS"</span>,
+                        <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>,
                         <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0</span>,
                         <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bin_consensus"</span>),
                         <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Tue Nov  5 23:46:38 2019"
+                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Wed Feb 19 09:26:59 2020"
 #&gt; Abarema_langsdorffii 
-#&gt; Reading evaluation files for Abarema_langsdorffii in present 
-#&gt; Extracting data for Abarema_langsdorffii bioclim 
-#&gt; Reading models from .tif files 
-#&gt; selecting partitions for Abarema_langsdorffii bioclim </div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii bioclim </span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected some final models</span>
-#&gt; <span class='warning'>                          are identical </span></div><div class='output co'>#&gt; Standardizing models from 0 to 1 
-#&gt; selected final models for Abarema_langsdorffii bioclim DONE </div><div class='output co'>#&gt; <span class='message'>writing models bioclim bin_consensus </span></div><div class='output co'>#&gt; [1] "DONE bioclim !"</div><div class='input'>
+#&gt; Reading evaluation files for Abarema_langsdorffii in present </div><div class='output co'>#&gt; <span class='error'>Error in data.table::rbindlist(lista_eval): Item 2 has 29 columns, inconsistent with item 1 which has 34 columns. To fill missing columns use fill=TRUE.</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
