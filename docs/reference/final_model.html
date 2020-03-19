@@ -39,22 +39,14 @@
 <meta property="og:description" content="This function reads the models generated either by do_any or
 do_many (i.e. one model per partition per algorithm) and
 summarizes them into a final model for each species-algorithm combination.
-These final models may be created from the raw continuous models, the binary
-models or the &quot;cut&quot; models (see do_any). They may use all
-partitions or select only partitions with performance metrics above a defined
-value (parameters select_partitions, select_par and
-select_par_val). The function can also calculate weighted means of the
-partitions (selected or not) using a performance statistic (passed to
-argument weight_par). After selecting and/or weighing each partition,
-a series of output can be created, see which_models for details about
-the final outputs available. Uncertainty taken as ranges between partitions may
-also be calculated. Analogous to no silver bullets in correlative
-ecological niche modeling, no method for evaluating and selecting partitions
-is always better and these are only a subset of the possibilities. The user
-should choose how to create the final model based on their assumptions. We
-simply recommend to focus on statistical clarity rather than significance
- (Dushoff et al. 2019)
-." />
+All the final models are created from the mean of the raw continuous models
+(raw_mean). From these means, several
+outputs can be created, see which_models for details about
+the final outputs available. The uncertainty between partitions, taken as
+ranges (maximum - minimum values) between partitions may also be calculated.
+Just as there are no silver bullets in correlative ecological niche
+modeling, no method for presenting this models is always better
+and these are only a subset of the possibilities." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,7 +99,12 @@ simply recommend to focus on statistical clarity rather than significance
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/Model-R/modleR">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -122,7 +119,7 @@ simply recommend to focus on statistical clarity rather than significance
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Joins ENM from several partitions, creating a model per algorithm</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/Model-R/modleR/blob/master/R/final_model.R'><code>R/final_model.R</code></a></small>
     <div class="hidden name"><code>final_model.Rd</code></div>
     </div>
 
@@ -130,31 +127,21 @@ simply recommend to focus on statistical clarity rather than significance
     <p>This function reads the models generated either by <code><a href='model_fit.html'>do_any</a></code> or
 <code><a href='model_fit.html'>do_many</a></code> (i.e. one model per partition per algorithm) and
 summarizes them into a final model for each species-algorithm combination.
-These final models may be created from the raw continuous models, the binary
-models or the "cut" models (see <code><a href='model_fit.html'>do_any</a></code>). They may use all
-partitions or select only partitions with performance metrics above a defined
-value (parameters <code>select_partitions</code>, <code>select_par</code> and
-<code>select_par_val</code>). The function can also calculate weighted means of the
-partitions (selected or not) using a performance statistic (passed to
-argument <code>weight_par</code>). After selecting and/or weighing each partition,
-a series of output can be created, see <code>which_models</code> for details about
-the final outputs available. Uncertainty taken as ranges between partitions may
-also be calculated. Analogous to <em>no silver bullets in correlative
-ecological niche modeling</em>, no method for evaluating and selecting partitions
-is always better and these are only a subset of the possibilities. The user
-should choose how to create the final model based on their assumptions. We
-simply recommend to focus on statistical clarity rather than significance
- (Dushoff et al. 2019)
-.</p>
+All the final models are created from the mean of the raw continuous models
+(<code>raw_mean</code>). From these means, several
+outputs can be created, see <code>which_models</code> for details about
+the final outputs available. The uncertainty between partitions, taken as
+ranges (maximum - minimum values) between partitions may also be calculated.
+Just as there are <em>no silver bullets in correlative ecological niche
+modeling</em>, no method for presenting this models is always better
+and these are only a subset of the possibilities.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>final_model</span>(<span class='no'>species_name</span>, <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>select_partitions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>, <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>weight_par</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>cut_level</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spec_sens"</span>), <span class='kw'>scale_models</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+    <pre class="usage"><span class='fu'>final_model</span>(<span class='no'>species_name</span>, <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>scale_models</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>,
   <span class='kw'>final_dir</span> <span class='kw'>=</span> <span class='st'>"final_models"</span>, <span class='kw'>proj_dir</span> <span class='kw'>=</span> <span class='st'>"present"</span>,
-  <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"raw_mean"</span>), <span class='kw'>uncertainty</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_final</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"raw_mean"</span>), <span class='kw'>mean_th_par</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spec_sens"</span>),
+  <span class='kw'>uncertainty</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>png_final</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>sensitivity</span> <span class='kw'>=</span> <span class='fl'>0.9</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,41 +162,14 @@ Defaults to NULL: if no name is given it will process all algorithms present
 in the evaluation files</p></td>
     </tr>
     <tr>
-      <th>select_partitions</th>
-      <td><p>Logical. If TRUE only partitions above a particular
-threshold value are selected</p></td>
-    </tr>
-    <tr>
-      <th>select_par</th>
-      <td><p>Which performance statistic should be used to select the
-partitions. Defaults to NULL but either <code>"AUC"</code> or <code>"TSSmax"</code> can be
-used</p></td>
-    </tr>
-    <tr>
-      <th>select_par_val</th>
-      <td><p>Performance metric value to select partitions</p></td>
-    </tr>
-    <tr>
-      <th>weight_par</th>
-      <td><p>Which performance statistic should be used to weigh the
-partitions. Defaults to NULL but either <code><a href='https://rdrr.io/r/base/c.html'>c("AUC", "TSSmax")</a></code> can be used</p></td>
-    </tr>
-    <tr>
-      <th>cut_level</th>
-      <td><p>A threshold that will be used to cut the
-raw mean models. Default is set to "<code>spec_sens</code>" but any <span class="pkg">dismo</span>
-threshold (see function <code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>) can be used:
-"<code>kappa</code>", "<code>no_omission</code>", "<code>prevalence</code>",
-"<code>equal_sens_spec</code>", "<code>sensitivity</code>"</p></td>
-    </tr>
-    <tr>
       <th>scale_models</th>
       <td><p>Logical. Whether input models should be scaled between 0
 and 1</p></td>
     </tr>
     <tr>
       <th>consensus_level</th>
-      <td><p>Which proportion of binary models will be kept when creating <code>bin_consensus</code></p></td>
+      <td><p>Which proportion of binary models will be kept when
+creating <code>bin_consensus</code></p></td>
     </tr>
     <tr>
       <th>models_dir</th>
@@ -217,8 +177,8 @@ and 1</p></td>
     </tr>
     <tr>
       <th>final_dir</th>
-      <td><p>Character. Name of the folder to save the output files.
-A subfolder will be created, defaults to "final_model"</p></td>
+      <td><p>Character. Name of the folder to save the output files. A
+subfolder will be created, defaults to "final_model"</p></td>
     </tr>
     <tr>
       <th>proj_dir</th>
@@ -233,21 +193,29 @@ be:</p><dl class='dl-horizontal'>
   <dt><code>raw_mean</code></dt><dd><p>Continuous model generated by the mean of the raw
   models (scale from 0 to 1)</p></dd>
   <dt><code>raw_mean_th</code></dt><dd><p>Cuts the <code>raw_mean</code> by the mean of the
-  thresholds that maximize the selected evaluation metric (e.g. TSS
-  (<code>spec_sens</code>) to make a binary model</p></dd>
-   <dt><code>raw_mean_cut</code></dt><dd><p>Recovers <code>raw_mean</code> values above the mean
-   threshold that maximizes the selected evaluation metric (e.g. TSS
-   (<code>spec_sens</code>) or other <span class="pkg">dismo</span> thresholds). Generates a
-   continuous model</p></dd>
-  <dt><code>bin_mean</code></dt><dd><p>The mean of the selected binary models. Generates a
-  model in a discrete scale (0 to 1 in 1/n intervals where n is the number of retained models)</p></dd>
+  threshold selected in <code>mean_th_par</code> to make a binary model</p></dd>
+   <dt><code>raw_mean_cut</code></dt><dd><p>Recovers <code>raw_mean</code> values above the
+   threshold selected in <code>mean_th_par</code>. Generates a continuous model
+   above this threshold while keeping null values below it</p></dd>
+  <dt><code>bin_mean</code></dt><dd><p>The mean of the binary models, created by cutting
+  the raw mean models by the threshold selected in <code>mean_th_par</code>.
+  Generates a model in a discrete scale (0 to 1 in 1/n intervals where n is
+  the number of partitions)</p></dd>
   <dt><code>bin_consensus</code></dt><dd><p>The binary consensus from <code>bin_mean</code>.
   Parameter <code>consensus_level</code> must be defined, 0.5 means a majority
   consensus</p></dd>
-  <dt><code>cut_mean</code></dt><dd><p>The mean of the selected cut models. Values below
-  the thresholds are down-weighted by zeros</p></dd>
 
 </dl></td>
+    </tr>
+    <tr>
+      <th>mean_th_par</th>
+      <td><p>A threshold that will be used to cut the raw mean models
+if <code>which_models</code> is set to "<code>raw_mean_th</code>" or to transform the raw
+mean models into binary models if <code>which_models</code> is set to
+"<code>bin_consensus</code>". Defaults to "<code>spec_sens</code>" but any <span class="pkg">dismo</span>
+threshold can be used (see function <code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>):
+"<code>kappa</code>", "<code>no_omission</code>", "<code>prevalence</code>",
+"<code>equal_spec_sens</code>", "<code>sensitivity</code>"</p></td>
     </tr>
     <tr>
       <th>uncertainty</th>
@@ -255,29 +223,35 @@ be:</p><dl class='dl-horizontal'>
 should be calculated</p></td>
     </tr>
     <tr>
-      <th>write_final</th>
+      <th>png_final</th>
       <td><p>Logical. If <code>TRUE</code>, writes png files of the final
 models</p></td>
     </tr>
     <tr>
+      <th>sensitivity</th>
+      <td><p>The sensitivity value for threshold "<code>sensitivity</code>".
+Defaults to 0.9</p></td>
+    </tr>
+    <tr>
       <th>...</th>
-      <td><p>Other parameters from <code><a href='https://rdrr.io/pkg/raster/man/writeRaster.html'>writeRaster</a></code>, especially <code>overwrite = TRUE</code>, when needed</p></td>
+      <td><p>Other parameters from <code><a href='https://rdrr.io/pkg/raster/man/writeRaster.html'>writeRaster</a></code>,
+especially <code>overwrite = TRUE</code>, when needed</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Returns a data frame with final statistics of the partitions included in the final model</p>
-<p>Writes on disk a set of ecological niche models (.tif files) in the <code>final_dir</code> subfolder</p>
-<p>If <code>write_final = TRUE</code> writes .png figures
- in the <code>final_dir</code> subfolder</p>
+    <p>Returns a data frame with final statistics of the partitions included
+ in the final model</p>
+<p>Writes on disk a data frame with mean statistics of the partitions
+included in the final model</p>
+<p>Writes on disk a set of ecological niche models (.tif files) in the
+<code>final_dir</code> subfolder</p>
+<p>If <code>png_final = TRUE</code> writes .png figures in the
+<code>final_dir</code> subfolder</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Dushoff J, Kain MP, Bolker BM (2019).
-&#8220;I Can See Clearly Now: Reinterpreting Statistical Significance.&#8221;
-<em>Methods in Ecology and Evolution</em>, <b>10</b>(6), 756-759.
-ISSN 2041-210X, doi: <a href='https://doi.org/10.1111/2041-210X.13159'>10.1111/2041-210X.13159</a>
-.</p>
+    <p>There are no references for Rd macro <code>\insertAllCites</code> on this help page.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/dismo/man/threshold.html'>threshold</a></code>  in <span class="pkg">dismo</span> package</p>
@@ -289,22 +263,17 @@ ISSN 2041-210X, doi: <a href='https://doi.org/10.1111/2041-210X.13159'>10.1111/2
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
 <span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
-                          <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata </span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
+                          <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run do_any</span>
 <span class='no'>sp_bioclim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='model_fit.html'>do_any</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                      <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
-                     <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim </span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1 </span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
+                     <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
 <span class='co'># run final_model</span>
 <span class='no'>sp_final</span> <span class='kw'>&lt;-</span> <span class='fu'>final_model</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                         <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>,
-                        <span class='kw'>select_partitions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                        <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>,
-                        <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0</span>,
                         <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bin_consensus"</span>),
                         <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Wed Feb 19 09:26:59 2020"
-#&gt; Abarema_langsdorffii 
-#&gt; Reading evaluation files for Abarema_langsdorffii in present </div><div class='output co'>#&gt; <span class='error'>Error in data.table::rbindlist(lista_eval): Item 2 has 29 columns, inconsistent with item 1 which has 34 columns. To fill missing columns use fill=TRUE.</span></div><div class='input'>
+                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Thu Mar 19 13:56:14 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='error'>Error in data.table::rbindlist(lista_eval): Item 2 has 28 columns, inconsistent with item 1 which has 33 columns. To fill missing columns use fill=TRUE.</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

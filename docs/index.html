@@ -50,7 +50,14 @@
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/Model-R/modleR">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -68,7 +75,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#modler-a-workflow-for-ecological-niche-models-based-on-dismo" class="anchor"></a>modleR: a workflow for ecological niche models based on dismo <img src="articles/modleR.png" align="right" alt="" width="120">
 </h1></div>
-<p><strong>modleR</strong> is a workflow based on package <strong>dismo</strong> (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the <code>dismo</code> package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.</p>
+<p><strong>modleR</strong> is a workflow based on package <strong>dismo</strong> (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the <code>dismo</code> package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. A function to join individual partitions in several ways is provided in <code><a href="reference/final_model.html">final_model()</a></code>. Finally, <code><a href="reference/ensemble_model.html">ensemble_model()</a></code> assembles models from distinct algorithms and provides summary rasters.</p>
 </div>
 
   </div>
@@ -77,6 +84,8 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Browse source code at <br><a href="https://github.com/Model-R/modleR">https://​github.com/​Model-R/​modleR</a>
+</li>
 <li>Report a bug at <br><a href="https://github.com/Model-R/modleR/issues">https://​github.com/​Model-R/​modleR/​issues</a>
 </li>
 </ul>
