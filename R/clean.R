@@ -20,7 +20,7 @@ clean <- function(occurrences,
             message("cleaning occurrences with no environmental data")
             presvals <- raster::extract(predictors, occurrences)
             compl <- complete.cases(presvals)
-            if (all(compl == F)) stop("All occurrence points are outside the predictor variable rasters")
+            if (all(compl == FALSE)) stop("All occurrence points are outside the predictor variable rasters")
             occurrences <- occurrences[compl, ]
         }
         if (clean_uni == TRUE) {
@@ -37,9 +37,9 @@ clean <- function(occurrences,
                 }
         }
 
-        cat(ori - nrow(occurrences), "points removed\n")
-        cat(nrow(occurrences), " clean points\n")
+        message(paste(ori - nrow(occurrences), "points removed"))
+        message(paste(nrow(occurrences), "clean points"))
         return(occurrences)
     } else
-        (cat("Indicate the object with the predictive variables"))
+        message("indicate the object with the predictive variables")
 }

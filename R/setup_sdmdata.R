@@ -29,10 +29,12 @@
 #'  variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified
 #' @param models_dir Folder path to save the output files. Defaults to
 #' "\code{./models}"
-#' @param plot_sdmdata Logical, whether png files will be written
+#' @param png_sdmdata Logical, whether png files will be written
 #' @param n_back Number of pseudoabsence points. Default is 1,000
 #' @param partition_type Character. Type of data partitioning scheme, either
-#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap, \code{boot_proportion} and \code{boot_n} must be specified. If set to crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
+#' "\code{bootstrap}" or k-fold "\code{crossvalidation}". If set to bootstrap,
+#'  \code{boot_proportion} and \code{boot_n} must be specified. If set to
+#'  crossvalidation, \code{cv_n} and \code{cv_partitions} must be specified
 #' @param boot_proportion Numerical 0 to 1, proportion of points to be sampled
 #' for bootstrap
 #' @param boot_n Number of bootstrap runs
@@ -40,13 +42,14 @@
 #' @param cv_n Number of crossvalidation runs
 #' @param clean_dupl Logical. If TRUE, removes points with the same longitude and
 #' latitude
-#' @param clean_nas Logical. If TRUE, removes points that are outside the bounds	#' of the raster
+#' @param clean_nas Logical. If TRUE, removes points that are outside the bounds
+#' of the raster
 #' @param clean_uni Logical. If TRUE, selects only one point per pixel
 #' @param cutoff Cutoff value of correlation between variables to exclude
 #' environmental layers
 #' Default is to exclude environmental variables with correlation > 0.8
-#' @param percent percentage of the raster values to be sampled to calculate the
-#'  correlation
+#' @param percent Numeric. Percentage of the raster values to be sampled to calculate the
+#'  correlation. The value should be set as a decimal, between 0 and 1.
 #' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
@@ -67,7 +70,9 @@
 #'     \insertAllCited{}
 #' @seealso \code{\link{create_buffer}}
 #' @importFrom utils write.table
+#' @importFrom utils capture.output
 #' @importFrom stats cor
+#' @importFrom sessioninfo session_info
 #' @export
 #'
 #'
@@ -81,11 +86,11 @@ setup_sdmdata <- function(species_name,
                           real_absences = NULL,
                           buffer_type = NULL,
                           dist_buf = NULL,
-                          env_buffer = FALSE,
+                          env_filter = FALSE,
                           env_distance = "centroid",
-                          dist_min = NULL,
                           buffer_shape = NULL,
-                          max_env_dist = 0.5,
+                          min_env_dist = NULL,
+                          min_geog_dist = NULL,
                           write_buffer = FALSE,
                           seed = NULL,
                           clean_dupl = FALSE,
@@ -96,7 +101,7 @@ setup_sdmdata <- function(species_name,
                           select_variables = FALSE,
                           cutoff = 0.8,
                           percent = 0.8,
-                          plot_sdmdata = TRUE,
+                          png_sdmdata = TRUE,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
                           boot_n = 1,
@@ -119,10 +124,13 @@ setup_sdmdata <- function(species_name,
         dir.create(paste(models_dir, species_name, sep = "/"))
 
     #creates a separate folder for sdmdata and metadata
-    setup.folder <-
+    setup_folder <-
         paste(models_dir, species_name, "present", "data_setup", sep = "/")
-    if (file.exists(setup.folder) == FALSE)
-        dir.create(setup.folder, recursive = TRUE)
+    if (file.exists(setup_folder) == FALSE)
+        dir.create(setup_folder, recursive = TRUE)
+    #writes session info
+    write_session_info(setup_folder)
+
 
     ## checking latitude and longitude columns
     if (all(c(lon, lat) %in% names(occurrences))) {
@@ -162,9 +170,9 @@ setup_sdmdata <- function(species_name,
         )
 
         #checking metadata----
-    if (file.exists(paste(setup.folder, "metadata.csv", sep = "/"))) {
-        message("metadata file found, checking metadata \n")
-        metadata_old <- read.csv(paste(setup.folder, "metadata.csv", sep = "/"),
+    if (file.exists(paste(setup_folder, "metadata.csv", sep = "/"))) {
+        message("metadata file found, checking metadata")
+        metadata_old <- read.csv(paste(setup_folder, "metadata.csv", sep = "/"),
                                    as.is = FALSE) #row.names = 1)
         # removes columns that dont exist yet for comparison
         metadata_old <- metadata_old[,
@@ -172,7 +180,7 @@ setup_sdmdata <- function(species_name,
                                              c("final.n", "final.n.back", "selected_predictors"))]
         if (all(all.equal(metadata_old, metadata_new) == TRUE)) {
             message("same metadata, no need to run data partition")
-            sdmdata <- read.csv(paste(setup.folder, "sdmdata.csv", sep = "/"), as.is = FALSE)
+            sdmdata <- read.csv(paste(setup_folder, "sdmdata.csv", sep = "/"), as.is = FALSE)
             return(sdmdata)
             }
     }
@@ -208,10 +216,11 @@ setup_sdmdata <- function(species_name,
                                     buffer_type = buffer_type,
                                     predictors = predictors,
                                     dist_buf = dist_buf,
-                                    dist_min = dist_min,
                                     buffer_shape = buffer_shape,
+                                    env_filter = env_filter,
                                     env_distance = env_distance,
-                                    max_env_dist = max_env_dist,
+                                    min_env_dist = min_env_dist,
+                                    min_geog_dist = min_geog_dist,
                                     write_buffer = write_buffer)
 
         } else {
@@ -236,7 +245,7 @@ setup_sdmdata <- function(species_name,
                 if (available_cells < n_back) {
                     n_back_mod <- available_cells
                     message(paste(available_cells, "available cells"))
-                    message(paste("Using", n_back_mod, "pseudoabsences", "\n"))
+                    message(paste("Using", n_back_mod, "pseudoabsences"))
                 } else {
                     n_back_mod <- n_back
                 }
@@ -252,7 +261,7 @@ setup_sdmdata <- function(species_name,
 
     # Seleccionando variables if sel_vars ==TRUE
     if (select_variables == TRUE) {
-    message(paste("selecting variables...", "\n"))
+    message(paste("selecting variables..."))
         predictors <- select_variables(predictors = predictors,
                                        buffer = pbuffr,
                                        cutoff = cutoff,
@@ -264,8 +273,8 @@ setup_sdmdata <- function(species_name,
     metadata_new$final.n <- as.integer(final_n)
     metadata_new$final.n.back <- as.integer(n_back_mod)
 
-    message(paste("saving metadata"), "\n")
-    write.table(metadata_new, file = paste(setup.folder, "metadata.csv", sep = "/"),
+    message("saving metadata")
+    write.table(metadata_new, file = paste(setup_folder, "metadata.csv", sep = "/"),
                 sep = ",", col.names = TRUE, row.names = FALSE)
 
     # cria a tabela de valores
@@ -354,14 +363,14 @@ setup_sdmdata <- function(species_name,
     if (exists("cv_0"))   sdmdata <- data.frame(cv_0, sdmdata)
     if (exists("cv.matrix"))   sdmdata <- data.frame(cv.matrix, sdmdata)
     if (exists("boot.matrix")) sdmdata <- data.frame(boot.matrix, sdmdata)
-    message(paste("saving sdmdata", "\n"))
-    write.table(sdmdata, file = paste(setup.folder, "sdmdata.csv", sep = "/"),
+    message("saving sdmdata")
+    write.table(sdmdata, file = paste(setup_folder, "sdmdata.csv", sep = "/"),
                 sep = ",", row.names = FALSE, col.names = TRUE)
 
 
-    if (plot_sdmdata) {
-        message(paste("Plotting the dataset...", "\n"))
-        png(filename = paste0(setup.folder, "/sdmdata_", species_name, ".png"))
+    if (png_sdmdata) {
+        message("Plotting the dataset...")
+        png(filename = paste0(setup_folder, "/sdmdata_", species_name, ".png"))
         par(mfrow = c(1, 1), mar = c(5, 4, 3, 0))
         raster::plot(predictors[[1]], legend = FALSE, col = "grey90", colNA = NA)
         points(back, pch = ".", col = "black")

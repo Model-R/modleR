@@ -6,7 +6,8 @@
 #' environmental layers and calculates basic statistics for model evaluation. In
 #' addition to commonly adopted metrics such as AUC and TSS, this package also
 #' calculates partial ROC
-#' \insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details on model evaluation see
+#' \insertCite{peterson_rethinking_2008,cobos_kuenm_2019}{modleR}. For details
+#' on model evaluation see
 #'  \insertCite{phillips_maximum_2006;textual}{modleR} and
 #'  \insertCite{peterson_ecological_2011;textual}{modleR}. \code{do_any}
 #'  performs one algorithm at a time. \code{do_many} runs internally
@@ -18,10 +19,13 @@
 #'
 #' @inheritParams setup_sdmdata
 #' @return Returns a data frame with some key threshold values and evaluation
-#' statistics of each algorithm (omission, TSSmax, AUC, pROC etc.)
+#' statistics of each algorithm (FNR, FPR, TSSmax, AUC, pROC, FScore,
+#' Jaccard dissimilarity etc.) for the selected threshold
 #' @return Writes on disk a .tif model for each partition of each algorithm
-#' @return Writes in disk a .csv file with evaluation statistics of each
-#' algorithm
+#' @return Writes in disk a .csv file with thresholds and evaluation statistics
+#' of each algorithm for a given threshold
+#' #' @return Writes in disk a .csv file with evaluation statistics for all
+#' threshold values
 #' @details See below for a description on the implementation of the algorithms
 #' supported in this package.
 #' \describe{
@@ -150,7 +154,7 @@
 #'
 #' @param algorithm Character string of length 1 specifying the algorithm to
 #' be fit: "\code{bioclim}", "\code{brt}",
-#' "\code{domain}", "\code{glm}", "\code{maxent}", "\code{mahal}",
+#' "\code{domain}", "\code{glm}", "\code{maxent}", "\code{maxnet}", "\code{mahal}",
 #' "\code{svme}", "\code{svmk}", "\code{rf}"
 #' @param bioclim Execute bioclim algorithm from the \pkg{dismo} implementation
 #' with \code{\link[dismo]{bioclim}} function
@@ -173,10 +177,11 @@
 #'  package with \code{\link[e1071]{best.tune}} function
 #' @param svmk Execute Support Vector Machines (SVM) algorithm from
 #' \pkg{kernlab} package with \code{\link[kernlab]{ksvm}} function
-#' @param project_model Logical, whether to perform a projection
+#' @param project_model Logical, whether to project the models to variable sets
+#' in \code{proj_data_folder} directory
 #' @param proj_data_folder Path to directory with projections containing one or
 #' more folders with the projection datasets (e.g. "./env/proj/proj1").
-#' Projection diretctory should only contain raster files corresponding to the
+#' This directory should only contain raster files corresponding to the
 #' environmental variables. If more than one projection, each projection should
 #' be at one directory (e.g. "./env/proj/proj1" and "./env/proj/proj2") and
 #' equivalent raster files at diferent subdirectories must have the same names
@@ -184,7 +189,9 @@
 #' @param mask A SpatialPolygonsDataFrame to be used to mask the models. This
 #' mask can be used if the final area of interest is smaller than the area used
 #'  for model fitting, to save disk space
-#' @param write_png Logical, whether png files will be written
+#' @param write_rda Logical, whether .rda objects with the fitted models will
+#' be written
+#' @param png_partitions Logical, whether png files will be written
 #' @param write_bin_cut Logical, whether binary and cut model files(.tif, .png)
 #' should be written
 #' @param dismo_threshold Character string indicating threshold (cut-off) to
@@ -193,9 +200,10 @@
 #'  "\code{kappa}", "\code{spec_sens}", "\code{no_omission}",
 #'   "\code{prevalence}", "\code{equal_sens_spec}",
 #'  "\code{sensitivity}". Default value is "\code{spec_sens}"
-#' @param conf_mat Logical, whether confusion tables should be written in the HD
 #' @param equalize Logical, whether the number of presences and absences should be
 #' equalized in randomForest and brt
+#' @param sensitivity Numeric, value from 0 to 0.9 to indicate the sensitivity
+#' value to calculate the threshold. Defaults to 0.9 as in dismo package
 #' @param proc_threshold Numeric, value from 0 to 100 that will be used as (E)
 #' for partialROC calculations in \code{\link[kuenm]{kuenm_proc}}. Default is
 #' \code{proc_threshold = 5}

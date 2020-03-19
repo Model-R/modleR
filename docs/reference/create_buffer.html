@@ -36,18 +36,19 @@
 
 
 <meta property="og:title" content="Samples pseudoabsences inside a geographic or environmental buffer — create_buffer" />
-<meta property="og:description" content="This function is used internally by function
-setup_sdmdata to define the area where pseudoabsences will be
-sampled in different ways. First, it can create a maximum inclusion buffer,
-within which the pseudoabsences will be sampled, to restrict model evaluation
- to accesible areas. This can be performed by either setting a user-defined
- shapefile, or by selecting one of several distance measures, including a
- numeric fixed value, to draw a buffer around the occurrences. In addition to
- this, an euclidean environmental distance can be superimposed to the
- previous step. The third step aims to control for overfitting by excluding
- areas that are too close to the occurrence points, with parameter &quot;dist_min&quot;.
- The function will return the resulting buffer as a RasterStack object with
- the same resolution and NA values of the predictors RasterStack." />
+<meta property="og:description" content="This function is used internally by function setup_sdmdata to
+define the area where pseudoabsences will be sampled in different ways.
+First, it can create an inclusion buffer, within which the pseudoabsences
+will be sampled, to restrict model evaluation to accesible areas. This can be
+performed by either setting a user-defined shapefile, or by drawing a buffer
+around the species occurrences: a geographic distance fixed value, or the
+mean, median or maximum pairwise distance between occurrences. In addition to
+this, an euclidean environmental distance filter can be superimposed to the
+previous step, to control for overfitting by excluding areas that are too
+close to the occurrence points, either in the environmental space or in the
+geographic space.
+The function will return the resulting buffer as a RasterStack object with
+the same resolution and NA values of the predictors RasterStack." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,7 +101,12 @@ within which the pseudoabsences will be sampled, to restrict model evaluation
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/Model-R/modleR">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -115,30 +121,30 @@ within which the pseudoabsences will be sampled, to restrict model evaluation
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Samples pseudoabsences inside a geographic or environmental buffer</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/Model-R/modleR/blob/master/R/create_buffer.R'><code>R/create_buffer.R</code></a></small>
     <div class="hidden name"><code>create_buffer.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function is used internally by function
-<code><a href='setup_sdmdata.html'>setup_sdmdata</a></code> to define the area where pseudoabsences will be
-sampled in different ways. First, it can create a maximum inclusion buffer,
-within which the pseudoabsences will be sampled, to restrict model evaluation
- to accesible areas. This can be performed by either setting a user-defined
- shapefile, or by selecting one of several distance measures, including a
- numeric fixed value, to draw a buffer around the occurrences. In addition to
- this, an euclidean environmental distance can be superimposed to the
- previous step. The third step aims to control for overfitting by excluding
- areas that are too close to the occurrence points, with parameter "<code>dist_min</code>".
- The function will return the resulting buffer as a RasterStack object with
- the same resolution and NA values of the predictors RasterStack.</p>
+    <p>This function is used internally by function <code><a href='setup_sdmdata.html'>setup_sdmdata</a></code> to
+define the area where pseudoabsences will be sampled in different ways.
+First, it can create an inclusion buffer, within which the pseudoabsences
+will be sampled, to restrict model evaluation to accesible areas. This can be
+performed by either setting a user-defined shapefile, or by drawing a buffer
+around the species occurrences: a geographic distance fixed value, or the
+mean, median or maximum pairwise distance between occurrences. In addition to
+this, an euclidean environmental distance filter can be superimposed to the
+previous step, to control for overfitting by excluding areas that are too
+close to the occurrence points, either in the environmental space or in the
+geographic space.
+The function will return the resulting buffer as a RasterStack object with
+the same resolution and NA values of the predictors RasterStack.</p>
     </div>
 
     <pre class="usage"><span class='fu'>create_buffer</span>(<span class='no'>species_name</span>, <span class='no'>occurrences</span>, <span class='kw'>lon</span> <span class='kw'>=</span> <span class='st'>"lon"</span>, <span class='kw'>lat</span> <span class='kw'>=</span> <span class='st'>"lat"</span>,
-  <span class='no'>predictors</span>, <span class='kw'>buffer_type</span> <span class='kw'>=</span> <span class='st'>"median"</span>, <span class='kw'>dist_buf</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env_buffer</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>env_distance</span> <span class='kw'>=</span> <span class='st'>"centroid"</span>, <span class='kw'>dist_min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>max_env_dist</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='no'>buffer_shape</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>,
-  <span class='kw'>write_buffer</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='no'>predictors</span>, <span class='kw'>buffer_type</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='no'>buffer_shape</span>, <span class='kw'>dist_buf</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>env_filter</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>env_distance</span> <span class='kw'>=</span> <span class='st'>"centroid"</span>, <span class='kw'>min_env_dist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>min_geog_dist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>, <span class='kw'>write_buffer</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,45 +187,48 @@ NULL, no distance buffer is applied. If set to "<code>distance</code>",
 <code>dist_buf</code> needs to be specified</p></td>
     </tr>
     <tr>
+      <th>buffer_shape</th>
+      <td><p>User-defined buffer shapefile in which pseudoabsences
+will be generated. Needs to be specified if <code>buffer_type = "user"</code></p></td>
+    </tr>
+    <tr>
       <th>dist_buf</th>
       <td><p>Defines the width of the buffer. Needs to be specified if
 <code>buffer_type = "distance"</code>. Distance unit is in the same unit of the
 RasterStack of predictor variables</p></td>
     </tr>
     <tr>
-      <th>env_buffer</th>
+      <th>env_filter</th>
       <td><p>Logical. Should an euclidean environmental filter be
-applied? If TRUE, <code>env_distance</code> and <code>max_env_dist</code> need to be
-specified</p></td>
+applied? If TRUE, <code>env_distance</code> and
+<code>min_env_dist</code> need to be specified. Areas closest than
+<code>min_env_dist</code> (expressed in quantiles in the environmental space)will
+be omitted from the pseudoabsence sampling</p></td>
     </tr>
     <tr>
       <th>env_distance</th>
-      <td><p>Character. Type of environmental distance, any in
-"<code>centroid</code>", "<code>mindist</code>". Defaults to "<code>centroid</code>", the
+      <td><p>Character. Type of environmental distance, either
+"<code>centroid</code>" or "<code>mindist</code>". Defaults to "<code>centroid</code>", the
 distance of each raster pixel to the environmental centroid of the
 distribution. When set to "<code>mindist</code>", the minimum distance of each
 raster pixel to any of the occurrence points is calculated. Needs to be
-specified if <code>env_buffer = TRUE</code>. A maximum value needs to be specified
- (parameter <code>max_env_dist</code>)</p></td>
+specified if <code>env_filter = TRUE</code>. A minimum value needs to be
+specified (parameter <code>min_env_dist</code>)</p></td>
     </tr>
     <tr>
-      <th>dist_min</th>
-      <td><p>Optional, numeric. A distance for the exclusion of areas too
-close from the occurrence points. Distance unit is in the same unit of the
-RasterStack of predictor variables</p></td>
+      <th>min_env_dist</th>
+      <td><p>Numeric. Sets a minimum value to exclude the areas
+closest (in the environmental space) to the occurrences or their centroid,
+expressed in quantiles, from 0 (the closest) to 1. Defaults to 0.05,
+excluding areas belonging to the 5<!-- % closest environmental values. Note that -->
+since this is based on quantiles, and environmental similarity can take large
+negative values, this is an abitrary value</p></td>
     </tr>
     <tr>
-      <th>max_env_dist</th>
-      <td><p>Numeric. Since large negative values can arise
-during the calculation of the euclidean environmental distance, this
-parameter sets a maximum value to cut the environmental distance buffer.
-Expressed in quantiles, from 0: all values to 1: no values. Defaults to 0.5,
-the median value. Needs to be specified if <code>env_buffer = TRUE</code></p></td>
-    </tr>
-    <tr>
-      <th>buffer_shape</th>
-      <td><p>User-defined buffer shapefile in which pseudoabsences
-will be generated. Needs to be specified if <code>buffer_type = "user"</code></p></td>
+      <th>min_geog_dist</th>
+      <td><p>Optional, numeric. A distance for the exclusion of the
+areas closest to the occurrence points (in the geographical space). Distance
+ unit is in the same unit of the RasterStack of predictor variables</p></td>
     </tr>
     <tr>
       <th>models_dir</th>
@@ -228,15 +237,16 @@ will be generated. Needs to be specified if <code>buffer_type = "user"</code></p
     </tr>
     <tr>
       <th>write_buffer</th>
-      <td><p>Logical. Should the resulting RasterStack be written?
-Defaults to FALSE</p></td>
+      <td><p>Logical. Should the resulting buffer RasterLayer be
+written? Defaults to FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Table of pseudoabsence points sampled within the selected distance</p>
-<p>A buffer around the occurrence points</p>
+<p>A RasterLayer object containing the final buffer around the
+occurrence points</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>VanDerWal, J., Shoo, L. P., Graham, C., &amp; Williams, S. E. (2009).
@@ -249,11 +259,11 @@ far should you stray from what you know? Ecological Modelling, 220(4),
 <p><code><a href='https://rdrr.io/pkg/dismo/man/randomPoints.html'>randomPoints</a></code>  in <span class="pkg">dismo</span> package</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)</div><div class='output co'>#&gt; <span class='message'>Carregando pacotes exigidos: sp</span></div><div class='input'><span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: sp</span></div><div class='input'><span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
 <span class='no'>occs</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
 <span class='no'>buf</span> <span class='kw'>&lt;-</span> <span class='fu'>create_buffer</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                      <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>occs</span>,
-                     <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Spatial object 1 is not projected; GEOS expects planar coordinates</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Spatial object is not projected; GEOS expects planar coordinates</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>buf</span>)</div><div class='img'><img src='create_buffer-1.png' alt='' width='700' height='433' /></div><div class='input'>
+                     <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>No inclusion buffer was applied</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>buf</span>)</div><div class='img'><img src='create_buffer-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -1,7 +1,7 @@
 rescale_layer <- function(layers) {
-    cat(paste("Standardizing models from 0 to 1", "\n"))
+    message("Standardizing models from 0 to 1")
     if (missing(layers)) {
-        stop("No layers were provided. Please enter a Raster layer or a RasterStack")
+        stop("No layers were provided. Please enter a Raster or a RasterStack")
         }
     for (i in 1:dim(layers)[3]) {
         stand <- function(x) {
