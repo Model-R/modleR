@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -47,7 +51,6 @@ ranges (maximum - minimum values) between partitions may also be calculated.
 Just as there are no silver bullets in correlative ecological niche
 modeling, no method for presenting this models is always better
 and these are only a subset of the possibilities." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -65,7 +68,7 @@ and these are only a subset of the possibilities." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -100,7 +103,7 @@ and these are only a subset of the possibilities." />
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/Model-R/modleR">
+  <a href="https://github.com/Model-R/modleR/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -124,8 +127,8 @@ and these are only a subset of the possibilities." />
     </div>
 
     <div class="ref-description">
-    <p>This function reads the models generated either by <code><a href='model_fit.html'>do_any</a></code> or
-<code><a href='model_fit.html'>do_many</a></code> (i.e. one model per partition per algorithm) and
+    <p>This function reads the models generated either by <code>do_any</code> or
+<code>do_many</code> (i.e. one model per partition per algorithm) and
 summarizes them into a final model for each species-algorithm combination.
 All the final models are created from the mean of the raw continuous models
 (<code>raw_mean</code>). From these means, several
@@ -152,7 +155,7 @@ and these are only a subset of the possibilities.</p>
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
+<code>example_occs</code> as an example</p></td>
     </tr>
     <tr>
       <th>algorithms</th>
@@ -189,7 +192,7 @@ to execute the function in projected models)</p></td>
     <tr>
       <th>which_models</th>
       <td><p>Which <code>final_model</code> will be used? Currently it can
-be:</p><dl class='dl-horizontal'>
+be:</p><dl'>
   <dt><code>raw_mean</code></dt><dd><p>Continuous model generated by the mean of the raw
   models (scale from 0 to 1)</p></dd>
   <dt><code>raw_mean_th</code></dt><dd><p>Cuts the <code>raw_mean</code> by the mean of the
@@ -261,11 +264,11 @@ included in the final model</p>
     <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata</span>
 <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'>setup_sdmdata</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                           <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run do_any</span>
-<span class='no'>sp_bioclim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='model_fit.html'>do_any</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_bioclim</span> <span class='kw'>&lt;-</span> <span class='fu'>do_any</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                      <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
                      <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
 <span class='co'># run final_model</span>
@@ -273,19 +276,14 @@ included in the final model</p>
                         <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>,
                         <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bin_consensus"</span>),
                         <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Thu Mar 19 13:56:14 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='error'>Error in data.table::rbindlist(lista_eval): Item 2 has 28 columns, inconsistent with item 1 which has 33 columns. To fill missing columns use fill=TRUE.</span></div><div class='input'>
+                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Wed Mar 25 15:36:43 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Extracting data for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='message'>Reading models from .tif files</span></div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected the final models</span>
+#&gt; <span class='warning'>                          are identical to the original model</span></div><div class='output co'>#&gt; <span class='message'>Standardizing models from 0 to 1</span></div><div class='output co'>#&gt; <span class='message'>selected final models for Abarema_langsdorffii bioclim DONE</span></div><div class='output co'>#&gt; <span class='message'>Writing models bioclim</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE bioclim !"</div><div class='input'>
 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -296,7 +294,7 @@ included in the final model</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
 </div>
 
       </footer>

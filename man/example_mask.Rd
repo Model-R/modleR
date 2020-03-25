@@ -4,8 +4,10 @@
 \name{example_mask}
 \alias{example_mask}
 \title{Example mask for cropping the partition models}
-\format{A SpatialPolygonsDataFrame of the Brazilian Atlantic Forest, based
-on IBGE}
+\format{
+A SpatialPolygonsDataFrame of the Brazilian Atlantic Forest, based
+on IBGE
+}
 \usage{
 example_mask
 }

@@ -1,1 +1,25 @@
 destination: docs
+reference:
+- title: The workflow
+- subtitle: Setup data
+- contents:
+  - setup_sdmdata
+  - create_buffer
+- subtitle: Fit and project models
+- contents:
+  - do_any
+  - do_many
+- subtitle: Join individual partitions
+- contents:
+  - final_model
+- subtitle: Create ensemble models
+- contents:
+  - ensemble_model
+- title: Example datasets
+- contents:
+  - example_occs
+  - example_vars
+  - example_mask
+- title:
+  contents:
+  - modleR

@@ -4,13 +4,15 @@
 \name{example_occs}
 \alias{example_occs}
 \title{Ocurrence points for four species in the Brazilian Atlantic Forest}
-\format{A list of 4:
+\format{
+A list of 4:
 \describe{
   \item{Abarema_langsdorffii}{104 observations of 3 variables}
   \item{Eugenia_florida}{341 observations of  3 variables}
   \item{Leandra_carassana}{82 observations of 3 variables}
   \item{Ouratea_semiserrata}{90 observations of 3 variables}
-}}
+}
+}
 \usage{
 example_occs
 }

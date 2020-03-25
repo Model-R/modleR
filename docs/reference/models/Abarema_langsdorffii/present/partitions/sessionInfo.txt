@@ -8,7 +8,7 @@
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       America/Los_Angeles         
- date     2020-03-19                  
+ date     2020-03-25                  
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package     * version    date       lib source                             
@@ -28,12 +28,12 @@
  evaluate      0.14       2019-05-28 [2] CRAN (R 3.6.0)                     
  fansi         0.4.1      2020-01-08 [2] CRAN (R 3.6.0)                     
  foreach       1.4.7      2019-07-27 [2] CRAN (R 3.6.0)                     
- fs            1.3.1      2019-05-06 [2] CRAN (R 3.6.0)                     
+ fs            1.3.2      2020-03-05 [2] CRAN (R 3.6.0)                     
  future      * 1.15.1     2019-11-25 [2] CRAN (R 3.6.0)                     
  gbRd          0.4-11     2012-10-01 [2] CRAN (R 3.6.0)                     
  glmnet        3.0-2      2019-12-11 [2] CRAN (R 3.6.0)                     
  globals       0.12.5     2019-12-07 [2] CRAN (R 3.6.0)                     
- glue          1.3.1      2019-03-12 [2] CRAN (R 3.6.0)                     
+ glue          1.3.2      2020-03-12 [2] CRAN (R 3.6.0)                     
  highlight     0.5.0      2019-12-15 [2] CRAN (R 3.6.0)                     
  htmltools     0.4.0      2019-10-04 [2] CRAN (R 3.6.0)                     
  httr          1.4.1      2019-08-05 [2] CRAN (R 3.6.0)                     
@@ -48,17 +48,16 @@
  Matrix        1.2-18     2019-11-27 [2] CRAN (R 3.6.2)                     
  maxnet        0.1.2      2017-02-11 [2] CRAN (R 3.6.0)                     
  memoise       1.1.0      2017-04-21 [2] CRAN (R 3.6.0)                     
- modleR      * 0.0.0.9000 2020-03-19 [1] local                              
+ modleR      * 0.0.0.9000 2020-03-25 [1] local                              
  munsell       0.5.0      2018-06-12 [2] CRAN (R 3.6.0)                     
  pillar        1.4.3      2019-12-20 [2] CRAN (R 3.6.0)                     
  pkgconfig     2.0.3      2019-09-22 [2] CRAN (R 3.6.0)                     
- pkgdown       1.4.1      2019-09-15 [2] CRAN (R 3.6.0)                     
+ pkgdown       1.5.0      2020-03-25 [2] CRAN (R 3.6.2)                     
  purrr         0.3.3      2019-10-18 [2] CRAN (R 3.6.0)                     
  R6            2.4.1      2019-11-12 [2] CRAN (R 3.6.0)                     
  raster      * 3.0-7      2019-09-24 [2] CRAN (R 3.6.0)                     
- Rcpp          1.0.3      2019-11-08 [2] CRAN (R 3.6.0)                     
+ Rcpp          1.0.4      2020-03-17 [2] CRAN (R 3.6.0)                     
  Rdpack        0.11-1     2019-12-14 [2] CRAN (R 3.6.0)                     
- rematch2      2.1.0      2019-07-11 [2] CRAN (R 3.6.0)                     
  rgdal         1.4-8      2019-11-27 [2] CRAN (R 3.6.0)                     
  rgeos         0.5-2      2019-10-03 [2] CRAN (R 3.6.0)                     
  rlang         0.4.5      2020-03-01 [2] CRAN (R 3.6.0)                     
@@ -76,8 +75,8 @@
  whisker       0.4        2019-08-28 [2] CRAN (R 3.6.0)                     
  withr         2.1.2      2018-03-15 [2] CRAN (R 3.6.0)                     
  xfun          0.12       2020-01-13 [2] CRAN (R 3.6.0)                     
- xml2          1.2.2      2019-08-09 [2] CRAN (R 3.6.0)                     
+ xml2          1.2.5      2020-03-11 [2] CRAN (R 3.6.0)                     
  yaml          2.2.1      2020-02-01 [2] CRAN (R 3.6.0)                     
 
-[1] /private/var/folders/14/9ljg2mcj1rdd1ht69s94t2240000gn/T/Rtmp7zyeDK/temp_libpath71805b3ddc32
+[1] /private/var/folders/14/9ljg2mcj1rdd1ht69s94t2240000gn/T/RtmpviGz9F/temp_libpathfafd285f5ca6
 [2] /Library/Frameworks/R.framework/Versions/3.6/Resources/library

@@ -115,10 +115,16 @@ __modleR__ comes with example data, a list called `example_occs`, with
 occurrence data for four species, and predictor variables called
 `example_vars`
 
+```{r, echo=FALSE, eval=TRUE}
+devtools::load_all() # for development
+
+```
+
+```{r, echo=TRUE, eval=FALSE}
+library(modleR)
+```
 
 ```{r lib, echo = TRUE, eval = TRUE}
-#library(modleR)
-devtools::load_all() # for development
 str(example_occs)
 species <- names(example_occs)
 species
