@@ -1,4 +1,10 @@
 destination: docs
+authors:
+  Andrea Sánchez-Tapia:
+    href: andreasancheztapia@gmail.com
+  Sara Mortara:
+    href: saramortara@gmail.com
+
 reference:
 - title: The workflow
 - subtitle: Setup data

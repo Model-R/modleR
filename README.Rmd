@@ -1,30 +1,28 @@
 ---
-title: "modleR: a workflow for ecological niche models based on dismo"
-author: "Andrea Sánchez-Tapia, Sara Mortara & Diogo S. B. Rocha"
-date: "`r Sys.Date()`"
-output:
-    rmarkdown::html_vignette:
-        toc: true
-    md_document:
-      variant: gfm
-vignette: >
-  %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{modleR: a workflow for ecological niche models based on dismo}
-  %\VignetteEngine{knitr::rmarkdown}
-    \usepackage[utf8]{inputenc}
-bibliography: ../inst/REFERENCES.bib
+output: github_document
+bibliography: inst/REFERENCES.bib
 ---
+
+# modleR: a workflow for ecological niche models based on dismo
+
+[![Build Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR)
+
+
+<img src="./vignettes/modleR.png" align="right" alt="" width="120" />
+
+
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   eval = TRUE,
-  cache = FALSE
+  cache = FALSE,
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
 ```
 
-<img src="modleR.png" align="right" alt="" width="120" />
 
 __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
 
@@ -67,7 +65,7 @@ The workflow consists of mainly four functions that should be used sequentially.
 
 
 ```{r workflow, echo = FALSE}
-knitr::include_graphics("fig01_workflow.jpg", dpi = 150)
+knitr::include_graphics("vignettes/fig01_workflow.jpg", dpi = 150)
 ```
 
 
@@ -338,7 +336,7 @@ There are many ways to create a final model per algorithm per species. `final_mo
 
 
 ```{r finalfig, echo = FALSE}
-knitr::include_graphics("fig05_finalmodel.png", dpi = 150)
+knitr::include_graphics("vignettes/fig05_finalmodel.png", dpi = 150)
 ```
 
 + The partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.

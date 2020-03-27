@@ -146,13 +146,13 @@ sdmdata files into the hard disk.</p>
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code>example_occs</code> as an example</p></td>
+<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>occurrences</th>
       <td><p>A data frame with occurrence data. Data must have at least
  columns with latitude and longitude values of species occurrences.
-See <code>example_occs</code> as an example</p></td>
+See <code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>predictors</th>
@@ -314,7 +314,7 @@ for bootstrap</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Other parameters from <code>create_buffer</code></p></td>
+      <td><p>Other parameters from <code><a href='create_buffer.html'>create_buffer</a></code></p></td>
     </tr>
     </table>
 
@@ -327,7 +327,7 @@ environmental variables (either all the layers or the selected ones if
 <code>select_variables = TRUE</code>).</p>
 <p>Function writes on disk (inside subfolder
 at <code>models_dir</code> directory) a text file named sdmdata.csv that will be used
-by <code>do_any</code> or <code>do_many</code></p>
+by <code><a href='model_fit.html'>do_any</a></code> or <code><a href='model_fit.html'>do_many</a></code></p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Varela S, Anderson RP, Garc\'ia-Valdés R, Fernández-González F (2014).
@@ -337,7 +337,7 @@ ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.1600-0587.2013.00441.x'>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>create_buffer</code></p></div>
+    <div class='dont-index'><p><code><a href='create_buffer.html'>create_buffer</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
@@ -345,12 +345,12 @@ ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.1600-0587.2013.00441.x'>
 <span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'>setup_sdmdata</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                           <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>sp_setup</span>)</div><div class='output co'>#&gt;   boot1 pa     lon     lat   layer.1  layer.2   layer.3   layer.4   layer.5
-#&gt; 1     0  1 -40.615 -19.921 -8.961108 6.114213 1.4063037 -7.387877 -1.498280
+#&gt; 1     1  1 -40.615 -19.921 -8.961108 6.114213 1.4063037 -7.387877 -1.498280
 #&gt; 2     0  1 -40.729 -20.016 -8.721493 5.877643 1.3779029 -7.611304 -1.470197
-#&gt; 3     0  1 -41.174 -20.303 -8.256238 5.837558 1.2663769 -8.370461 -1.451739
+#&gt; 3     1  1 -41.174 -20.303 -8.256238 5.837558 1.2663769 -8.370461 -1.451739
 #&gt; 4     0  1 -41.740 -20.493 -7.275032 3.612645 0.8156436 -8.967305 -1.260719
-#&gt; 5     0  1 -42.482 -20.701 -7.878113 5.980754 1.2590602 -9.314089 -1.418201
-#&gt; 6     1  1 -40.855 -17.082 -8.830172 8.385015 1.2544242 -7.260952 -1.759634
+#&gt; 5     1  1 -42.482 -20.701 -7.878113 5.980754 1.2590602 -9.314089 -1.418201
+#&gt; 6     0  1 -40.855 -17.082 -8.830172 8.385015 1.2544242 -7.260952 -1.759634
 #&gt;     layer.6
 #&gt; 1 -5.799044
 #&gt; 2 -5.797889
@@ -369,7 +369,7 @@ ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.1600-0587.2013.00441.x'>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andrea Sánchez-Tapia, Sara Mortara, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
+  <p>Developed by <a href='andreasancheztapia@gmail.com'>Andrea Sánchez-Tapia</a>, <a href='saramortara@gmail.com'>Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
 </div>
 
 <div class="pkgdown">

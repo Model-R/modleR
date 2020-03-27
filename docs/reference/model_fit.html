@@ -136,7 +136,7 @@ on model evaluation see
     </div>
 
     <div class="ref-description">
-    <p><code>do_any</code> reads the output from <code>setup_sdmdata</code> and
+    <p><code>do_any</code> reads the output from <code><a href='setup_sdmdata.html'>setup_sdmdata</a></code> and
 computes ecological niche models for a species based on an algorithm
 specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
@@ -178,7 +178,7 @@ on model evaluation see
 name will be used as a directory name, avoid non-ASCII characters, spaces and
 punctuation marks.
 Recommendation is to adopt "Genus_species" format. See names in
-<code>example_occs</code> as an example</p></td>
+<code><a href='example_occs.html'>example_occs</a></code> as an example</p></td>
     </tr>
     <tr>
       <th>predictors</th>
@@ -502,7 +502,7 @@ ISSN 0304-3800, doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>1
     <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata first from one species in example_occs data</span>
 <span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'>setup_sdmdata</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
+<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
                           <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run bioclim for one species</span>
@@ -525,7 +525,7 @@ ISSN 0304-3800, doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>1
 
       <footer>
       <div class="copyright">
-  <p>Developed by Andrea Sánchez-Tapia, Sara Mortara, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
+  <p>Developed by <a href='andreasancheztapia@gmail.com'>Andrea Sánchez-Tapia</a>, <a href='saramortara@gmail.com'>Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
 </div>
 
 <div class="pkgdown">

@@ -75,7 +75,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#modler-a-workflow-for-ecological-niche-models-based-on-dismo" class="anchor"></a>modleR: a workflow for ecological niche models based on dismo <img src="articles/modleR.png" align="right" alt="" width="120">
 </h1></div>
-<p><strong>modleR</strong> is a workflow based on package <strong>dismo</strong> (Hijmans et al 2017), designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the <code>dismo</code> package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests. A function to join individual partitions in several ways is provided in <code>final_model()</code>. Finally, <code>ensemble_model()</code> assembles models from distinct algorithms and provides summary rasters.</p>
+<p><strong>modleR</strong> is a workflow designed to automatize and document some of the common steps when performing ecological niche models (ENM). Given the occurrence records and a set of environmental predictors, <code><a href="reference/setup_sdmdata.html">setup_sdmdata()</a></code> prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It also partitions data into test and training sets, using crossvalidation or bootstrap procedures. <code><a href="reference/model_fit.html">do_any()</a></code>or <code><a href="reference/model_fit.html">do_many()</a></code> fit the ecological niche models using several algorithms, some of which are already implemented in the <strong>dismo</strong> package (Hijmans et al 2017), and others come from other packages in the R environment, such as glm, Support Vector Machines (<strong>kernlab</strong> and <strong>e1071</strong>) and Random Forests (<strong>randomForest</strong>). A function to join individual partitions in several ways is provided in <code><a href="reference/final_model.html">final_model()</a></code>. Finally, <code><a href="reference/ensemble_model.html">ensemble_model()</a></code> assembles models from distinct algorithms and provides summary rasters.</p>
 </div>
 
   </div>
@@ -105,8 +105,10 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Andrea Sánchez-Tapia <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-3521-4338" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Sara Mortara <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6221-7537" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="andreasancheztapia@gmail.com">Andrea Sánchez-Tapia</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-3521-4338" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="saramortara@gmail.com">Sara Mortara</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6221-7537" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Diogo Rocha <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-2913-4072" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Felipe Barros <br><small class="roles"> Author </small>  </li>
 <li>Guilherme Gall <br><small class="roles"> Author </small>  </li>
@@ -125,7 +127,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Andrea Sánchez-Tapia, Sara Mortara, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
+  <p>Developed by <a href="andreasancheztapia@gmail.com">Andrea Sánchez-Tapia</a>, <a href="saramortara@gmail.com">Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
 </div>
 
 <div class="pkgdown">

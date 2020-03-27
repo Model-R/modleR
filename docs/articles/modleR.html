@@ -73,7 +73,7 @@
       <h1 data-toc-skip>modleR: a workflow for ecological niche models based on dismo</h1>
                         <h4 class="author">Andrea Sánchez-Tapia, Sara Mortara &amp; Diogo S. B. Rocha</h4>
             
-            <h4 class="date">2020-03-25</h4>
+            <h4 class="date">2020-03-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Model-R/modleR/blob/master/vignettes/modleR.Rmd"><code>vignettes/modleR.Rmd</code></a></small>
       <div class="hidden name"><code>modleR.Rmd</code></div>
@@ -109,10 +109,10 @@
 <p>The workflow consists of mainly four functions that should be used sequentially.</p>
 <p><img src="fig01_workflow.jpg" width="645"></p>
 <ol style="list-style-type: decimal">
-<li>Setup: <code><a href="https://rdrr.io/pkg/modleR/man/setup_sdmdata.html">setup_sdmdata()</a></code> prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling</li>
-<li>Model fitting and projecting: <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> makes the ENM for one algorithm and partition; optionally, <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many()</a></code> calls <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> to fit multiple algorithms</li>
-<li>Partition joining: <code><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model()</a></code> joins the partition models into a model per species per algorithm</li>
-<li>Ensemble: <code><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model()</a></code> joins the different models per algorithm into an ensemble model (algorithmic consensus) using several methods.</li>
+<li>Setup: <code><a href="../reference/setup_sdmdata.html">setup_sdmdata()</a></code> prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling</li>
+<li>Model fitting and projecting: <code><a href="../reference/model_fit.html">do_any()</a></code> makes the ENM for one algorithm and partition; optionally, <code><a href="../reference/model_fit.html">do_many()</a></code> calls <code><a href="../reference/model_fit.html">do_any()</a></code> to fit multiple algorithms</li>
+<li>Partition joining: <code><a href="../reference/final_model.html">final_model()</a></code> joins the partition models into a model per species per algorithm</li>
+<li>Ensemble: <code><a href="../reference/ensemble_model.html">ensemble_model()</a></code> joins the different models per algorithm into an ensemble model (algorithmic consensus) using several methods.</li>
 </ol>
 <div id="folder-structure-created-by-this-package" class="section level2">
 <h2 class="hasAnchor">
@@ -121,30 +121,28 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">models_dir</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">├── <span class="ex">projection1</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">│   ├── <span class="ex">data_setup</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">│   ├── <span class="ex">ensemble_models</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">│   ├── <span class="ex">partitions</span></a>
 <a class="sourceLine" id="cb2-5" data-line-number="5">│   ├── <span class="ex">final_models</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">│   └── <span class="ex">partitions</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">│   └── <span class="ex">ensemble_models</span></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7">└── <span class="ex">projection2</span></a>
 <a class="sourceLine" id="cb2-8" data-line-number="8">    ├── <span class="ex">data_setup</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">    ├── <span class="ex">ensemble_models</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">    ├── <span class="ex">partitions</span></a>
 <a class="sourceLine" id="cb2-10" data-line-number="10">    ├── <span class="ex">final_models</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">    └── <span class="ex">partitions</span></a></code></pre></div>
+<a class="sourceLine" id="cb2-11" data-line-number="11">    └── <span class="ex">ensemble_models</span></a></code></pre></div>
 <ul>
-<li>We define a <em>partition</em> as the individual modeling round that takes part of the data to train the algorithms and the rest of the data to test them.</li>
-<li>We define the <em>final models</em> as joining together the partitions and obtaining <strong>one model per species per algorithm</strong>.</li>
-<li>
-<em>Ensemble</em> models join together the results obtained by different algorithms <span class="citation">(Araújo and New 2007)</span>.</li>
-<li>When projecting models into the present, the projection folder is called <code>present</code>.</li>
+<li>We define a <em>partition</em> as the individual modeling round (one training and test data set and one algorithm)</li>
+<li>We define the <em>final models</em> as joining together the partitions and obtaining <strong>one model per species per algorithm</strong>
+</li>
+<li><p><em>Ensemble</em> models join together the results obtained by different algorithms <span class="citation">(Araújo and New 2007)</span></p></li>
+<li>When projecting models into the present, the projection folder is called <code>present</code>, other projections will be named after their environmental variables</li>
 <li>You can set <code>models_dir</code> wherever you want in the hard disk, but if you do not modify the default value, it will create the output under the working directory (its default value is <code>./models</code>, where the period points to the working directory)</li>
-<li>The <em>names</em> of the <code>final</code> and <code>ensemble</code> folders can be modified, but <strong>the nested subfolder structure will remain the same</strong>. If you change <code>final_models</code> default value (<code>"final_model"</code>) you will need to include the new value when calling <code><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model()</a></code> (<code>final_dir = "[new name]"</code>), to indicate the function where to look for models. This partial flexibility allows for experimenting with final model and ensemble construction (by runnning final or ensemble twice in different output folders, for example).</li>
+<li><p>The <em>names</em> of the <code>final</code> and <code>ensemble</code> folders can be modified, but <strong>the nested subfolder structure will remain the same</strong>. If you change <code>final_models</code> default value (<code>"final_model"</code>) you will need to include the new value when calling <code><a href="../reference/ensemble_model.html">ensemble_model()</a></code> (<code>final_dir = "[new name]"</code>), to indicate the function where to look for models. This partial flexibility allows for experimenting with final model and ensemble construction (by runnning final or ensemble twice in different output folders, for example).</p></li>
 </ul>
 </div>
-<div id="cleaning-and-setting-up-the-data-setup_sdmdata" class="section level2">
+<div id="the-example-dataset" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cleaning-and-setting-up-the-data-setup_sdmdata" class="anchor"></a>Cleaning and setting up the data: <code>setup_sdmdata()</code>
-</h2>
-<p>The first step of the workflow is to setup the data, that is, to partition it according to each project needs, to sample background pseudoabsences and to apply some data cleaning procedures, as well as some filters. This is done by function <code><a href="https://rdrr.io/pkg/modleR/man/setup_sdmdata.html">setup_sdmdata()</a></code></p>
-<p><strong>modleR</strong> comes with example data, a list called <code>example_occs</code>, with occurrence data for four species, and predictor variables called <code>example_vars</code></p>
+<a href="#the-example-dataset" class="anchor"></a>The example dataset</h2>
+<p><strong>modleR</strong> comes with example data, a list called <code>example_occs</code> with occurrence data for four species, and predictor variables called <code>example_vars</code>.</p>
 <pre><code>#&gt; Loading modleR</code></pre>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">modleR</span>)</pre></body></html></div>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">example_occs</span>)
@@ -171,19 +169,28 @@
 <span class="co">#&gt; [4] "Ouratea_semiserrata"</span></pre></body></html></div>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>, <span class="fl">2</span>), <span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">1</span>))
 <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">example_occs</span>)) {
-  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">example_vars</span><span class="kw">[[</span><span class="fl">1</span>]]), <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="no">species</span>[<span class="no">i</span>])
-  <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="no">lat</span> ~ <span class="no">lon</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="no">i</span>]])
-}</pre></body></html></div>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">example_vars</span><span class="kw">[[</span><span class="fl">1</span>]]),
+       <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
+       <span class="kw">main</span> <span class="kw">=</span> <span class="no">species</span>[<span class="no">i</span>],
+       <span class="kw">col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"white"</span>, <span class="st">"#00A08A"</span>))
+  <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="no">lat</span> ~ <span class="no">lon</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="no">i</span>]], <span class="kw">pch</span> <span class="kw">=</span> <span class="fl">19</span>)
+}
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">1</span>))</pre></body></html></div>
 <div class="figure">
 <img src="modleR_files/figure-html/dataset-1.png" alt="Figure 1. The example dataset: predictor variables and occurrence for four species." width="480"><p class="caption">
 Figure 1. The example dataset: predictor variables and occurrence for four species.
 </p>
 </div>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">1</span>))</pre></body></html></div>
 <p>We will filter the <code>example_occs</code> file to select only the data for the first species:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">occs</span> <span class="kw">&lt;-</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="fl">1</span>]]</pre></body></html></div>
-<p><code>setupsdmdata()</code> has a large number of parameters:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">setup_sdmdata</span>)
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">occs</span> <span class="kw">&lt;-</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="fl">1</span>]]</pre></body></html></div>
+</div>
+<div id="cleaning-and-setting-up-the-data-setup_sdmdata" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cleaning-and-setting-up-the-data-setup_sdmdata" class="anchor"></a>Cleaning and setting up the data: <code>setup_sdmdata()</code>
+</h2>
+<p>The first step of the workflow is to setup the data, that is, to partition it according to each project needs, to sample background pseudoabsences and to apply some data cleaning procedures, as well as some filters. This is done by function <code><a href="../reference/setup_sdmdata.html">setup_sdmdata()</a></code></p>
+<p><code><a href="../reference/setup_sdmdata.html">setup_sdmdata()</a></code> has a large number of parameters:</p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">setup_sdmdata</span>)
 <span class="co">#&gt; function (species_name, occurrences, predictors, lon = "lon", </span>
 <span class="co">#&gt;     lat = "lat", models_dir = "./models", real_absences = NULL, </span>
 <span class="co">#&gt;     buffer_type = NULL, dist_buf = NULL, env_filter = FALSE, </span>
@@ -208,7 +215,9 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>
 <code>clean_dupl</code> will delete exact duplicates in the occurrence data</li>
 <li>
-<code>clean_nas</code> will delete any occurrence with no environmental data in the predictor set.</li>
+<code>clean_nas</code> will delete any occurrence with no environmental data in the predictor set</li>
+<li>
+<code>clean_uni</code> will leave only one occurrence per pixel</li>
 </ul>
 <p>The function also sets up different experimental designs:</p>
 <ul>
@@ -219,22 +228,26 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>
 <code>boot_proportion</code> sets the proportion of data to be sampled as training set (defaults to 0.8)</li>
 <li>
-<code>cv_partitions</code> sets the number of partitions in the k-fold crossvalidations (defaults to 3)</li>
-<li>but overwrites part when n &lt; 10, setting part to the number of occurrence records (a jacknife partition).</li>
+<code>cv_partitions</code> sets the number of partitions in the k-fold crossvalidations (defaults to 3) but overwrites part when n &lt; 10, setting part to the number of occurrence records (a jacknife partition).</li>
 </ul>
-<p>Pseudoabsence sampling has also some options:</p>
+<p>Pseudoabsence sampling is performed by function has also some options:</p>
 <ul>
 <li>
-<code>real_absences</code> can be used to specify a set of user-defined absences, with species name, lat and lon columns.</li>
+<code>real_absences</code> can be used to specify a set of user-defined absences, with species name, lat and lon columns</li>
 <li>
 <code>geo_filt</code> will eliminate records that are at less than <code>geo_filt_dist</code> between them, in order to control for spatial autocorrelation</li>
 <li>
-<code>buffer_type</code>: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. Pseudoabsence points will be sampled (using <code><a href="https://rdrr.io/pkg/dismo/man/randomPoints.html">dismo::randomPoints()</a></code>) <em>within</em> this buffer, in order to control for the area accessible to the species (M in the BAM diagram).</li>
+<code>buffer_type</code>: can build a distance buffer around the occurrence points, by taking either the maximal, median or mean distance between points. It can also take a user-defined shapefile as the area for pseudoabsence sampling</li>
 <li>
-<code>seed</code>: for reproducilibity purposes</li>
+<code>env_filter</code> calculates the euclidean distance and removes the closest areas in the environmental space from the sampling of pseudoabsences</li>
 </ul>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">test_folder</span> <span class="kw">&lt;-</span> <span class="st">"~/modleR_test"</span>
-<span class="no">sdmdata_1sp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
+<p>Pseudoabsence points will be sampled (using <code><a href="https://rdrr.io/pkg/dismo/man/randomPoints.html">dismo::randomPoints()</a></code>) <em>within</em> the buffer and outside the environmental filter, in order to control for the area accessible to the species (M in the BAM diagram).</p>
+<ul>
+<li>
+<code>seed</code>: for reproducibility purposes</li>
+</ul>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">test_folder</span> <span class="kw">&lt;-</span> <span class="st">"~/modleR_test"</span>
+<span class="no">sdmdata_1sp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
                              <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">occs</span>,
                              <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">example_vars</span>,
                              <span class="kw">models_dir</span> <span class="kw">=</span> <span class="no">test_folder</span>,
@@ -273,7 +286,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <h2 class="hasAnchor">
 <a href="#fitting-a-model-per-partition-do_any-and-do_many" class="anchor"></a>Fitting a model per partition: <code>do_any()</code> and <code>do_many()</code>
 </h2>
-<p>Functions <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> and <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many()</a></code> create a <em>model per partition, per algorithm</em>. The difference between these functions that <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> performs modeling for one individual algorithm at a time, that can be chosen by using parameter <code>algorithm</code>, while <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many()</a></code> can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).</p>
+<p>Functions <code><a href="../reference/model_fit.html">do_any()</a></code> and <code><a href="../reference/model_fit.html">do_many()</a></code> create a <em>model per partition, per algorithm</em>. The difference between these functions that <code><a href="../reference/model_fit.html">do_any()</a></code> performs modeling for one individual algorithm at a time, that can be chosen by using parameter <code>algorithm</code>, while <code><a href="../reference/model_fit.html">do_many()</a></code> can select multiple algorithms, with TRUE or FALSE statements (just as BIOMOD2 functions do).</p>
 <p>The available algorithms are:</p>
 <ul>
 <li>
@@ -285,8 +298,8 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>Boosted regression trees (BRT) as implemented by <code>gbm.step()</code> function in <strong>dismo</strong> package <span class="citation">(Hastie, Tibshirani, and Friedman 2001; Elith, Leathwick, and Hastie 2009)</span>.</li>
 </ul>
 <p>Details for the implementation of each model can be accessed in the documentation of the function.</p>
-<p>Here you can see the differences between the parameters of both functions. <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many()</a></code> calls several instances of <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> In practice you may only want to call <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many()</a></code> but for parallelization by algorithm it may be better to call <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> individually.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">do_any</span>)
+<p>Here you can see the differences between the parameters of both functions. <code><a href="../reference/model_fit.html">do_many()</a></code> calls several instances of <code><a href="../reference/model_fit.html">do_any()</a></code> Sometimes you may only want to call <code><a href="../reference/model_fit.html">do_many()</a></code> but for better control and parallelization by algorithm it may be better to call <code><a href="../reference/model_fit.html">do_any()</a></code> individually.</p>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">do_any</span>)
 <span class="co">#&gt; function (species_name, predictors, models_dir = "./models", </span>
 <span class="co">#&gt;     algorithm = c("bioclim"), project_model = FALSE, proj_data_folder = "./data/proj", </span>
 <span class="co">#&gt;     mask = NULL, write_rda = FALSE, png_partitions = FALSE, write_bin_cut = FALSE, </span>
@@ -298,71 +311,35 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt;     mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE, </span>
 <span class="co">#&gt;     svmk = FALSE, svme = FALSE, brt = FALSE, ...) </span>
 <span class="co">#&gt; NULL</span></pre></body></html></div>
-<p>Calling <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many()</a></code> and setting <code>bioclim = TRUE</code> is therefore equivalent to call <code><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any()</a></code> and set <code>algorithm = "bioclim"</code>.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r">
-<span class="no">sp_maxnet</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_any</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
+<p>Calling <code><a href="../reference/model_fit.html">do_many()</a></code> and setting <code>bioclim = TRUE</code> is therefore equivalent to call <code><a href="../reference/model_fit.html">do_any()</a></code> and set <code>algorithm = "bioclim"</code>.</p>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">sp_maxnet</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/model_fit.html">do_any</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
                     <span class="kw">algorithm</span> <span class="kw">=</span> <span class="st">"maxnet"</span>,
                     <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">example_vars</span>,
                     <span class="kw">models_dir</span> <span class="kw">=</span> <span class="no">test_folder</span>,
                     <span class="kw">png_partitions</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                     <span class="kw">write_bin_cut</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-                    <span class="kw">equalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co">#&gt; maxnet</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-
-<span class="no">sp_maxnet</span>
+                    <span class="kw">equalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<p>The resulting object is a table with the performance metrics, but the actual output is written on disk</p>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">sp_maxnet</span>
 <span class="co">#&gt;                kappa spec_sens no_omission prevalence equal_sens_spec</span>
 <span class="co">#&gt; thresholds 0.3199126 0.1761995  0.00492225  0.1761995        0.109052</span>
 <span class="co">#&gt;            sensitivity         species_name algorithm run partition presencenb</span>
 <span class="co">#&gt; thresholds  0.09111853 Abarema_langsdorffii    maxnet   1         1         21</span>
 <span class="co">#&gt;            absencenb correlation    pvaluecor       AUC AUC_pval AUCratio</span>
 <span class="co">#&gt; thresholds       100   0.6977735 5.935626e-19 0.9142857       NA 1.828571</span>
-<span class="co">#&gt;                pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold</span>
-<span class="co">#&gt; thresholds 1.787132         0 0.7295238 0.7357438       spec_sens</span>
+<span class="co">#&gt;               pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold</span>
+<span class="co">#&gt; thresholds 1.79505         0 0.7295238 0.7357438       spec_sens</span>
 <span class="co">#&gt;            prevalence.value  PPP       NPP       TPR  TNR  FPR       FNR</span>
 <span class="co">#&gt; thresholds        0.1735537 0.68 0.9583333 0.8095238 0.92 0.08 0.1904762</span>
 <span class="co">#&gt;                  CCR     Kappa   F_score   Jaccard</span>
 <span class="co">#&gt; thresholds 0.9008264 0.6784765 0.7391304 0.5862069</span></pre></body></html></div>
 <p>The following lines call for bioclim, GLM, maxnet, random forests and smvk (from package <strong>kernlab</strong>)</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">many</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">many</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/model_fit.html">do_many</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
                 <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">example_vars</span>,
                 <span class="kw">models_dir</span> <span class="kw">=</span> <span class="no">test_folder</span>,
                 <span class="kw">png_partitions</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                 <span class="kw">write_bin_cut</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
+                <span class="kw">write_rda</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                 <span class="kw">bioclim</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                 <span class="kw">domain</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
                 <span class="kw">glm</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
@@ -372,645 +349,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                 <span class="kw">rf</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                 <span class="kw">mahal</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
                 <span class="kw">brt</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                <span class="kw">equalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co">#&gt; bioclim</span>
-<span class="co">#&gt; Abarema_langsdorffii bioclim run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii bioclim run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii bioclim run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii bioclim run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii bioclim run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; glm</span>
-<span class="co">#&gt; Abarema_langsdorffii glm run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii glm run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii glm run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii glm run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii glm run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; maxnet</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii maxnet run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; rf</span>
-<span class="co">#&gt; Abarema_langsdorffii rf run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryCur, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; 0.01281904 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryCur, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; -0.06103153 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = res[which.min(res[, 2]), 1], :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii rf run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; 0.008247689 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryCur, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; -0.0509031 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = res[which.min(res[, 2]), 1], :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii rf run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; 0.02903438 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryCur, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; -0.01391524 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = res[which.min(res[, 2]), 1], :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii rf run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; -0.06984245 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryCur, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; -0.05862316 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = res[which.min(res[, 2]), 1], :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii rf run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryStart, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; 0.03103431 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = mtryCur, ntree = ntreeTry, :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; 0.03651881 0.05</span>
-<span class="co">#&gt; Warning in randomForest.default(x, y, mtry = res[which.min(res[, 2]), 1], :</span>
-<span class="co">#&gt; The response has five or fewer unique values. Are you sure you want to do</span>
-<span class="co">#&gt; regression?</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; svmk</span>
-<span class="co">#&gt; Abarema_langsdorffii svmk run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svmk run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svmk run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svmk run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svmk run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; svme</span>
-<span class="co">#&gt; Abarema_langsdorffii svme run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; Trying svme 2 times</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svme run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svme run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svme run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii svme run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; brt</span>
-<span class="co">#&gt; Abarema_langsdorffii brt run number 1 part. nb. 3</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  GBM STEP - version 2.9 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Performing cross-validation optimisation of a boosted regression tree model </span>
-<span class="co">#&gt; for NA and using a family of bernoulli </span>
-<span class="co">#&gt; Using 168 observations and 6 predictors </span>
-<span class="co">#&gt; creating 10 initial models of 50 trees </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  folds are stratified by prevalence </span>
-<span class="co">#&gt; total mean deviance =  1.3863 </span>
-<span class="co">#&gt; tolerance is fixed at  0.0014 </span>
-<span class="co">#&gt; ntrees resid. dev. </span>
-<span class="co">#&gt; 50    1.1649 </span>
-<span class="co">#&gt; now adding trees... </span>
-<span class="co">#&gt; 100   1.0663 </span>
-<span class="co">#&gt; 150   1.0253 </span>
-<span class="co">#&gt; 200   1.0057 </span>
-<span class="co">#&gt; 250   0.9946 </span>
-<span class="co">#&gt; 300   0.9839 </span>
-<span class="co">#&gt; 350   0.9748 </span>
-<span class="co">#&gt; 400   0.9682 </span>
-<span class="co">#&gt; 450   0.9564 </span>
-<span class="co">#&gt; 500   0.948 </span>
-<span class="co">#&gt; 550   0.942 </span>
-<span class="co">#&gt; 600   0.9395 </span>
-<span class="co">#&gt; 650   0.9322 </span>
-<span class="co">#&gt; 700   0.927 </span>
-<span class="co">#&gt; 750   0.9201 </span>
-<span class="co">#&gt; 800   0.9176 </span>
-<span class="co">#&gt; 850   0.9161 </span>
-<span class="co">#&gt; 900   0.9154 </span>
-<span class="co">#&gt; 950   0.9118 </span>
-<span class="co">#&gt; 1000   0.9104 </span>
-<span class="co">#&gt; 1050   0.9109 </span>
-<span class="co">#&gt; 1100   0.9052 </span>
-<span class="co">#&gt; 1150   0.903 </span>
-<span class="co">#&gt; 1200   0.9022 </span>
-<span class="co">#&gt; 1250   0.8963 </span>
-<span class="co">#&gt; 1300   0.8964 </span>
-<span class="co">#&gt; 1350   0.895 </span>
-<span class="co">#&gt; 1400   0.8979 </span>
-<span class="co">#&gt; 1450   0.8942 </span>
-<span class="co">#&gt; 1500   0.8921 </span>
-<span class="co">#&gt; 1550   0.8905 </span>
-<span class="co">#&gt; 1600   0.8879 </span>
-<span class="co">#&gt; 1650   0.8875 </span>
-<span class="co">#&gt; 1700   0.8847 </span>
-<span class="co">#&gt; 1750   0.8848 </span>
-<span class="co">#&gt; 1800   0.8857 </span>
-<span class="co">#&gt; 1850   0.8855 </span>
-<span class="co">#&gt; 1900   0.8837 </span>
-<span class="co">#&gt; 1950   0.8841 </span>
-<span class="co">#&gt; 2000   0.8808 </span>
-<span class="co">#&gt; 2050   0.8805 </span>
-<span class="co">#&gt; 2100   0.8807 </span>
-<span class="co">#&gt; 2150   0.8828 </span>
-<span class="co">#&gt; 2200   0.883 </span>
-<span class="co">#&gt; 2250   0.8826 </span>
-<span class="co">#&gt; 2300   0.8815 </span>
-<span class="co">#&gt; 2350   0.8812 </span>
-<span class="co">#&gt; 2400   0.8814 </span>
-<span class="co">#&gt; 2450   0.8807 </span>
-<span class="co">#&gt; 2500   0.8821 </span>
-<span class="co">#&gt; 2550   0.8819 </span>
-<span class="co">#&gt; 2600   0.8824 </span>
-<span class="co">#&gt; 2650   0.882 </span>
-<span class="co">#&gt; 2700   0.8819</span>
-<span class="co">#&gt; Warning: glm.fit: algorithm did not converge</span>
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-<span class="co">#&gt; fitting final gbm model with a fixed number of 2050 trees for NA</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; mean total deviance = 1.386 </span>
-<span class="co">#&gt; mean residual deviance = 0.461 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; estimated cv deviance = 0.881 ; se = 0.144 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data correlation = 0.873 </span>
-<span class="co">#&gt; cv correlation =  0.674 ; se = 0.062 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data AUC score = 0.978 </span>
-<span class="co">#&gt; cv AUC score = 0.877 ; se = 0.035 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; elapsed time -  0.06 minutes</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii brt run number 1 part. nb. 4</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  GBM STEP - version 2.9 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Performing cross-validation optimisation of a boosted regression tree model </span>
-<span class="co">#&gt; for NA and using a family of bernoulli </span>
-<span class="co">#&gt; Using 166 observations and 6 predictors </span>
-<span class="co">#&gt; creating 10 initial models of 50 trees </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  folds are stratified by prevalence </span>
-<span class="co">#&gt; total mean deviance =  1.3863 </span>
-<span class="co">#&gt; tolerance is fixed at  0.0014 </span>
-<span class="co">#&gt; ntrees resid. dev. </span>
-<span class="co">#&gt; 50    1.0791 </span>
-<span class="co">#&gt; now adding trees... </span>
-<span class="co">#&gt; 100   0.9489 </span>
-<span class="co">#&gt; 150   0.8855 </span>
-<span class="co">#&gt; 200   0.8511 </span>
-<span class="co">#&gt; 250   0.8322 </span>
-<span class="co">#&gt; 300   0.8256 </span>
-<span class="co">#&gt; 350   0.8242 </span>
-<span class="co">#&gt; 400   0.8209 </span>
-<span class="co">#&gt; 450   0.8207 </span>
-<span class="co">#&gt; 500   0.8208 </span>
-<span class="co">#&gt; 550   0.8233 </span>
-<span class="co">#&gt; 600   0.8257 </span>
-<span class="co">#&gt; 650   0.8267 </span>
-<span class="co">#&gt; 700   0.8286 </span>
-<span class="co">#&gt; 750   0.8298 </span>
-<span class="co">#&gt; 800   0.8313 </span>
-<span class="co">#&gt; 850   0.8321 </span>
-<span class="co">#&gt; 900   0.8333 </span>
-<span class="co">#&gt; 950   0.8341 </span>
-<span class="co">#&gt; 1000   0.8378 </span>
-<span class="co">#&gt; 1050   0.8413 </span>
-<span class="co">#&gt; 1100   0.8447</span>
-<span class="co">#&gt; fitting final gbm model with a fixed number of 450 trees for NA</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; mean total deviance = 1.386 </span>
-<span class="co">#&gt; mean residual deviance = 0.649 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; estimated cv deviance = 0.821 ; se = 0.098 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data correlation = 0.791 </span>
-<span class="co">#&gt; cv correlation =  0.722 ; se = 0.047 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data AUC score = 0.942 </span>
-<span class="co">#&gt; cv AUC score = 0.893 ; se = 0.028 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; elapsed time -  0.02 minutes</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii brt run number 1 part. nb. 2</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  GBM STEP - version 2.9 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Performing cross-validation optimisation of a boosted regression tree model </span>
-<span class="co">#&gt; for NA and using a family of bernoulli </span>
-<span class="co">#&gt; Using 166 observations and 6 predictors </span>
-<span class="co">#&gt; creating 10 initial models of 50 trees </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  folds are stratified by prevalence </span>
-<span class="co">#&gt; total mean deviance =  1.3863 </span>
-<span class="co">#&gt; tolerance is fixed at  0.0014 </span>
-<span class="co">#&gt; ntrees resid. dev. </span>
-<span class="co">#&gt; 50    1.1025 </span>
-<span class="co">#&gt; now adding trees... </span>
-<span class="co">#&gt; 100   1.0006 </span>
-<span class="co">#&gt; 150   0.9657 </span>
-<span class="co">#&gt; 200   0.9541 </span>
-<span class="co">#&gt; 250   0.9482 </span>
-<span class="co">#&gt; 300   0.9416 </span>
-<span class="co">#&gt; 350   0.9372 </span>
-<span class="co">#&gt; 400   0.9324 </span>
-<span class="co">#&gt; 450   0.9302 </span>
-<span class="co">#&gt; 500   0.93 </span>
-<span class="co">#&gt; 550   0.9331 </span>
-<span class="co">#&gt; 600   0.9329 </span>
-<span class="co">#&gt; 650   0.9334 </span>
-<span class="co">#&gt; 700   0.9324 </span>
-<span class="co">#&gt; 750   0.9334 </span>
-<span class="co">#&gt; 800   0.9314 </span>
-<span class="co">#&gt; 850   0.9327 </span>
-<span class="co">#&gt; 900   0.9336 </span>
-<span class="co">#&gt; 950   0.933 </span>
-<span class="co">#&gt; 1000   0.9351 </span>
-<span class="co">#&gt; 1050   0.9371 </span>
-<span class="co">#&gt; 1100   0.9379 </span>
-<span class="co">#&gt; 1150   0.9365 </span>
-<span class="co">#&gt; 1200   0.9388</span>
-<span class="co">#&gt; Warning: glm.fit: algorithm did not converge</span>
-
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-<span class="co">#&gt; fitting final gbm model with a fixed number of 500 trees for NA</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; mean total deviance = 1.386 </span>
-<span class="co">#&gt; mean residual deviance = 0.739 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; estimated cv deviance = 0.93 ; se = 0.095 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data correlation = 0.751 </span>
-<span class="co">#&gt; cv correlation =  0.669 ; se = 0.057 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data AUC score = 0.927 </span>
-<span class="co">#&gt; cv AUC score = 0.863 ; se = 0.033 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; elapsed time -  0.02 minutes</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii brt run number 1 part. nb. 5</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  GBM STEP - version 2.9 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Performing cross-validation optimisation of a boosted regression tree model </span>
-<span class="co">#&gt; for NA and using a family of bernoulli </span>
-<span class="co">#&gt; Using 166 observations and 6 predictors </span>
-<span class="co">#&gt; creating 10 initial models of 50 trees </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  folds are stratified by prevalence </span>
-<span class="co">#&gt; total mean deviance =  1.3863 </span>
-<span class="co">#&gt; tolerance is fixed at  0.0014 </span>
-<span class="co">#&gt; ntrees resid. dev. </span>
-<span class="co">#&gt; 50    1.0986 </span>
-<span class="co">#&gt; now adding trees... </span>
-<span class="co">#&gt; 100   0.9649 </span>
-<span class="co">#&gt; 150   0.9047 </span>
-<span class="co">#&gt; 200   0.8641 </span>
-<span class="co">#&gt; 250   0.8345 </span>
-<span class="co">#&gt; 300   0.8109 </span>
-<span class="co">#&gt; 350   0.7919 </span>
-<span class="co">#&gt; 400   0.7791 </span>
-<span class="co">#&gt; 450   0.7639 </span>
-<span class="co">#&gt; 500   0.7544 </span>
-<span class="co">#&gt; 550   0.748 </span>
-<span class="co">#&gt; 600   0.744 </span>
-<span class="co">#&gt; 650   0.7415 </span>
-<span class="co">#&gt; 700   0.7397 </span>
-<span class="co">#&gt; 750   0.7364 </span>
-<span class="co">#&gt; 800   0.7363 </span>
-<span class="co">#&gt; 850   0.7371 </span>
-<span class="co">#&gt; 900   0.7372 </span>
-<span class="co">#&gt; 950   0.7373 </span>
-<span class="co">#&gt; 1000   0.7393 </span>
-<span class="co">#&gt; 1050   0.7431 </span>
-<span class="co">#&gt; 1100   0.7435 </span>
-<span class="co">#&gt; 1150   0.7478 </span>
-<span class="co">#&gt; 1200   0.7495 </span>
-<span class="co">#&gt; 1250   0.7551 </span>
-<span class="co">#&gt; 1300   0.7594 </span>
-<span class="co">#&gt; 1350   0.7632</span>
-<span class="co">#&gt; Warning: glm.fit: algorithm did not converge</span>
-
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-<span class="co">#&gt; Warning: glm.fit: algorithm did not converge</span>
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-<span class="co">#&gt; fitting final gbm model with a fixed number of 800 trees for NA</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; mean total deviance = 1.386 </span>
-<span class="co">#&gt; mean residual deviance = 0.499 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; estimated cv deviance = 0.736 ; se = 0.089 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data correlation = 0.866 </span>
-<span class="co">#&gt; cv correlation =  0.777 ; se = 0.039 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data AUC score = 0.965 </span>
-<span class="co">#&gt; cv AUC score = 0.921 ; se = 0.022 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; elapsed time -  0.03 minutes</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span>
-<span class="co">#&gt; Abarema_langsdorffii brt run number 1 part. nb. 1</span>
-<span class="co">#&gt; fitting models</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  GBM STEP - version 2.9 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; Performing cross-validation optimisation of a boosted regression tree model </span>
-<span class="co">#&gt; for NA and using a family of bernoulli </span>
-<span class="co">#&gt; Using 166 observations and 6 predictors </span>
-<span class="co">#&gt; creating 10 initial models of 50 trees </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  folds are stratified by prevalence </span>
-<span class="co">#&gt; total mean deviance =  1.3863 </span>
-<span class="co">#&gt; tolerance is fixed at  0.0014 </span>
-<span class="co">#&gt; ntrees resid. dev. </span>
-<span class="co">#&gt; 50    1.0811 </span>
-<span class="co">#&gt; now adding trees... </span>
-<span class="co">#&gt; 100   0.9443 </span>
-<span class="co">#&gt; 150   0.8889 </span>
-<span class="co">#&gt; 200   0.8646 </span>
-<span class="co">#&gt; 250   0.8423 </span>
-<span class="co">#&gt; 300   0.8272 </span>
-<span class="co">#&gt; 350   0.8145 </span>
-<span class="co">#&gt; 400   0.8051 </span>
-<span class="co">#&gt; 450   0.8009 </span>
-<span class="co">#&gt; 500   0.7992 </span>
-<span class="co">#&gt; 550   0.7985 </span>
-<span class="co">#&gt; 600   0.7965 </span>
-<span class="co">#&gt; 650   0.7933 </span>
-<span class="co">#&gt; 700   0.7952 </span>
-<span class="co">#&gt; 750   0.7934 </span>
-<span class="co">#&gt; 800   0.7935 </span>
-<span class="co">#&gt; 850   0.791 </span>
-<span class="co">#&gt; 900   0.7907 </span>
-<span class="co">#&gt; 950   0.7933 </span>
-<span class="co">#&gt; 1000   0.7937 </span>
-<span class="co">#&gt; 1050   0.7941 </span>
-<span class="co">#&gt; 1100   0.7931 </span>
-<span class="co">#&gt; 1150   0.7969 </span>
-<span class="co">#&gt; 1200   0.7981 </span>
-<span class="co">#&gt; 1250   0.7994 </span>
-<span class="co">#&gt; 1300   0.8034 </span>
-<span class="co">#&gt; 1350   0.8053</span>
-<span class="co">#&gt; Warning: glm.fit: algorithm did not converge</span>
-
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-<span class="co">#&gt; Warning: glm.fit: algorithm did not converge</span>
-<span class="co">#&gt; Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</span>
-<span class="co">#&gt; fitting final gbm model with a fixed number of 900 trees for NA</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; mean total deviance = 1.386 </span>
-<span class="co">#&gt; mean residual deviance = 0.563 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; estimated cv deviance = 0.791 ; se = 0.118 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data correlation = 0.832 </span>
-<span class="co">#&gt; cv correlation =  0.743 ; se = 0.055 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; training data AUC score = 0.956 </span>
-<span class="co">#&gt; cv AUC score = 0.889 ; se = 0.036 </span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; elapsed time -  0.02 minutes</span>
-<span class="co">#&gt; projecting the models</span>
-<span class="co">#&gt; evaluating the models</span>
-<span class="co">#&gt; writing evaluation tables</span>
-<span class="co">#&gt; writing raster files</span>
-<span class="co">#&gt; writing png files</span></pre></body></html></div>
+                <span class="kw">equalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <p>In addition:</p>
 <ul>
 <li>
@@ -1018,42 +357,11 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>
 <code>png_partitions</code> will create a png file of the output</li>
 </ul>
-<p>You can explore the list of files created at this phase, for example:</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">partitions.folder</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="no">test_folder</span>,
-                                <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                                <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"partitions"</span>,
-                                <span class="kw">include.dirs</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                                <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">partitions.folder</span>
-<span class="co">#&gt; [1] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/partitions"</span></pre></body></html></div>
-<p>A call to:</p>
-<pre><code><a href="https://rdrr.io/r/base/list.files.html">list.files(partitions.folder, recursive = TRUE)</a></code></pre>
-<p>should return something like this:</p>
-<pre><code>[1] "bioclim_bin_Abarema_langsdorffii_1_1.png"
-[2] "bioclim_bin_Abarema_langsdorffii_1_1.tif"
-[3] "bioclim_bin_Abarema_langsdorffii_1_2.png"
-[4] "bioclim_bin_Abarema_langsdorffii_1_2.tif"
- ...
-[11] "bioclim_cont_Abarema_langsdorffii_1_1.png"
-[12] "bioclim_cont_Abarema_langsdorffii_1_1.tif"
-[13] "bioclim_cont_Abarema_langsdorffii_1_2.png"
-[14] "bioclim_cont_Abarema_langsdorffii_1_2.tif"
-...
-[31] "evaluate_Abarema_langsdorffii_1_1_bioclim.txt"
-[32] "evaluate_Abarema_langsdorffii_1_1_glm.txt"
-[33] "evaluate_Abarema_langsdorffii_1_1_maxnet.txt"
-...
-[116] "metadata.txt"
-...
-[145] "rf_cut_Abarema_langsdorffii_1_5.png"
-[146] "rf_cut_Abarema_langsdorffii_1_5.tif"
-[147] "sdmdata_Abarema_langsdorffii.png"
-[148] "sdmdata.txt"</code></pre>
 <p>At the end of a modeling round, the partition folder containts:</p>
 <ul>
 <li>A <code>.tif</code> file for each partition, continuous, binary and cut by the threshold that maximizes its TSS (TSSmax). Its name will indicate the algorithm, the type of model (cont, bin or cut), the name of the species, the run and partition.</li>
 <li>Figures in <code>.png</code> to explore the results readily, without reloading them into R or opening them in a SIG program. The creation of these figures can be controlled with the <code>png_partitions</code> parameter.</li>
-<li>A <code>.txt</code> table with the evaluation data for each partition: <code>evaluate_[Species name ]_[partition number]_[algorithm].txt</code>. These files will be read by the <code><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model()</a></code> function, to generate the final model per species.</li>
+<li>A <code>.txt</code> table with the evaluation data for each partition: <code>evaluate_[Species name ]_[partition number]_[algorithm].txt</code>. These files will be read by the <code><a href="../reference/final_model.html">final_model()</a></code> function, to generate the final model per species.</li>
 <li>A file called <code>sdmdata.txt</code> with the data used for each partition</li>
 <li>A file called <code>metadata.txt</code> with the metadata of the current modeling round.</li>
 <li>An optional <code>.png</code> image of the data (controlled by parameter <code>png_sdmdata = TRUE</code>)</li>
@@ -1063,7 +371,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <h2 class="hasAnchor">
 <a href="#joining-partitions-final_model" class="anchor"></a>Joining partitions: <code>final_model()</code>
 </h2>
-<p>There are many ways to create a final model per algorithm per species. <code><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model()</a></code> follows the following logic:</p>
+<p>There are many ways to create a final model per algorithm per species. <code><a href="../reference/final_model.html">final_model()</a></code> follows the following logic:</p>
 <p><img src="fig05_finalmodel.png" width="343"></p>
 <ul>
 <li>The partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a <code>raster::rasterStack()</code> object.</li>
@@ -1072,15 +380,15 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>From <code>bin_mean</code>, a consensus model (i.e. how many of the models predict an area) can be built (<code>bin_consensus</code>). The parameter <code>consensus_level</code> allows to set this level of consensus (defaults to 0.5: majority consensus approach).</li>
 <li>NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter <code>algorithms</code>. If left unspecified, all algorithms listed in the <code>evaluate</code> files will be used.</li>
 </ul>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">final_model</span>)
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">final_model</span>)
 <span class="co">#&gt; function (species_name, algorithms = NULL, scale_models = TRUE, </span>
 <span class="co">#&gt;     consensus_level = 0.5, models_dir = "./models", final_dir = "final_models", </span>
 <span class="co">#&gt;     proj_dir = "present", which_models = c("raw_mean"), mean_th_par = c("spec_sens"), </span>
 <span class="co">#&gt;     uncertainty = FALSE, png_final = TRUE, sensitivity = 0.9, </span>
 <span class="co">#&gt;     ...) </span>
 <span class="co">#&gt; NULL</span></pre></body></html></div>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
-            <span class="kw">algorithms</span> <span class="kw">=</span> <span class="kw">NULL</span>, <span class="co">#if null it will take all the in-disk algorithms</span>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
+            <span class="kw">algorithms</span> <span class="kw">=</span> <span class="kw">NULL</span>, <span class="co">#if null it will take all the algorithms in disk</span>
             <span class="kw">models_dir</span> <span class="kw">=</span> <span class="no">test_folder</span>,
             <span class="kw">which_models</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"raw_mean"</span>,
                              <span class="st">"bin_mean"</span>,
@@ -1088,7 +396,6 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
             <span class="kw">consensus_level</span> <span class="kw">=</span> <span class="fl">0.5</span>,
             <span class="kw">uncertainty</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
             <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="co">#&gt; [1] "Wed Mar 25 15:38:37 2020"</span>
 <span class="co">#&gt; Abarema_langsdorffii</span>
 <span class="co">#&gt; Reading evaluation files for Abarema_langsdorffii in present</span>
 <span class="co">#&gt; Extracting data for Abarema_langsdorffii bioclim</span>
@@ -1133,224 +440,18 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt; Standardizing models from 0 to 1</span>
 <span class="co">#&gt; selected final models for Abarema_langsdorffii svmk DONE</span>
 <span class="co">#&gt; Writing models svmk</span>
-<span class="co">#&gt; writing metadata</span>
-<span class="co">#&gt; [1] "DONE svmk !"</span>
-<span class="co">#&gt;         kappa  spec_sens no_omission prevalence equal_sens_spec sensitivity</span>
-<span class="co">#&gt; 1  0.07218916 0.04809277 -0.00010000 0.16857470      0.04809277  0.04809277</span>
-<span class="co">#&gt; 2  0.82662948 0.39069024 -1.92989875 0.09180761      0.39069024  0.43415606</span>
-<span class="co">#&gt; 3  0.33109077 0.33109077  0.02844708 0.15480553      0.19622520  0.19473965</span>
-<span class="co">#&gt; 4  0.31991255 0.17619949  0.00492225 0.17619949      0.10905196  0.09111853</span>
-<span class="co">#&gt; 5  0.65820000 0.65820000  0.06426667 0.17180000      0.46896667  0.69473333</span>
-<span class="co">#&gt; 6  0.19253552 0.19253552 -0.00618287 0.19253552      0.07015249  0.20658250</span>
-<span class="co">#&gt; 7  0.14758247 0.10761077 -0.01248507 0.15831118      0.07707533  0.11308524</span>
-<span class="co">#&gt; 8  0.25291205 0.12038193 -0.00010000 0.16857470      0.07218916  0.02399639</span>
-<span class="co">#&gt; 9  0.91361640 0.02055549  0.02055549 0.25550454      0.83480060  0.83480060</span>
-<span class="co">#&gt; 10 0.24849759 0.24849759  0.14242208 0.18108208      0.31299245  0.31299245</span>
-<span class="co">#&gt; 11 0.64136783 0.27127092  0.27127092 0.18618639      0.44670794  0.47217070</span>
-<span class="co">#&gt; 12 0.77520000 0.75696667  0.66180000 0.17130000      0.75696667  0.77606667</span>
-<span class="co">#&gt; 13 0.40594724 0.16501184  0.16501184 0.17877434      0.29732647  0.37519042</span>
-<span class="co">#&gt; 14 0.42031253 0.15169553  0.15169553 0.15785722      0.28025826  0.42751069</span>
-<span class="co">#&gt; 15 0.19037619 0.04751905 -0.00010000 0.16656667      0.07132857  0.02370952</span>
-<span class="co">#&gt; 16 0.83122166 0.83122166 -1.73175320 0.28351135      0.69392529 -0.22983530</span>
-<span class="co">#&gt; 17 0.42164642 0.19935320  0.00970504 0.17247034      0.25583286  0.04901348</span>
-<span class="co">#&gt; 18 0.33665583 0.17540725  0.00408978 0.16755334      0.19003715  0.09942462</span>
-<span class="co">#&gt; 19 0.69130000 0.44923333  0.17206667 0.16476667      0.44923333  0.20873333</span>
-<span class="co">#&gt; 20 0.16501184 0.16501184 -0.02412937 0.16501184      0.16501184  0.00989128</span>
-<span class="co">#&gt; 21 0.19370531 0.19370531 -0.02629314 0.15784527      0.19370531  0.01403567</span>
-<span class="co">#&gt; 22 0.22881566 0.09628554 -0.00010000 0.16857470      0.09628554  0.09628554</span>
-<span class="co">#&gt; 23 0.98191331 0.98191331 -0.26696180 0.32044152      0.49916672  0.49916672</span>
-<span class="co">#&gt; 24 0.48371928 0.19145236  0.07142959 0.17292862      0.22669136  0.20559806</span>
-<span class="co">#&gt; 25 0.28408239 0.28408239  0.07019214 0.17527792      0.25022335  0.20151193</span>
-<span class="co">#&gt; 26 0.70160000 0.62290000  0.47943333 0.17513333      0.64626667  0.66516667</span>
-<span class="co">#&gt; 27 0.33556956 0.15598053 -0.00493722 0.17231664      0.16859401  0.21527493</span>
-<span class="co">#&gt; 28 0.39702119 0.15920573 -0.00882606 0.18642237      0.20156938  0.20156938</span>
-<span class="co">#&gt; 29 0.12038193 0.04809277 -0.00010000 0.16857470      0.02399639  0.02399639</span>
-<span class="co">#&gt; 30 1.37549523 0.08034040 -3.14906733 0.15778172     -1.64815091 -2.40731623</span>
-<span class="co">#&gt; 31 0.63740501 0.17525009  0.00682914 0.17525009      0.05979101  0.02006101</span>
-<span class="co">#&gt; 32 0.44814759 0.01072223  0.00095274 0.15662056      0.04072912  0.01500022</span>
-<span class="co">#&gt; 33 0.37803333 0.37803333  0.00930000 0.17363333      0.21320000  0.05980000</span>
-<span class="co">#&gt; 34 0.26258569 0.05565798 -0.00499454 0.19781681      0.03764554  0.00104084</span>
-<span class="co">#&gt; 35 0.58880539 0.08583980 -0.01600202 0.17352216      0.03316320  0.00065161</span>
-<span class="co">#&gt;            species_name algorithm run partition presencenb absencenb</span>
-<span class="co">#&gt; 1  Abarema_langsdorffii   bioclim   1         1         21       100</span>
-<span class="co">#&gt; 2  Abarema_langsdorffii       brt   1         1         21       100</span>
-<span class="co">#&gt; 3  Abarema_langsdorffii       glm   1         1         21       100</span>
-<span class="co">#&gt; 4  Abarema_langsdorffii    maxnet   1         1         21       100</span>
-<span class="co">#&gt; 5  Abarema_langsdorffii        rf   1         1         21       100</span>
-<span class="co">#&gt; 6  Abarema_langsdorffii      svme   1         1         21       100</span>
-<span class="co">#&gt; 7  Abarema_langsdorffii      svmk   1         1         21       100</span>
-<span class="co">#&gt; 8  Abarema_langsdorffii   bioclim   1         2         21       100</span>
-<span class="co">#&gt; 9  Abarema_langsdorffii       brt   1         2         21       100</span>
-<span class="co">#&gt; 10 Abarema_langsdorffii       glm   1         2         21       100</span>
-<span class="co">#&gt; 11 Abarema_langsdorffii    maxnet   1         2         21       100</span>
-<span class="co">#&gt; 12 Abarema_langsdorffii        rf   1         2         21       100</span>
-<span class="co">#&gt; 13 Abarema_langsdorffii      svme   1         2         21       100</span>
-<span class="co">#&gt; 14 Abarema_langsdorffii      svmk   1         2         21       100</span>
-<span class="co">#&gt; 15 Abarema_langsdorffii   bioclim   1         3         20       100</span>
-<span class="co">#&gt; 16 Abarema_langsdorffii       brt   1         3         20       100</span>
-<span class="co">#&gt; 17 Abarema_langsdorffii       glm   1         3         20       100</span>
-<span class="co">#&gt; 18 Abarema_langsdorffii    maxnet   1         3         20       100</span>
-<span class="co">#&gt; 19 Abarema_langsdorffii        rf   1         3         20       100</span>
-<span class="co">#&gt; 20 Abarema_langsdorffii      svme   1         3         20       100</span>
-<span class="co">#&gt; 21 Abarema_langsdorffii      svmk   1         3         20       100</span>
-<span class="co">#&gt; 22 Abarema_langsdorffii   bioclim   1         4         21       100</span>
-<span class="co">#&gt; 23 Abarema_langsdorffii       brt   1         4         21       100</span>
-<span class="co">#&gt; 24 Abarema_langsdorffii       glm   1         4         21       100</span>
-<span class="co">#&gt; 25 Abarema_langsdorffii    maxnet   1         4         21       100</span>
-<span class="co">#&gt; 26 Abarema_langsdorffii        rf   1         4         21       100</span>
-<span class="co">#&gt; 27 Abarema_langsdorffii      svme   1         4         21       100</span>
-<span class="co">#&gt; 28 Abarema_langsdorffii      svmk   1         4         21       100</span>
-<span class="co">#&gt; 29 Abarema_langsdorffii   bioclim   1         5         21       100</span>
-<span class="co">#&gt; 30 Abarema_langsdorffii       brt   1         5         21       100</span>
-<span class="co">#&gt; 31 Abarema_langsdorffii       glm   1         5         21       100</span>
-<span class="co">#&gt; 32 Abarema_langsdorffii    maxnet   1         5         21       100</span>
-<span class="co">#&gt; 33 Abarema_langsdorffii        rf   1         5         21       100</span>
-<span class="co">#&gt; 34 Abarema_langsdorffii      svme   1         5         21       100</span>
-<span class="co">#&gt; 35 Abarema_langsdorffii      svmk   1         5         21       100</span>
-<span class="co">#&gt;    correlation    pvaluecor       AUC AUC_pval AUCratio     pROC pROC_pval</span>
-<span class="co">#&gt; 1    0.4480167 2.566218e-07 0.8190476       NA 1.638095 1.830157         0</span>
-<span class="co">#&gt; 2    0.6454647 1.325567e-15 0.9257143       NA 1.851429 1.700328         0</span>
-<span class="co">#&gt; 3    0.6903083 1.970747e-18 0.9295238       NA 1.859048 1.716567         0</span>
-<span class="co">#&gt; 4    0.6977735 5.935626e-19 0.9142857       NA 1.828571 1.796240         0</span>
-<span class="co">#&gt; 5    0.7221420 9.014913e-21 0.9314286       NA 1.862857 1.559832         0</span>
-<span class="co">#&gt; 6    0.7223519 8.678787e-21 0.9366667       NA 1.873333 1.353161         0</span>
-<span class="co">#&gt; 7    0.6750438 2.055271e-17 0.9152381       NA 1.830476 1.199724         0</span>
-<span class="co">#&gt; 8    0.3545906 6.594145e-05 0.7297619       NA 1.459524 1.774365         0</span>
-<span class="co">#&gt; 9    0.6410768 2.366488e-15 0.9338095       NA 1.867619 1.911910         0</span>
-<span class="co">#&gt; 10   0.6691222 4.916937e-17 0.9390476       NA 1.878095 1.852064         0</span>
-<span class="co">#&gt; 11   0.7038821 2.162570e-19 0.9395238       NA 1.879048 1.961316         0</span>
-<span class="co">#&gt; 12   0.7166133 2.422252e-20 0.9747619       NA 1.949524 1.977932         0</span>
-<span class="co">#&gt; 13   0.7817323 3.655430e-26 0.9685714       NA 1.937143 1.718128         0</span>
-<span class="co">#&gt; 14   0.7204569 1.221485e-20 0.9485714       NA 1.897143 1.701591         0</span>
-<span class="co">#&gt; 15   0.4361926 6.359398e-07 0.7717500       NA 1.543500 1.801613         0</span>
-<span class="co">#&gt; 16   0.5767427 5.428280e-12 0.9150000       NA 1.830000 1.859491         0</span>
-<span class="co">#&gt; 17   0.5275248 5.992005e-10 0.8625000       NA 1.725000 1.617664         0</span>
-<span class="co">#&gt; 18   0.6251312 2.317029e-14 0.9015000       NA 1.803000 1.807113         0</span>
-<span class="co">#&gt; 19   0.6137492 9.097276e-14 0.8995000       NA 1.799000 1.548020         0</span>
-<span class="co">#&gt; 20   0.6081352 1.750584e-13 0.8810000       NA 1.762000 1.289394         0</span>
-<span class="co">#&gt; 21   0.6112069 1.225577e-13 0.8800000       NA 1.760000 1.356159         0</span>
-<span class="co">#&gt; 22   0.6809576 8.427162e-18 0.9057143       NA 1.811429 1.897174         0</span>
-<span class="co">#&gt; 23   0.6451649 1.379512e-15 0.9447619       NA 1.889524 1.905274         0</span>
-<span class="co">#&gt; 24   0.6070905 1.562636e-13 0.9038095       NA 1.807619 1.748525         0</span>
-<span class="co">#&gt; 25   0.6752218 2.001449e-17 0.9347619       NA 1.869524 1.860996         0</span>
-<span class="co">#&gt; 26   0.7349008 8.388010e-22 0.9723810       NA 1.944762 1.948984         0</span>
-<span class="co">#&gt; 27   0.7446564 1.242036e-22 0.9371429       NA 1.874286 1.392318         0</span>
-<span class="co">#&gt; 28   0.7173178 2.138420e-20 0.9257143       NA 1.851429 1.436506         0</span>
-<span class="co">#&gt; 29   0.4427049 3.686475e-07 0.7273810       NA 1.454762 1.861021         0</span>
-<span class="co">#&gt; 30   0.6048480 2.024789e-13 0.8652381       NA 1.730476 1.459380         0</span>
-<span class="co">#&gt; 31   0.5956863 5.715602e-13 0.8080952       NA 1.616190 1.318088         0</span>
-<span class="co">#&gt; 32   0.5965813 5.172041e-13 0.8552381       NA 1.710476 1.697563         0</span>
-<span class="co">#&gt; 33   0.6143013 6.698632e-14 0.8409524       NA 1.681905 1.128380         0</span>
-<span class="co">#&gt; 34   0.6791731 1.105263e-17 0.8319048       NA 1.663810 1.048133         0</span>
-<span class="co">#&gt; 35   0.6427902 1.889298e-15 0.7914286       NA 1.582857 1.038614         0</span>
-<span class="co">#&gt;       TSSmax  KAPPAmax dismo_threshold prevalence.value       PPP       NPP</span>
-<span class="co">#&gt; 1  0.5771429 0.4180361       spec_sens        0.1735537 0.3913043 0.9600000</span>
-<span class="co">#&gt; 2  0.7947619 0.7119048       spec_sens        0.1735537 0.6333333 0.9780220</span>
-<span class="co">#&gt; 3  0.7971429 0.7545639       spec_sens        0.1735537 0.7500000 0.9690722</span>
-<span class="co">#&gt; 4  0.7295238 0.7357438       spec_sens        0.1735537 0.6800000 0.9583333</span>
-<span class="co">#&gt; 5  0.8347619 0.7630033       spec_sens        0.1735537 0.7307692 0.9789474</span>
-<span class="co">#&gt; 6  0.8647619 0.8334098       spec_sens        0.1735537 0.8260870 0.9795918</span>
-<span class="co">#&gt; 7  0.8347619 0.7778798       spec_sens        0.1735537 0.7307692 0.9789474</span>
-<span class="co">#&gt; 8  0.3714286 0.3517176       spec_sens        0.1735537 0.3750000 0.8988764</span>
-<span class="co">#&gt; 9  0.8100000 0.6494205       spec_sens        0.1735537 0.5250000 1.0000000</span>
-<span class="co">#&gt; 10 0.8323810 0.6896824       spec_sens        0.1735537 0.6250000 0.9887640</span>
-<span class="co">#&gt; 11 0.8100000 0.7000225       spec_sens        0.1735537 0.5250000 1.0000000</span>
-<span class="co">#&gt; 12 0.8823810 0.8091053       spec_sens        0.1735537 0.7407407 0.9893617</span>
-<span class="co">#&gt; 13 0.8800000 0.7545639       spec_sens        0.1735537 0.6363636 1.0000000</span>
-<span class="co">#&gt; 14 0.8700000 0.7411211       spec_sens        0.1735537 0.6176471 1.0000000</span>
-<span class="co">#&gt; 15 0.4500000 0.4375000       spec_sens        0.1666667 0.3137255 0.9420290</span>
-<span class="co">#&gt; 16 0.8100000 0.7105263       spec_sens        0.1666667 0.6666667 0.9784946</span>
-<span class="co">#&gt; 17 0.6800000 0.5344828       spec_sens        0.1666667 0.4500000 0.9750000</span>
-<span class="co">#&gt; 18 0.7700000 0.6379310       spec_sens        0.1666667 0.5806452 0.9775281</span>
-<span class="co">#&gt; 19 0.6900000 0.6250000       spec_sens        0.1666667 0.5151515 0.9655172</span>
-<span class="co">#&gt; 20 0.7900000 0.6694915       spec_sens        0.1666667 0.6206897 0.9780220</span>
-<span class="co">#&gt; 21 0.8000000 0.6896552       spec_sens        0.1666667 0.6428571 0.9782609</span>
-<span class="co">#&gt; 22 0.6471429 0.6501971       spec_sens        0.1735537 0.4615385 0.9634146</span>
-<span class="co">#&gt; 23 0.7771429 0.7103373       spec_sens        0.1735537 0.6923077 0.9684211</span>
-<span class="co">#&gt; 24 0.6847619 0.6501971       spec_sens        0.1735537 0.4634146 0.9750000</span>
-<span class="co">#&gt; 25 0.7471429 0.6494205       spec_sens        0.1735537 0.6206897 0.9673913</span>
-<span class="co">#&gt; 26 0.8623810 0.8271429       spec_sens        0.1735537 0.6896552 0.9891304</span>
-<span class="co">#&gt; 27 0.8523810 0.7944674       spec_sens        0.1735537 0.6666667 0.9890110</span>
-<span class="co">#&gt; 28 0.8223810 0.7605146       spec_sens        0.1735537 0.6060606 0.9886364</span>
-<span class="co">#&gt; 29 0.3614286 0.4046740       spec_sens        0.1735537 0.3636364 0.8977273</span>
-<span class="co">#&gt; 30 0.6242857 0.6350425       spec_sens        0.1735537 0.6250000 0.9381443</span>
-<span class="co">#&gt; 31 0.5566667 0.6350425       spec_sens        0.1735537 0.5600000 0.9270833</span>
-<span class="co">#&gt; 32 0.5623810 0.5865966       spec_sens        0.1735537 0.3389831 0.9838710</span>
-<span class="co">#&gt; 33 0.7019048 0.6889460       spec_sens        0.1735537 0.7272727 0.9494949</span>
-<span class="co">#&gt; 34 0.6242857 0.6752550       spec_sens        0.1735537 0.6250000 0.9381443</span>
-<span class="co">#&gt; 35 0.5766667 0.6608744       spec_sens        0.1735537 0.6086957 0.9285714</span>
-<span class="co">#&gt;          TPR  TNR  FPR        FNR       CCR     Kappa   F_score   Jaccard</span>
-<span class="co">#&gt; 1  0.8571429 0.72 0.28 0.14285714 0.7438017 0.3925506 0.5373134 0.3673469</span>
-<span class="co">#&gt; 2  0.9047619 0.89 0.11 0.09523810 0.8925620 0.6796986 0.7450980 0.5937500</span>
-<span class="co">#&gt; 3  0.8571429 0.94 0.06 0.14285714 0.9256198 0.7545639 0.8000000 0.6666667</span>
-<span class="co">#&gt; 4  0.8095238 0.92 0.08 0.19047619 0.9008264 0.6784765 0.7391304 0.5862069</span>
-<span class="co">#&gt; 5  0.9047619 0.93 0.07 0.09523810 0.9256198 0.7630033 0.8085106 0.6785714</span>
-<span class="co">#&gt; 6  0.9047619 0.96 0.04 0.09523810 0.9504132 0.8334098 0.8636364 0.7600000</span>
-<span class="co">#&gt; 7  0.9047619 0.93 0.07 0.09523810 0.9256198 0.7630033 0.8085106 0.6785714</span>
-<span class="co">#&gt; 8  0.5714286 0.80 0.20 0.42857143 0.7603306 0.3077530 0.4528302 0.2926829</span>
-<span class="co">#&gt; 9  1.0000000 0.81 0.19 0.00000000 0.8429752 0.5967374 0.6885246 0.5250000</span>
-<span class="co">#&gt; 10 0.9523810 0.88 0.12 0.04761905 0.8925620 0.6896824 0.7547170 0.6060606</span>
-<span class="co">#&gt; 11 1.0000000 0.81 0.19 0.00000000 0.8429752 0.5967374 0.6885246 0.5250000</span>
-<span class="co">#&gt; 12 0.9523810 0.93 0.07 0.04761905 0.9338843 0.7928969 0.8333333 0.7142857</span>
-<span class="co">#&gt; 13 1.0000000 0.88 0.12 0.00000000 0.9008264 0.7179487 0.7777778 0.6363636</span>
-<span class="co">#&gt; 14 1.0000000 0.87 0.13 0.00000000 0.8925620 0.6990626 0.7636364 0.6176471</span>
-<span class="co">#&gt; 15 0.8000000 0.65 0.35 0.20000000 0.6750000 0.2777778 0.4507042 0.2909091</span>
-<span class="co">#&gt; 16 0.9000000 0.91 0.09 0.10000000 0.9083333 0.7105263 0.7659574 0.6206897</span>
-<span class="co">#&gt; 17 0.9000000 0.78 0.22 0.10000000 0.8000000 0.4857143 0.6000000 0.4285714</span>
-<span class="co">#&gt; 18 0.9000000 0.87 0.13 0.10000000 0.8750000 0.6311475 0.7058824 0.5454545</span>
-<span class="co">#&gt; 19 0.8500000 0.84 0.16 0.15000000 0.8416667 0.5476190 0.6415094 0.4722222</span>
-<span class="co">#&gt; 20 0.9000000 0.89 0.11 0.10000000 0.8916667 0.6694915 0.7346939 0.5806452</span>
-<span class="co">#&gt; 21 0.9000000 0.90 0.10 0.10000000 0.9000000 0.6896552 0.7500000 0.6000000</span>
-<span class="co">#&gt; 22 0.8571429 0.79 0.21 0.14285714 0.8016529 0.4834578 0.6000000 0.4285714</span>
-<span class="co">#&gt; 23 0.8571429 0.92 0.08 0.14285714 0.9090909 0.7103373 0.7659574 0.6206897</span>
-<span class="co">#&gt; 24 0.9047619 0.78 0.22 0.09523810 0.8016529 0.4975779 0.6129032 0.4418605</span>
-<span class="co">#&gt; 25 0.8571429 0.89 0.11 0.14285714 0.8842975 0.6494205 0.7200000 0.5625000</span>
-<span class="co">#&gt; 26 0.9523810 0.91 0.09 0.04761905 0.9173554 0.7495861 0.8000000 0.6666667</span>
-<span class="co">#&gt; 27 0.9523810 0.90 0.10 0.04761905 0.9090909 0.7289758 0.7843137 0.6451613</span>
-<span class="co">#&gt; 28 0.9523810 0.87 0.13 0.04761905 0.8842975 0.6709402 0.7407407 0.5882353</span>
-<span class="co">#&gt; 29 0.5714286 0.79 0.21 0.42857143 0.7520661 0.2948718 0.4444444 0.2857143</span>
-<span class="co">#&gt; 30 0.7142857 0.91 0.09 0.28571429 0.8760331 0.5909398 0.6666667 0.5000000</span>
-<span class="co">#&gt; 31 0.6666667 0.89 0.11 0.33333333 0.8512397 0.5177148 0.6086957 0.4375000</span>
-<span class="co">#&gt; 32 0.9523810 0.61 0.39 0.04761905 0.6694215 0.3279645 0.5000000 0.3333333</span>
-<span class="co">#&gt; 33 0.7619048 0.94 0.06 0.23809524 0.9090909 0.6889460 0.7441860 0.5925926</span>
-<span class="co">#&gt; 34 0.7142857 0.91 0.09 0.28571429 0.8760331 0.5909398 0.6666667 0.5000000</span>
-<span class="co">#&gt; 35 0.6666667 0.91 0.09 0.33333333 0.8677686 0.5557595 0.6363636 0.4666667</span></pre></body></html></div>
-<p><code><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model()</a></code> creates a .tif file for each final.model (one per algorithm) under the specified folder (default: <code>final_models</code>)</p>
-<p>We can explore these models from the files:</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">final.folder</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="no">test_folder</span>,
-                           <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                           <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"final_models"</span>,
-                           <span class="kw">include.dirs</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                           <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">final.folder</span>
-<span class="co">#&gt; [1] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models"</span>
-<span class="no">final_mods</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="no">final.folder</span>,
-                         <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                         <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"raw_mean.+tif$"</span>,
-                         <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">final_mods</span>
-<span class="co">#&gt; [1] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_bioclim_raw_mean.tif"</span>
-<span class="co">#&gt; [2] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_brt_raw_mean.tif"    </span>
-<span class="co">#&gt; [3] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_glm_raw_mean.tif"    </span>
-<span class="co">#&gt; [4] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_maxnet_raw_mean.tif" </span>
-<span class="co">#&gt; [5] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_rf_raw_mean.tif"     </span>
-<span class="co">#&gt; [6] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_svme_raw_mean.tif"   </span>
-<span class="co">#&gt; [7] "/Users/andreasancheztapia/modleR_test/Abarema_langsdorffii/present/final_models/Abarema_langsdorffii_svmk_raw_mean.tif"</span></pre></body></html></div>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">final_models</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/stack.html">stack</a></span>(<span class="no">final_mods</span>)
-
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">final_models</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/strsplit.html">strsplit</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">final_models</span>),
-                                       <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">species</span>[<span class="fl">1</span>], <span class="st">'_'</span>)),
-                              <span class="kw">function</span>(<span class="no">x</span>) <span class="no">x</span>[<span class="fl">2</span>])
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">final_models</span>)</pre></body></html></div>
+<span class="co">#&gt; writing metadata</span></pre></body></html></div>
+<p><code><a href="../reference/final_model.html">final_model()</a></code> creates a .tif file for each final.model (one per algorithm) under the specified folder (default: <code>final_models</code>)</p>
+<p>The <code>raw_mean</code> final models for each algorithm are these:</p>
 <p><img src="modleR_files/figure-html/plot_final-1.png" width="672"></p>
 </div>
 <div id="algorithmic-consensus-with-ensemble_model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#algorithmic-consensus-with-ensemble_model" class="anchor"></a>Algorithmic consensus with <code>ensemble_model()</code>
 </h2>
-<p>The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. <code><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model()</a></code> calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by <code>ensemble_dir</code>. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).</p>
-<p><code><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model()</a></code> uses a <code>which_final</code> parameter -analog to <code>which_model</code> in <code><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model()</a></code> to specify which final model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: <code>which_final = c("raw_mean")</code>).</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">ensemble_model</span>)
+<p>The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. <code><a href="../reference/ensemble_model.html">ensemble_model()</a></code> calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by <code>ensemble_dir</code>. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).</p>
+<p><code><a href="../reference/ensemble_model.html">ensemble_model()</a></code> uses a <code>which_final</code> parameter -analog to <code>which_model</code> in <code><a href="../reference/final_model.html">final_model()</a></code> to specify which final model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: <code>which_final = c("raw_mean")</code>).</p>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">ensemble_model</span>)
 <span class="co">#&gt; function (species_name, occurrences, lon = "lon", lat = "lat", </span>
 <span class="co">#&gt;     models_dir = "./models", final_dir = "final_models", ensemble_dir = "ensemble", </span>
 <span class="co">#&gt;     proj_dir = "present", algorithms = NULL, which_ensemble = c("average"), </span>
@@ -1359,7 +460,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt;     write_occs = FALSE, write_map = FALSE, scale_models = TRUE, </span>
 <span class="co">#&gt;     uncertainty = TRUE, ...) </span>
 <span class="co">#&gt; NULL</span>
-<span class="no">ens</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
+<span class="no">ens</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ensemble_model.html">ensemble_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">species</span>[<span class="fl">1</span>],
                       <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">occs</span>,
                       <span class="kw">performance_metric</span> <span class="kw">=</span> <span class="st">"pROC"</span>,
                       <span class="kw">which_ensemble</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"average"</span>,
@@ -1373,7 +474,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                       <span class="kw">which_final</span> <span class="kw">=</span> <span class="st">"raw_mean"</span>,
                       <span class="kw">models_dir</span> <span class="kw">=</span> <span class="no">test_folder</span>,
                       <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="co">#argument from writeRaster</span>
-<span class="co">#&gt; [1] "Wed Mar 25 15:40:20 2020"</span>
+<span class="co">#&gt; [1] "Thu Mar 26 22:09:54 2020"</span>
 <span class="co">#&gt; Abarema_langsdorffii</span>
 <span class="co">#&gt; Reading mean evaluation files for Abarema_langsdorffii in present</span>
 <span class="co">#&gt; The best performing algorithm was bioclim according to pROC values</span>
@@ -1382,23 +483,22 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt; Writing pngs</span>
 <span class="co">#&gt; writing metadata</span>
 <span class="co">#&gt; [1] "DONE!"</span>
-<span class="co">#&gt; [1] "Wed Mar 25 15:41:01 2020"</span></pre></body></html></div>
-<p>At any point we can explore the outputs in the folders:</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">ens</span>)</pre></body></html></div>
-<p><img src="modleR_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
+<span class="co">#&gt; [1] "Thu Mar 26 22:10:30 2020"</span></pre></body></html></div>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">ens</span>)</pre></body></html></div>
+<p><img src="modleR_files/figure-html/ensplot-1.png" width="672"></p>
 </div>
 </div>
 <div id="workflows-with-multiple-species" class="section level1">
 <h1 class="hasAnchor">
 <a href="#workflows-with-multiple-species" class="anchor"></a>Workflows with multiple species</h1>
 <p>Our <code>example_occs</code> dataset has data for four species. An option to do the several models is to use a <code>for</code> loop</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">do_many</span>)
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">do_many</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span>(<span class="no">setup_sdmdata</span>)
 
 <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">example_occs</span>)) {
   <span class="no">sp</span> <span class="kw">&lt;-</span> <span class="no">species</span>[<span class="no">i</span>]
   <span class="no">occs</span> <span class="kw">&lt;-</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="no">i</span>]]
-  <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
+  <span class="fu"><a href="../reference/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
                 <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"~/modleR_test/forlooptest"</span>,
                 <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">occs</span>,
                 <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">example_vars</span>,
@@ -1418,7 +518,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 
 <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">example_occs</span>)) {
   <span class="no">sp</span> <span class="kw">&lt;-</span> <span class="no">species</span>[<span class="no">i</span>]
-  <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
+  <span class="fu"><a href="../reference/model_fit.html">do_many</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
           <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">example_vars</span>,
           <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"~/modleR_test/forlooptest"</span>,
           <span class="kw">png_partitions</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
@@ -1437,7 +537,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 
 <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">example_occs</span>)) {
   <span class="no">sp</span> <span class="kw">&lt;-</span> <span class="no">species</span>[<span class="no">i</span>]
-  <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
+  <span class="fu"><a href="../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
               <span class="kw">consensus_level</span> <span class="kw">=</span> <span class="fl">0.5</span>,
               <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"~/modleR_test/forlooptest"</span>,
               <span class="kw">which_models</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"raw_mean"</span>,
@@ -1450,18 +550,18 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">example_occs</span>)) {
   <span class="no">sp</span> <span class="kw">&lt;-</span> <span class="no">species</span>[<span class="no">i</span>]
   <span class="no">occs</span> <span class="kw">&lt;-</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="no">i</span>]]
-  <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
+  <span class="fu"><a href="../reference/ensemble_model.html">ensemble_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">sp</span>,
                  <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">occs</span>,
                  <span class="kw">which_final</span> <span class="kw">=</span> <span class="st">"bin_consensus"</span>,
                  <span class="kw">png_ensemble</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                  <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"~/modleR_test/forlooptest"</span>)
 }</pre></body></html></div>
 <p>Another option is to use the <code>purrr</code> package <span class="citation">(Henry and Wickham 2017)</span>.</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">purrr</span>)
 
 <span class="no">example_occs</span> <span class="kw">%&gt;%</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span>(<span class="kw">.x</span> <span class="kw">=</span> <span class="no">.</span>,
                              <span class="kw">.y</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">.</span>)),
-                             ~ <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.y</span>,
+                             ~ <span class="fu"><a href="../reference/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.y</span>,
                                              <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">.x</span>,
                                              <span class="kw">partition_type</span> <span class="kw">=</span> <span class="st">"bootstrap"</span>,
                                              <span class="kw">boot_n</span> <span class="kw">=</span> <span class="fl">5</span>,
@@ -1477,7 +577,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 
 <span class="no">species</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="no">.</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(~ <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/model_fit.html">do_many</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.</span>,
+  <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(~ <span class="fu"><a href="../reference/model_fit.html">do_many</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.</span>,
                        <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">example_vars</span>,
                        <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"~/modleR_test/temp_purrr"</span>,
                        <span class="kw">bioclim</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
@@ -1490,28 +590,24 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                        <span class="kw">mahal</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
                        <span class="kw">brt</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                        <span class="kw">equalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>))</pre></body></html></div>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">species</span> <span class="kw">%&gt;%</span>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">species</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="no">.</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(~ <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.</span>,
+  <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span>(~ <span class="fu"><a href="../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.</span>,
                            <span class="kw">consensus_level</span> <span class="kw">=</span> <span class="fl">0.5</span>,
                            <span class="kw">models_dir</span> <span class="kw">=</span>  <span class="st">"~/modleR_test/temp_purrr"</span>,
                            <span class="kw">which_models</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"raw_mean"</span>,
                                             <span class="st">"bin_mean"</span>,
                                             <span class="st">"bin_consensus"</span>),
                            <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>))</pre></body></html></div>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">example_occs</span> <span class="kw">%&gt;%</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span>(<span class="kw">.x</span> <span class="kw">=</span> <span class="no">.</span>,
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">example_occs</span> <span class="kw">%&gt;%</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span>(<span class="kw">.x</span> <span class="kw">=</span> <span class="no">.</span>,
                              <span class="kw">.y</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">.</span>)),
-                             ~ <span class="fu"><a href="https://rdrr.io/pkg/modleR/man/ensemble_model.html">ensemble_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.y</span>,
+                             ~ <span class="fu"><a href="../reference/ensemble_model.html">ensemble_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">.y</span>,
                                               <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">.x</span>,
                                               <span class="kw">which_final</span> <span class="kw">=</span> <span class="st">"raw_mean"</span>,
                                               <span class="kw">png_ensemble</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
                                               <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"~/modleR_test/temp_purrr"</span>,
                                               <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>))</pre></body></html></div>
-<div id="parallel-computing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#parallel-computing" class="anchor"></a>Parallel computing</h2>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">parallel</span>)</pre></body></html></div>
-</div>
+<p>These workflows can also be paralellized by species or species algorithms</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -1556,7 +652,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 
 
       <footer><div class="copyright">
-  <p>Developed by Andrea Sánchez-Tapia, Sara Mortara, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
+  <p>Developed by <a href="andreasancheztapia@gmail.com">Andrea Sánchez-Tapia</a>, <a href="saramortara@gmail.com">Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
 </div>
 
 <div class="pkgdown">
