@@ -349,8 +349,9 @@ do_any <- function(species_name,
                             mod_proj_cont <- dismo::predict(pred_proj, mod)
                         }
                         if (algorithm %in% c("svmk",
-                                        "svme",
-                                        "rf")) {
+                                             "maxnet",
+                                             "svme",
+                                             "rf")) {
                             mod_proj_cont <- raster::predict(pred_proj, mod)
                         }
 
