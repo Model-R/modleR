@@ -56,7 +56,7 @@ this workflow and is currently being updated to this newest version.
 The workflow consists of mainly four functions that should be used
 sequentially.
 
-<img src="vignettes/fig01_workflow.jpg" width="100%" />
+<img src="vignettes/fig01_workflow.jpg" width="645" />
 
 1.  Setup: `setup_sdmdata()` prepares and cleans the data, samples the
     pseudoabsences, and organizes the experimental design (bootstrap,
@@ -167,18 +167,8 @@ for (i in 1:length(example_occs)) {
 par(mfrow = c(1, 1))
 ```
 
-<div class="figure">
-
-<img src="man/figures/README-dataset-1.png" alt="Figure 1. The example dataset: predictor variables and occurrence for four species." width="100%" />
-
-<p class="caption">
-
-Figure 1. The example dataset: predictor variables and occurrence for
-four species.
-
-</p>
-
-</div>
+![Figure 1. The example dataset: predictor variables and occurrence for
+four species.](man/figures/README-dataset-1.png)
 
 We will filter the `example_occs` file to select only the data for the
 first species:
@@ -377,7 +367,7 @@ sp_maxnet
 #>            absencenb correlation    pvaluecor       AUC AUC_pval AUCratio
 #> thresholds       100   0.6977735 5.935626e-19 0.9142857       NA 1.828571
 #>                pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold
-#> thresholds 1.791255         0 0.7295238 0.7357438       spec_sens
+#> thresholds 1.799152         0 0.7295238 0.7357438       spec_sens
 #>            prevalence.value  PPP       NPP       TPR  TNR  FPR       FNR
 #> thresholds        0.1735537 0.68 0.9583333 0.8095238 0.92 0.08 0.1904762
 #>                  CCR     Kappa   F_score   Jaccard
@@ -435,7 +425,7 @@ At the end of a modeling round, the partition folder containts:
 There are many ways to create a final model per algorithm per species.
 `final_model()` follows the following logic:
 
-<img src="vignettes/fig05_finalmodel.png" width="100%" />
+<img src="vignettes/fig05_finalmodel.png" width="343" />
 
   - The partitions can be the raw, uncut models, the binary or the cut
     (zero below the threshold and continuous above it) and form a
@@ -528,7 +518,7 @@ algorithm) under the specified folder (default: `final_models`)
 
 The `raw_mean` final models for each algorithm are these:
 
-<img src="man/figures/README-plot_final-1.png" width="100%" />
+![](man/figures/README-plot_final-1.png)<!-- -->
 
 ## Algorithmic consensus with `ensemble_model()`
 
@@ -569,23 +559,23 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Thu Mar 26 19:53:10 2020"
+#> [1] "Fri Mar 27 11:15:56 2020"
 #> Abarema_langsdorffii
 #> Reading mean evaluation files for Abarema_langsdorffii in present
-#> The best performing algorithm was maxnet according to pROC values
+#> The best performing algorithm was bioclim according to pROC values
 #> Standardizing models from 0 to 1
 #> Calculating range
 #> Writing pngs
 #> writing metadata
 #> [1] "DONE!"
-#> [1] "Thu Mar 26 19:53:46 2020"
+#> [1] "Fri Mar 27 11:16:31 2020"
 ```
 
 ``` r
 plot(ens)
 ```
 
-<img src="man/figures/README-ensplot-1.png" width="100%" />
+![](man/figures/README-ensplot-1.png)<!-- -->
 
 # Workflows with multiple species
 
