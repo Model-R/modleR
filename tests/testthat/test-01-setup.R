@@ -1,5 +1,4 @@
 # test file for setup_sdmdata function
-
 ## goal: test output of function
 
 context("basic setup test")
@@ -10,14 +9,14 @@ my_dir <- "../tmp_test/"
 sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 # helper function
-run_setup <- function(my_seed, ...){
-  setup_sdmdata(species_name = sp,
-                occurrences = sp_coord,
-                predictors = example_vars,
-                seed = my_seed,
-                boot_n = 4,
-                models_dir = my_dir,
-                ...)
+run_setup <- function(my_seed, ...) {
+    setup_sdmdata(species_name = sp,
+                  occurrences = sp_coord,
+                  predictors = example_vars,
+                  seed = my_seed,
+                  boot_n = 4,
+                  models_dir = my_dir,
+                  ...)
 }
 my_setup <- run_setup(my_seed)
 
@@ -45,4 +44,3 @@ test_that("setup is a data frame and has numeric values", {
   expect_s3_class(my_setup, "data.frame")
   lapply(apply(my_setup, 2, is.numeric), expect_true)
 })
-

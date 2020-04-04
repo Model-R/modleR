@@ -3,7 +3,7 @@ output: github_document
 bibliography: inst/REFERENCES.bib
 ---
 
-# modleR: a workflow for ecological niche models based on dismo
+# modleR: a workflow for ecological niche models
 
 [![Build Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR)
 

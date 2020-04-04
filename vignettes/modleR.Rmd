@@ -1,5 +1,5 @@
 ---
-title: "modleR: a workflow for ecological niche models based on dismo"
+title: "modleR: a workflow for ecological niche models"
 author: "Andrea Sánchez-Tapia, Sara Mortara & Diogo S. B. Rocha"
 date: "`r Sys.Date()`"
 output:
@@ -9,7 +9,7 @@ output:
       variant: gfm
 vignette: >
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{modleR: a workflow for ecological niche models based on dismo}
+  %\VignetteIndexEntry{modleR: a workflow for ecological niche models}
   %\VignetteEngine{knitr::rmarkdown}
     \usepackage[utf8]{inputenc}
 bibliography: ../inst/REFERENCES.bib

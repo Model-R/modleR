@@ -3,7 +3,7 @@ select_variables <- function(predictors,
                              cutoff = 0.8,
                              sample_proportion = 0.8) {
 
-    if (!class(predictors) %in% c("RasterBrick","RasterStack")) {
+    if (!class(predictors) %in% c("RasterBrick", "RasterStack")) {
   stop("predictors must be a RasterBrick or RasterStack object")
     }
     if (!is.null(buffer) & class(buffer) %in% c("RasterBrick", "RasterStack")) {
@@ -14,7 +14,7 @@ select_variables <- function(predictors,
       mask = predictors,
       n = floor(sum(!is.na(raster::values(predictors[[1]]))) * sample_proportion))
   vals <- raster::extract(x = predictors, sampled)
-  vals <- vals[complete.cases(vals),]
+  vals <- vals[complete.cases(vals), ]
   exclude_vars <- caret::findCorrelation(cor(vals), cutoff = cutoff)
   if (length(exclude_vars) > 0) {
       excluded <- names(predictors)[exclude_vars]

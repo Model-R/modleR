@@ -1,5 +1,5 @@
 
-# modleR: a workflow for ecological niche models based on dismo
+# modleR: a workflow for ecological niche models
 
 [![Build
 Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR)
@@ -367,7 +367,7 @@ sp_maxnet
 #>            absencenb correlation    pvaluecor       AUC AUC_pval AUCratio
 #> thresholds       100   0.6977735 5.935626e-19 0.9142857       NA 1.828571
 #>                pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold
-#> thresholds 1.790466         0 0.7295238 0.7357438       spec_sens
+#> thresholds 1.802134         0 0.7295238 0.7357438       spec_sens
 #>            prevalence.value  PPP       NPP       TPR  TNR  FPR       FNR
 #> thresholds        0.1735537 0.68 0.9583333 0.8095238 0.92 0.08 0.1904762
 #>                  CCR     Kappa   F_score   Jaccard
@@ -564,7 +564,7 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Fri Apr  3 21:07:05 2020"
+#> [1] "Sat Apr  4 13:45:10 2020"
 #> Abarema_langsdorffii
 #> Reading mean evaluation files for Abarema_langsdorffii in present
 #> The best performing algorithm was bioclim according to pROC values
@@ -573,7 +573,7 @@ ens <- ensemble_model(species_name = species[1],
 #> Writing pngs
 #> writing metadata
 #> [1] "DONE!"
-#> [1] "Fri Apr  3 21:08:34 2020"
+#> [1] "Sat Apr  4 13:45:46 2020"
 ```
 
 ``` r

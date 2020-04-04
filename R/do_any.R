@@ -236,8 +236,6 @@ do_any <- function(species_name,
             th_table$Kappa <- eval_mod@kappa[which(eval_mod@t == th_mod)] #kappa
             th_table$F_score <- eval_df$FScore[which(eval_mod@t == th_mod)]
             th_table$Jaccard <- eval_df$Jaccard[which(eval_mod@t == th_mod)]
-            #for tests: export th_table as a global object
-            #th_table <<- th_table
 
 
 
