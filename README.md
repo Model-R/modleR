@@ -42,7 +42,7 @@ you can install them apart by running `install.packages()` and retry.
 When building the vignette, package **rJava** and a JDK will be needed.
 Also, make sure that the maxent.jar file is available and in the `java`
 folder of package **dismo**. Please download it
-[here](http://www.cs.princeton.edu/~schapire/maxent/). Vignette builindg
+[here](http://www.cs.princeton.edu/~schapire/maxent/). Vignette building
 may take a while during installation.
 
 # Shiny app
@@ -195,9 +195,9 @@ args(setup_sdmdata)
 #>     min_geog_dist = NULL, write_buffer = FALSE, seed = NULL, 
 #>     clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE, 
 #>     geo_filt = FALSE, geo_filt_dist = NULL, select_variables = FALSE, 
-#>     cutoff = 0.8, percent = 0.8, png_sdmdata = TRUE, n_back = 1000, 
-#>     partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7, 
-#>     cv_n = NULL, cv_partitions = NULL) 
+#>     cutoff = 0.8, sample_proportion = 0.8, png_sdmdata = TRUE, 
+#>     n_back = 1000, partition_type = c("bootstrap"), boot_n = 1, 
+#>     boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL) 
 #> NULL
 ```
 
@@ -269,7 +269,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              geo_filt = FALSE,
                              geo_filt_dist = 10,
                              select_variables = TRUE,
-                             percent = 0.5,
+                             sample_proportion = 0.5,
                              cutoff = 0.7)
 #> metadata file found, checking metadata
 #> same metadata, no need to run data partition
@@ -367,7 +367,7 @@ sp_maxnet
 #>            absencenb correlation    pvaluecor       AUC AUC_pval AUCratio
 #> thresholds       100   0.6977735 5.935626e-19 0.9142857       NA 1.828571
 #>                pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold
-#> thresholds 1.799152         0 0.7295238 0.7357438       spec_sens
+#> thresholds 1.790466         0 0.7295238 0.7357438       spec_sens
 #>            prevalence.value  PPP       NPP       TPR  TNR  FPR       FNR
 #> thresholds        0.1735537 0.68 0.9583333 0.8095238 0.92 0.08 0.1904762
 #>                  CCR     Kappa   F_score   Jaccard
@@ -427,16 +427,21 @@ There are many ways to create a final model per algorithm per species.
 
 <img src="vignettes/fig05_finalmodel.png" width="343" />
 
-  - The partitions can be the raw, uncut models, the binary or the cut
-    (zero below the threshold and continuous above it) and form a
+  - The partitions that will be joined can be the raw, uncut models, or
+    the binary models from the previous step, they form a
     `raster::rasterStack()` object.
-  - Their means can be calculated (`raw_mean`, `bin_mean`)
+  - The means for the raw models can be calculated (`raw_mean`)
   - From `raw_mean`, a binary model can be obtained by cutting it by the
     mean threshold that maximizes the selected performance metric for
-    each partition (`bin_mean_th`). A “cut” model can also be obtained
-    (`cut_mean_th`).
-  - From `bin_mean`, a consensus model (i.e. how many of the models
-    predict an area) can be built (`bin_consensus`). The parameter
+    each partition (`bin_th_par`), this is `raw_mean_th`. From this,
+    values above the threshold can be revovered (`raw_mean_cut`).
+  - In the case of binary models, since they have already been
+    transformed into binary, a mean can be calculated (`bin_mean`). This
+    `bin_mean` reflects the consensus between partitions, and its scale
+    is categorical.
+  - From `bin_mean`, a specific consensus level can be chosen (i.e. how
+    many of the models predict an area, `consensus_level`) and the
+    resulting binary model can be built (`bin_consensus`). The parameter
     `consensus_level` allows to set this level of consensus (defaults to
     0.5: majority consensus approach).
   - NOTE: The final models can be done using a subset of the algorithms
@@ -559,7 +564,7 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Fri Mar 27 11:15:56 2020"
+#> [1] "Fri Apr  3 21:07:05 2020"
 #> Abarema_langsdorffii
 #> Reading mean evaluation files for Abarema_langsdorffii in present
 #> The best performing algorithm was bioclim according to pROC values
@@ -568,7 +573,7 @@ ens <- ensemble_model(species_name = species[1],
 #> Writing pngs
 #> writing metadata
 #> [1] "DONE!"
-#> [1] "Fri Mar 27 11:16:31 2020"
+#> [1] "Fri Apr  3 21:08:34 2020"
 ```
 
 ``` r

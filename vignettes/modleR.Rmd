@@ -53,7 +53,7 @@ packages. If any of these return an error you can install them apart by running
 `install.packages()` and retry. When building the vignette, package __rJava__
 and a JDK will be needed. Also, make sure that the maxent.jar file is available
 and in the `java` folder of package __dismo__. Please download it [here](
-http://www.cs.princeton.edu/~schapire/maxent/). Vignette builindg may take a
+http://www.cs.princeton.edu/~schapire/maxent/). Vignette building may take a
 while during installation.
 
 # Shiny app
@@ -208,7 +208,7 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              geo_filt = FALSE,
                              geo_filt_dist = 10,
                              select_variables = TRUE,
-                             percent = 0.5,
+                             sample_proportion = 0.5,
                              cutoff = 0.7)
 ```
 
@@ -341,10 +341,11 @@ There are many ways to create a final model per algorithm per species. `final_mo
 knitr::include_graphics("fig05_finalmodel.png", dpi = 150)
 ```
 
-+ The partitions can be the raw, uncut models, the binary or the cut (zero below the threshold and continuous above it) and form a `raster::rasterStack()` object.
-+ Their means can be calculated (`raw_mean`, `bin_mean`)
-+ From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_mean_th`). A "cut" model can also be obtained (`cut_mean_th`).
-+ From `bin_mean`, a consensus model (i.e. how many of the models predict an area) can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
++ The partitions that will be joined can be the raw, uncut models, or the binary models from the previous step, they form a `raster::rasterStack()` object.
++ The means for the raw models can be calculated (`raw_mean`)
++ From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_th_par`), this is `raw_mean_th`. From this, values above the threshold can be revovered  (`raw_mean_cut`).
++ In the case of binary models, since they have already been transformed into binary, a mean can be calculated (`bin_mean`). This `bin_mean` reflects the consensus between partitions, and its scale is categorical. 
++ From `bin_mean`, a specific consensus level can be chosen (i.e. how many of the models predict an area, `consensus_level`) and the resulting binary model can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
 + NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
 
 

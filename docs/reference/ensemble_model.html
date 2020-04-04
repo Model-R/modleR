@@ -58,6 +58,16 @@ calculates median, standard deviation and range (maximum - minimum)" />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-162793833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-162793833-1');
+</script>
+
 
   </head>
 
@@ -283,7 +293,7 @@ deviation and range of the assembled models</p>
 <span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
 <span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                           <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
-                          <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>running data setup</span></div><div class='output co'>#&gt; <span class='message'>cleaning data</span></div><div class='output co'>#&gt; <span class='message'>0 points removed</span></div><div class='output co'>#&gt; <span class='message'>104 clean points</span></div><div class='output co'>#&gt; <span class='message'>sampling pseudoabsence points with  buffer</span></div><div class='output co'>#&gt; <span class='message'>saving metadata</span></div><div class='output co'>#&gt; <span class='message'>extracting environmental data</span></div><div class='output co'>#&gt; <span class='message'>extracting background data</span></div><div class='output co'>#&gt; <span class='message'>performing data partition</span></div><div class='output co'>#&gt; <span class='message'>saving sdmdata</span></div><div class='output co'>#&gt; <span class='message'>Plotting the dataset...</span></div><div class='output co'>#&gt; <span class='message'>DONE!</span></div><div class='input'>
+                          <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
 <span class='co'># run do_many</span>
 <span class='no'>sp_many</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='model_fit.html'>do_many</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                    <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
@@ -297,14 +307,14 @@ deviation and range of the assembled models</p>
                         <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0</span>,
                         <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"raw_mean"</span>),
                         <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Thu Mar 26 22:06:36 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Extracting data for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='message'>Reading models from .tif files</span></div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected the final models</span>
+                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Fri Apr  3 21:47:29 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Extracting data for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='message'>Reading models from .tif files</span></div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected the final models</span>
 #&gt; <span class='warning'>                          are identical to the original model</span></div><div class='output co'>#&gt; <span class='message'>Standardizing models from 0 to 1</span></div><div class='output co'>#&gt; <span class='message'>selected final models for Abarema_langsdorffii bioclim DONE</span></div><div class='output co'>#&gt; <span class='message'>Writing models bioclim</span></div><div class='output co'>#&gt; <span class='message'>Extracting data for Abarema_langsdorffii maxnet</span></div><div class='output co'>#&gt; <span class='message'>Reading models from .tif files</span></div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii maxnet</span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected the final models</span>
 #&gt; <span class='warning'>                          are identical to the original model</span></div><div class='output co'>#&gt; <span class='message'>Standardizing models from 0 to 1</span></div><div class='output co'>#&gt; <span class='message'>selected final models for Abarema_langsdorffii maxnet DONE</span></div><div class='output co'>#&gt; <span class='message'>Writing models maxnet</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE maxnet !"</div><div class='input'>
 <span class='co'># run ensemble model</span>
 <span class='no'>sp_ensemble</span> <span class='kw'>&lt;-</span> <span class='fu'>ensemble_model</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
                               <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
-                              <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Thu Mar 26 22:06:42 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading mean evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Calculating range</span></div><div class='output co'>#&gt; <span class='message'>Writing pngs</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE!"
-#&gt; [1] "Thu Mar 26 22:06:44 2020"</div></pre>
+                              <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Fri Apr  3 21:47:35 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading mean evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Calculating range</span></div><div class='output co'>#&gt; <span class='message'>Writing pngs</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE!"
+#&gt; [1] "Fri Apr  3 21:47:37 2020"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -316,7 +326,7 @@ deviation and range of the assembled models</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='andreasancheztapia@gmail.com'>Andrea Sánchez-Tapia</a>, <a href='saramortara@gmail.com'>Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
+  <p>Developed by <a href='https://github.com/AndreaSanchezTapia'>Andrea Sánchez-Tapia</a>, <a href='https://github.com/saramortara'>Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
 </div>
 
 <div class="pkgdown">

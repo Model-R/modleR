@@ -26,7 +26,7 @@
 #' @param geo_filt_dist The distance of the geographic filter in the unit of the
 #' predictor raster, see \insertCite{varela_environmental_2014;textual}{modleR}
 #' @param select_variables Logical. Whether a variable selection should be performed. It excludes highly correlated environmental
-#'  variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified
+#'  variables. If TRUE, \code{cutoff} and \code{sample_proportion} parameters must be specified
 #' @param models_dir Folder path to save the output files. Defaults to
 #' "\code{./models}"
 #' @param png_sdmdata Logical, whether png files will be written
@@ -48,8 +48,9 @@
 #' @param cutoff Cutoff value of correlation between variables to exclude
 #' environmental layers
 #' Default is to exclude environmental variables with correlation > 0.8
-#' @param percent Numeric. Percentage of the raster values to be sampled to calculate the
-#'  correlation. The value should be set as a decimal, between 0 and 1.
+#' @param sample_proportion Numeric. Proportion of the raster values to be
+#' sampled to calculate the correlation. The value should be set as a decimal,
+#' between 0 and 1.
 #' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
@@ -100,7 +101,7 @@ setup_sdmdata <- function(species_name,
                           geo_filt_dist = NULL,
                           select_variables = FALSE,
                           cutoff = 0.8,
-                          percent = 0.8,
+                          sample_proportion = 0.8,
                           png_sdmdata = TRUE,
                           n_back = 1000,
                           partition_type = c("bootstrap"),
@@ -265,7 +266,7 @@ setup_sdmdata <- function(species_name,
         predictors <- select_variables(predictors = predictors,
                                        buffer = pbuffr,
                                        cutoff = cutoff,
-                                       percent = percent)
+                                       sample_proportion = sample_proportion)
         }
 
     # edit metadata

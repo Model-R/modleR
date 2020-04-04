@@ -1,9 +1,9 @@
 destination: docs
 authors:
   Andrea Sánchez-Tapia:
-    href: andreasancheztapia@gmail.com
+    href: https://github.com/AndreaSanchezTapia
   Sara Mortara:
-    href: saramortara@gmail.com
+    href: https://github.com/saramortara
 
 reference:
 - title: The workflow
@@ -29,3 +29,6 @@ reference:
 - title:
   contents:
   - modleR
+template:
+ params:
+  ganalytics: UA-162793833-1

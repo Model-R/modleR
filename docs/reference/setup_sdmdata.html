@@ -58,6 +58,16 @@ sdmdata files into the hard disk." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-162793833-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-162793833-1');
+</script>
+
 
   </head>
 
@@ -133,9 +143,9 @@ sdmdata files into the hard disk.</p>
   <span class='kw'>min_geog_dist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>write_buffer</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>seed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>clean_dupl</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>clean_nas</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>clean_uni</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>geo_filt</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>geo_filt_dist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>select_variables</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>percent</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>png_sdmdata</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>n_back</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>partition_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bootstrap"</span>), <span class='kw'>boot_n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>boot_proportion</span> <span class='kw'>=</span> <span class='fl'>0.7</span>,
-  <span class='kw'>cv_n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cv_partitions</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>sample_proportion</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>png_sdmdata</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>n_back</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>partition_type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bootstrap"</span>), <span class='kw'>boot_n</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>boot_proportion</span> <span class='kw'>=</span> <span class='fl'>0.7</span>, <span class='kw'>cv_n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cv_partitions</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -267,7 +277,7 @@ predictor raster, see Varela et al. (2014)</p></td>
     <tr>
       <th>select_variables</th>
       <td><p>Logical. Whether a variable selection should be performed. It excludes highly correlated environmental
-variables. If TRUE, <code>cutoff</code> and <code>percent</code> parameters must be specified</p></td>
+variables. If TRUE, <code>cutoff</code> and <code>sample_proportion</code> parameters must be specified</p></td>
     </tr>
     <tr>
       <th>cutoff</th>
@@ -276,9 +286,10 @@ environmental layers
 Default is to exclude environmental variables with correlation &gt; 0.8</p></td>
     </tr>
     <tr>
-      <th>percent</th>
-      <td><p>Numeric. Percentage of the raster values to be sampled to calculate the
-correlation. The value should be set as a decimal, between 0 and 1.</p></td>
+      <th>sample_proportion</th>
+      <td><p>Numeric. Proportion of the raster values to be
+sampled to calculate the correlation. The value should be set as a decimal,
+between 0 and 1.</p></td>
     </tr>
     <tr>
       <th>png_sdmdata</th>
@@ -369,7 +380,7 @@ ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.1600-0587.2013.00441.x'>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='andreasancheztapia@gmail.com'>Andrea Sánchez-Tapia</a>, <a href='saramortara@gmail.com'>Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
+  <p>Developed by <a href='https://github.com/AndreaSanchezTapia'>Andrea Sánchez-Tapia</a>, <a href='https://github.com/saramortara'>Sara Mortara</a>, Diogo Rocha, Felipe Barros, Guilherme Gall.</p>
 </div>
 
 <div class="pkgdown">

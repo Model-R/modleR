@@ -8,7 +8,7 @@
  collate  en_US.UTF-8                 
  ctype    en_US.UTF-8                 
  tz       America/Los_Angeles         
- date     2020-03-26                  
+ date     2020-04-03                  
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package     * version    date       lib source                             
@@ -48,7 +48,7 @@
  Matrix        1.2-18     2019-11-27 [2] CRAN (R 3.6.2)                     
  maxnet        0.1.2      2017-02-11 [2] CRAN (R 3.6.0)                     
  memoise       1.1.0      2017-04-21 [2] CRAN (R 3.6.0)                     
- modleR      * 0.0.0.9000 2020-03-27 [1] local                              
+ modleR      * 0.0.0.9000 2020-04-04 [1] local                              
  munsell       0.5.0      2018-06-12 [2] CRAN (R 3.6.0)                     
  pillar        1.4.3      2019-12-20 [2] CRAN (R 3.6.0)                     
  pkgconfig     2.0.3      2019-09-22 [2] CRAN (R 3.6.0)                     
@@ -78,5 +78,5 @@
  xml2          1.2.5      2020-03-11 [2] CRAN (R 3.6.0)                     
  yaml          2.2.1      2020-02-01 [2] CRAN (R 3.6.0)                     
 
-[1] /private/var/folders/14/9ljg2mcj1rdd1ht69s94t2240000gn/T/RtmpElhsuX/temp_libpath132f150a11dbf
+[1] /private/var/folders/14/9ljg2mcj1rdd1ht69s94t2240000gn/T/Rtmpp681Av/temp_libpath153859680985
 [2] /Library/Frameworks/R.framework/Versions/3.6/Resources/library

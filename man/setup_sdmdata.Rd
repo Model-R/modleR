@@ -11,9 +11,9 @@ setup_sdmdata(species_name, occurrences, predictors, lon = "lon",
   min_geog_dist = NULL, write_buffer = FALSE, seed = NULL,
   clean_dupl = FALSE, clean_nas = FALSE, clean_uni = FALSE,
   geo_filt = FALSE, geo_filt_dist = NULL, select_variables = FALSE,
-  cutoff = 0.8, percent = 0.8, png_sdmdata = TRUE, n_back = 1000,
-  partition_type = c("bootstrap"), boot_n = 1, boot_proportion = 0.7,
-  cv_n = NULL, cv_partitions = NULL)
+  cutoff = 0.8, sample_proportion = 0.8, png_sdmdata = TRUE,
+  n_back = 1000, partition_type = c("bootstrap"), boot_n = 1,
+  boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL)
 }
 \arguments{
 \item{species_name}{A character string with the species name. Because species
@@ -99,14 +99,15 @@ See \insertCite{varela_environmental_2014;textual}{modleR}}
 predictor raster, see \insertCite{varela_environmental_2014;textual}{modleR}}
 
 \item{select_variables}{Logical. Whether a variable selection should be performed. It excludes highly correlated environmental
-variables. If TRUE, \code{cutoff} and \code{percent} parameters must be specified}
+variables. If TRUE, \code{cutoff} and \code{sample_proportion} parameters must be specified}
 
 \item{cutoff}{Cutoff value of correlation between variables to exclude
 environmental layers
 Default is to exclude environmental variables with correlation > 0.8}
 
-\item{percent}{Numeric. Percentage of the raster values to be sampled to calculate the
-correlation. The value should be set as a decimal, between 0 and 1.}
+\item{sample_proportion}{Numeric. Proportion of the raster values to be
+sampled to calculate the correlation. The value should be set as a decimal,
+between 0 and 1.}
 
 \item{png_sdmdata}{Logical, whether png files will be written}
 
