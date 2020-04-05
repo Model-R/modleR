@@ -26,3 +26,5 @@ wc10
 .Rd2pdf*/
 ## the buffers from article
 vignettes/articles/buffer_res
+doc
+Meta

@@ -12,3 +12,5 @@ index.md
 ^.travis\.yml$
 ^codecov\.yml$
 vignettes/articles/
+^doc$
+^Meta$
