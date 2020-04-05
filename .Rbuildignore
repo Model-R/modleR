@@ -11,3 +11,4 @@ test/
 index.md
 ^.travis\.yml$
 ^codecov\.yml$
+vignettes/articles/

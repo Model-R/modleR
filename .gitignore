@@ -24,3 +24,5 @@ test/
 vignettes/modelR_cache
 wc10
 .Rd2pdf*/
+## the buffers from article
+vignettes/articles/buffer_res

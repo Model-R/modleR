@@ -208,29 +208,31 @@ setup_sdmdata <- function(species_name,
     #background selection:
 
     #first option: there is a buffer
-    if (!is.null(buffer_type)) {
-        if (buffer_type %in% c("mean", "maximum", "median", "distance", "user", "environmental_distance")) {
+    if (!is.null(buffer_type) | env_filter == TRUE) {
+        if (buffer_type %in% c("mean", "maximum", "median", "distance", "user") |
+            env_filter == TRUE) {
             message("creating buffer")
-            pbuffr <- create_buffer(occurrences = occurrences,
-                                    models_dir = models_dir,
-                                    species_name = species_name,
-                                    buffer_type = buffer_type,
+            pbuffr <- create_buffer(species_name = species_name,
+                                    occurrences = occurrences,
+                                    lon = lon,
+                                    lat = lat,
                                     predictors = predictors,
-                                    dist_buf = dist_buf,
+                                    buffer_type = buffer_type,
                                     buffer_shape = buffer_shape,
+                                    dist_buf = dist_buf,
                                     env_filter = env_filter,
                                     env_distance = env_distance,
                                     min_env_dist = min_env_dist,
                                     min_geog_dist = min_geog_dist,
+                                    models_dir = models_dir,
                                     write_buffer = write_buffer)
 
         } else {
-        warning("buffer_type not recognized, returning predictors")
             pbuffr <- predictors
             }
         }
     # second option: there is no buffer
-    else pbuffr <- predictors # second option, there is no buffer
+    else pbuffr <- predictors
 
     # absences
     #first option: user-supplied absences
