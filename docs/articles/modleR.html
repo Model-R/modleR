@@ -91,7 +91,7 @@
         <li>
   <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -103,7 +103,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -117,16 +117,16 @@
         <li>
   <a href="https://github.com/Model-R/modleR/">
     <span class="fab fa fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header>
 
@@ -136,17 +136,17 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>modleR: a workflow for ecological niche models</h1>
                         <h4 class="author">Andrea Sánchez-Tapia, Sara Mortara &amp; Diogo S. B. Rocha</h4>
-            
+
             <h4 class="date">2020-04-04</h4>
-      
+
       <small class="dont-index">Source: <a href='https://github.com/Model-R/modleR/blob/master/vignettes/modleR.Rmd'><code>vignettes/modleR.Rmd</code></a></small>
       <div class="hidden name"><code>modleR.Rmd</code></div>
 
     </div>
 
-    
-    
-<p><img src="/Users/andreasancheztapia/Documents/1_modleR/1_repos_modleR/1_modleR/vignettes/modleR.png" align="right" alt="" width="120" /></p>
+
+
+<p><img src="modleR.png" align="right" alt="" width="120" /></p>
 <p><strong>modleR</strong> is a workflow based on package <strong>dismo</strong> <span class="citation">(Hijmans et al. 2017)</span>, designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the <code>dismo</code> package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.</p>
 <div id="installing" class="section level1">
 <h1>Installing</h1>
@@ -168,7 +168,7 @@
 <div id="the-workflow" class="section level1">
 <h1>The workflow</h1>
 <p>The workflow consists of mainly four functions that should be used sequentially.</p>
-<p><img src="/Users/andreasancheztapia/Documents/1_modleR/1_repos_modleR/1_modleR/vignettes/fig01_workflow.jpg" width="645" /></p>
+<p><img src="fig01_workflow.jpg" width="645" /></p>
 <ol style="list-style-type: decimal">
 <li>Setup: <code>setup_sdmdata()</code> prepares and cleans the data, samples the pseudoabsences, and organizes the experimental design (bootstrap, crossvalidation or repeated crossvalidation). It creates a metadata file with details for the current round and a sdmdata file with the data used for modeling</li>
 <li>Model fitting and projecting: <code>do_any()</code> makes the ENM for one algorithm and partition; optionally, <code>do_many()</code> calls <code>do_any()</code> to fit multiple algorithms</li>
@@ -402,7 +402,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <div id="joining-partitions-final_model" class="section level2">
 <h2>Joining partitions: <code>final_model()</code></h2>
 <p>There are many ways to create a final model per algorithm per species. <code>final_model()</code> follows the following logic:</p>
-<p><img src="/Users/andreasancheztapia/Documents/1_modleR/1_repos_modleR/1_modleR/vignettes/fig05_finalmodel.png" width="343" /></p>
+<p><img src="fig05_finalmodel.png" width="343" /></p>
 <ul>
 <li>The partitions that will be joined can be the raw, uncut models, or the binary models from the previous step, they form a <code>raster::rasterStack()</code> object.</li>
 <li>The means for the raw models can be calculated (<code>raw_mean</code>)</li>
@@ -691,7 +691,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
       </footer>
    </div>
 
-  
+
 
 
   </body>
