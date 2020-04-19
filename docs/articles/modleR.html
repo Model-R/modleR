@@ -65,6 +65,9 @@
 <li>
       <a href="../articles/articles/buffer_and_randomPoints.html">Testing background point generation in modleR</a>
     </li>
+    <li>
+      <a href="../articles/articles/projection.html">Projecting models in modleR</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -91,7 +94,7 @@
       <h1 data-toc-skip>modleR: a workflow for ecological niche models</h1>
                         <h4 class="author">Andrea Sánchez-Tapia, Sara Mortara &amp; Diogo S. B. Rocha</h4>
             
-            <h4 class="date">2020-04-04</h4>
+            <h4 class="date">2020-04-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Model-R/modleR/blob/master/vignettes/modleR.Rmd"><code>vignettes/modleR.Rmd</code></a></small>
       <div class="hidden name"><code>modleR.Rmd</code></div>
@@ -346,7 +349,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt;            absencenb correlation    pvaluecor       AUC AUC_pval AUCratio</span>
 <span class="co">#&gt; thresholds       100   0.6977735 5.935626e-19 0.9142857       NA 1.828571</span>
 <span class="co">#&gt;                pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold</span>
-<span class="co">#&gt; thresholds 1.802835         0 0.7295238 0.7357438       spec_sens</span>
+<span class="co">#&gt; thresholds 1.804417         0 0.7295238 0.7357438       spec_sens</span>
 <span class="co">#&gt;            prevalence.value  PPP       NPP       TPR  TNR  FPR       FNR</span>
 <span class="co">#&gt; thresholds        0.1735537 0.68 0.9583333 0.8095238 0.92 0.08 0.1904762</span>
 <span class="co">#&gt;                  CCR     Kappa   F_score   Jaccard</span>
@@ -493,7 +496,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                       <span class="kw">which_final</span> <span class="kw">=</span> <span class="st">"raw_mean"</span>,
                       <span class="kw">models_dir</span> <span class="kw">=</span> <span class="no">test_folder</span>,
                       <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="co">#argument from writeRaster</span>
-<span class="co">#&gt; [1] "Sat Apr  4 21:43:18 2020"</span>
+<span class="co">#&gt; [1] "Sun Apr 19 00:12:09 2020"</span>
 <span class="co">#&gt; Abarema_langsdorffii</span>
 <span class="co">#&gt; Reading mean evaluation files for Abarema_langsdorffii in present</span>
 <span class="co">#&gt; The best performing algorithm was bioclim according to pROC values</span>
@@ -502,7 +505,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt; Writing pngs</span>
 <span class="co">#&gt; writing metadata</span>
 <span class="co">#&gt; [1] "DONE!"</span>
-<span class="co">#&gt; [1] "Sat Apr  4 21:43:56 2020"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "Sun Apr 19 00:12:44 2020"</span></pre></body></html></div>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">ens</span>)</pre></body></html></div>
 <p><img src="modleR_files/figure-html/ensplot-1.png" width="672"></p>
 </div>
@@ -675,7 +678,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
