@@ -44,7 +44,7 @@ Imports:
 Remotes: marlonecobos/kuenm
 URL: https://model-r.github.io/modleR/index.html, https://github.com/Model-R/modleR
 BugReports: https://github.com/Model-R/modleR/issues
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Roxygen: list(old_usage = TRUE)
 RdMacros: Rdpack
 Suggests: 
