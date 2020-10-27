@@ -32,6 +32,9 @@ __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], desig
 # Installing
 
 Currently __modleR__ can be installed from GitHub:
+```{r, echo = F}
+devtools::load_all()
+```
 
 ```{r install, eval = F}
 # Without vignette
@@ -248,12 +251,13 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call
 
 ```{r do_any_echo, echo = TRUE, eval = FALSE}
 sp_maxnet <- do_any(species_name = species[1],
-                    algorithm = "maxnet",
+                    algorithm = "maxent",
                     predictors = example_vars,
                     models_dir = test_folder,
                     png_partitions = TRUE,
                     write_bin_cut = FALSE,
-                    equalize = TRUE)
+                    equalize = TRUE,
+                    write_rda = TRUE)
 ```
 
 ```{r do_any_eval, echo = FALSE, eval = TRUE, include = FALSE}
@@ -263,7 +267,8 @@ sp_maxnet <- do_any(species_name = species[1],
                     models_dir = test_folder,
                     png_partitions = TRUE,
                     write_bin_cut = FALSE,
-                    equalize = TRUE)
+                    equalize = TRUE,
+                    write_rda = TRUE)
 ```
 
 The resulting object is a table with the performance metrics, but the actual output is written on disk

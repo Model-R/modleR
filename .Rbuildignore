@@ -14,3 +14,4 @@ index.md
 vignettes/articles/
 ^doc$
 ^Meta$
+data-raw

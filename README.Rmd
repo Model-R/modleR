@@ -125,6 +125,7 @@ species
 
 
 ```{r dataset, fig.width = 5, fig.height = 5, fig.cap = "Figure 1. The example dataset: predictor variables and occurrence for four species.", eval = TRUE, fig.show='hold'}
+library(sp)
 par(mfrow = c(2, 2), mar = c(2, 2, 3, 1))
 for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]),
@@ -255,7 +256,7 @@ sp_maxnet <- do_any(species_name = species[1],
 
 ```{r do_any_eval, echo = FALSE, eval = TRUE, include = FALSE}
 sp_maxnet <- do_any(species_name = species[1],
-                    algorithm = "maxnet",
+                    algorithm = "maxent",
                     predictors = example_vars,
                     models_dir = test_folder,
                     png_partitions = TRUE,
@@ -305,7 +306,7 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxnet = TRUE,
+                maxnet = F,
                 rf = TRUE,
                 mahal = FALSE,
                 brt = TRUE,

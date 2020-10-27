@@ -156,6 +156,7 @@ species
 ```
 
 ``` r
+library(sp)
 par(mfrow = c(2, 2), mar = c(2, 2, 3, 1))
 for (i in 1:length(example_occs)) {
   plot(!is.na(example_vars[[1]]),
@@ -272,7 +273,26 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              sample_proportion = 0.5,
                              cutoff = 0.7)
 #> metadata file found, checking metadata
-#> same metadata, no need to run data partition
+#> running data setup
+#> cleaning data
+#> 0 points removed
+#> 104 clean points
+#> creating buffer
+#> Applying buffer
+#> Warning in RGEOSDistanceFunc(spgeom1, spgeom2, byid, "rgeos_distance"): Spatial
+#> object 1 is not projected; GEOS expects planar coordinates
+#> Warning in rgeos::gBuffer(spgeom = occurrences, byid = FALSE, width = dist.buf):
+#> Spatial object is not projected; GEOS expects planar coordinates
+#> sampling pseudoabsence points with mean buffer
+#> selecting variables...
+#> No variables were excluded with cutoff = 0.7
+#> saving metadata
+#> extracting environmental data
+#> extracting background data
+#> performing data partition
+#> saving sdmdata
+#> Plotting the dataset...
+#> DONE!
 ```
 
   - The function will return a `sdmdata` data frame, with the groups for
@@ -361,17 +381,17 @@ actual output is written on disk
 ``` r
 sp_maxnet
 #>                kappa spec_sens no_omission prevalence equal_sens_spec
-#> thresholds 0.3199126 0.1761995  0.00492225  0.1761995        0.109052
+#> thresholds 0.5373581  0.246518  0.04513295  0.1737146       0.2543898
 #>            sensitivity         species_name algorithm run partition presencenb
-#> thresholds  0.09111853 Abarema_langsdorffii    maxnet   1         1         21
-#>            absencenb correlation    pvaluecor       AUC AUC_pval AUCratio
-#> thresholds       100   0.6977735 5.935626e-19 0.9142857       NA 1.828571
-#>                pROC pROC_pval    TSSmax  KAPPAmax dismo_threshold
-#> thresholds 1.802134         0 0.7295238 0.7357438       spec_sens
-#>            prevalence.value  PPP       NPP       TPR  TNR  FPR       FNR
-#> thresholds        0.1735537 0.68 0.9583333 0.8095238 0.92 0.08 0.1904762
-#>                  CCR     Kappa   F_score   Jaccard
-#> thresholds 0.9008264 0.6784765 0.7391304 0.5862069
+#> thresholds   0.2721152 Abarema_langsdorffii    maxent   1         1         21
+#>            absencenb correlation   pvaluecor       AUC AUC_pval AUCratio
+#> thresholds       100   0.7284402 2.83905e-21 0.9395238       NA 1.879048
+#>                pROC pROC_pval   TSSmax  KAPPAmax dismo_threshold
+#> thresholds 1.739945         0 0.832381 0.7507724       spec_sens
+#>            prevalence.value   PPP      NPP      TPR  TNR  FPR        FNR
+#> thresholds        0.1735537 0.625 0.988764 0.952381 0.88 0.12 0.04761905
+#>                 CCR     Kappa  F_score   Jaccard
+#> thresholds 0.892562 0.6896824 0.754717 0.6060606
 ```
 
 The following lines call for bioclim, GLM, maxnet, random forests and
@@ -491,12 +511,12 @@ final_model(species_name = species[1],
 #> Standardizing models from 0 to 1
 #> selected final models for Abarema_langsdorffii glm DONE
 #> Writing models glm
-#> Extracting data for Abarema_langsdorffii maxnet
+#> Extracting data for Abarema_langsdorffii maxent
 #> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii maxnet
+#> 5 / 5 partitions will be used for Abarema_langsdorffii maxent
 #> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii maxnet DONE
-#> Writing models maxnet
+#> selected final models for Abarema_langsdorffii maxent DONE
+#> Writing models maxent
 #> Extracting data for Abarema_langsdorffii rf
 #> Reading models from .tif files
 #> 5 / 5 partitions will be used for Abarema_langsdorffii rf
@@ -515,6 +535,12 @@ final_model(species_name = species[1],
 #> Standardizing models from 0 to 1
 #> selected final models for Abarema_langsdorffii svmk DONE
 #> Writing models svmk
+#> Extracting data for Abarema_langsdorffii maxnet
+#> Reading models from .tif files
+#> 4 / 4 partitions will be used for Abarema_langsdorffii maxnet
+#> Standardizing models from 0 to 1
+#> selected final models for Abarema_langsdorffii maxnet DONE
+#> Writing models maxnet
 #> writing metadata
 ```
 
@@ -564,7 +590,7 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Sat Apr  4 13:45:10 2020"
+#> [1] "Mon Oct 26 22:47:00 2020"
 #> Abarema_langsdorffii
 #> Reading mean evaluation files for Abarema_langsdorffii in present
 #> The best performing algorithm was bioclim according to pROC values
@@ -573,7 +599,7 @@ ens <- ensemble_model(species_name = species[1],
 #> Writing pngs
 #> writing metadata
 #> [1] "DONE!"
-#> [1] "Sat Apr  4 13:45:46 2020"
+#> [1] "Mon Oct 26 22:47:58 2020"
 ```
 
 ``` r
@@ -720,7 +746,7 @@ algorithms
 
 # References
 
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 
 <div id="ref-araujo_ensemble_2007">
 
