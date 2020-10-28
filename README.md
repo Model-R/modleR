@@ -264,9 +264,9 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              buffer_type = "mean",
                              png_sdmdata = TRUE,
                              n_back = 500,
-                             clean_dupl = FALSE,
-                             clean_uni = FALSE,
-                             clean_nas = FALSE,
+                             clean_dupl = TRUE,
+                             clean_uni = TRUE,
+                             clean_nas = TRUE,
                              geo_filt = FALSE,
                              geo_filt_dist = 10,
                              select_variables = TRUE,
@@ -275,8 +275,11 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 #> metadata file found, checking metadata
 #> running data setup
 #> cleaning data
-#> 0 points removed
-#> 104 clean points
+#> cleaning duplicates
+#> cleaning occurrences with no environmental data
+#> cleaning occurrences within the same pixel
+#> 5 points removed
+#> 99 clean points
 #> creating buffer
 #> Applying buffer
 #> Warning in RGEOSDistanceFunc(spgeom1, spgeom2, byid, "rgeos_distance"): Spatial
@@ -366,36 +369,35 @@ Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent
 to call `do_any()` and set `algorithm = "bioclim"`.
 
 ``` r
-sp_maxnet <- do_any(species_name = species[1],
-                    algorithm = "maxnet",
+sp_maxent <- do_any(species_name = species[1],
+                    algorithm = "maxent",
                     predictors = example_vars,
                     models_dir = test_folder,
                     png_partitions = TRUE,
                     write_bin_cut = FALSE,
-                    equalize = TRUE)
+                    equalize = TRUE,
+                    write_rda = TRUE)
 ```
 
 The resulting object is a table with the performance metrics, but the
 actual output is written on disk
 
 ``` r
-sp_maxnet
+sp_maxent
 #>                kappa spec_sens no_omission prevalence equal_sens_spec
-#> thresholds 0.5373581  0.246518  0.04513295  0.1737146       0.2543898
+#> thresholds 0.5531638 0.4229991   0.2646903  0.1707383       0.3903203
 #>            sensitivity         species_name algorithm run partition presencenb
-#> thresholds   0.2721152 Abarema_langsdorffii    maxent   1         1         21
-#>            absencenb correlation   pvaluecor       AUC AUC_pval AUCratio
-#> thresholds       100   0.7284402 2.83905e-21 0.9395238       NA 1.879048
-#>                pROC pROC_pval   TSSmax  KAPPAmax dismo_threshold
-#> thresholds 1.739945         0 0.832381 0.7507724       spec_sens
-#>            prevalence.value   PPP      NPP      TPR  TNR  FPR        FNR
-#> thresholds        0.1735537 0.625 0.988764 0.952381 0.88 0.12 0.04761905
-#>                 CCR     Kappa  F_score   Jaccard
-#> thresholds 0.892562 0.6896824 0.754717 0.6060606
+#> thresholds   0.3241391 Abarema_langsdorffii    maxent   1         1         20
+#>            absencenb correlation    pvaluecor    AUC AUC_pval AUCratio     pROC
+#> thresholds       100   0.7481386 9.306951e-23 0.9715       NA    1.943 1.882757
+#>            pROC_pval TSSmax  KAPPAmax dismo_threshold prevalence.value  PPP
+#> thresholds         0   0.83 0.8043478       spec_sens        0.1666667 0.72
+#>                  NPP TPR  TNR  FPR FNR   CCR     Kappa F_score   Jaccard
+#> thresholds 0.9789474 0.9 0.93 0.07 0.1 0.925 0.7545455     0.8 0.6666667
 ```
 
-The following lines call for bioclim, GLM, maxnet, random forests and
-smvk (from package **kernlab**)
+The following lines call for bioclim, GLM, random forests, BRT, svme
+(from package **e1071**), and smvk (from package **kernlab**)
 
 ``` r
 many <- do_many(species_name = species[1],
@@ -409,7 +411,8 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxnet = TRUE,
+                maxent = FALSE,
+                maxnet = FALSE,
                 rf = TRUE,
                 mahal = FALSE,
                 brt = TRUE,
@@ -491,57 +494,6 @@ final_model(species_name = species[1],
             consensus_level = 0.5,
             uncertainty = TRUE,
             overwrite = TRUE)
-#> Abarema_langsdorffii
-#> Reading evaluation files for Abarema_langsdorffii in present
-#> Extracting data for Abarema_langsdorffii bioclim
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii bioclim
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii bioclim DONE
-#> Writing models bioclim
-#> Extracting data for Abarema_langsdorffii brt
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii brt
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii brt DONE
-#> Writing models brt
-#> Extracting data for Abarema_langsdorffii glm
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii glm
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii glm DONE
-#> Writing models glm
-#> Extracting data for Abarema_langsdorffii maxent
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii maxent
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii maxent DONE
-#> Writing models maxent
-#> Extracting data for Abarema_langsdorffii rf
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii rf
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii rf DONE
-#> Writing models rf
-#> Extracting data for Abarema_langsdorffii svme
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii svme
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii svme DONE
-#> Writing models svme
-#> Extracting data for Abarema_langsdorffii svmk
-#> Reading models from .tif files
-#> 5 / 5 partitions will be used for Abarema_langsdorffii svmk
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii svmk DONE
-#> Writing models svmk
-#> Extracting data for Abarema_langsdorffii maxnet
-#> Reading models from .tif files
-#> 4 / 4 partitions will be used for Abarema_langsdorffii maxnet
-#> Standardizing models from 0 to 1
-#> selected final models for Abarema_langsdorffii maxnet DONE
-#> Writing models maxnet
-#> writing metadata
 ```
 
 `final_model()` creates a .tif file for each final.model (one per
@@ -590,16 +542,9 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Mon Oct 26 22:47:00 2020"
-#> Abarema_langsdorffii
-#> Reading mean evaluation files for Abarema_langsdorffii in present
-#> The best performing algorithm was bioclim according to pROC values
-#> Standardizing models from 0 to 1
-#> Calculating range
-#> Writing pngs
-#> writing metadata
+#> [1] "Tue Oct 27 17:26:39 2020"
 #> [1] "DONE!"
-#> [1] "Mon Oct 26 22:47:58 2020"
+#> [1] "Tue Oct 27 17:27:34 2020"
 ```
 
 ``` r
@@ -645,7 +590,7 @@ for (i in 1:length(example_occs)) {
           models_dir = "~/modleR_test/forlooptest",
           png_partitions = TRUE,
           bioclim = TRUE,
-          maxnet = TRUE,
+          maxnet = FALSE,
           rf = TRUE,
           svmk = TRUE,
           svme = TRUE,
@@ -707,7 +652,7 @@ species %>%
                        predictors = example_vars,
                        models_dir = "~/modleR_test/temp_purrr",
                        bioclim = TRUE,
-                       maxnet = TRUE,
+                       maxnet = FALSE,
                        rf = TRUE,
                        svme = TRUE,
                        svmk = TRUE,

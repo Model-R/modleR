@@ -116,22 +116,23 @@ mean of the final models in order to obtain one model per species. It also
 calculates median, standard deviation and range (maximum - minimum)
 }
 \examples{
+\dontrun{
 # run setup_sdmdata
 sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
-                          predictors = example_vars)
+                          predictors = example_vars,
+                          clean_uni = TRUE)
 
 # run do_many
 sp_many <- do_many(species_name = sp,
                    predictors = example_vars,
-                   bioclim = TRUE,
-                   maxnet = TRUE)
+                   bioclim = TRUE)
 
 # run final_model
 sp_final <- final_model(species_name = sp,
-                        algorithms = c("bioclim", "maxnet"),
+                        algorithms = c("bioclim"),
                         select_partitions = TRUE,
                         select_par = "TSSmax",
                         select_par_val = 0,
@@ -143,6 +144,7 @@ sp_final <- final_model(species_name = sp,
 sp_ensemble <- ensemble_model(species_name = sp,
                               occurrences = sp_coord,
                               overwrite = TRUE)
+}
 }
 \seealso{
 \code{\link{final_model}}

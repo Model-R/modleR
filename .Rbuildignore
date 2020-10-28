@@ -15,3 +15,4 @@ vignettes/articles/
 ^doc$
 ^Meta$
 data-raw
+models

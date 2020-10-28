@@ -200,9 +200,9 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
                              buffer_type = "mean",
                              png_sdmdata = TRUE,
                              n_back = 500,
-                             clean_dupl = FALSE,
-                             clean_uni = FALSE,
-                             clean_nas = FALSE,
+                             clean_dupl = TRUE,
+                             clean_uni = TRUE,
+                             clean_nas = TRUE,
                              geo_filt = FALSE,
                              geo_filt_dist = 10,
                              select_variables = TRUE,
@@ -244,37 +244,28 @@ args(do_many)
 
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
-```{r do_any_echo, echo = TRUE, eval = FALSE}
-sp_maxnet <- do_any(species_name = species[1],
-                    algorithm = "maxnet",
-                    predictors = example_vars,
-                    models_dir = test_folder,
-                    png_partitions = TRUE,
-                    write_bin_cut = FALSE,
-                    equalize = TRUE)
-```
-
-```{r do_any_eval, echo = FALSE, eval = TRUE, include = FALSE}
-sp_maxnet <- do_any(species_name = species[1],
+```{r do_any_eval, echo = TRUE, eval = TRUE, results= "hide", message=F, warning= FALSE}
+sp_maxent <- do_any(species_name = species[1],
                     algorithm = "maxent",
                     predictors = example_vars,
                     models_dir = test_folder,
                     png_partitions = TRUE,
                     write_bin_cut = FALSE,
-                    equalize = TRUE)
+                    equalize = TRUE,
+                    write_rda = TRUE)
 ```
 
 The resulting object is a table with the performance metrics, but the actual output is written on disk
 
 ```{r sp_maxnet}
-sp_maxnet
+sp_maxent
 ```
 
 
 
-The following lines call for bioclim, GLM, maxnet, random forests and smvk (from package __kernlab__)
+The following lines call for bioclim, GLM, random forests, BRT, svme (from package __e1071__), and smvk (from package __kernlab__)
 
-```{r do_many_show, echo = TRUE, eval = FALSE, results = "hide", messages = FALSE}
+```{r do_many_show, echo = TRUE, eval = TRUE, results = 'hide', message = FALSE, warning = FALSE}
 many <- do_many(species_name = species[1],
                 predictors = example_vars,
                 models_dir = test_folder,
@@ -286,27 +277,8 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxnet = TRUE,
-                rf = TRUE,
-                mahal = FALSE,
-                brt = TRUE,
-                equalize = TRUE)
-```
-
-
-```{r do_many_echo, echo = FALSE, eval = TRUE, include = FALSE, results= "hide", messages = FALSE}
-many <- do_many(species_name = species[1],
-                predictors = example_vars,
-                models_dir = test_folder,
-                png_partitions = TRUE,
-                write_bin_cut = FALSE,
-                write_rda = TRUE,
-                bioclim = TRUE,
-                domain = FALSE,
-                glm = TRUE,
-                svmk = TRUE,
-                svme = TRUE,
-                maxnet = F,
+                maxent = FALSE,
+                maxnet = FALSE,
                 rf = TRUE,
                 mahal = FALSE,
                 brt = TRUE,
@@ -342,7 +314,7 @@ knitr::include_graphics("vignettes/fig05_finalmodel.png", dpi = 150)
 + The partitions that will be joined can be the raw, uncut models, or the binary models from the previous step, they form a `raster::rasterStack()` object.
 + The means for the raw models can be calculated (`raw_mean`)
 + From `raw_mean`, a binary model can be obtained by cutting it by the mean threshold that maximizes the selected performance metric for each partition (`bin_th_par`), this is `raw_mean_th`. From this, values above the threshold can be revovered  (`raw_mean_cut`).
-+ In the case of binary models, since they have already been transformed into binary, a mean can be calculated (`bin_mean`). This `bin_mean` reflects the consensus between partitions, and its scale is categorical. 
++ In the case of binary models, since they have already been transformed into binary, a mean can be calculated (`bin_mean`). This `bin_mean` reflects the consensus between partitions, and its scale is categorical.
 + From `bin_mean`, a specific consensus level can be chosen (i.e. how many of the models predict an area, `consensus_level`) and the resulting binary model can be built (`bin_consensus`). The parameter `consensus_level` allows to set this level of consensus (defaults to 0.5: majority consensus approach).
 + NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter `algorithms`. If left unspecified, all algorithms listed in the `evaluate` files will be used.
 
@@ -352,7 +324,7 @@ args(final_model)
 ```
 
 
-```{r final, echo = TRUE, eval = TRUE, results = "hide"}
+```{r final, echo = TRUE, eval = TRUE, results = "hide", message=F}
 final_model(species_name = species[1],
             algorithms = NULL, #if null it will take all the algorithms in disk
             models_dir = test_folder,
@@ -393,7 +365,7 @@ The fourth step of the workflow is joining the models for each algorithm into a 
 
 `ensemble_model()` uses a `which_final` parameter -analog to `which_model` in `final_model()` to specify which final model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: `which_final = c("raw_mean")`).
 
-```{r ensemble_model, eval = TRUE}
+```{r ensemble_model, eval = TRUE, message=F, warning=F}
 args(ensemble_model)
 ens <- ensemble_model(species_name = species[1],
                       occurrences = occs,
@@ -454,7 +426,7 @@ for (i in 1:length(example_occs)) {
           models_dir = "~/modleR_test/forlooptest",
           png_partitions = TRUE,
           bioclim = TRUE,
-          maxnet = TRUE,
+          maxnet = FALSE,
           rf = TRUE,
           svmk = TRUE,
           svme = TRUE,
@@ -516,7 +488,7 @@ species %>%
                        predictors = example_vars,
                        models_dir = "~/modleR_test/temp_purrr",
                        bioclim = TRUE,
-                       maxnet = TRUE,
+                       maxnet = FALSE,
                        rf = TRUE,
                        svme = TRUE,
                        svmk = TRUE,

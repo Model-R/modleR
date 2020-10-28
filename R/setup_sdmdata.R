@@ -51,7 +51,6 @@
 #' @param sample_proportion Numeric. Proportion of the raster values to be
 #' sampled to calculate the correlation. The value should be set as a decimal,
 #' between 0 and 1.
-#' @param ... Other parameters from \code{\link{create_buffer}}
 #' @return Returns a data frame with the groups for each run (in columns called
 #' cv.1, cv.2 or boot.1, boot.2), presence/absence values, the geographical
 #' coordinates of the occurrence and pseudoabsence points, and the associated
@@ -61,12 +60,14 @@
 #' at \code{models_dir} directory) a text file named sdmdata.csv that will be used
 #' by \code{\link{do_any}} or \code{\link{do_many}}
 #' @examples
+#' \dontrun{
 #' sp <- names(example_occs)[1]
 #' sp_coord <- example_occs[[1]]
 #' sp_setup <- setup_sdmdata(species_name = sp,
 #'                           occurrences = sp_coord,
 #'                           predictors = example_vars)
 #' head(sp_setup)
+#' }
 #' @references
 #'     \insertAllCited{}
 #' @seealso \code{\link{create_buffer}}
@@ -254,7 +255,7 @@ setup_sdmdata <- function(species_name,
                 }
         #Now it does the sampling
                 message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
-        set.seed(seed)
+        if (!missing(seed)) set.seed(seed)
                 backgr <- dismo::randomPoints(mask = pbuffr,
                                               n = n_back_mod,
                                               p = occurrences,
@@ -311,9 +312,9 @@ setup_sdmdata <- function(species_name,
         if (is.null(cv_partitions)) stop("cv_partitions must be specified in crossvalidation")
         if (cv_n == 1) {
             #Crossvalidation
-            set.seed(seed)  #reproducibility
+            if (!missing(seed)) set.seed(seed) #reproducibility
             group <- dismo::kfold(occurrences, cv_partitions)
-            set.seed(seed)
+            if (!missing(seed)) set.seed(seed)
             bg.grp <- dismo::kfold(backgr, cv_partitions)
             cv_0 <- c(group, bg.grp)
         }
@@ -334,13 +335,15 @@ setup_sdmdata <- function(species_name,
             stop("bootstrap training set proportion must be between 0 and 1")
         if (is.null(boot_n))
             stop("boot_n must be specified")
-    boot.pres <- replicate(n = boot_n,
+        if (!missing(seed)) set.seed(seed)
+        boot.pres <- replicate(n = boot_n,
                            sample(
                                x = seq_along(1:nrow(occurrences)),
                                size = nrow(occurrences) * boot_proportion,
                                replace = FALSE
                            ))
-    boot.back <- replicate(n = boot_n,
+        if (!missing(seed)) set.seed(seed)
+        boot.back <- replicate(n = boot_n,
                            sample(
                                x = seq_along(1:nrow(backgr)),
                                size = nrow(backgr) * boot_proportion,

@@ -126,8 +126,6 @@ for bootstrap}
 \item{cv_n}{Number of crossvalidation runs}
 
 \item{cv_partitions}{Number of partitions in the crossvalidation}
-
-\item{...}{Other parameters from \code{\link{create_buffer}}}
 }
 \value{
 Returns a data frame with the groups for each run (in columns called
@@ -147,12 +145,14 @@ variable selection according to their correlation. It saves the metadata and
 sdmdata files into the hard disk.
 }
 \examples{
+\dontrun{
 sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 sp_setup <- setup_sdmdata(species_name = sp,
                           occurrences = sp_coord,
                           predictors = example_vars)
 head(sp_setup)
+}
 }
 \references{
 \insertAllCited{}

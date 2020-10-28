@@ -2,7 +2,7 @@ context("basic final_model test")
 
 my_dir <- "../tmp_test/"
 sp <- names(example_occs)[1]
-algos <- c("bioclim", "maxnet", "svme")
+algos <- c("bioclim", "svme")
 n.algos <- length(algos)
 final_folder <- paste0(my_dir, sp, "/present/final_models/")
 #lists all the options from final

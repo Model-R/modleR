@@ -210,12 +210,14 @@
 #' @param ... Other arguments from \code{\link[kuenm]{kuenm_proc}}
 #'
 #' @examples
+#' \dontrun{
 #' # run setup_sdmdata first from one species in example_occs data
 #' sp <- names(example_occs)[1]
 #' sp_coord <- example_occs[[1]]
 #' sp_setup <- setup_sdmdata(species_name = sp,
 #'                           occurrences = sp_coord,
-#'                           predictors = example_vars)
+#'                           predictors = example_vars,
+#'                           clean_uni = TRUE)
 #'
 #' # run bioclim for one species
 #' sp_any <- do_any(species_name = sp,
@@ -225,8 +227,8 @@
 #' # run do_many
 #' sp_many <- do_many(species_name = sp,
 #'                    predictors = example_vars,
-#'                    bioclim = TRUE,
-#'                    maxnet = TRUE)
+#'                    bioclim = TRUE)
+#'                    }
 #' @name model_fit
 #'
 NULL

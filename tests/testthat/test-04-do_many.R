@@ -6,7 +6,7 @@ sp <- names(example_occs)[1]
 sp_coord <- example_occs[[1]]
 part <- 4
 mod_dir <- paste0(my_dir, sp, "/present/partitions/")
-algos <- c("bioclim", "maxnet", "svme")
+algos <- c("bioclim", "svme")
 n.algos <- length(algos)
 
 test_that("do_many produces model and stats file", {
@@ -14,8 +14,7 @@ test_that("do_many produces model and stats file", {
                      predictors = example_vars,
                      models_dir = my_dir,
                      bioclim = TRUE,
-                     svme = TRUE,
-                     maxnet = TRUE)
+                     svme = TRUE)
   # does it have two txt files (evaluate and eval_mod)?
   expect_length(list.files(path = mod_dir,
                            pattern = "evaluate.*csv"),

@@ -72,12 +72,14 @@
 #' @seealso \code{\link[dismo]{threshold}}  in \pkg{dismo} package
 #' @seealso \code{\link[raster]{writeRaster}}  in \pkg{raster} package
 #' @examples
+#' \dontrun{
 #' # run setup_sdmdata
 #' sp <- names(example_occs)[1]
 #' sp_coord <- example_occs[[1]]
 #' sp_setup <- setup_sdmdata(species_name = sp,
 #'                           occurrences = sp_coord,
-#'                           predictors = example_vars)
+#'                           predictors = example_vars,
+#'                           clean_uni = TRUE)
 #'
 #' # run do_any
 #' sp_bioclim <- do_any(species_name = sp,
@@ -90,7 +92,7 @@
 #'                         which_models = c("bin_consensus"),
 #'                         consensus_level = 0.5,
 #'                         overwrite = TRUE)
-#'
+#' }
 #' @references
 #'     \insertAllCited{}
 #' @import raster
