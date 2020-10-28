@@ -46,10 +46,10 @@ specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
 addition to commonly adopted metrics such as AUC and TSS, this package also
 calculates partial ROC
-(Peterson et al. 2008; Cobos et al. 2019)
+(Peterson et al. 2008-apr; Cobos et al. 2019-feb)
 . For details
 on model evaluation see
- Phillips et al. (2006)
+ Phillips et al. (2006-jan)
  and
  Peterson et al. (2011)
 . do_any
@@ -167,10 +167,10 @@ specified by the user. It fits the model, predicts it into the current
 environmental layers and calculates basic statistics for model evaluation. In
 addition to commonly adopted metrics such as AUC and TSS, this package also
 calculates partial ROC
-(Peterson et al. 2008; Cobos et al. 2019)
+(Peterson et al. 2008-apr; Cobos et al. 2019-feb)
 . For details
 on model evaluation see
- Phillips et al. (2006)
+ Phillips et al. (2006-jan)
  and
  Peterson et al. (2011)
 . <code>do_any</code>
@@ -183,16 +183,16 @@ on model evaluation see
  how each algorithm supported in this package is implemented.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_any</span>(<span class='no'>species_name</span>, <span class='no'>predictors</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>,
-  <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bioclim"</span>), <span class='kw'>project_model</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>proj_data_folder</span> <span class='kw'>=</span> <span class='st'>"./data/proj"</span>, <span class='kw'>mask</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>write_rda</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>png_partitions</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>write_bin_cut</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>dismo_threshold</span> <span class='kw'>=</span> <span class='st'>"spec_sens"</span>, <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>sensitivity</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>proc_threshold</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>do_any</span><span class='op'>(</span><span class='va'>species_name</span>, <span class='va'>predictors</span>, models_dir <span class='op'>=</span> <span class='st'>"./models"</span>,
+  algorithm <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bioclim"</span><span class='op'>)</span>, project_model <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  proj_data_folder <span class='op'>=</span> <span class='st'>"./data/proj"</span>, mask <span class='op'>=</span> <span class='cn'>NULL</span>, write_rda <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  png_partitions <span class='op'>=</span> <span class='cn'>FALSE</span>, write_bin_cut <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  dismo_threshold <span class='op'>=</span> <span class='st'>"spec_sens"</span>, equalize <span class='op'>=</span> <span class='cn'>TRUE</span>, sensitivity <span class='op'>=</span> <span class='fl'>0.9</span>,
+  proc_threshold <span class='op'>=</span> <span class='fl'>0.5</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>do_many</span>(<span class='no'>species_name</span>, <span class='kw'>bioclim</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>domain</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>glm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>mahal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>maxent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>maxnet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rf</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>svmk</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>svme</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>brt</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>do_many</span><span class='op'>(</span><span class='va'>species_name</span>, bioclim <span class='op'>=</span> <span class='cn'>FALSE</span>, domain <span class='op'>=</span> <span class='cn'>FALSE</span>, glm <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  mahal <span class='op'>=</span> <span class='cn'>FALSE</span>, maxent <span class='op'>=</span> <span class='cn'>FALSE</span>, maxnet <span class='op'>=</span> <span class='cn'>FALSE</span>, rf <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  svmk <span class='op'>=</span> <span class='cn'>FALSE</span>, svme <span class='op'>=</span> <span class='cn'>FALSE</span>, brt <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -352,7 +352,7 @@ threshold values</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>See below for a description on the implementation of the algorithms
-supported in this package.</p><dl'>
+supported in this package.</p><dl>
 <dt>Bioclim</dt><dd><p>Specified by <code>algo = "bioclim"</code> uses <code><a href='https://rdrr.io/pkg/dismo/man/bioclim.html'>bioclim</a></code>
 function in <span class="pkg">dismo</span> package (Hijmans et al. 2017)
 .
@@ -381,12 +381,12 @@ to Bernoulli distribution, evaluated and predicted using
 <dt>Domain</dt><dd><p>Specified by <code>algo = "domain"</code> uses <code><a href='https://rdrr.io/pkg/dismo/man/domain.html'>domain</a></code> function
 from <span class="pkg">dismo</span> package. Computes point-to-point similarity based on Gower
 distance between environmental variables
-(Carpenter et al. 1993)
+(Carpenter et al. 1993-dec)
 .
 (Hijmans et al. 2017)
  state that one should use it with
 caution because it does not perform well compared to other algorithms
-(Elith et al. 2006; Hijmans and Graham 2006)
+(Elith et al. 2006-apr; Hijmans and Graham 2006-dec)
 . We add that it is
  a slow algorithm. In this package it is implemented by the function
  <code><a href='https://rdrr.io/pkg/dismo/man/domain.html'>domain</a></code>, evaluated and predicted using
@@ -418,7 +418,7 @@ corresponding to implementation by <span class="pkg">dismo</span>
  packages respectively. Maxent is a
 machine learning method for modeling species distributions based in
 incomplete data allowing ENM with presence-only data
-(Phillips et al. 2006)
+(Phillips et al. 2006-jan)
 . If <code>algo = "maxent"</code> model
 is fit by the function <code><a href='https://rdrr.io/pkg/dismo/man/maxent.html'>maxent</a></code>, evaluated and predicted
 using  <code><a href='https://rdrr.io/pkg/dismo/man/evaluate.html'>evaluate</a></code> and <code><a href='https://rdrr.io/pkg/dismo/man/predict.html'>predict</a></code> also in
@@ -460,57 +460,58 @@ corresponding to implementation on <span class="pkg">e1071</span>
 
     <p>Booth TH, Nix HA, Busby JR, Hutchinson MF (2014).
 &#8220;Bioclim: The First Species Distribution Modelling Package, Its Early Applications and Relevance to Most Current MaxEnt Studies.&#8221;
-<em>Diversity and Distributions</em>, <b>20</b>(1), 1-9.
-ISSN 1472-4642, doi: <a href='https://doi.org/10.1111/ddi.12144'>10.1111/ddi.12144</a>
-.<br /><br /> Carpenter G, Gillison AN, Winter J (1993).
+<em>Diversity and Distributions</em>, <b>20</b>, 1--9.
+doi: <a href='https://doi.org/10.1111/ddi.12144'>10.1111/ddi.12144</a>
+.<br /><br /> Carpenter G, Gillison AN, Winter J (1993-dec).
 &#8220;DOMAIN: A Flexible Modelling Procedure for Mapping Potential Distributions of Plants and Animals.&#8221;
-<em>Biodiversity \&amp; Conservation</em>, <b>2</b>(6), 667-680.
-ISSN 1572-9710, doi: <a href='https://doi.org/10.1007/BF00051966'>10.1007/BF00051966</a>
-.<br /><br /> Cobos ME, Peterson AT, Barve N, Osorio-Olvera L (2019).
+<em>Biodiversity \&amp; Conservation</em>, <b>2</b>, 667--680.
+doi: <a href='https://doi.org/10.1007/BF00051966'>10.1007/BF00051966</a>
+, <a href='/home/jbrj/Zotero/storage/9JFVKIIJ/Carpenter et al_1993_DOMAIN.pdf'>/home/jbrj/Zotero/storage/9JFVKIIJ/Carpenter et al_1993_DOMAIN.pdf</a>.<br /><br /> Cobos ME, Peterson AT, Barve N, Osorio-Olvera L (2019-feb).
 &#8220;Kuenm: An R Package for Detailed Development of Ecological Niche Models Using Maxent.&#8221;
-<em>PeerJ</em>, <b>7</b>, e6281.
-ISSN 2167-8359, doi: <a href='https://doi.org/10.7717/peerj.6281'>10.7717/peerj.6281</a>
-.<br /><br /> Elith J, H. Graham* C, P. Anderson R, Dudík M, Ferrier S, Guisan A, J. Hijmans R, Huettmann F, R. Leathwick J, Lehmann A, Li J, G. Lohmann L, A. Loiselle B, Manion G, Moritz C, Nakamura M, Nakazawa Y, McC. M. Overton J, Townsend Peterson A, J. Phillips S, Richardson K, Scachetti-Pereira R, E. Schapire R, Soberón J, Williams S, S. Wisz M, E. Zimmermann N (2006).
+<em>PeerJ</em>, <b>7</b>.
+doi: <a href='https://doi.org/10.7717/peerj.6281'>10.7717/peerj.6281</a>
+, <a href='/home/jbrj/Zotero/storage/RTL847QG/Cobos et al. - 2019 - kuenm an R package for detailed development of ec.pdf;/home/jbrj/Zotero/storage/MZRC3UGZ/6281.html'>/home/jbrj/Zotero/storage/RTL847QG/Cobos et al. - 2019 - kuenm an R package for detailed development of ec.pdf;/home/jbrj/Zotero/storage/MZRC3UGZ/6281.html</a>.<br /><br /> Elith J, H. Graham* C, P. Anderson R, Dudík M, Ferrier S, Guisan A, J. Hijmans R, Huettmann F, R. Leathwick J, Lehmann A, Li J, G. Lohmann L, A. Loiselle B, Manion G, Moritz C, Nakamura M, Nakazawa Y, McC. M. Overton J, Townsend Peterson A, J. Phillips S, Richardson K, Scachetti-Pereira R, E. Schapire R, Soberón J, Williams S, S. Wisz M, E. Zimmermann N (2006-apr).
 &#8220;Novel Methods Improve Prediction of Species' Distributions from Occurrence Data.&#8221;
-<em>Ecography</em>, <b>29</b>(2), 129-151.
-ISSN 1600-0587, doi: <a href='https://doi.org/10.1111/j.2006.0906-7590.04596.x'>10.1111/j.2006.0906-7590.04596.x</a>
-.<br /><br /> Elith J, Leathwick JR, Hastie T (2009).
+<em>Ecography</em>, <b>29</b>, 129--151.
+doi: <a href='https://doi.org/10.1111/j.2006.0906-7590.04596.x'>10.1111/j.2006.0906-7590.04596.x</a>
+, <a href='/home/jbrj/Zotero/storage/9HGQL85F/Elith et al_2006_Novel methods improve prediction of species’ distributions from occurrence data.pdf;/home/jbrj/Zotero/storage/RLWYA466/Elith et al_2006_Novel methods improve prediction of species’ distributions from occurrence data.pdf'>/home/jbrj/Zotero/storage/9HGQL85F/Elith et al_2006_Novel methods improve prediction of species’ distributions from occurrence data.pdf;/home/jbrj/Zotero/storage/RLWYA466/Elith et al_2006_Novel methods improve prediction of species’ distributions from occurrence data.pdf</a>.<br /><br /> Elith J, Leathwick JR, Hastie T (2009).
 &#8220;A Working Guide to Boosted Regression Trees.&#8221;
-<em>Journal of Animal Ecology</em>, <b>77</b>(4), 802-813.
-ISSN 1365-2656, doi: <a href='https://doi.org/10/fn6m6v'>10/fn6m6v</a>
-.<br /><br /> Hastie T, Tibshirani R, Friedman J (2001).
+<em>Journal of Animal Ecology</em>, <b>77</b>, 802--813.
+doi: <a href='https://doi.org/10/fn6m6v'>10/fn6m6v</a>
+, <a href='/home/jbrj/Zotero/storage/5AGHWY5G/Elith et al_2009_A working guide to boosted regression trees.pdf;/home/jbrj/Zotero/storage/ZZX52FVM/Elith et al_2009_A working guide to boosted regression trees.pdf'>/home/jbrj/Zotero/storage/5AGHWY5G/Elith et al_2009_A working guide to boosted regression trees.pdf;/home/jbrj/Zotero/storage/ZZX52FVM/Elith et al_2009_A working guide to boosted regression trees.pdf</a>.<br /><br /> Hastie T, Tibshirani R, Friedman J (2001).
 <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>.
-Springer Heidelberg.<br /><br /> Hijmans RJ, Graham CH (2006).
+Springer Heidelberg.<br /><br /> Hijmans RJ, Graham CH (2006-dec).
 &#8220;The Ability of Climate Envelope Models to Predict the Effect of Climate Change on Species Distributions.&#8221;
-<em>Global Change Biology</em>, <b>12</b>(12), 2272-2281.
-ISSN 1354-1013, 1365-2486, doi: <a href='https://doi.org/10.1111/j.1365-2486.2006.01256.x'>10.1111/j.1365-2486.2006.01256.x</a>
-.<br /><br /> Hijmans RJ, Phillips S, Leathwick J, Elith J (2017).
+<em>Global Change Biology</em>, <b>12</b>, 2272--2281.
+doi: <a href='https://doi.org/10.1111/j.1365-2486.2006.01256.x'>10.1111/j.1365-2486.2006.01256.x</a>
+, <a href='/home/jbrj/Zotero/storage/M4D6T9PI/Hijmans_Graham_2006_The ability of climate envelope models to predict the effect of climate change.pdf'>/home/jbrj/Zotero/storage/M4D6T9PI/Hijmans_Graham_2006_The ability of climate envelope models to predict the effect of climate change.pdf</a>.<br /><br /> Hijmans RJ, Phillips S, Leathwick J, Elith J (2017).
 &#8220;Dismo: Species Distribution Modeling. R Package Version 1.1-4.&#8221;
 R package version 1.1-4.<br /><br /> Karatzoglou A, Smola A, Hornik K, Zeileis A (2004).
 &#8220;Kernlab - An S4 Package for Kernel Methods in R.&#8221;
-<em>Journal of Statistical Software</em>, <b>11</b>(9), 1--20.<br /><br /> Liaw A, Wiener M (2002).
+<em>Journal of Statistical Software</em>, <b>11</b>, 1--20.<br /><br /> Liaw A, Wiener M (2002).
 &#8220;Classification and Regression by randomForest.&#8221;
-<em>R News</em>, <b>2</b>(3), 18-22.<br /><br /> Mahalanobis PC (1936).
+<em>R News</em>, <b>2</b>, 18--22.<br /><br /> Mahalanobis PC (1936).
 &#8220;On the Generalized Distance in Statistics.&#8221;
 In <em>National Institute of Science of India</em>.<br /><br /> Meyer D, Dimitriadou E, Hornik K, Weingessel A, Leisch F (2017).
 &#8220;E1071: Misc Functions of the Department of Statistics, Probability Theory Group (Formerly: E1071), TU Wien.&#8221;
 R package version 1.6-8.<br /><br /> Nix HA (1986).
 <em>A Biogeographic Analysis of the Australian Elapid Snakes. In `Atlas of Elapid Snakes of Australia'.(Ed. R. Longmore.) Pp. 4-15. Australian Flora and Fauna Series No. 7</em>.
-Australian Government Publishing Service: Canberra.<br /><br /> Peterson AT, Papeş M, Soberón J (2008).
+Australian Government Publishing Service: Canberra.<br /><br /> Peterson AT, Papeş M, Soberón J (2008-apr).
 &#8220;Rethinking Receiver Operating Characteristic Analysis Applications in Ecological Niche Modeling.&#8221;
-<em>Ecological Modelling</em>, <b>213</b>(1), 63-72.
-ISSN 0304-3800, doi: <a href='https://doi.org/10/ctk6cf'>10/ctk6cf</a>
-.<br /><br /> Peterson AT, Soberón J, Pearson RG, Anderson RP, Mart\'inez-Meyer E, Nakamura M (2011).
-<em>Ecological Niches and Geographic Distributions</em>,  number 49 in Monographs in Population Biology.
+<em>Ecological Modelling</em>, <b>213</b>, 63--72.
+doi: <a href='https://doi.org/10/ctk6cf'>10/ctk6cf</a>
+, <a href='/home/jbrj/Zotero/storage/FQXNTFGC/Peterson et al_2008_Rethinking receiver operating characteristic analysis applications in.pdf'>/home/jbrj/Zotero/storage/FQXNTFGC/Peterson et al_2008_Rethinking receiver operating characteristic analysis applications in.pdf</a>.<br /><br /> Peterson AT, Soberón J, Pearson RG, Anderson RP, Martínez-Meyer E, Nakamura M (2011).
+<em>Ecological Niches and Geographic Distributions</em>,  number 49.
 Princeton University Press, Princeton, N.J.
-ISBN 978-0-691-13686-8 978-0-691-13688-2, OCLC: ocn724664003.<br /><br /> Phillips S (2017).
-&#8220;Maxnet: Fitting 'Maxent' Species Distribution Models with 'Glmnet'.&#8221;<br /><br /> Phillips SJ, Anderson RP, Schapire RE (2006).
+ISBN 978-0-691-13686-8 978-0-691-13688-2, OCLC: ocn724664003, <a href='/home/jbrj/Zotero/storage/DDKE94XJ/Peterson et al. - 2011 - Ecological niches and geographic distributions.pdf;/home/jbrj/Zotero/storage/LRYQKFKD/Peterson et al. - 2011 - Ecological niches and geographic distributions.pdf'>/home/jbrj/Zotero/storage/DDKE94XJ/Peterson et al. - 2011 - Ecological niches and geographic distributions.pdf;/home/jbrj/Zotero/storage/LRYQKFKD/Peterson et al. - 2011 - Ecological niches and geographic distributions.pdf</a>.<br /><br /> Phillips S (2017).
+&#8220;Maxnet: Fitting 'Maxent' Species Distribution Models with 'Glmnet'.&#8221;<br /><br /> Phillips SJ, Anderson RP, Schapire RE (2006-jan).
 &#8220;Maximum Entropy Modeling of Species Geographic Distributions.&#8221;
-<em>Ecological Modelling</em>, <b>190</b>(3-4), 231-259.
-ISSN 0304-3800, doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>10.1016/j.ecolmodel.2005.03.026</a>
-.<br /><br /> Qiao H, Soberón J, Peterson AT (2015).
+<em>Ecological Modelling</em>, <b>190</b>, 231--259.
+doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>10.1016/j.ecolmodel.2005.03.026</a>
+, <a href='/home/jbrj/Zotero/storage/ITKE3U5I/Phillips et al_2006_Maximum entropy modeling of species geographic distributions.pdf;/home/jbrj/Zotero/storage/RHMKRXAB/Phillips et al. - 2006 - Maximum entropy modeling of species geographic dis.pdf;/home/jbrj/Zotero/storage/UYCRK4PT/Phillips et al_2006_Maximum entropy modeling of species geographic distributions.pdf;/home/jbrj/Zotero/storage/WBHZJYKP/S030438000500267X.html'>/home/jbrj/Zotero/storage/ITKE3U5I/Phillips et al_2006_Maximum entropy modeling of species geographic distributions.pdf;/home/jbrj/Zotero/storage/RHMKRXAB/Phillips et al. - 2006 - Maximum entropy modeling of species geographic dis.pdf;/home/jbrj/Zotero/storage/UYCRK4PT/Phillips et al_2006_Maximum entropy modeling of species geographic distributions.pdf;/home/jbrj/Zotero/storage/WBHZJYKP/S030438000500267X.html</a>.<br /><br /> Qiao H, Soberón J, Peterson AT (2015).
 &#8220;No Silver Bullets in Correlative Ecological Niche Modelling: Insights from Testing among Many Potential Algorithms for Niche Estimation.&#8221;
-<em>Methods in Ecology and Evolution</em>, <b>6</b>(10), 1126-1136.</p>
+<em>Methods in Ecology and Evolution</em>, <b>6</b>, 1126--1136.
+<a href='/home/jbrj/Zotero/storage/63CZTQ29/2041-210X.html'>/home/jbrj/Zotero/storage/63CZTQ29/2041-210X.html</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/dismo/man/bioclim.html'>bioclim</a></code> in <span class="pkg">dismo</span> package</p>
@@ -524,21 +525,26 @@ ISSN 0304-3800, doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>1
 <p><code><a href='https://rdrr.io/pkg/raster/man/predict.html'>predict</a></code> in <span class="pkg">raster</span> package</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata first from one species in example_occs data</span>
-<span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
-<span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                          <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
-                          <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># run setup_sdmdata first from one species in example_occs data</span>
+<span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span><span class='op'>(</span><span class='va'>example_occs</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+<span class='va'>sp_coord</span> <span class='op'>&lt;-</span> <span class='va'>example_occs</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
+<span class='va'>sp_setup</span> <span class='op'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                          occurrences <span class='op'>=</span> <span class='va'>sp_coord</span>,
+                          predictors <span class='op'>=</span> <span class='va'>example_vars</span>,
+                          clean_uni <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='co'># run bioclim for one species</span>
-<span class='no'>sp_any</span> <span class='kw'>&lt;-</span> <span class='fu'>do_any</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                 <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
-                 <span class='kw'>algorithm</span> <span class='kw'>=</span> <span class='st'>"bioclim"</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
+<span class='va'>sp_any</span> <span class='op'>&lt;-</span> <span class='fu'>do_any</span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                 predictors <span class='op'>=</span> <span class='va'>example_vars</span>,
+                 algorithm <span class='op'>=</span> <span class='st'>"bioclim"</span><span class='op'>)</span>
+
 <span class='co'># run do_many</span>
-<span class='no'>sp_many</span> <span class='kw'>&lt;-</span> <span class='fu'>do_many</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                   <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
-                   <span class='kw'>bioclim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                   <span class='kw'>maxnet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='output co'>#&gt; <span class='message'>maxnet</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii maxnet run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div></pre>
+<span class='va'>sp_many</span> <span class='op'>&lt;-</span> <span class='fu'>do_many</span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                   predictors <span class='op'>=</span> <span class='va'>example_vars</span>,
+                   bioclim <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+                   <span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -554,7 +560,7 @@ ISSN 0304-3800, doi: <a href='https://doi.org/10.1016/j.ecolmodel.2005.03.026'>1
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

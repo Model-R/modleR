@@ -88,13 +88,14 @@
 
       
 
-      </header><div class="row">
+      </header><script src="projection_files/header-attrs-2.5/header-attrs.js"></script><link href="projection_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="projection_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Projecting models in modleR</h1>
                         <h4 class="author">Andrea Sánchez-Tapia</h4>
             
-            <h4 class="date">2020-04-19</h4>
+            <h4 class="date">2020-10-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Model-R/modleR/blob/master/vignettes/articles/projection.Rmd"><code>vignettes/articles/projection.Rmd</code></a></small>
       <div class="hidden name"><code>projection.Rmd</code></div>
@@ -105,20 +106,22 @@
     
 <p>Here we explain the setup for projecting models in <strong>modleR</strong>.</p>
 <p>Loading required packages.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">rJava</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">raster</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">maps</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">maptools</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/rJava/">rJava</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">maps</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://maptools.r-forge.r-project.org/">maptools</a></span><span class="op">)</span></pre></div>
 <div id="selecting-one-species-as-an-example" class="section level1">
 <h1 class="hasAnchor">
 <a href="#selecting-one-species-as-an-example" class="anchor"></a>Selecting one species as an example</h1>
 <p>We use the standard dataset inside the package <code>modleR</code>. First, from <code>example_occs</code> object we select only data from one species <em>Abarema langsdorffii</em> and create one training set (70% of the data) and one test set (30% of the data) for the data.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co">## Creating an object with species names</span>
-<span class="no">especies</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span>(<span class="no">example_occs</span>)[<span class="fl">1</span>]
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co">## Creating an object with species names</span>
+<span class="va">especies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="co"># Selecting only coordinates for the first species</span>
-<span class="no">coord1sp</span> <span class="kw">&lt;-</span> <span class="no">example_occs</span><span class="kw">[[</span><span class="fl">1</span>]]
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html">head</a></span>(<span class="no">coord1sp</span>)</pre></body></html></div>
+<span class="va">coord1sp</span> <span class="op">&lt;-</span> <span class="va">example_occs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html">head</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span></pre></div>
 <pre><code>##                       sp     lon     lat
 ## 343 Abarema_langsdorffii -40.615 -19.921
 ## 344 Abarema_langsdorffii -40.729 -20.016
@@ -126,25 +129,29 @@
 ## 346 Abarema_langsdorffii -41.740 -20.493
 ## 347 Abarema_langsdorffii -42.482 -20.701
 ## 348 Abarema_langsdorffii -40.855 -17.082</code></pre>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/dimensions.html">dim</a></span>(<span class="no">coord1sp</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/dimensions.html">dim</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span></pre></div>
 <pre><code>## [1] 104   3</code></pre>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co"># Subsetting data into training and test</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span>(<span class="fl">0.7</span> * <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span>(<span class="no">coord1sp</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="co"># Subsetting data into training and test</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span><span class="op">(</span><span class="fl">0.7</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>## [1] 73</code></pre>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># Making a sample of 70% of species' records</span>
-<span class="no">set</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample.html">sample</a></span>(<span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span>(<span class="no">coord1sp</span>), <span class="kw">size</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span>(<span class="fl">0.7</span> * <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span>(<span class="no">coord1sp</span>)))
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="co"># Making a sample of 70% of species' records</span>
+<span class="va">set</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span><span class="op">(</span><span class="fl">0.7</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># Creating training data set (70% of species' records)</span>
-<span class="no">train_set</span> <span class="kw">&lt;-</span> <span class="no">coord1sp</span>[<span class="no">set</span>,]
+<span class="va">train_set</span> <span class="op">&lt;-</span> <span class="va">coord1sp</span><span class="op">[</span><span class="va">set</span>,<span class="op">]</span>
 <span class="co"># Creating test data set (other 30%)</span>
-<span class="no">test_set</span> <span class="kw">&lt;-</span> <span class="no">coord1sp</span>[<span class="fu"><a href="https://dplyr.tidyverse.org/reference/setops.html">setdiff</a></span>(<span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span>(<span class="no">coord1sp</span>), <span class="no">set</span>), ]</pre></body></html></div>
+<span class="va">test_set</span> <span class="op">&lt;-</span> <span class="va">coord1sp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/generics/man/setops.html">setdiff</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span>, <span class="va">set</span><span class="op">)</span>, <span class="op">]</span></pre></div>
 <p>Now lets the check our data points. We plot the traning and test data sets with the first axis of the environmental PCA data from the object <code>example_vars</code>.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># selecting only the first PCA axis</span>
-<span class="no">predictor</span> <span class="kw">&lt;-</span> <span class="no">example_vars</span><span class="kw">[[</span><span class="fl">1</span>]]
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="co"># selecting only the first PCA axis</span>
+<span class="va">predictor</span> <span class="op">&lt;-</span> <span class="va">example_vars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 <span class="co"># transforming the data frame with the coordinates in a spatial object</span>
-<span class="no">pts</span> <span class="kw">&lt;-</span> <span class="fu">SpatialPoints</span>(<span class="no">coord1sp</span>[,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">3</span>)])
+<span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu">SpatialPoints</span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 <span class="co"># ploting environmental layer</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span>(<span class="no">predictor</span>, <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="no">lat</span> ~ <span class="no">lon</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">coord1sp</span>, <span class="kw">pch</span> <span class="kw">=</span> <span class="fl">19</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">predictor</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">lat</span> <span class="op">~</span> <span class="va">lon</span>, data <span class="op">=</span> <span class="va">coord1sp</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></pre></div>
 <p><img src="projection_files/figure-html/plotdataset-1.png" width="576"></p>
 </div>
 <div id="fitting-and-projection-datasets" class="section level1">
@@ -152,44 +159,45 @@
 <a href="#fitting-and-projection-datasets" class="anchor"></a>Fitting and projection datasets</h1>
 <p>We want to fit everything in a small area around the occurrence points and project it to other sample rasterStack objects.</p>
 <p>The structure of folder for projections in modleR is key for this step. In this example we have a folder with environmental data <code>"./env"</code>. The period means “the current working directory” so this is a subfolder, in this case it is besides the folder where the model outputs are created <code>("./models_dir")</code> by default.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="ex">current_wd</span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">├── <span class="ex">models_dir</span> etc...</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">└── <span class="fu">env</span></a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">    ├── <span class="ex">cropped_proj.tif</span></a>
-<a class="sourceLine" id="cb10-5" data-line-number="5">    └── <span class="ex">proj/</span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6">        ├── <span class="ex">proj1/</span></a>
-<a class="sourceLine" id="cb10-7" data-line-number="7">        │     ├ <span class="ex">var01.tif</span></a>
-<a class="sourceLine" id="cb10-8" data-line-number="8">        │     ├ <span class="ex">var02.tif</span></a>
-<a class="sourceLine" id="cb10-9" data-line-number="9">        │     ├ <span class="ex">var03.tif</span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10">        │     └ <span class="ex">var04.tif</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11">        ├── <span class="ex">proj2/</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12">        │     ├ <span class="ex">var01.tif</span></a>
-<a class="sourceLine" id="cb10-13" data-line-number="13">        │     ├ <span class="ex">var02.tif</span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14">        │     ├ <span class="ex">var03.tif</span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15">        │     └ <span class="ex">var04.tif</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16">        ├── <span class="ex">proj3/</span></a>
-<a class="sourceLine" id="cb10-17" data-line-number="17">        │     ├ <span class="ex">var01.tif</span></a>
-<a class="sourceLine" id="cb10-18" data-line-number="18">        │     ├ <span class="ex">var02.tif</span></a>
-<a class="sourceLine" id="cb10-19" data-line-number="19">        │     ├ <span class="ex">var03.tif</span></a>
-<a class="sourceLine" id="cb10-20" data-line-number="20">        │     └ <span class="ex">var04.tif</span></a>
-<a class="sourceLine" id="cb10-21" data-line-number="21">        └── <span class="ex">proj4/</span></a>
-<a class="sourceLine" id="cb10-22" data-line-number="22">              ├ <span class="ex">var01.tif</span></a>
-<a class="sourceLine" id="cb10-23" data-line-number="23">              ├ <span class="ex">var02.tif</span></a>
-<a class="sourceLine" id="cb10-24" data-line-number="24">              ├ <span class="ex">var03.tif</span></a>
-<a class="sourceLine" id="cb10-25" data-line-number="25">              └ <span class="ex">var04.tif</span></a></code></pre></div>
-<p>Note that in this subfolder every projection has its own subfolder, and that all variables have the same names. You can put all the variables (from bio01 to bio19 in Worldclim, for example) and if there’s a variable selection within <code><a href="../../reference/model_fit.html">do_any()</a></code> the function will use only the selected variables too.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">current_wd</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>├── <span class="ex">models_dir</span> etc...</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>└── <span class="fu">env</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a>    ├── <span class="ex">cropped_proj.tif</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a>    └── <span class="ex">proj/</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true"></a>        ├── <span class="ex">proj1/</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true"></a>        │     ├ <span class="ex">var01.tif</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true"></a>        │     ├ <span class="ex">var02.tif</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true"></a>        │     ├ <span class="ex">var03.tif</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true"></a>        │     └ <span class="ex">var04.tif</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true"></a>        ├── <span class="ex">proj2/</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true"></a>        │     ├ <span class="ex">var01.tif</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true"></a>        │     ├ <span class="ex">var02.tif</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true"></a>        │     ├ <span class="ex">var03.tif</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true"></a>        │     └ <span class="ex">var04.tif</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true"></a>        ├── <span class="ex">proj3/</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true"></a>        │     ├ <span class="ex">var01.tif</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true"></a>        │     ├ <span class="ex">var02.tif</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true"></a>        │     ├ <span class="ex">var03.tif</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true"></a>        │     └ <span class="ex">var04.tif</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true"></a>        └── <span class="ex">proj4/</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true"></a>              ├ <span class="ex">var01.tif</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true"></a>              ├ <span class="ex">var02.tif</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true"></a>              ├ <span class="ex">var03.tif</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true"></a>              └ <span class="ex">var04.tif</span></span></code></pre></div>
+<p>Note that in this subfolder every projection has its own subfolder, and that all variables have the same names. You can put all the variables (from bio01 to bio19 in Worldclim, for example) and if there’s a variable selection within <code><a href="../../reference/do_any.html">do_any()</a></code> the function will use only the selected variables too.</p>
 <p>For performing projections in modleR you only need to pass the address of the folder where the projection variables are <code>proj_data_folder = "./env/proj"</code> and set <code>project_model = TRUE</code>.</p>
 <p>We show here the example dataset and one of the projections (<code>proj1</code>)</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">fit_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span>(<span class="st">"./data/env/cropped_proj.tif"</span>)
-<span class="no">proj_folder</span> <span class="kw">&lt;-</span> <span class="st">"./data/env/proj/proj1/"</span>
-<span class="no">proj_data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="no">proj_folder</span>, <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>) <span class="kw">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span>() <span class="kw">%&gt;%</span>
-    <span class="no">.</span><span class="kw">[[</span><span class="fl">1</span>]]
-<span class="no">pts</span> <span class="kw">&lt;-</span> <span class="fu">SpatialPoints</span>(<span class="no">coord1sp</span>[,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">3</span>)])
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="va">fit_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="st">"./data/env/cropped_proj.tif"</span><span class="op">)</span>
+<span class="va">proj_folder</span> <span class="op">&lt;-</span> <span class="st">"./data/env/proj/proj1/"</span>
+<span class="va">proj_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">proj_folder</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="va">.</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
+<span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu">SpatialPoints</span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">example_vars</span><span class="kw">[[</span><span class="fl">1</span>]]), <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">add</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span>(<span class="no">fit_data</span><span class="kw">[[</span><span class="fl">1</span>]], <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">add</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span>(<span class="no">proj_data</span><span class="kw">[[</span><span class="fl">1</span>]], <span class="kw">legend</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">add</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">example_vars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, add <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">fit_data</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">proj_data</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p><img src="projection_files/figure-html/dataset2-1.png" width="576"></p>
 <p>Models will be fit in the area of the Brazilian Atlantic Forest and projected to the Northern Andes in Colombia.</p>
 <div id="model-projection" class="section level2">
@@ -198,55 +206,65 @@
 <div id="a-simple-model-with-no-buffer-and-no-projection" class="section level3">
 <h3 class="hasAnchor">
 <a href="#a-simple-model-with-no-buffer-and-no-projection" class="anchor"></a>A simple model with no buffer and no projection:</h3>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># generating sdmdata</span>
-<span class="no">sdm_no_proj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                             <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">coord1sp</span>[,-<span class="fl">1</span>],
-                             <span class="kw">predictors</span><span class="kw">=</span><span class="no">fit_data</span>,
-                             <span class="kw">models_dir</span><span class="kw">=</span><span class="st">"./projections/"</span>,
-                             <span class="kw">clean_dupl</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                             <span class="kw">clean_na</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="co"># generating sdmdata</span>
+<span class="va">sdm_no_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, 
+                             occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
+                             predictors<span class="op">=</span><span class="va">fit_data</span>, 
+                             models_dir<span class="op">=</span><span class="st">"./projections/"</span>, 
+                             clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>, 
+                             clean_na <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># running models</span>
-<span class="no">no_proj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/model_fit.html">do_any</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                   <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">fit_data</span>,
-                   <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                   <span class="kw">algorithm</span> <span class="kw">=</span> <span class="st">"svme"</span>)
-
-<span class="no">no_proj.bc</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span>(<span class="st">"./projections/Abarema_langsdorffii/present/partitions/svme_cont_Abarema_langsdorffii_1_1.tif"</span>)
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span>(<span class="no">no_proj.bc</span>)
-<span class="kw pkg">maps</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/maps/man/map.html">map</a></span>(, , <span class="kw">add</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<span class="va">no_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/do_any.html">do_any</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                   predictors <span class="op">=</span> <span class="va">fit_data</span>,
+                   models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                   algorithm <span class="op">=</span> <span class="st">"svme"</span><span class="op">)</span></pre></div>
+<pre><code>## Warning: `mutate_()` is deprecated as of dplyr 0.7.0.
+## Please use `mutate()` instead.
+## See vignette('programming') for more help
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="va">no_proj.bc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html">raster</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/present/partitions/svme_cont_Abarema_langsdorffii_1_1.tif"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">no_proj.bc</span><span class="op">)</span>
+<span class="fu">maps</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/maps/man/map.html">map</a></span><span class="op">(</span>, , add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p><img src="projection_files/figure-html/enm1-1.png" width="576"></p>
 </div>
 <div id="projections" class="section level3">
 <h3 class="hasAnchor">
 <a href="#projections" class="anchor"></a>Projections</h3>
-<p>We make a series of projections in the specified folder: <code>"./env/proj"</code>. We use function <code><a href="../../reference/model_fit.html">do_any()</a></code> and algorithm svme in this example:</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span>(<span class="no">fit_data</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"proj1_"</span>, <span class="fl">1</span>:<span class="fl">6</span>)
+<p>We make a series of projections in the specified folder: <code>"./env/proj"</code>. We use function <code><a href="../../reference/do_any.html">do_any()</a></code> and algorithm svme in this example:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">fit_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"proj1_"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
 <span class="co"># this is just to make sure that all current layers have the same names of the projectio variables.</span>
 
-<span class="no">sdm_yes_proj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                              <span class="kw">occurrences</span> <span class="kw">=</span> <span class="no">coord1sp</span>[, -<span class="fl">1</span>],
-                              <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">fit_data</span>,
-                              <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                              <span class="kw">clean_dupl</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                              <span class="kw">clean_na</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                              <span class="kw">buffer_type</span> <span class="kw">=</span> <span class="st">"median"</span>,
-                              <span class="kw">partition_type</span> <span class="kw">=</span> <span class="st">"bootstrap"</span>,
-                              <span class="kw">boot_n</span> <span class="kw">=</span> <span class="fl">3</span>)
+<span class="va">sdm_yes_proj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                              occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
+                              predictors <span class="op">=</span> <span class="va">fit_data</span>,
+                              models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                              clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
+                              clean_na <span class="op">=</span> <span class="cn">TRUE</span>,
+                              buffer_type <span class="op">=</span> <span class="st">"median"</span>,
+                              partition_type <span class="op">=</span> <span class="st">"bootstrap"</span>,
+                              boot_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
 
-<span class="no">yes_proj1</span> <span class="kw">&lt;-</span> <span class="kw pkg">modleR</span><span class="kw ns">::</span><span class="fu"><a href="../../reference/model_fit.html">do_any</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                            <span class="kw">predictors</span> <span class="kw">=</span> <span class="no">fit_data</span>,
-                            <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                            <span class="kw">algo</span> <span class="kw">=</span> <span class="st">"svme"</span>,
-                            <span class="kw">project_model</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-                            <span class="kw">proj_data_folder</span> <span class="kw">=</span> <span class="st">"data/env/proj/"</span>,
-                            <span class="kw">png_partitions</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<p>The same parameters would work when calling <code><a href="../../reference/model_fit.html">do_many()</a></code> (not run here)</p>
+<span class="va">yes_proj1</span> <span class="op">&lt;-</span> <span class="fu">modleR</span><span class="fu">::</span><span class="fu"><a href="../../reference/do_any.html">do_any</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                            predictors <span class="op">=</span> <span class="va">fit_data</span>,
+                            models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                            algo <span class="op">=</span> <span class="st">"svme"</span>,
+                            project_model <span class="op">=</span> <span class="cn">TRUE</span>,
+                            proj_data_folder <span class="op">=</span> <span class="st">"data/env/proj/"</span>,
+                            png_partitions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<p>The same parameters would work when calling <code><a href="../../reference/do_any.html">do_many()</a></code> (not run here)</p>
 <p>We can plot the resulting projections. Note that this is one projection per partition (n = 3).</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_1_1.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_1_1.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_1_1.png" width="240"></p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_2_1.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_2_1.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_2_1.png" width="240"></p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_3_1.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_3_1.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj1/partitions/svme_cont_Abarema_langsdorffii_3_1.png" width="240"></p>
 </div>
 </div>
@@ -254,60 +272,69 @@
 <div id="final-model-projection" class="section level1">
 <h1 class="hasAnchor">
 <a href="#final-model-projection" class="anchor"></a>Final model projection</h1>
-<p><code><a href="../../reference/final_model.html">final_model()</a></code> has a parameter <code>proj_dir</code> that allows it to be run using any projection. Unlike <code><a href="../../reference/model_fit.html">do_any()</a></code> and <code><a href="../../reference/model_fit.html">do_many()</a></code> this function needs to be run for each projection. The default projection is <code>"present"</code>.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">final_model_present</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                                   <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                                   <span class="kw">proj_dir</span> <span class="kw">=</span> <span class="st">"present"</span>,
-                                   <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## [1] "Sun Apr 19 00:09:06 2020"</code></pre>
+<p><code><a href="../../reference/final_model.html">final_model()</a></code> has a parameter <code>proj_dir</code> that allows it to be run using any projection. Unlike <code><a href="../../reference/do_any.html">do_any()</a></code> and <code><a href="../../reference/do_any.html">do_many()</a></code> this function needs to be run for each projection. The default projection is <code>"present"</code>.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit">
+<span class="va">final_model_present</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                   models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                                   proj_dir <span class="op">=</span> <span class="st">"present"</span>, 
+                                   overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<pre><code>## [1] "Tue Oct 27 17:44:17 2020"</code></pre>
 <pre><code>## [1] "DONE svme !"</code></pre>
 <p>For the projected models, each <code>proj_dir</code> has to have the name of the projection</p>
 <div id="proj1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#proj1" class="anchor"></a>Proj1</h3>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">final_model_proj1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                                 <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                                 <span class="kw">proj_dir</span> <span class="kw">=</span> <span class="st">"proj1"</span>,
-                                 <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## [1] "Sun Apr 19 00:09:10 2020"</code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit">
+<span class="va">final_model_proj1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                 models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                                 proj_dir <span class="op">=</span> <span class="st">"proj1"</span>,
+                                 overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<pre><code>## [1] "Tue Oct 27 17:44:22 2020"</code></pre>
 <pre><code>## [1] "DONE svme !"</code></pre>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj1/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb25"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj1/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj1/final_models/Abarema_langsdorffii_svme_raw_mean.png" width="240"></p>
 </div>
 <div id="proj2" class="section level3">
 <h3 class="hasAnchor">
 <a href="#proj2" class="anchor"></a>Proj2</h3>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">final_model_proj2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                                 <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                                 <span class="kw">proj_dir</span> <span class="kw">=</span> <span class="st">"proj2"</span>,
-                                 <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## [1] "Sun Apr 19 00:09:12 2020"</code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit">
+<span class="va">final_model_proj2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                 models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                                 proj_dir <span class="op">=</span> <span class="st">"proj2"</span>,
+                                 overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<pre><code>## [1] "Tue Oct 27 17:44:25 2020"</code></pre>
 <pre><code>## [1] "DONE svme !"</code></pre>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj2/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb29"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj2/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj2/final_models/Abarema_langsdorffii_svme_raw_mean.png" width="240"></p>
 </div>
 <div id="proj3" class="section level3">
 <h3 class="hasAnchor">
 <a href="#proj3" class="anchor"></a>Proj3</h3>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">final_model_proj3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                                 <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                                 <span class="kw">proj_dir</span> <span class="kw">=</span> <span class="st">"proj3"</span>,
-                                 <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## [1] "Sun Apr 19 00:09:16 2020"</code></pre>
+<div class="sourceCode" id="cb30"><pre class="downlit">
+<span class="va">final_model_proj3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                 models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                                 proj_dir <span class="op">=</span> <span class="st">"proj3"</span>,
+                                 overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<pre><code>## [1] "Tue Oct 27 17:44:31 2020"</code></pre>
 <pre><code>## [1] "DONE svme !"</code></pre>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj3/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb33"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj3/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj3/final_models/Abarema_langsdorffii_svme_raw_mean.png" width="240"></p>
 </div>
 <div id="proj4" class="section level3">
 <h3 class="hasAnchor">
 <a href="#proj4" class="anchor"></a>Proj4</h3>
-<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">final_model_proj4</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span>(<span class="kw">species_name</span> <span class="kw">=</span> <span class="no">especies</span>[<span class="fl">1</span>],
-                                 <span class="kw">models_dir</span> <span class="kw">=</span> <span class="st">"./projections/"</span>,
-                                 <span class="kw">proj_dir</span> <span class="kw">=</span> <span class="st">"proj4"</span>,
-                                 <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## [1] "Sun Apr 19 00:09:20 2020"</code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit">
+<span class="va">final_model_proj4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                                 models_dir <span class="op">=</span> <span class="st">"./projections/"</span>,
+                                 proj_dir <span class="op">=</span> <span class="st">"proj4"</span>,
+                                 overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<pre><code>## [1] "Tue Oct 27 17:44:37 2020"</code></pre>
 <pre><code>## [1] "DONE svme !"</code></pre>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span>(<span class="st">"./projections/Abarema_langsdorffii/proj4/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb37"><pre class="downlit">
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./projections/Abarema_langsdorffii/proj4/final_models/Abarema_langsdorffii_svme_raw_mean.png"</span><span class="op">)</span></pre></div>
 <p><img src="projections/Abarema_langsdorffii/proj4/final_models/Abarema_langsdorffii_svme_raw_mean.png" width="240"></p>
 </div>
 </div>
@@ -328,7 +355,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

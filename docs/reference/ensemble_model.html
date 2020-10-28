@@ -151,13 +151,13 @@ mean of the final models in order to obtain one model per species. It also
 calculates median, standard deviation and range (maximum - minimum)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ensemble_model</span>(<span class='no'>species_name</span>, <span class='no'>occurrences</span>, <span class='kw'>lon</span> <span class='kw'>=</span> <span class='st'>"lon"</span>, <span class='kw'>lat</span> <span class='kw'>=</span> <span class='st'>"lat"</span>,
-  <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>, <span class='kw'>final_dir</span> <span class='kw'>=</span> <span class='st'>"final_models"</span>,
-  <span class='kw'>ensemble_dir</span> <span class='kw'>=</span> <span class='st'>"ensemble"</span>, <span class='kw'>proj_dir</span> <span class='kw'>=</span> <span class='st'>"present"</span>, <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>which_ensemble</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"average"</span>), <span class='kw'>which_final</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"raw_mean"</span>),
-  <span class='kw'>performance_metric</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>, <span class='kw'>dismo_threshold</span> <span class='kw'>=</span> <span class='st'>"spec_sens"</span>,
-  <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>png_ensemble</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>write_occs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>write_map</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>scale_models</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>uncertainty</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>ensemble_model</span><span class='op'>(</span><span class='va'>species_name</span>, <span class='va'>occurrences</span>, lon <span class='op'>=</span> <span class='st'>"lon"</span>, lat <span class='op'>=</span> <span class='st'>"lat"</span>,
+  models_dir <span class='op'>=</span> <span class='st'>"./models"</span>, final_dir <span class='op'>=</span> <span class='st'>"final_models"</span>,
+  ensemble_dir <span class='op'>=</span> <span class='st'>"ensemble"</span>, proj_dir <span class='op'>=</span> <span class='st'>"present"</span>, algorithms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  which_ensemble <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"average"</span><span class='op'>)</span>, which_final <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"raw_mean"</span><span class='op'>)</span>,
+  performance_metric <span class='op'>=</span> <span class='st'>"TSSmax"</span>, dismo_threshold <span class='op'>=</span> <span class='st'>"spec_sens"</span>,
+  consensus_level <span class='op'>=</span> <span class='fl'>0.5</span>, png_ensemble <span class='op'>=</span> <span class='cn'>TRUE</span>, write_occs <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  write_map <span class='op'>=</span> <span class='cn'>FALSE</span>, scale_models <span class='op'>=</span> <span class='cn'>TRUE</span>, uncertainty <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,7 +215,7 @@ in the final_models folder</p></td>
     <tr>
       <th>which_ensemble</th>
       <td><p>Which method to apply consensus between algorithms will
-be used? Current options are:</p><dl'>
+be used? Current options are:</p><dl>
   <dt><code>best</code></dt><dd><p>Selects models from the best-performing algorithm. A
     performance metric must be specified (<code>performance_metric</code>). Parameter
     <code>which_final</code> indicates which model will be returned</p></dd>
@@ -303,33 +303,36 @@ deviation and range of the assembled models</p>
     <div class='dont-index'><p><code><a href='final_model.html'>final_model</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># run setup_sdmdata</span>
-<span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
-<span class='no'>sp_coord</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>sp_setup</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                          <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
-                          <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>metadata file found, checking metadata</span></div><div class='output co'>#&gt; <span class='message'>same metadata, no need to run data partition</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># run setup_sdmdata</span>
+<span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span><span class='op'>(</span><span class='va'>example_occs</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+<span class='va'>sp_coord</span> <span class='op'>&lt;-</span> <span class='va'>example_occs</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
+<span class='va'>sp_setup</span> <span class='op'>&lt;-</span> <span class='fu'><a href='setup_sdmdata.html'>setup_sdmdata</a></span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                          occurrences <span class='op'>=</span> <span class='va'>sp_coord</span>,
+                          predictors <span class='op'>=</span> <span class='va'>example_vars</span>,
+                          clean_uni <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='co'># run do_many</span>
-<span class='no'>sp_many</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='model_fit.html'>do_many</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                   <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>,
-                   <span class='kw'>bioclim</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                   <span class='kw'>maxnet</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>bioclim</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii bioclim run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='output co'>#&gt; <span class='message'>maxnet</span></div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii maxnet run number 1 part. nb. 1</span></div><div class='output co'>#&gt; <span class='message'>fitting models</span></div><div class='output co'>#&gt; <span class='message'>projecting the models</span></div><div class='output co'>#&gt; <span class='message'>evaluating the models</span></div><div class='output co'>#&gt; <span class='message'>writing evaluation tables</span></div><div class='output co'>#&gt; <span class='message'>writing raster files</span></div><div class='input'>
+<span class='va'>sp_many</span> <span class='op'>&lt;-</span> <span class='fu'><a href='do_any.html'>do_many</a></span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                   predictors <span class='op'>=</span> <span class='va'>example_vars</span>,
+                   bioclim <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='co'># run final_model</span>
-<span class='no'>sp_final</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='final_model.html'>final_model</a></span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                        <span class='kw'>algorithms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"bioclim"</span>, <span class='st'>"maxnet"</span>),
-                        <span class='kw'>select_partitions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                        <span class='kw'>select_par</span> <span class='kw'>=</span> <span class='st'>"TSSmax"</span>,
-                        <span class='kw'>select_par_val</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-                        <span class='kw'>which_models</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"raw_mean"</span>),
-                        <span class='kw'>consensus_level</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                        <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Sat Apr 18 23:47:02 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Extracting data for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='message'>Reading models from .tif files</span></div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii bioclim</span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected the final models</span>
-#&gt; <span class='warning'>                          are identical to the original model</span></div><div class='output co'>#&gt; <span class='message'>Standardizing models from 0 to 1</span></div><div class='output co'>#&gt; <span class='message'>selected final models for Abarema_langsdorffii bioclim DONE</span></div><div class='output co'>#&gt; <span class='message'>Writing models bioclim</span></div><div class='output co'>#&gt; <span class='message'>Extracting data for Abarema_langsdorffii maxnet</span></div><div class='output co'>#&gt; <span class='message'>Reading models from .tif files</span></div><div class='output co'>#&gt; <span class='message'>1 / 1 partitions will be used for Abarema_langsdorffii maxnet</span></div><div class='output co'>#&gt; <span class='warning'>Warning: when only one partition is selected the final models</span>
-#&gt; <span class='warning'>                          are identical to the original model</span></div><div class='output co'>#&gt; <span class='message'>Standardizing models from 0 to 1</span></div><div class='output co'>#&gt; <span class='message'>selected final models for Abarema_langsdorffii maxnet DONE</span></div><div class='output co'>#&gt; <span class='message'>Writing models maxnet</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE maxnet !"</div><div class='input'>
+<span class='va'>sp_final</span> <span class='op'>&lt;-</span> <span class='fu'><a href='final_model.html'>final_model</a></span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                        algorithms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bioclim"</span><span class='op'>)</span>,
+                        select_partitions <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                        select_par <span class='op'>=</span> <span class='st'>"TSSmax"</span>,
+                        select_par_val <span class='op'>=</span> <span class='fl'>0</span>,
+                        which_models <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"raw_mean"</span><span class='op'>)</span>,
+                        consensus_level <span class='op'>=</span> <span class='fl'>0.5</span>,
+                        overwrite <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='co'># run ensemble model</span>
-<span class='no'>sp_ensemble</span> <span class='kw'>&lt;-</span> <span class='fu'>ensemble_model</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                              <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>sp_coord</span>,
-                              <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "Sat Apr 18 23:47:08 2020"</div><div class='output co'>#&gt; <span class='message'>Abarema_langsdorffii</span></div><div class='output co'>#&gt; <span class='message'>Reading mean evaluation files for Abarema_langsdorffii in present</span></div><div class='output co'>#&gt; <span class='message'>Calculating range</span></div><div class='output co'>#&gt; <span class='message'>Writing pngs</span></div><div class='output co'>#&gt; <span class='message'>writing metadata</span></div><div class='output co'>#&gt; [1] "DONE!"
-#&gt; [1] "Sat Apr 18 23:47:10 2020"</div></pre>
+<span class='va'>sp_ensemble</span> <span class='op'>&lt;-</span> <span class='fu'>ensemble_model</span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                              occurrences <span class='op'>=</span> <span class='va'>sp_coord</span>,
+                              overwrite <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -345,7 +348,7 @@ deviation and range of the assembled models</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

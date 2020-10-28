@@ -169,10 +169,10 @@ The function will return the resulting buffer as a RasterStack object with
 the same resolution and NA values of the predictors RasterStack.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>create_buffer</span>(<span class='no'>species_name</span>, <span class='no'>occurrences</span>, <span class='kw'>lon</span> <span class='kw'>=</span> <span class='st'>"lon"</span>, <span class='kw'>lat</span> <span class='kw'>=</span> <span class='st'>"lat"</span>,
-  <span class='no'>predictors</span>, <span class='kw'>buffer_type</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='no'>buffer_shape</span>, <span class='kw'>dist_buf</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env_filter</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>env_distance</span> <span class='kw'>=</span> <span class='st'>"centroid"</span>, <span class='kw'>min_env_dist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>min_geog_dist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>models_dir</span> <span class='kw'>=</span> <span class='st'>"./models"</span>, <span class='kw'>write_buffer</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>create_buffer</span><span class='op'>(</span><span class='va'>species_name</span>, <span class='va'>occurrences</span>, lon <span class='op'>=</span> <span class='st'>"lon"</span>, lat <span class='op'>=</span> <span class='st'>"lat"</span>,
+  <span class='va'>predictors</span>, buffer_type <span class='op'>=</span> <span class='st'>"none"</span>, <span class='va'>buffer_shape</span>, dist_buf <span class='op'>=</span> <span class='cn'>NULL</span>,
+  env_filter <span class='op'>=</span> <span class='cn'>FALSE</span>, env_distance <span class='op'>=</span> <span class='st'>"centroid"</span>, min_env_dist <span class='op'>=</span> <span class='cn'>NULL</span>,
+  min_geog_dist <span class='op'>=</span> <span class='cn'>NULL</span>, models_dir <span class='op'>=</span> <span class='st'>"./models"</span>, write_buffer <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -287,11 +287,14 @@ far should you stray from what you know? Ecological Modelling, 220(4),
 <p><code><a href='https://rdrr.io/pkg/dismo/man/randomPoints.html'>randomPoints</a></code>  in <span class="pkg">dismo</span> package</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>raster</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: sp</span></div><div class='input'><span class='no'>sp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span>(<span class='no'>example_occs</span>)[<span class='fl'>1</span>]
-<span class='no'>occs</span> <span class='kw'>&lt;-</span> <span class='no'>example_occs</span><span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>buf</span> <span class='kw'>&lt;-</span> <span class='fu'>create_buffer</span>(<span class='kw'>species_name</span> <span class='kw'>=</span> <span class='no'>sp</span>,
-                     <span class='kw'>occurrences</span> <span class='kw'>=</span> <span class='no'>occs</span>,
-                     <span class='kw'>predictors</span> <span class='kw'>=</span> <span class='no'>example_vars</span>)</div><div class='output co'>#&gt; <span class='message'>No inclusion buffer was applied</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span>(<span class='no'>buf</span>)</div><div class='img'><img src='create_buffer-1.png' alt='' width='700' height='433' /></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: sp</span></div><div class='input'><span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span><span class='op'>(</span><span class='va'>example_occs</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+<span class='va'>occs</span> <span class='op'>&lt;-</span> <span class='va'>example_occs</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
+<span class='va'>buf</span> <span class='op'>&lt;-</span> <span class='fu'>create_buffer</span><span class='op'>(</span>species_name <span class='op'>=</span> <span class='va'>sp</span>,
+                     occurrences <span class='op'>=</span> <span class='va'>occs</span>,
+                     predictors <span class='op'>=</span> <span class='va'>example_vars</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>No inclusion buffer was applied</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/raster/man/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>buf</span><span class='op'>)</span>
+</div><div class='img'><img src='create_buffer-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -308,7 +311,7 @@ far should you stray from what you know? Ecological Modelling, 220(4),
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
