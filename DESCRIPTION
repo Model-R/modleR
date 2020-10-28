@@ -41,7 +41,8 @@ Imports:
     scales,
     sessioninfo,
     sp
-Remotes: marlonecobos/kuenm
+Remotes: marlonecobos/kuenm,
+         mrmaxent/maxnet
 URL: https://model-r.github.io/modleR/index.html, https://github.com/Model-R/modleR
 BugReports: https://github.com/Model-R/modleR/issues
 RoxygenNote: 7.1.1

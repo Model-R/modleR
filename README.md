@@ -39,9 +39,17 @@ will include the vignette on the installation but we have found that
 `build_vignettes = TRUE` is also necessary. During installation, R may
 ask to install or update some packages. If any of these return an error
 you can install them apart by running `install.packages()` and retry.
-When building the vignette, package **rJava** and a JDK will be needed.
-Also, make sure that the maxent.jar file is available and in the `java`
-folder of package **dismo**. Please download it
+
+Packages **kuenm** and **maxnet** should be installed from GitHub:
+
+``` r
+remotes::install_github("marlonecobos/kuenm")
+remotes::install_github("mrmaxent/maxnet")
+```
+
+To use `maxent()` from package **dismo**, package **rJava** and a JDK
+will be needed. Also, make sure that the `maxent.jar` file is available
+and in the `java` folder of package **dismo**. Please download it
 [here](http://www.cs.princeton.edu/~schapire/maxent/). Vignette building
 may take a while during installation.
 
@@ -411,8 +419,8 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxent = FALSE,
-                maxnet = FALSE,
+                maxent = TRUE,
+                maxnet = TRUE,
                 rf = TRUE,
                 mahal = FALSE,
                 brt = TRUE,
@@ -542,9 +550,9 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Tue Oct 27 17:26:39 2020"
+#> [1] "Tue Oct 27 18:49:27 2020"
 #> [1] "DONE!"
-#> [1] "Tue Oct 27 17:27:34 2020"
+#> [1] "Tue Oct 27 18:50:19 2020"
 ```
 
 ``` r
