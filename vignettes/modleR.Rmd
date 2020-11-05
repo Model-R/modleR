@@ -251,8 +251,8 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
 ```{r do_any_eval, echo = TRUE, eval = TRUE, results= "hide", message=F, warning= FALSE}
-sp_maxent <- do_any(species_name = species[1],
-                    algorithm = "maxent",
+sp_maxnet <- do_any(species_name = species[1],
+                    algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
                     png_partitions = TRUE,
@@ -264,7 +264,7 @@ sp_maxent <- do_any(species_name = species[1],
 The resulting object is a table with the performance metrics, but the actual output is written on disk
 
 ```{r sp_maxnet}
-sp_maxent
+sp_maxnet
 ```
 
 
@@ -284,7 +284,7 @@ many <- do_many(species_name = species[1],
                 svmk = TRUE,
                 svme = TRUE,
                 maxent = FALSE,
-                maxnet = FALSE,
+                maxnet = TRUE,
                 rf = TRUE,
                 mahal = FALSE,
                 brt = TRUE,
@@ -432,7 +432,7 @@ for (i in 1:length(example_occs)) {
           models_dir = "~/modleR_test/forlooptest",
           png_partitions = TRUE,
           bioclim = TRUE,
-          maxnet = FALSE,
+          maxnet = TRUE,
           rf = TRUE,
           svmk = TRUE,
           svme = TRUE,
