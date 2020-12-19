@@ -254,7 +254,8 @@ setup_sdmdata <- function(species_name,
                     n_back_mod <- n_back
                 }
         #Now it does the sampling
-                message(paste("sampling pseudoabsence points with", buffer_type, "buffer"))
+                message(paste("sampling pseudoabsence points with", 
+                              ifelse(is.null(buffer_type), "no", buffer_type), "buffer"))
         if (!missing(seed)) set.seed(seed)
                 backgr <- dismo::randomPoints(mask = pbuffr,
                                               n = n_back_mod,
