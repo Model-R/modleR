@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -74,7 +74,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/Model-R/modleR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -88,14 +88,13 @@
 
       
 
-      </header><script src="modleR_files/header-attrs-2.5/header-attrs.js"></script><link href="modleR_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="modleR_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="modleR_files/header-attrs-2.9.1/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>modleR: a workflow for ecological niche models</h1>
                         <h4 class="author">Andrea Sánchez-Tapia, Sara Mortara &amp; Diogo S. B. Rocha</h4>
             
-            <h4 class="date">2020-10-27</h4>
+            <h4 class="date">2021-08-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Model-R/modleR/blob/master/vignettes/modleR.Rmd"><code>vignettes/modleR.Rmd</code></a></small>
       <div class="hidden name"><code>modleR.Rmd</code></div>
@@ -111,15 +110,15 @@
 <a href="#installing" class="anchor"></a>Installing</h1>
 <p>Currently <strong>modleR</strong> can be installed from GitHub:</p>
 <pre><code>#&gt; Loading modleR</code></pre>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># Without vignette</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Without vignette</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"Model-R/modleR"</span>, build <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># With vignette</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"Model-R/modleR"</span>,
                         build <span class="op">=</span> <span class="cn">TRUE</span>,
                         dependencies <span class="op">=</span> <span class="cn">TRUE</span>,
                         build_opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"--no-resave-data"</span>, <span class="st">"--no-manual"</span><span class="op">)</span>,
-                        build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+                        build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><strong>Note regarding vignette building</strong>: the default parameters in <code>build_opts</code> include <code>--no-build-vignettes</code>. In theory, removing this will include the vignette on the installation but we have found that <code>build_vignettes = TRUE</code> is also necessary. During installation, R may ask to install or update some packages. If any of these return an error you can install them apart by running <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages()</a></code> and retry. When building the vignette, package <strong>rJava</strong> and a JDK will be needed. Also, make sure that the maxent.jar file is available and in the <code>java</code> folder of package <strong>dismo</strong>. Please download it <a href="http://www.cs.princeton.edu/~schapire/maxent/">here</a>. Vignette building may take a while during installation.</p>
 </div>
 <div id="shiny-app" class="section level1">
@@ -142,17 +141,17 @@
 <h2 class="hasAnchor">
 <a href="#folder-structure-created-by-this-package" class="anchor"></a>Folder structure created by this package</h2>
 <p><strong>modleR</strong> writes the outputs in the hard disk, according to the following folder structure:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">models_dir</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>├── <span class="ex">projection1</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>│   ├── <span class="ex">data_setup</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>│   ├── <span class="ex">partitions</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>│   ├── <span class="ex">final_models</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a>│   └── <span class="ex">ensemble_models</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a>└── <span class="ex">projection2</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a>    ├── <span class="ex">data_setup</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a>    ├── <span class="ex">partitions</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a>    ├── <span class="ex">final_models</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>    └── <span class="ex">ensemble_models</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">models_dir</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>├── <span class="ex">projection1</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>│   ├── <span class="ex">data_setup</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>│   ├── <span class="ex">partitions</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>│   ├── <span class="ex">final_models</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>│   └── <span class="ex">ensemble_models</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>└── <span class="ex">projection2</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    ├── <span class="ex">data_setup</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    ├── <span class="ex">partitions</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ├── <span class="ex">final_models</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    └── <span class="ex">ensemble_models</span></span></code></pre></div>
 <ul>
 <li><p>We define a <em>partition</em> as the individual modeling round (one training and test data set and one algorithm)</p></li>
 <li><p>We define the <em>final models</em> as joining together the partitions and obtaining <strong>one model per species per algorithm</strong></p></li>
@@ -167,10 +166,10 @@
 <a href="#the-example-dataset" class="anchor"></a>The example dataset</h2>
 <p><strong>modleR</strong> comes with example data, a list called <code>example_occs</code> with occurrence data for four species, and predictor variables called <code>example_vars</code>.</p>
 <pre><code>#&gt; Loading modleR</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://model-r.github.io/modleR/index.html">modleR</a></span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://model-r.github.io/modleR/index.html">modleR</a></span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span>
 <span class="co">#&gt; List of 4</span>
 <span class="co">#&gt;  $ Abarema_langsdorffii:'data.frame':    104 obs. of  3 variables:</span>
 <span class="co">#&gt;   ..$ sp : chr [1:104] "Abarema_langsdorffii" "Abarema_langsdorffii" "Abarema_langsdorffii" "Abarema_langsdorffii" ...</span>
@@ -191,9 +190,9 @@
 <span class="va">species</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span>
 <span class="va">species</span>
 <span class="co">#&gt; [1] "Abarema_langsdorffii" "Eugenia_florida"      "Leandra_carassana"   </span>
-<span class="co">#&gt; [4] "Ouratea_semiserrata"</span></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edzer/sp/">sp</a></span><span class="op">)</span>
+<span class="co">#&gt; [4] "Ouratea_semiserrata"</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edzer/sp/">sp</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">example_vars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,
@@ -202,15 +201,15 @@
        col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"#00A08A"</span><span class="op">)</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">lat</span> <span class="op">~</span> <span class="va">lon</span>, data <span class="op">=</span> <span class="va">example_occs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="modleR_files/figure-html/dataset-1.png" alt="Figure 1. The example dataset: predictor variables and occurrence for four species." width="480"><p class="caption">
 Figure 1. The example dataset: predictor variables and occurrence for four species.
 </p>
 </div>
 <p>We will filter the <code>example_occs</code> file to select only the data for the first species:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">occs</span> <span class="op">&lt;-</span> <span class="va">example_occs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occs</span> <span class="op">&lt;-</span> <span class="va">example_occs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 </div>
 <div id="cleaning-and-setting-up-the-data-setup_sdmdata" class="section level2">
 <h2 class="hasAnchor">
@@ -218,8 +217,8 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 </h2>
 <p>The first step of the workflow is to setup the data, that is, to partition it according to each project needs, to sample background pseudoabsences and to apply some data cleaning procedures, as well as some filters. This is done by function <code><a href="../reference/setup_sdmdata.html">setup_sdmdata()</a></code></p>
 <p><code><a href="../reference/setup_sdmdata.html">setup_sdmdata()</a></code> has a large number of parameters:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">setup_sdmdata</span><span class="op">)</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">setup_sdmdata</span><span class="op">)</span>
 <span class="co">#&gt; function (species_name, occurrences, predictors, lon = "lon", </span>
 <span class="co">#&gt;     lat = "lat", models_dir = "./models", real_absences = NULL, </span>
 <span class="co">#&gt;     buffer_type = NULL, dist_buf = NULL, env_filter = FALSE, </span>
@@ -230,7 +229,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt;     cutoff = 0.8, sample_proportion = 0.8, png_sdmdata = TRUE, </span>
 <span class="co">#&gt;     n_back = 1000, partition_type = c("bootstrap"), boot_n = 1, </span>
 <span class="co">#&gt;     boot_proportion = 0.7, cv_n = NULL, cv_partitions = NULL) </span>
-<span class="co">#&gt; NULL</span></pre></div>
+<span class="co">#&gt; NULL</span></code></pre></div>
 <ul>
 <li>
 <code>species_name</code> is the name of the species to model</li>
@@ -275,8 +274,8 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>
 <code>seed</code>: for reproducibility purposes</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="va">test_folder</span> <span class="op">&lt;-</span> <span class="st">"~/modleR_test"</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">test_folder</span> <span class="op">&lt;-</span> <span class="st">"~/modleR_test"</span>
 <span class="va">sdmdata_1sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
                              occurrences <span class="op">=</span> <span class="va">occs</span>,
                              predictors <span class="op">=</span> <span class="va">example_vars</span>,
@@ -319,7 +318,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt; performing data partition</span>
 <span class="co">#&gt; saving sdmdata</span>
 <span class="co">#&gt; Plotting the dataset...</span>
-<span class="co">#&gt; DONE!</span></pre></div>
+<span class="co">#&gt; DONE!</span></code></pre></div>
 <ul>
 <li>The function will return a <code>sdmdata</code> data frame, with the groups for training and test in bootstrap or crossvalidation, a <code>pa</code> vector that marks presences and absences, and the environmental dataset. This same data frame will be written in the hard disk, as <code>sdmdata.txt</code>
 </li>
@@ -351,8 +350,8 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 </ul>
 <p>Details for the implementation of each model can be accessed in the documentation of the function.</p>
 <p>Here you can see the differences between the parameters of both functions. <code><a href="../reference/do_any.html">do_many()</a></code> calls several instances of <code><a href="../reference/do_any.html">do_any()</a></code> Sometimes you may only want to call <code><a href="../reference/do_any.html">do_many()</a></code> but for better control and parallelization by algorithm it may be better to call <code><a href="../reference/do_any.html">do_any()</a></code> individually.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">do_any</span><span class="op">)</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">do_any</span><span class="op">)</span>
 <span class="co">#&gt; function (species_name, predictors, models_dir = "./models", </span>
 <span class="co">#&gt;     algorithm = c("bioclim"), project_model = FALSE, proj_data_folder = "./data/proj", </span>
 <span class="co">#&gt;     mask = NULL, write_rda = FALSE, png_partitions = FALSE, write_bin_cut = FALSE, </span>
@@ -363,33 +362,35 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <span class="co">#&gt; function (species_name, bioclim = FALSE, domain = FALSE, glm = FALSE, </span>
 <span class="co">#&gt;     mahal = FALSE, maxent = FALSE, maxnet = FALSE, rf = FALSE, </span>
 <span class="co">#&gt;     svmk = FALSE, svme = FALSE, brt = FALSE, ...) </span>
-<span class="co">#&gt; NULL</span></pre></div>
+<span class="co">#&gt; NULL</span></code></pre></div>
 <p>Calling <code><a href="../reference/do_any.html">do_many()</a></code> and setting <code>bioclim = TRUE</code> is therefore equivalent to call <code><a href="../reference/do_any.html">do_any()</a></code> and set <code>algorithm = "bioclim"</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="va">sp_maxent</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/do_any.html">do_any</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
-                    algorithm <span class="op">=</span> <span class="st">"maxent"</span>,
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sp_maxnet</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/do_any.html">do_any</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+                    algorithm <span class="op">=</span> <span class="st">"maxnet"</span>,
                     predictors <span class="op">=</span> <span class="va">example_vars</span>,
                     models_dir <span class="op">=</span> <span class="va">test_folder</span>,
                     png_partitions <span class="op">=</span> <span class="cn">TRUE</span>,
                     write_bin_cut <span class="op">=</span> <span class="cn">FALSE</span>,
                     equalize <span class="op">=</span> <span class="cn">TRUE</span>,
-                    write_rda <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+                    write_rda <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>The resulting object is a table with the performance metrics, but the actual output is written on disk</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="va">sp_maxent</span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sp_maxnet</span>
 <span class="co">#&gt;                kappa spec_sens no_omission prevalence equal_sens_spec</span>
-<span class="co">#&gt; thresholds 0.5531638 0.4229991   0.2646903  0.1707383       0.3903203</span>
+<span class="co">#&gt; thresholds 0.5497432 0.2246503  0.06975926  0.1639895       0.2433702</span>
 <span class="co">#&gt;            sensitivity         species_name algorithm run partition presencenb</span>
-<span class="co">#&gt; thresholds   0.3241391 Abarema_langsdorffii    maxent   1         1         20</span>
-<span class="co">#&gt;            absencenb correlation    pvaluecor    AUC AUC_pval AUCratio     pROC</span>
-<span class="co">#&gt; thresholds       100   0.7481386 9.306951e-23 0.9715       NA    1.943 1.882757</span>
-<span class="co">#&gt;            pROC_pval TSSmax  KAPPAmax dismo_threshold prevalence.value  PPP</span>
-<span class="co">#&gt; thresholds         0   0.83 0.8043478       spec_sens        0.1666667 0.72</span>
-<span class="co">#&gt;                  NPP TPR  TNR  FPR FNR   CCR     Kappa F_score   Jaccard</span>
-<span class="co">#&gt; thresholds 0.9789474 0.9 0.93 0.07 0.1 0.925 0.7545455     0.8 0.6666667</span></pre></div>
+<span class="co">#&gt; thresholds   0.2433702 Abarema_langsdorffii    maxnet   1         1         20</span>
+<span class="co">#&gt;            absencenb correlation    pvaluecor   AUC AUC_pval AUCratio     pROC</span>
+<span class="co">#&gt; thresholds       100   0.7844173 3.088941e-26 0.965       NA     1.93 1.837488</span>
+<span class="co">#&gt;            pROC_pval TSSmax  KAPPAmax dismo_threshold prevalence.value</span>
+<span class="co">#&gt; thresholds         0   0.85 0.7765957       spec_sens        0.1666667</span>
+<span class="co">#&gt;                  PPP      NPP  TPR TNR FPR  FNR       CCR    Kappa   F_score</span>
+<span class="co">#&gt; thresholds 0.6551724 0.989011 0.95 0.9 0.1 0.05 0.9083333 0.720339 0.7755102</span>
+<span class="co">#&gt;              Jaccard</span>
+<span class="co">#&gt; thresholds 0.6333333</span></code></pre></div>
 <p>The following lines call for bioclim, GLM, random forests, BRT, svme (from package <strong>e1071</strong>), and smvk (from package <strong>kernlab</strong>)</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="va">many</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/do_any.html">do_many</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">many</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/do_any.html">do_many</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
                 predictors <span class="op">=</span> <span class="va">example_vars</span>,
                 models_dir <span class="op">=</span> <span class="va">test_folder</span>,
                 png_partitions <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -401,11 +402,11 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                 svmk <span class="op">=</span> <span class="cn">TRUE</span>,
                 svme <span class="op">=</span> <span class="cn">TRUE</span>,
                 maxent <span class="op">=</span> <span class="cn">FALSE</span>,
-                maxnet <span class="op">=</span> <span class="cn">FALSE</span>,
+                maxnet <span class="op">=</span> <span class="cn">TRUE</span>,
                 rf <span class="op">=</span> <span class="cn">TRUE</span>,
                 mahal <span class="op">=</span> <span class="cn">FALSE</span>,
                 brt <span class="op">=</span> <span class="cn">TRUE</span>,
-                equalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+                equalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>In addition:</p>
 <ul>
 <li>
@@ -437,16 +438,16 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <li>From <code>bin_mean</code>, a specific consensus level can be chosen (i.e. how many of the models predict an area, <code>consensus_level</code>) and the resulting binary model can be built (<code>bin_consensus</code>). The parameter <code>consensus_level</code> allows to set this level of consensus (defaults to 0.5: majority consensus approach).</li>
 <li>NOTE: The final models can be done using a subset of the algorithms avaliable on the hard disk, using the parameter <code>algorithms</code>. If left unspecified, all algorithms listed in the <code>evaluate</code> files will be used.</li>
 </ul>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">final_model</span><span class="op">)</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">final_model</span><span class="op">)</span>
 <span class="co">#&gt; function (species_name, algorithms = NULL, scale_models = TRUE, </span>
 <span class="co">#&gt;     consensus_level = 0.5, models_dir = "./models", final_dir = "final_models", </span>
 <span class="co">#&gt;     proj_dir = "present", which_models = c("raw_mean"), mean_th_par = c("spec_sens"), </span>
 <span class="co">#&gt;     uncertainty = FALSE, png_final = TRUE, sensitivity = 0.9, </span>
 <span class="co">#&gt;     ...) </span>
-<span class="co">#&gt; NULL</span></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="fu"><a href="../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+<span class="co">#&gt; NULL</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
             algorithms <span class="op">=</span> <span class="cn">NULL</span>, <span class="co">#if null it will take all the algorithms in disk</span>
             models_dir <span class="op">=</span> <span class="va">test_folder</span>,
             which_models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"raw_mean"</span>,
@@ -454,7 +455,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                              <span class="st">"bin_consensus"</span><span class="op">)</span>,
             consensus_level <span class="op">=</span> <span class="fl">0.5</span>,
             uncertainty <span class="op">=</span> <span class="cn">TRUE</span>,
-            overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+            overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><code><a href="../reference/final_model.html">final_model()</a></code> creates a .tif file for each final.model (one per algorithm) under the specified folder (default: <code>final_models</code>)</p>
 <p>The <code>raw_mean</code> final models for each algorithm are these:</p>
 <p><img src="modleR_files/figure-html/plot_final-1.png" width="672"></p>
@@ -465,8 +466,8 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 </h2>
 <p>The fourth step of the workflow is joining the models for each algorithm into a final ensemble model. <code><a href="../reference/ensemble_model.html">ensemble_model()</a></code> calculates the mean, standard deviation, minimum and maximum values of the final models and saves them under the folder specified by <code>ensemble_dir</code>. It can also create these models by a consensus rule (what proportion of final models predict a presence in each pixel, 0.5 is a majority rule, 0.3 would be 30% of the models).</p>
 <p><code><a href="../reference/ensemble_model.html">ensemble_model()</a></code> uses a <code>which_final</code> parameter -analog to <code>which_model</code> in <code><a href="../reference/final_model.html">final_model()</a></code> to specify which final model(s) (Figure 2) should be assembled together (the default is a mean of the raw continuous models: <code>which_final = c("raw_mean")</code>).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">ensemble_model</span><span class="op">)</span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">ensemble_model</span><span class="op">)</span>
 <span class="co">#&gt; function (species_name, occurrences, lon = "lon", lat = "lat", </span>
 <span class="co">#&gt;     models_dir = "./models", final_dir = "final_models", ensemble_dir = "ensemble", </span>
 <span class="co">#&gt;     proj_dir = "present", algorithms = NULL, which_ensemble = c("average"), </span>
@@ -489,11 +490,11 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                       which_final <span class="op">=</span> <span class="st">"raw_mean"</span>,
                       models_dir <span class="op">=</span> <span class="va">test_folder</span>,
                       overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co">#argument from writeRaster</span>
-<span class="co">#&gt; [1] "Tue Oct 27 17:48:09 2020"</span>
+<span class="co">#&gt; [1] "Thu Aug  5 14:40:56 2021"</span>
 <span class="co">#&gt; [1] "DONE!"</span>
-<span class="co">#&gt; [1] "Tue Oct 27 17:48:52 2020"</span></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">ens</span><span class="op">)</span></pre></div>
+<span class="co">#&gt; [1] "Thu Aug  5 14:41:45 2021"</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">ens</span><span class="op">)</span></code></pre></div>
 <p><img src="modleR_files/figure-html/ensplot-1.png" width="672"></p>
 </div>
 </div>
@@ -501,8 +502,8 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
 <h1 class="hasAnchor">
 <a href="#workflows-with-multiple-species" class="anchor"></a>Workflows with multiple species</h1>
 <p>Our <code>example_occs</code> dataset has data for four species. An option to do the several models is to use a <code>for</code> loop</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">do_many</span><span class="op">)</span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">do_many</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/args.html">args</a></span><span class="op">(</span><span class="va">setup_sdmdata</span><span class="op">)</span>
 
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
@@ -533,7 +534,7 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
           models_dir <span class="op">=</span> <span class="st">"~/modleR_test/forlooptest"</span>,
           png_partitions <span class="op">=</span> <span class="cn">TRUE</span>,
           bioclim <span class="op">=</span> <span class="cn">TRUE</span>,
-          maxnet <span class="op">=</span> <span class="cn">FALSE</span>,
+          maxnet <span class="op">=</span> <span class="cn">TRUE</span>,
           rf <span class="op">=</span> <span class="cn">TRUE</span>,
           svmk <span class="op">=</span> <span class="cn">TRUE</span>,
           svme <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -565,10 +566,10 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                  which_final <span class="op">=</span> <span class="st">"bin_consensus"</span>,
                  png_ensemble <span class="op">=</span> <span class="cn">TRUE</span>,
                  models_dir <span class="op">=</span> <span class="st">"~/modleR_test/forlooptest"</span><span class="op">)</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>Another option is to use the <code>purrr</code> package <span class="citation">(Henry and Wickham 2017)</span>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
 
 <span class="va">example_occs</span> <span class="op">%&gt;%</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">.</span>,
                              .y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span>,
@@ -600,9 +601,9 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                        glm <span class="op">=</span> <span class="cn">TRUE</span>,
                        mahal <span class="op">=</span> <span class="cn">FALSE</span>,
                        brt <span class="op">=</span> <span class="cn">TRUE</span>,
-                       equalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="va">species</span> <span class="op">%&gt;%</span>
+                       equalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">species</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="../reference/final_model.html">final_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">.</span>,
                            consensus_level <span class="op">=</span> <span class="fl">0.5</span>,
@@ -610,45 +611,45 @@ Figure 1. The example dataset: predictor variables and occurrence for four speci
                            which_models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"raw_mean"</span>,
                                             <span class="st">"bin_mean"</span>,
                                             <span class="st">"bin_consensus"</span><span class="op">)</span>,
-                           overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="va">example_occs</span> <span class="op">%&gt;%</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">.</span>,
+                           overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">example_occs</span> <span class="op">%&gt;%</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span><span class="op">(</span>.x <span class="op">=</span> <span class="va">.</span>,
                              .y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span>,
                              <span class="op">~</span> <span class="fu"><a href="../reference/ensemble_model.html">ensemble_model</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">.y</span>,
                                               occurrences <span class="op">=</span> <span class="va">.x</span>,
                                               which_final <span class="op">=</span> <span class="st">"raw_mean"</span>,
                                               png_ensemble <span class="op">=</span> <span class="cn">TRUE</span>,
                                               models_dir <span class="op">=</span> <span class="st">"~/modleR_test/temp_purrr"</span>,
-                                              overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></pre></div>
+                                              overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>These workflows can also be paralellized by species or species algorithms</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references hanging-indent">
-<div id="ref-araujo_ensemble_2007">
-<p>Araújo, M, and M New. 2007. “Ensemble Forecasting of Species Distributions.” <em>Trends in Ecology &amp; Evolution</em> 22 (1): 42–47. <a href="https://doi.org/10.1016/j.tree.2006.09.010">https://doi.org/10.1016/j.tree.2006.09.010</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-araujo_ensemble_2007" class="csl-entry">
+Araújo, M, and M New. 2007. <span>“Ensemble Forecasting of Species Distributions.”</span> <em>Trends in Ecology &amp; Evolution</em> 22 (1): 42–47. <a href="https://doi.org/10.1016/j.tree.2006.09.010">https://doi.org/10.1016/j.tree.2006.09.010</a>.
 </div>
-<div id="ref-elith_working_2009">
-<p>Elith, J., J. R. Leathwick, and T. Hastie. 2009. “A Working Guide to Boosted Regression Trees.” <em>Journal of Animal Ecology</em> 77 (4): 802–13. <a href="https://doi.org/10/fn6m6v">https://doi.org/10/fn6m6v</a>.</p>
+<div id="ref-elith_working_2009" class="csl-entry">
+Elith, J., J. R. Leathwick, and T. Hastie. 2009. <span>“A Working Guide to Boosted Regression Trees.”</span> <em>Journal of Animal Ecology</em> 77 (4): 802–13. <a href="https://doi.org/fn6m6v">https://doi.org/fn6m6v</a>.
 </div>
-<div id="ref-hastie_elements_2001">
-<p>Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. Springer Heidelberg.</p>
+<div id="ref-hastie_elements_2001" class="csl-entry">
+Hastie, Trevor, Robert Tibshirani, and Jerome Friedman. 2001. <em>The Elements of Statistical Learning: Data Mining, Inference, and Prediction</em>. <span>Springer Heidelberg</span>.
 </div>
-<div id="ref-henry_purrr_2017">
-<p>Henry, Lionel, and Hadley Wickham. 2017. “Purrr: Functional Programming Tools. R Package Version 0.2.4.”</p>
+<div id="ref-henry_purrr_2017" class="csl-entry">
+Henry, Lionel, and Hadley Wickham. 2017. <span>“Purrr: <span>Functional Programming Tools</span>. <span>R</span> Package Version 0.2.4.”</span>
 </div>
-<div id="ref-hijmans_dismo_2017">
-<p>Hijmans, Robert J., Steven Phillips, John Leathwick, and Jane Elith. 2017. “Dismo: Species Distribution Modeling. R Package Version 1.1-4.”</p>
+<div id="ref-hijmans_dismo_2017" class="csl-entry">
+Hijmans, Robert J., Steven Phillips, John Leathwick, and Jane Elith. 2017. <span>“Dismo: <span>Species Distribution Modeling</span>. <span>R</span> Package Version 1.1-4.”</span>
 </div>
-<div id="ref-karatzoglou_kernlab_2004">
-<p>Karatzoglou, Alexandros, Alex Smola, Kurt Hornik, and Achim Zeileis. 2004. “Kernlab - an S4 Package for Kernel Methods in R.” <em>Journal of Statistical Software</em> 11 (9): 1–20.</p>
+<div id="ref-karatzoglou_kernlab_2004" class="csl-entry">
+Karatzoglou, Alexandros, Alex Smola, Kurt Hornik, and Achim Zeileis. 2004. <span>“Kernlab - <span>An S4 Package</span> for <span>Kernel Methods</span> in <span>R</span>.”</span> <em>Journal of Statistical Software</em> 11 (9): 1–20.
 </div>
-<div id="ref-liaw_classification_2002">
-<p>Liaw, Andy, and Matthew Wiener. 2002. “Classification and Regression by randomForest.” <em>R News</em> 2 (3): 18–22.</p>
+<div id="ref-liaw_classification_2002" class="csl-entry">
+Liaw, Andy, and Matthew Wiener. 2002. <span>“Classification and <span>Regression</span> by <span class="nocase">randomForest</span>.”</span> <em>R News</em> 2 (3): 18–22.
 </div>
-<div id="ref-meyer_e1071_2017">
-<p>Meyer, David, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel, and Friedrich Leisch. 2017. “E1071: Misc Functions of the Department of Statistics, Probability Theory Group (Formerly: E1071), TU Wien.”</p>
+<div id="ref-meyer_e1071_2017" class="csl-entry">
+Meyer, David, Evgenia Dimitriadou, Kurt Hornik, Andreas Weingessel, and Friedrich Leisch. 2017. <span>“E1071: <span>Misc Functions</span> of the <span>Department</span> of <span>Statistics</span>, <span>Probability Theory Group</span> (<span>Formerly</span>: <span>E1071</span>), <span>TU Wien</span>.”</span>
 </div>
 </div>
 </div>

@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -74,7 +74,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/Model-R/modleR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -88,14 +88,13 @@
 
       
 
-      </header><script src="buffer_and_randomPoints_files/header-attrs-2.5/header-attrs.js"></script><link href="buffer_and_randomPoints_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="buffer_and_randomPoints_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="buffer_and_randomPoints_files/header-attrs-2.9.1/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Testing background point generation in modleR</h1>
                         <h4 class="author">Andrea Sánchez-Tapia &amp; Sara Mortara</h4>
             
-            <h4 class="date">2020-10-27</h4>
+            <h4 class="date">2021-08-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Model-R/modleR/blob/master/vignettes/articles/buffer_and_randomPoints.Rmd"><code>vignettes/articles/buffer_and_randomPoints.Rmd</code></a></small>
       <div class="hidden name"><code>buffer_and_randomPoints.Rmd</code></div>
@@ -106,32 +105,32 @@
     
 <p>This workflow tests background point generation in <code>modleR</code>. We perform tests with different types of buffer and different code options to sample pseudoabsences inside a geographic buffer. Later, we explore how different methods for sampling pseudoabsences result on different model predictions.</p>
 <p>To run this example you will need <code>modleR</code>and the additional packages <code>rJava</code>, <code>raster</code>, and <code>dplyr</code>. To check if they are already installed and install eventually missing packages run the code below.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"rJava"</span>, <span class="st">"raster"</span>, <span class="st">"dplyr"</span>, <span class="st">"devtools"</span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">packages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"rJava"</span>, <span class="st">"raster"</span>, <span class="st">"dplyr"</span>, <span class="st">"devtools"</span><span class="op">)</span>
 <span class="va">instpack</span> <span class="op">&lt;-</span> <span class="va">packages</span><span class="op">[</span><span class="op">!</span><span class="va">packages</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">]</span>
 <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">instpack</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span>
     <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="va">packages</span><span class="op">[</span><span class="op">!</span><span class="va">packages</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-<span class="op">}</span></pre></div>
+<span class="op">}</span></code></pre></div>
 <p>If you don’t have <code>modleR</code> installed, run:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co">#devtools::install_github("Model-R/modleR", ref = "master")</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#devtools::install_github("Model-R/modleR", ref = "master")</span>
 <span class="co">#library(modleR)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Then, load all required packages.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/rJava/">rJava</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/rJava/">rJava</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster">raster</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></code></pre></div>
 <div id="the-example-data-set" class="section level1">
 <h1 class="hasAnchor">
 <a href="#the-example-data-set" class="anchor"></a>The example data set</h1>
 <p>We use a standard dataset inside the package <strong>modleR</strong>. First, from <code>example_occs</code> object we select only data from one species <em>Abarema langsdorffii</em> and create one training set (70% of the data) and one test set (30% of the data) for the data.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co">## Creating an object with species names</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Creating an object with species names</span>
 <span class="va">especies</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html">names</a></span><span class="op">(</span><span class="va">example_occs</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="co"># Selecting only coordinates for the first species</span>
 <span class="va">coord1sp</span> <span class="op">&lt;-</span> <span class="va">example_occs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html">head</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html">head</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span></code></pre></div>
 <pre><code>##                       sp     lon     lat
 ## 343 Abarema_langsdorffii -40.615 -19.921
 ## 344 Abarema_langsdorffii -40.729 -20.016
@@ -139,20 +138,20 @@
 ## 346 Abarema_langsdorffii -41.740 -20.493
 ## 347 Abarema_langsdorffii -42.482 -20.701
 ## 348 Abarema_langsdorffii -40.855 -17.082</code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/dimensions.html">dim</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/dimensions.html">dim</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 104   3</code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># Subsetting data into training and test</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Subsetting data into training and test</span>
 <span class="co"># Making a sample of 70% of species' records</span>
 <span class="va">set</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">ceiling</a></span><span class="op">(</span><span class="fl">0.7</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co"># Creating training data set (70% of species' records)</span>
 <span class="va">train_set</span> <span class="op">&lt;-</span> <span class="va">coord1sp</span><span class="op">[</span><span class="va">set</span>,<span class="op">]</span>
 <span class="co"># Creating test data set (other 30%)</span>
-<span class="va">test_set</span> <span class="op">&lt;-</span> <span class="va">coord1sp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/generics/man/setops.html">setdiff</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span>,<span class="va">set</span><span class="op">)</span>,<span class="op">]</span></pre></div>
+<span class="va">test_set</span> <span class="op">&lt;-</span> <span class="va">coord1sp</span><span class="op">[</span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html">setdiff</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html">nrow</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">)</span>,<span class="va">set</span><span class="op">)</span>,<span class="op">]</span></code></pre></div>
 <p>Now let’s the check our data points. We plot the traning and test data sets with the first axis of the environmental PCA data from the object <code>example_vars</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co"># selecting only the first PCA axis</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># selecting only the first PCA axis</span>
 <span class="va">predictor</span> <span class="op">&lt;-</span> <span class="va">example_vars</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 <span class="co"># transforming the data frame with the coordinates in a spatial object</span>
 <span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu">SpatialPoints</span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
@@ -161,7 +160,7 @@
 <span class="co"># adding training data set in red</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">train_set</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
 <span class="co"># adding test data set in blue</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">test_set</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">test_set</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_and_randomPoints_files/figure-html/plotdataset-1.png" width="700"></p>
 </div>
 <div id="inclusion-buffers-distance-base-or-user-defined" class="section level1">
@@ -224,15 +223,15 @@
 <h2 class="hasAnchor">
 <a href="#inclusion-buffer-within-a-user-defined-shapefile-user-and-buffer_shape" class="anchor"></a>Inclusion buffer within a user-defined shapefile (<code>user</code> and <code>buffer_shape</code>)</h2>
 <p>In this example we specify a shapefile that we use as the buffer. Please note that a <code>buffer_shape</code> must be included in order to use this buffer.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="co">#myshapefile &lt;- rgdal::readOGR("./data/myshapefile.shp")</span>
-<span class="va">myshapefile</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html">readOGR</a></span><span class="op">(</span><span class="st">"./data/myshapefile.shp"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#myshapefile &lt;- rgdal::readOGR("./data/myshapefile.shp")</span>
+<span class="va">myshapefile</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html">readOGR</a></span><span class="op">(</span><span class="st">"./data/myshapefile.shp"</span><span class="op">)</span></code></pre></div>
 <pre><code>## OGR data source with driver: ESRI Shapefile 
 ## Source: "/Users/andreasancheztapia/Documents/1_modleR/1_repos_modleR/1_modleR/vignettes/articles/data/myshapefile.shp", layer: "myshapefile"
 ## with 1 features
 ## It has 1 fields</code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="va">buf.user</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">buf.user</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
                           predictors <span class="op">=</span> <span class="va">predictor</span>,
                           buffer_type <span class="op">=</span> <span class="st">"user"</span>,
                           buffer_shape <span class="op">=</span> <span class="va">myshapefile</span><span class="op">)</span>
@@ -247,9 +246,9 @@
      legend <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"user-defined buffer"</span><span class="op">)</span>
 <span class="co">## adding buff</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">buf.user</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, 
-     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
+     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
 <span class="co">## adding buf.user.p</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.user.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.user.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_and_randomPoints_files/figure-html/usr-1.png" width="700"></p>
 </div>
 </div>
@@ -260,8 +259,8 @@
 <h2 class="hasAnchor">
 <a href="#geographic-distance-filter" class="anchor"></a>Geographic distance filter</h2>
 <p>The simplest exclusion filter is based on the geographical distance, in the units of the predictor rasters (here, degrees)</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="va">geog.filt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">geog.filt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
                           predictors <span class="op">=</span> <span class="va">predictor</span>,
                           buffer_type <span class="op">=</span> <span class="st">"none"</span>,
                           min_geog_dist <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
@@ -277,10 +276,10 @@
      legend <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"geographic filter"</span><span class="op">)</span>
 <span class="co">## adding buff</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">geog.filt</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, 
-     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
+     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
 <span class="co">## adding buf.user.p</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">geog.filt.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_and_randomPoints_files/figure-html/geog-1.png" width="700"></p>
 </div>
 <div id="environmental-distance-filter" class="section level2">
@@ -290,8 +289,8 @@
 <div id="an-example-with-centroid-taking-away-10-of-the-closest-points" class="section level3">
 <h3 class="hasAnchor">
 <a href="#an-example-with-centroid-taking-away-10-of-the-closest-points" class="anchor"></a>An example with <code>centroid</code>, taking away 10% of the closest points</h3>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="va">predictor</span> <span class="op">&lt;-</span> <span class="va">example_vars</span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">predictor</span> <span class="op">&lt;-</span> <span class="va">example_vars</span>
 <span class="va">buf.env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
                          predictors <span class="op">=</span> <span class="va">predictor</span>,
                          env_filter <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -310,17 +309,17 @@
      legend <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"environmental distance filter (centroid)"</span><span class="op">)</span>
 <span class="co">## adding buff</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">buf.env</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, 
-     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
+     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
 <span class="co">## adding buf.user.p</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.env.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.env.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_and_randomPoints_files/figure-html/centroid-1.png" width="700"></p>
 </div>
 <div id="an-example-with-mindist-taking-away-10-of-the-closest-points" class="section level3">
 <h3 class="hasAnchor">
 <a href="#an-example-with-mindist-taking-away-10-of-the-closest-points" class="anchor"></a>An example with <code>mindist</code>, taking away 10% of the closest points</h3>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="va">predictor</span> <span class="op">&lt;-</span> <span class="va">example_vars</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">predictor</span> <span class="op">&lt;-</span> <span class="va">example_vars</span>
 <span class="va">buf.env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
                          predictors <span class="op">=</span> <span class="va">predictor</span>,
                          env_filter <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -339,10 +338,10 @@
      legend <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"environmental distance filter (mindist)"</span><span class="op">)</span>
 <span class="co">## adding buff</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">buf.env</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, 
-     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
+     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
 <span class="co">## adding buf.user.p</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.env.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.env.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_and_randomPoints_files/figure-html/mindist-1.png" width="700"></p>
 </div>
 </div>
@@ -351,8 +350,8 @@
 <h1 class="hasAnchor">
 <a href="#superimposing-buffers-and-filters" class="anchor"></a>Superimposing buffers and filters</h1>
 <p>Buffers and filters can be used simultaneously. Here is an example with a maximum distance buffer and a 5% centroid environmental filter:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="va">buf.env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">buf.env</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/create_buffer.html">create_buffer</a></span><span class="op">(</span>occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span>,
                          predictors <span class="op">=</span> <span class="va">predictor</span>,
                          buffer_type <span class="op">=</span> <span class="st">"maximum"</span>,
                          env_filter <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -370,9 +369,9 @@
      legend <span class="op">=</span> <span class="cn">FALSE</span>, main <span class="op">=</span> <span class="st">"environmental distance buffer x maximum distance buffer"</span><span class="op">)</span>
 <span class="co">## adding buff</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">buf.env</span>, add <span class="op">=</span> <span class="cn">TRUE</span>, legend <span class="op">=</span> <span class="cn">FALSE</span>, 
-     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
+     col <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/alpha.html">alpha</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="fl">0.8</span><span class="op">)</span>, border <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
 <span class="co">## adding buf.user.p</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.env.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">buf.env.p</span>, col <span class="op">=</span> <span class="st">"blue"</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_and_randomPoints_files/figure-html/max_env-1.png" width="700"></p>
 </div>
 <div id="using-function-setup_sdmdata" class="section level1">
@@ -381,8 +380,8 @@
 </h1>
 <p>So far, the examples have been using function <code><a href="../../reference/create_buffer.html">create_buffer()</a></code> and sampling directly. In modleR, however, function <code><a href="../../reference/setup_sdmdata.html">setup_sdmdata()</a></code> can take all arguments and execute the pseudoabsence sampling, as well as data partitioning.</p>
 <p>The following examples show the use of function <code><a href="../../reference/setup_sdmdata.html">setup_sdmdata()</a></code> in several combinations of buffers and filters.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="co">#maxbuff + mindist</span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#maxbuff + mindist</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
               occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
               predictors <span class="op">=</span> <span class="va">example_vars</span>,
@@ -391,10 +390,10 @@
               min_geog_dist <span class="op">=</span> <span class="fl">3</span>,
               clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
               clean_nas <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_maxdist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></pre></div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_maxdist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_res/mindist_maxdist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png" width="480"></p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="co">#mean + mindist</span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#mean + mindist</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
               occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
               predictors <span class="op">=</span> <span class="va">example_vars</span>,
@@ -403,10 +402,10 @@
               min_geog_dist <span class="op">=</span> <span class="fl">3</span>,
               clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
               clean_nas <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_meandist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></pre></div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_meandist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_res/mindist_meandist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png" width="480"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="co">#median + mindist</span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#median + mindist</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
               occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
               predictors <span class="op">=</span> <span class="va">example_vars</span>,
@@ -415,10 +414,10 @@
               min_geog_dist <span class="op">=</span> <span class="fl">3</span>,
               clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
               clean_nas <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_mediandist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></pre></div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_mediandist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_res/mindist_mediandist/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png" width="480"></p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="co">#geog.distance + mindist</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#geog.distance + mindist</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
               occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
               predictors <span class="op">=</span> <span class="va">example_vars</span>,
@@ -429,17 +428,17 @@
               clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
               clean_nas <span class="op">=</span> <span class="cn">TRUE</span>
               <span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_distance/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></pre></div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_distance/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_res/mindist_distance/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png" width="480"></p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="co">#user + mindist</span>
-<span class="va">myshapefile</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html">readOGR</a></span><span class="op">(</span><span class="st">"./data/myshapefile.shp"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#user + mindist</span>
+<span class="va">myshapefile</span> <span class="op">&lt;-</span> <span class="fu">rgdal</span><span class="fu">::</span><span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html">readOGR</a></span><span class="op">(</span><span class="st">"./data/myshapefile.shp"</span><span class="op">)</span></code></pre></div>
 <pre><code>## OGR data source with driver: ESRI Shapefile 
 ## Source: "/Users/andreasancheztapia/Documents/1_modleR/1_repos_modleR/1_modleR/vignettes/articles/data/myshapefile.shp", layer: "myshapefile"
 ## with 1 features
 ## It has 1 fields</code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
               occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
               predictors <span class="op">=</span> <span class="va">example_vars</span>,
               models_dir <span class="op">=</span> <span class="st">"./buffer_res/mindist_usrshp"</span>,
@@ -448,10 +447,10 @@
               min_geog_dist <span class="op">=</span> <span class="fl">3</span>,
               clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
               clean_nas <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_usrshp/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></pre></div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/mindist_usrshp/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_res/mindist_usrshp/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png" width="480"></p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="co">#ENV + mindist</span>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#ENV + mindist</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/setup_sdmdata.html">setup_sdmdata</a></span><span class="op">(</span>species_name <span class="op">=</span> <span class="va">especies</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
                    occurrences <span class="op">=</span> <span class="va">coord1sp</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>,
                    predictors <span class="op">=</span> <span class="va">example_vars</span>,
@@ -461,7 +460,7 @@
                    min_env_dist <span class="op">=</span> <span class="fl">0.3</span>,
                    clean_dupl <span class="op">=</span> <span class="cn">TRUE</span>,
                    clean_nas <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/envdist_usrshp/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></pre></div>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html">include_graphics</a></span><span class="op">(</span><span class="st">"./buffer_res/envdist_usrshp/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png"</span><span class="op">)</span></code></pre></div>
 <p><img src="buffer_res/envdist_usrshp/Abarema_langsdorffii/present/data_setup/sdmdata_Abarema_langsdorffii.png" width="480"></p>
 </div>
   </div>
