@@ -159,7 +159,7 @@ create_buffer <- function(species_name,
     if (is.numeric(min_geog_dist)) {
         if (exists("dist.buf")) {
             if (min_geog_dist >= dist.buf) {
-                warning("min_geog_dist is higher than dist_buf")
+                stop("min_geog_dist is higher than dist_buf")
             }
         }
         message("Applying geographic filter")

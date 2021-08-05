@@ -18,6 +18,10 @@ implemented in the `dismo` package, and others come from other packages
 in the R environment, such as glm, Support Vector Machines and Random
 Forests.
 
+# Citation
+
+Andrea Sánchez-Tapia, Sara Ribeiro Mortara, Diogo Souza Bezerra Rocha, Felipe Sodré Mendes Barros, Guilherme Gall, Marinez Ferreira de Siqueira. modleR: a modular workflow to perform ecological niche modeling in R. https://www.biorxiv.org/content/10.1101/2020.04.01.021105v1
+
 # Installing
 
 Currently **modleR** can be installed from GitHub:
