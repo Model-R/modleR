@@ -349,7 +349,7 @@ final_mods <- list.files(final.folder,
                          pattern = "raw_mean.+tif$",
                          recursive = TRUE)
 
-final_models <- stack(final_mods)
+final_models <- raster::stack(final_mods)
 
 names(final_models) <- sapply(strsplit(names(final_models),
                                        paste0(species[1], '_')),
