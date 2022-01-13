@@ -32,9 +32,6 @@ __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], desig
 # Installing
 
 Currently __modleR__ can be installed from GitHub:
-```{r, echo = F}
-devtools::load_all()
-```
 
 ```{r install, eval = F}
 # Without vignette
@@ -113,12 +110,7 @@ __modleR__ comes with example data, a list called `example_occs` with
 occurrence data for four species, and predictor variables called
 `example_vars`.
 
-```{r load, echo=FALSE, eval=TRUE}
-devtools::load_all() # for development
-
-```
-
-```{r library, echo=TRUE, eval=FALSE}
+```{r library}
 library(modleR)
 ```
 
