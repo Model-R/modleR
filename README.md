@@ -1,8 +1,6 @@
 
 # modleR: a workflow for ecological niche models
-
-[![Build
-Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR)
+[![:registry status badge](https://andreasancheztapia.r-universe.dev/badges/:registry)](https://andreasancheztapia.r-universe.dev)
 
 <img src="./vignettes/modleR.png" align="right" alt="" width="120" />
 
