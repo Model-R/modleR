@@ -16,3 +16,4 @@ vignettes/articles/
 ^Meta$
 data-raw
 models
+^\.github$

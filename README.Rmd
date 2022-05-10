@@ -5,8 +5,12 @@ bibliography: inst/REFERENCES.bib
 
 # modleR: a workflow for ecological niche models
 
-[![Build Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR)
+[![:registry status badge](https://andreasancheztapia.r-universe.dev/badges/:registry)](https://andreasancheztapia.r-universe.dev)
 
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/Model-R/modleR/workflows/R-CMD-check/badge.svg)](https://github.com/Model-R/modleR/actions)
+<!-- badges: end -->
 
 <img src="./vignettes/modleR.png" align="right" alt="" width="120" />
 
@@ -23,8 +27,12 @@ knitr::opts_chunk$set(
 ```
 
 
+
 __modleR__ is a workflow based on package __dismo__ [@hijmans_dismo_2017], designed to automatize some of the common steps when performing ecological niche models. Given the occurrence records and a set of environmental predictors, it prepares the data by cleaning for duplicates, removing occurrences with no environmental information and applying some geographic and environmental filters. It executes crossvalidation or bootstrap procedures, then it performs ecological niche models using several algorithms, some of which are already implemented in the `dismo` package, and others come from other packages in the R environment, such as glm, Support Vector Machines and Random Forests.
 
+# Citation 
+ 
+Andrea Sánchez-Tapia, Sara Ribeiro Mortara, Diogo Souza Bezerra Rocha, Felipe Sodré Mendes Barros, Guilherme Gall, Marinez Ferreira de Siqueira. modleR: a modular workflow to perform ecological niche modeling in R. https://www.biorxiv.org/content/10.1101/2020.04.01.021105v1
 
 # Installing
 
@@ -116,7 +124,7 @@ __modleR__ comes with example data, a list called `example_occs` with
 occurrence data for four species, and predictor variables called
 `example_vars`.
 
-```{r load, echo=FALSE, eval=TRUE}
+```{r load, echo=FALSE, eval=TRUE, include = F}
 devtools::load_all() # for development
 
 ```
@@ -254,8 +262,8 @@ args(do_many)
 Calling `do_many()` and setting `bioclim = TRUE` is therefore equivalent to call `do_any()` and set `algorithm = "bioclim"`.
 
 ```{r do_any_eval, echo = TRUE, eval = TRUE, results= "hide", message=F, warning= FALSE}
-sp_maxent <- do_any(species_name = species[1],
-                    algorithm = "maxent",
+sp_maxnet <- do_any(species_name = species[1],
+                    algorithm = "maxnet",
                     predictors = example_vars,
                     models_dir = test_folder,
                     png_partitions = TRUE,
@@ -267,7 +275,7 @@ sp_maxent <- do_any(species_name = species[1],
 The resulting object is a table with the performance metrics, but the actual output is written on disk
 
 ```{r sp_maxnet}
-sp_maxent
+sp_maxnet
 ```
 
 
@@ -286,7 +294,7 @@ many <- do_many(species_name = species[1],
                 glm = TRUE,
                 svmk = TRUE,
                 svme = TRUE,
-                maxent = TRUE,
+                maxent = FALSE,
                 maxnet = TRUE,
                 rf = TRUE,
                 mahal = FALSE,

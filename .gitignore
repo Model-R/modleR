@@ -12,6 +12,8 @@ modelos_teste.log
 script.R
 teste.R
 
+*.html
+
 # dirs
 1sdmtest_boot
 1sdmtest_cv
