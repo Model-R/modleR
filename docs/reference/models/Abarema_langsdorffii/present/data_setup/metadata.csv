@@ -1,2 +1,0 @@
-"species_name","original_predictors","select_variables","original.n","original.n.back","buffer_type","dist_buf","seed","res.x","res.y","clean_dupl","clean_nas","clean_uni","geo_filt","geo_filt_dist","models_dir","partition","boot_proportion","boot_n","cv_partitions","cv_n","selected_predictors","final.n","final.n.back"
-"Abarema_langsdorffii","layer.1-layer.2-layer.3-layer.4-layer.5-layer.6",FALSE,104,1000,NA,NA,NA,0.166666666666667,0.166666666666667,FALSE,FALSE,FALSE,FALSE,NA,"./models","bootstrap",0.7,1,NA,NA,"layer.1-layer.2-layer.3-layer.4-layer.5-layer.6",104,1000
