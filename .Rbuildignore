@@ -17,3 +17,5 @@ vignettes/articles/
 data-raw
 models
 ^\.github$
+V2_test
+tests

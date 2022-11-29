@@ -100,7 +100,8 @@ do_any <- function(species_name,
             if (algorithm == "svme") {
                 sv <- 1
                 while (!exists("mod")) {
-                    mod <- e1071::best.tune("svm", envtrain,
+                    mod <- e1071::best.tune("svm",
+                                            envtrain,
                                             sdmdata_train$pa,
                                             data = envtrain)
                     sv <- sv + 1
@@ -263,7 +264,8 @@ do_any <- function(species_name,
                     message("writing binary and cut raster files")
                     mod_bin  <- mod_cont > th_mod
                     mod_cut  <- mod_cont * mod_bin
-                    if (class(mask) == "SpatialPolygonsDataFrame") {
+                    if (class(mask) %in% c("SpatialPolygonsDataFrame",
+                               "SpatialPolygons")) {
                         mod_bin <- crop_model(mod_bin, mask)
                         mod_cut <- crop_model(mod_cut, mask)
                     }
@@ -359,7 +361,8 @@ do_any <- function(species_name,
                             # Normaliza o modelo cut
                             #mod_proj_cut <- mod_proj_cut / maxValue(mod_proj_cut)
                         }
-                        if (class(mask) == "SpatialPolygonsDataFrame") {
+                        if (class(mask) %in% c("SpatialPolygonsDataFrame",
+                                               "SpatialPolygons")) {
                             mod_proj_cont <- crop_model(mod_proj_cont, mask)
                             mod_proj_bin  <- crop_model(mod_proj_bin, mask)
                             mod_proj_cut  <- crop_model(mod_proj_cut, mask)
