@@ -12,7 +12,6 @@ modelos_teste.log
 script.R
 teste.R
 
-*.html
 
 # dirs
 1sdmtest_boot
@@ -28,5 +27,4 @@ wc10
 .Rd2pdf*/
 ## the buffers from article
 vignettes/articles/buffer_res
-doc
 Meta

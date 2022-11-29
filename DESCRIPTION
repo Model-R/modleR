@@ -26,18 +26,16 @@ Imports:
     data.table,
     dismo,
     e1071,
-    gbm,
     graphics,
     kernlab,
     kuenm,
     maps,
+    methods,
     maxnet,
     randomForest,
     raster,
     Rdpack,
     rgeos,
-    rgdal,
-    rJava,
     scales,
     sessioninfo,
     sp
@@ -45,7 +43,7 @@ Remotes: marlonecobos/kuenm,
          mrmaxent/maxnet
 URL: https://model-r.github.io/modleR/index.html, https://github.com/Model-R/modleR
 BugReports: https://github.com/Model-R/modleR/issues
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Roxygen: list(old_usage = TRUE)
 RdMacros: Rdpack
 Suggests: 

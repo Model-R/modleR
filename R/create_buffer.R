@@ -70,6 +70,7 @@
 #'
 #' @import raster
 #' @importFrom dismo randomPoints
+#' @importFrom methods is
 #' @importFrom rgeos gBuffer
 #' @importFrom stats median
 #' @export
@@ -96,14 +97,12 @@ create_buffer <- function(species_name,
     if (buffer_type %in% c("distance", "mean", "median", "maximum", "user")) {
         message("Applying buffer")
             if (buffer_type == "user") {
-                if (missing(buffer_shape) | !class(buffer_shape) %in%
-                    c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
+                if (!missing(buffer_shape) & is(buffer_shape, "Spatial")) {
+                    buffer.shape <- buffer_shape
+                }
+                else {
                     stop("if buffer_type == 'user', buffer_shape needs to be
                          specified and to be a shapefile")
-                }
-                if (class(buffer_shape) %in%
-                    c("SpatialPolygonsDataFrame", "SpatialPolygonsDataFrame")) {
-                    buffer.shape <- buffer_shape
                 }
             }
         if (buffer_type %in% c("distance", "mean", "median", "maximum")) {
