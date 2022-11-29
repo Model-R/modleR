@@ -6,7 +6,7 @@ badge](https://andreasancheztapia.r-universe.dev/badges/:registry)](https://andr
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/Model-R/modleR/workflows/R-CMD-check/badge.svg)](https://github.com/Model-R/modleR/actions)
+[![R-CMD-check](https://github.com/Model-R/modleR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Model-R/modleR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 <img src="./vignettes/modleR.png" align="right" alt="" width="120" />
@@ -52,6 +52,11 @@ will include the vignette on the installation but we have found that
 `build_vignettes = TRUE` is also necessary. During installation, R may
 ask to install or update some packages. If any of these return an error
 you can install them apart by running `install.packages()` and retry.
+When building the vignette, package **rJava** and a JDK will be needed.
+Also, make sure that the maxent.jar file is available and in the `java`
+folder of package **dismo**. Please download it
+[here](http://www.cs.princeton.edu/~schapire/maxent/). Vignette building
+may take a while during installation.
 
 Packages **kuenm** and **maxnet** should be installed from GitHub:
 
@@ -59,12 +64,6 @@ Packages **kuenm** and **maxnet** should be installed from GitHub:
 remotes::install_github("marlonecobos/kuenm")
 remotes::install_github("mrmaxent/maxnet")
 ```
-
-To use `maxent()` from package **dismo**, package **rJava** and a JDK
-will be needed. Also, make sure that the `maxent.jar` file is available
-and in the `java` folder of package **dismo**. Please download it
-[here](http://www.cs.princeton.edu/~schapire/maxent/). Vignette building
-may take a while during installation.
 
 # Shiny app
 
@@ -77,7 +76,7 @@ this workflow and is currently being updated to this newest version.
 The workflow consists of mainly four functions that should be used
 sequentially.
 
-<img src="vignettes/fig01_workflow.jpg" width="645" />
+![](vignettes/fig01_workflow.jpg)<!-- -->
 
 1.  Setup: `setup_sdmdata()` prepares and cleans the data, samples the
     pseudoabsences, and organizes the experimental design (bootstrap,
@@ -112,32 +111,32 @@ models_dir
     └── ensemble_models
 ```
 
--   We define a *partition* as the individual modeling round (one
-    training and test data set and one algorithm)
+- We define a *partition* as the individual modeling round (one training
+  and test data set and one algorithm)
 
--   We define the *final models* as joining together the partitions and
-    obtaining **one model per species per algorithm**
+- We define the *final models* as joining together the partitions and
+  obtaining **one model per species per algorithm**
 
--   *Ensemble* models join together the results obtained by different
-    algorithms (Araújo and New 2007)
+- *Ensemble* models join together the results obtained by different
+  algorithms (Araújo and New 2007)
 
--   When projecting models into the present, the projection folder is
-    called `present`, other projections will be named after their
-    environmental variables
+- When projecting models into the present, the projection folder is
+  called `present`, other projections will be named after their
+  environmental variables
 
--   You can set `models_dir` wherever you want in the hard disk, but if
-    you do not modify the default value, it will create the output under
-    the working directory (its default value is `./models`, where the
-    period points to the working directory)
+- You can set `models_dir` wherever you want in the hard disk, but if
+  you do not modify the default value, it will create the output under
+  the working directory (its default value is `./models`, where the
+  period points to the working directory)
 
--   The *names* of the `final` and `ensemble` folders can be modified,
-    but **the nested subfolder structure will remain the same**. If you
-    change `final_models` default value (`"final_model"`) you will need
-    to include the new value when calling `ensemble_model()`
-    (`final_dir = "[new name]"`), to indicate the function where to look
-    for models. This partial flexibility allows for experimenting with
-    final model and ensemble construction (by runnning final or ensemble
-    twice in different output folders, for example).
+- The *names* of the `final` and `ensemble` folders can be modified, but
+  **the nested subfolder structure will remain the same**. If you change
+  `final_models` default value (`"final_model"`) you will need to
+  include the new value when calling `ensemble_model()`
+  (`final_dir = "[new name]"`), to indicate the function where to look
+  for models. This partial flexibility allows for experimenting with
+  final model and ensemble construction (by runnning final or ensemble
+  twice in different output folders, for example).
 
 ## The example dataset
 
@@ -221,52 +220,50 @@ args(setup_sdmdata)
 #> NULL
 ```
 
--   `species_name` is the name of the species to model
--   `occurrences` is the data frame with occurrences, lat and lon are
-    the names of the columns for latitude and longitude, respectively.
-    If they are already named `lat` and `lon` they need not be
-    specified.
--   `predictors`: is the rasterStack of the environmental variables
+- `species_name` is the name of the species to model
+- `occurrences` is the data frame with occurrences, lat and lon are the
+  names of the columns for latitude and longitude, respectively. If they
+  are already named `lat` and `lon` they need not be specified.
+- `predictors`: is the rasterStack of the environmental variables
 
 There are a couple options for data cleaning:
 
--   `clean_dupl` will delete exact duplicates in the occurrence data
--   `clean_nas` will delete any occurrence with no environmental data in
-    the predictor set
--   `clean_uni` will leave only one occurrence per pixel
+- `clean_dupl` will delete exact duplicates in the occurrence data
+- `clean_nas` will delete any occurrence with no environmental data in
+  the predictor set
+- `clean_uni` will leave only one occurrence per pixel
 
 The function also sets up different experimental designs:
 
--   `partition_type` can be either bootstrap or k-fold crossvalidation
--   `boot_n` and `cv_n` perform repeated bootstraps and repeated k-fold
-    crossvalidation, respectively
--   `boot_proportion` sets the proportion of data to be sampled as
-    training set (defaults to 0.8)
--   `cv_partitions` sets the number of partitions in the k-fold
-    crossvalidations (defaults to 3) but overwrites part when n &lt; 10,
-    setting part to the number of occurrence records (a jacknife
-    partition).
+- `partition_type` can be either bootstrap or k-fold crossvalidation
+- `boot_n` and `cv_n` perform repeated bootstraps and repeated k-fold
+  crossvalidation, respectively
+- `boot_proportion` sets the proportion of data to be sampled as
+  training set (defaults to 0.8)
+- `cv_partitions` sets the number of partitions in the k-fold
+  crossvalidations (defaults to 3) but overwrites part when n \< 10,
+  setting part to the number of occurrence records (a jacknife
+  partition).
 
 Pseudoabsence sampling is performed by function has also some options:
 
--   `real_absences` can be used to specify a set of user-defined
-    absences, with species name, lat and lon columns
--   `geo_filt` will eliminate records that are at less than
-    `geo_filt_dist` between them, in order to control for spatial
-    autocorrelation
--   `buffer_type`: can build a distance buffer around the occurrence
-    points, by taking either the maximal, median or mean distance
-    between points. It can also take a user-defined shapefile as the
-    area for pseudoabsence sampling
--   `env_filter` calculates the euclidean distance and removes the
-    closest areas in the environmental space from the sampling of
-    pseudoabsences
+- `real_absences` can be used to specify a set of user-defined absences,
+  with species name, lat and lon columns
+- `geo_filt` will eliminate records that are at less than
+  `geo_filt_dist` between them, in order to control for spatial
+  autocorrelation
+- `buffer_type`: can build a distance buffer around the occurrence
+  points, by taking either the maximal, median or mean distance between
+  points. It can also take a user-defined shapefile as the area for
+  pseudoabsence sampling
+- `env_filter` calculates the euclidean distance and removes the closest
+  areas in the environmental space from the sampling of pseudoabsences
 
 Pseudoabsence points will be sampled (using `dismo::randomPoints()`)
 *within* the buffer and outside the environmental filter, in order to
 control for the area accessible to the species (M in the BAM diagram).
 
--   `seed`: for reproducibility purposes
+- `seed`: for reproducibility purposes
 
 ``` r
 test_folder <- "~/modleR_test"
@@ -315,26 +312,25 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 #> DONE!
 ```
 
--   The function will return a `sdmdata` data frame, with the groups for
-    training and test in bootstrap or crossvalidation, a `pa` vector
-    that marks presences and absences, and the environmental dataset.
-    This same data frame will be written in the hard disk, as
-    `sdmdata.txt`
--   It will also write a `metadata.txt` with the parameters of the
-    latest modeling round. If there has been a cleaning step, it will
-    show different values in the “original.n” and “final.n” columns.
--   **NOTE:** `setup_sdmdata` will check if there’s a prior folder
-    structure and `sdmdata.txt` and `metadata.txt` files, in order to
-    avoid repeating the data partitioning.
-    -   If a call to the function encounters previously written
-        metadata, it will check if the current round has the same
-        parameters and skip the data partitioning. A message will be
-        displayed: `#> metadata file found, checking metadata`
-        `#> same metadata, no need to run data partition`
-    -   If a previous metadata file is found but it has different
-        metadata (i.e. there is an inconsistency between the existing
-        metadata and the current parameters), it will run the function
-        with the current parameters.
+- The function will return a `sdmdata` data frame, with the groups for
+  training and test in bootstrap or crossvalidation, a `pa` vector that
+  marks presences and absences, and the environmental dataset. This same
+  data frame will be written in the hard disk, as `sdmdata.txt`
+- It will also write a `metadata.txt` with the parameters of the latest
+  modeling round. If there has been a cleaning step, it will show
+  different values in the “original.n” and “final.n” columns.
+- **NOTE:** `setup_sdmdata` will check if there’s a prior folder
+  structure and `sdmdata.txt` and `metadata.txt` files, in order to
+  avoid repeating the data partitioning.
+  - If a call to the function encounters previously written metadata, it
+    will check if the current round has the same parameters and skip the
+    data partitioning. A message will be displayed:
+    `#> metadata file found, checking metadata`
+    `#> same metadata, no need to run data partition`
+  - If a previous metadata file is found but it has different metadata
+    (i.e. there is an inconsistency between the existing metadata and
+    the current parameters), it will run the function with the current
+    parameters.
 
 ## Fitting a model per partition: `do_any()` and `do_many()`
 
@@ -347,16 +343,16 @@ functions do).
 
 The available algorithms are:
 
--   `"bioclim"`, `"maxent"`, `"mahal"`, `"domain"`, as implemented in
-    **dismo** package (Hijmans et al. 2017),
--   Support Vector Machines (SVM), as implemented by packages
-    **kernlab** (`svmk` Karatzoglou et al. 2004) and **e1071** (`svme`
-    Meyer et al. 2017),
--   GLM from base R, here implemented with a stepwise selection approach
--   Random Forests (from package **randomForest** Liaw and Wiener 2002)
--   Boosted regression trees (BRT) as implemented by `gbm.step()`
-    function in **dismo** package (Hastie, Tibshirani, and Friedman
-    2001; Elith, Leathwick, and Hastie 2009).
+- `"bioclim"`, `"maxent"`, `"mahal"`, `"domain"`, as implemented in
+  **dismo** package (Hijmans et al. 2017),
+- Support Vector Machines (SVM), as implemented by packages **kernlab**
+  (`svmk` Karatzoglou et al. 2004) and **e1071** (`svme` Meyer et al.
+  2017),
+- GLM from base R, here implemented with a stepwise selection approach
+- Random Forests (from package **randomForest** Liaw and Wiener 2002)
+- Boosted regression trees (BRT) as implemented by `gbm.step()` function
+  in **dismo** package (Hastie, Tibshirani, and Friedman 2001; Elith,
+  Leathwick, and Hastie 2009).
 
 Details for the implementation of each model can be accessed in the
 documentation of the function.
@@ -402,17 +398,17 @@ actual output is written on disk
 ``` r
 sp_maxnet
 #>                kappa spec_sens no_omission prevalence equal_sens_spec
-#> thresholds 0.5497432 0.2246503  0.06975926  0.1639895       0.2433702
+#> thresholds 0.5466117 0.4121507   0.2633284  0.1707096       0.3985237
 #>            sensitivity         species_name algorithm run partition presencenb
-#> thresholds   0.2433702 Abarema_langsdorffii    maxnet   1         1         20
+#> thresholds   0.3257664 Abarema_langsdorffii    maxnet   1         1         20
 #>            absencenb correlation    pvaluecor   AUC AUC_pval AUCratio     pROC
-#> thresholds       100   0.7844173 3.088941e-26 0.965       NA     1.93 1.837488
+#> thresholds       100    0.747932 9.702981e-23 0.971       NA    1.942 1.882305
 #>            pROC_pval TSSmax  KAPPAmax dismo_threshold prevalence.value
-#> thresholds         0   0.85 0.7765957       spec_sens        0.1666667
-#>                  PPP      NPP  TPR TNR FPR  FNR       CCR    Kappa   F_score
-#> thresholds 0.6551724 0.989011 0.95 0.9 0.1 0.05 0.9083333 0.720339 0.7755102
+#> thresholds         0   0.82 0.8043478       spec_sens        0.1666667
+#>                  PPP       NPP TPR  TNR  FPR FNR       CCR     Kappa   F_score
+#> thresholds 0.6923077 0.9787234 0.9 0.92 0.08 0.1 0.9166667 0.7321429 0.7826087
 #>              Jaccard
-#> thresholds 0.6333333
+#> thresholds 0.6428571
 ```
 
 The following lines call for bioclim, GLM, random forests, BRT, svme
@@ -440,56 +436,56 @@ many <- do_many(species_name = species[1],
 
 In addition:
 
--   `mask`: will crop and mask the partition models into a ShapeFile
--   `png_partitions` will create a png file of the output
+- `mask`: will crop and mask the partition models into a ShapeFile
+- `png_partitions` will create a png file of the output
 
 At the end of a modeling round, the partition folder containts:
 
--   A `.tif` file for each partition, continuous, binary and cut by the
-    threshold that maximizes its TSS (TSSmax). Its name will indicate
-    the algorithm, the type of model (cont, bin or cut), the name of the
-    species, the run and partition.
--   Figures in `.png` to explore the results readily, without reloading
-    them into R or opening them in a SIG program. The creation of these
-    figures can be controlled with the `png_partitions` parameter.
--   A `.txt` table with the evaluation data for each partition:
-    `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These
-    files will be read by the `final_model()` function, to generate the
-    final model per species.
--   A file called `sdmdata.txt` with the data used for each partition
--   A file called `metadata.txt` with the metadata of the current
-    modeling round.
--   An optional `.png` image of the data (controlled by parameter
-    `png_sdmdata = TRUE`)
+- A `.tif` file for each partition, continuous, binary and cut by the
+  threshold that maximizes its TSS (TSSmax). Its name will indicate the
+  algorithm, the type of model (cont, bin or cut), the name of the
+  species, the run and partition.
+- Figures in `.png` to explore the results readily, without reloading
+  them into R or opening them in a SIG program. The creation of these
+  figures can be controlled with the `png_partitions` parameter.
+- A `.txt` table with the evaluation data for each partition:
+  `evaluate_[Species name ]_[partition number]_[algorithm].txt`. These
+  files will be read by the `final_model()` function, to generate the
+  final model per species.
+- A file called `sdmdata.txt` with the data used for each partition
+- A file called `metadata.txt` with the metadata of the current modeling
+  round.
+- An optional `.png` image of the data (controlled by parameter
+  `png_sdmdata = TRUE`)
 
 ## Joining partitions: `final_model()`
 
 There are many ways to create a final model per algorithm per species.
 `final_model()` follows the following logic:
 
-<img src="vignettes/fig05_finalmodel.png" width="343" />
+![](vignettes/fig05_finalmodel.png)<!-- -->
 
--   The partitions that will be joined can be the raw, uncut models, or
-    the binary models from the previous step, they form a
-    `raster::rasterStack()` object.
--   The means for the raw models can be calculated (`raw_mean`)
--   From `raw_mean`, a binary model can be obtained by cutting it by the
-    mean threshold that maximizes the selected performance metric for
-    each partition (`bin_th_par`), this is `raw_mean_th`. From this,
-    values above the threshold can be revovered (`raw_mean_cut`).
--   In the case of binary models, since they have already been
-    transformed into binary, a mean can be calculated (`bin_mean`). This
-    `bin_mean` reflects the consensus between partitions, and its scale
-    is categorical.
--   From `bin_mean`, a specific consensus level can be chosen (i.e. how
-    many of the models predict an area, `consensus_level`) and the
-    resulting binary model can be built (`bin_consensus`). The parameter
-    `consensus_level` allows to set this level of consensus (defaults to
-    0.5: majority consensus approach).
--   NOTE: The final models can be done using a subset of the algorithms
-    avaliable on the hard disk, using the parameter `algorithms`. If
-    left unspecified, all algorithms listed in the `evaluate` files will
-    be used.
+- The partitions that will be joined can be the raw, uncut models, or
+  the binary models from the previous step, they form a
+  `raster::rasterStack()` object.
+- The means for the raw models can be calculated (`raw_mean`)
+- From `raw_mean`, a binary model can be obtained by cutting it by the
+  mean threshold that maximizes the selected performance metric for each
+  partition (`bin_th_par`), this is `raw_mean_th`. From this, values
+  above the threshold can be revovered (`raw_mean_cut`).
+- In the case of binary models, since they have already been transformed
+  into binary, a mean can be calculated (`bin_mean`). This `bin_mean`
+  reflects the consensus between partitions, and its scale is
+  categorical.
+- From `bin_mean`, a specific consensus level can be chosen (i.e. how
+  many of the models predict an area, `consensus_level`) and the
+  resulting binary model can be built (`bin_consensus`). The parameter
+  `consensus_level` allows to set this level of consensus (defaults to
+  0.5: majority consensus approach).
+- NOTE: The final models can be done using a subset of the algorithms
+  avaliable on the hard disk, using the parameter `algorithms`. If left
+  unspecified, all algorithms listed in the `evaluate` files will be
+  used.
 
 ``` r
 args(final_model)
@@ -559,9 +555,9 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Wed May  4 22:08:55 2022"
+#> [1] "Tue Nov 29 11:45:53 2022"
 #> [1] "DONE!"
-#> [1] "Wed May  4 22:09:50 2022"
+#> [1] "Tue Nov 29 11:46:08 2022"
 ```
 
 ``` r
