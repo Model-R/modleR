@@ -49,6 +49,7 @@ RdMacros: Rdpack
 Suggests: 
     devtools,
     dplyr,
+    gbm,
     knitr,
     purrr,
     rmarkdown,
