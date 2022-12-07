@@ -322,13 +322,19 @@ do_any <- function(species_name,
                     for (proje in pfiles) {
                         v <- strsplit(proje, "/")
                         name_proj <- v[[1]][length(v[[1]])]
+                        #due to the way raster reads, only tif for now will change soon v2
+                        vars <- list.files(proje, full.names = TRUE, pattern = "\\.tif$")
+                        if (length(vars) == 0) stop("projection rasters have to be tif files")
+
                         projection_folder <- paste0(models_dir, "/", species_name,
                                                     "/", name_proj, "/partitions")
                         if (file.exists(projection_folder) == FALSE)
                             dir.create(paste0(projection_folder),
                                        recursive = TRUE, showWarnings = FALSE)
-                        pred_proj <- raster::stack(list.files(proje,
-                                                              full.names = TRUE))
+
+                        pred_proj <- raster::stack(vars)
+                        names(pred_proj) <- tools::file_path_sans_ext(
+                          list.files(proje, full.names = F))
                         pred_proj <- raster::subset(pred_proj, names(predictors))
                         message(name_proj)
 

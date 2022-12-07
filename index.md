@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/Model-R/modleR.svg?branch=travis)](https://travis-ci.com/Model-R/modleR) 
 
 # modleR: a workflow for ecological niche models <img src="articles/modleR.png" align="right" alt="" width="120" />
 
