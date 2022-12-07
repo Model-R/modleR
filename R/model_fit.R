@@ -151,6 +151,7 @@
 #' @importFrom stats complete.cases formula glm step dist
 #' @importFrom Rdpack reprompt
 #' @importFrom kuenm kuenm_proc
+#' @importFrom tools file_path_sans_ext
 #'
 #' @param algorithm Character string of length 1 specifying the algorithm to
 #' be fit: "\code{bioclim}", "\code{brt}",
