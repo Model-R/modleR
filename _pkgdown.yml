@@ -29,6 +29,5 @@ reference:
 - title:
   contents:
   - modleR
-template:
- params:
-  ganalytics: UA-162793833-1
+- template:
+  bootstrap: 5

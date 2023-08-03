@@ -1,9 +1,9 @@
-pandoc: 2.19.2
-pkgdown: 2.0.6
+pandoc: 3.1.1
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   buffer_and_randomPoints: buffer_and_randomPoints.html
   projection: projection.html
   modleR: modleR.html
-last_built: 2022-11-29T16:02Z
+last_built: 2023-08-03T18:06Z
 
