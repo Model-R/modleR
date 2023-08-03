@@ -288,13 +288,15 @@ ensemble_model <- function(species_name,
         #axis_nb <- which(summary_pca$importance["Cumulative Proportion",] >= 0.95)[1]
         expl <- summary_pca$importance["Cumulative Proportion",1]
         first_axis <- predict(raw_mean_models, pca_mod, index = 1)
-        first_axis <- rescale_layer(first_axis)
-        names(first_axis) <- "pca"
-        writeRaster(first_axis,
+        pca_vals <- rescale_layer(first_axis)
+        pca1 <- raster(pca_vals)
+        values(pca1) <- values(pca_vals)
+        names(pca1) <- "pca"
+            terra::writeRaster(pca1,
                     filename = paste0(ensemble_folder, "/", species_name,
-                                      "_ensemble_pca_", round(expl,3),
+                                      "_ensemble_pca_", as.character(round(expl,3)),
                                       ".tif"), ...)
-        ensemble_mods <- raster::addLayer(ensemble_mods, first_axis)
+        ensemble_mods <- raster::addLayer(ensemble_mods, pca1)
     }
     if (uncertainty == TRUE) {
         raw_mean_files <- list.files(final_folder,
