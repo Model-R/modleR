@@ -292,7 +292,7 @@ ensemble_model <- function(species_name,
         pca1 <- raster(pca_vals)
         values(pca1) <- values(pca_vals)
         names(pca1) <- "pca"
-            terra::writeRaster(pca1,
+            raster::writeRaster(pca1,
                     filename = paste0(ensemble_folder, "/", species_name,
                                       "_ensemble_pca_", as.character(round(expl,3)),
                                       ".tif"), ...)
