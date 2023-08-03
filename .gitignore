@@ -28,3 +28,5 @@ wc10
 ## the buffers from article
 vignettes/articles/buffer_res
 Meta
+/doc/
+/Meta/
