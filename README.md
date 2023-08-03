@@ -65,18 +65,12 @@ remotes::install_github("marlonecobos/kuenm")
 remotes::install_github("mrmaxent/maxnet")
 ```
 
-# Shiny app
-
-A shiny application currently available at:
-<https://github.com/Model-R/modleR_shiny_app> uses a previous version of
-this workflow and is currently being updated to this newest version.
-
 # The workflow
 
 The workflow consists of mainly four functions that should be used
 sequentially.
 
-![](vignettes/fig01_workflow.jpg)<!-- -->
+<img src="vignettes/fig01_workflow.jpg" width="645" />
 
 1.  Setup: `setup_sdmdata()` prepares and cleans the data, samples the
     pseudoabsences, and organizes the experimental design (bootstrap,
@@ -186,8 +180,12 @@ for (i in 1:length(example_occs)) {
 par(mfrow = c(1, 1))
 ```
 
-![Figure 1. The example dataset: predictor variables and occurrence for
-four species.](man/figures/README-dataset-1.png)
+<figure>
+<img src="man/figures/README-dataset-1.png"
+alt="Figure 1. The example dataset: predictor variables and occurrence for four species." />
+<figcaption aria-hidden="true">Figure 1. The example dataset: predictor
+variables and occurrence for four species.</figcaption>
+</figure>
 
 We will filter the `example_occs` file to select only the data for the
 first species:
@@ -298,8 +296,9 @@ sdmdata_1sp <- setup_sdmdata(species_name = species[1],
 #> Applying buffer
 #> Warning in RGEOSDistanceFunc(spgeom1, spgeom2, byid, "rgeos_distance"): Spatial
 #> object 1 is not projected; GEOS expects planar coordinates
-#> Warning in rgeos::gBuffer(spgeom = occurrences, byid = FALSE, width = dist.buf):
-#> Spatial object is not projected; GEOS expects planar coordinates
+#> Warning: GEOS support is provided by the sf and terra packages among others
+#> Warning in rgeos::gBuffer(spgeom = occurrences, byid = FALSE, width =
+#> dist.buf): Spatial object is not projected; GEOS expects planar coordinates
 #> sampling pseudoabsence points with mean buffer
 #> selecting variables...
 #> No variables were excluded with cutoff = 0.7
@@ -463,7 +462,7 @@ At the end of a modeling round, the partition folder containts:
 There are many ways to create a final model per algorithm per species.
 `final_model()` follows the following logic:
 
-![](vignettes/fig05_finalmodel.png)<!-- -->
+<img src="vignettes/fig05_finalmodel.png" width="343" />
 
 - The partitions that will be joined can be the raw, uncut models, or
   the binary models from the previous step, they form a
@@ -555,9 +554,9 @@ ens <- ensemble_model(species_name = species[1],
                       which_final = "raw_mean",
                       models_dir = test_folder,
                       overwrite = TRUE) #argument from writeRaster
-#> [1] "Tue Nov 29 11:45:53 2022"
+#> [1] "Thu Aug  3 11:36:24 2023"
 #> [1] "DONE!"
-#> [1] "Tue Nov 29 11:46:08 2022"
+#> [1] "Thu Aug  3 11:36:36 2023"
 ```
 
 ``` r

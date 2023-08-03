@@ -69,11 +69,6 @@ remotes::install_github("mrmaxent/maxnet")
 ```
 
 
-# Shiny app
-
-A shiny application currently available at: https://github.com/Model-R/modleR_shiny_app
-uses a previous version of this workflow and is currently being updated to this newest version.
-
 # The workflow
 
 The workflow consists of mainly four functions that should be used sequentially.
